@@ -1,0 +1,1620 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>טריטוריה</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#101a2c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Rubik:wght@400;500;700&display=swap">
+<style>
+/* Layout: one-screen phone app. A tiled board of territories; duels take over the whole screen with two chess-style clocks. Single dark arena look, by choice. */
+:root{
+  --ink:#101a2c;        /* arena floor */
+  --panel:#18263d;      /* raised surfaces */
+  --line:#2b3c5a;       /* hairlines, tile gaps */
+  --text:#eef2f8;
+  --muted:#93a4bf;
+  --amber:#ffb547;      /* accent: active clock, primary action */
+  --good:#3ddc97;
+  --bad:#ff5d6c;
+  --font-d:'Karantina','Secular One','Arial Narrow',system-ui,sans-serif;
+  --font-b:'Rubik','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--ink);color:var(--text);font-family:var(--font-b);font-size:16px;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+#app{height:100%;display:flex;flex-direction:column;max-width:560px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.scr{flex:1;min-height:0;display:flex;flex-direction:column;padding-block:12px}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- home ---------- */
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:6px 2px}
+.brand h1{font-family:var(--font-d);font-weight:700;font-size:72px;line-height:.9;margin:0;letter-spacing:.5px}
+.brand h1 span{color:var(--amber)}
+.mini-grid{display:grid;grid-template-columns:repeat(3,14px);gap:2px;transform:rotate(-8deg)}
+.mini-grid i{width:14px;height:14px;border-radius:2px;display:block}
+.tag{color:var(--muted);margin:4px 0 14px;line-height:1.5;max-width:40ch}
+.field{display:flex;flex-direction:column;gap:8px;padding-block:10px;border-top:1px solid var(--line)}
+.field>label,.flabel{font-size:13px;color:var(--muted);letter-spacing:.3px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 auto;min-width:64px;padding:10px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);font-size:15px}
+.seg button.on{background:var(--amber);color:#1b1206;border-color:var(--amber);font-weight:700}
+.inp{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:inherit;font-size:16px}
+.row{display:flex;gap:8px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:7px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.chip.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 18%,var(--panel))}
+.chip.off{opacity:.45}
+.chip .x{opacity:.7;font-size:13px}
+.hint{font-size:13px;color:var(--muted);line-height:1.45}
+.big{width:100%;padding:16px;border-radius:14px;background:var(--amber);color:#1b1206;font-weight:700;font-size:19px}
+.big:disabled{opacity:.4}
+.ghost{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:15px}
+.home-foot{padding-block:12px 4px;position:sticky;bottom:0;background:linear-gradient(to top,var(--ink) 75%,transparent)}
+
+/* ---------- board ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px}
+.topbar .logo{font-family:var(--font-d);font-weight:700;font-size:34px;line-height:1}
+.topbar .logo span{color:var(--amber)}
+.pill{font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.board-wrap{display:flex;justify-content:center}
+.board{display:grid;width:100%;max-width:min(100%,60vh);direction:ltr;border-radius:14px;overflow:hidden;background:var(--ink)}
+.tile{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  border:0 solid var(--ink);transition:filter .25s,opacity .25s,background-color .4s;padding:2px;overflow:hidden}
+.tile .ic{font-size:clamp(18px,7vw,34px);line-height:1}
+.tile .nm{font-size:clamp(10px,2.9vw,13px);font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.6);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .cn{font-size:clamp(9px,2.4vw,11px);opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.6);white-space:nowrap}
+.board.small .tile .cn{display:none}
+.tile.dim{filter:saturate(.25) brightness(.55)}
+.tile.hl{filter:brightness(1.25);box-shadow:inset 0 0 0 3px #fff}
+.tile.tgt{cursor:pointer;animation:pulse 1s ease-in-out infinite}
+.tile.flash{animation:flash .7s ease-out 2}
+@keyframes pulse{50%{filter:brightness(1.35)}}
+@keyframes flash{50%{filter:brightness(1.8)}}
+.status{min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:17px;line-height:1.4;padding-block:12px 6px;text-wrap:balance}
+.actions{display:flex;flex-direction:column;gap:8px}
+.tgt-list{display:flex;flex-direction:column;gap:6px}
+.tgt-btn{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--panel);border:1px solid var(--line);text-align:start}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.tgt-btn b{flex:1}
+.roster{display:flex;flex-wrap:wrap;gap:6px;padding-top:12px;border-top:1px solid var(--line);margin-top:12px}
+.roster .chip{font-size:13px;padding:5px 9px}
+.roster .chip.out{opacity:.35;text-decoration:line-through}
+
+/* ---------- duel ---------- */
+.duel-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cat-badge{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px}
+.cat-badge .ci{font-size:24px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-block:10px}
+.clock{border-radius:14px;background:var(--panel);border:2px solid var(--line);padding:8px 12px 6px;display:flex;flex-direction:column;gap:0;transition:border-color .2s,opacity .2s;position:relative;overflow:hidden}
+.clock .who{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clock .t{font-family:var(--font-d);font-weight:700;font-size:58px;line-height:1;font-variant-numeric:tabular-nums}
+.clock.act{border-color:var(--amber)}
+.clock.act .t{color:var(--amber)}
+.clock:not(.act){opacity:.6}
+.clock.low .t{color:var(--bad)}
+.clock .bar{position:absolute;inset:auto 0 0 0;height:4px;background:var(--line)}
+.clock .bar i{display:block;height:100%;background:currentColor;transform-origin:right;transition:transform .1s linear}
+.turn{text-align:center;font-size:14px;color:var(--muted);min-height:20px}
+.stage{flex:1;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;gap:10px}
+.stage .ask{font-size:15px;color:var(--muted)}
+.stage .pic{font-size:min(40vw,190px);line-height:1.05}
+.stage .txt{font-size:clamp(22px,6.4vw,32px);font-weight:700;line-height:1.35;max-width:22ch;text-wrap:balance}
+.stage .cd{font-family:var(--font-d);font-size:140px;font-weight:700;color:var(--amber);line-height:1}
+.stage .intro{display:flex;flex-direction:column;gap:12px;align-items:center}
+.stage .intro .vs{font-family:var(--font-d);font-size:44px;font-weight:700;line-height:1}
+.stage .intro .vs em{font-style:normal;color:var(--amber);padding-inline:8px}
+.reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border-radius:16px;
+  background:color-mix(in srgb,var(--bad) 22%,var(--ink));font-size:28px;font-weight:700;padding:16px}
+.reveal small{font-size:14px;font-weight:400;color:var(--muted)}
+.reveal.good{background:color-mix(in srgb,var(--good) 22%,var(--ink))}
+.feed{min-height:26px;text-align:center;color:var(--muted);font-size:15px;padding-block:4px}
+.feed.ok{color:var(--good);font-weight:700}
+.controls{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{padding:14px 10px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:17px;font-weight:500;min-height:56px}
+.opt.right{background:var(--good);color:#04130b}
+.opt.wrong{background:var(--bad);color:#1d0306}
+.hostbtns{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.hostbtns button{padding:18px 10px;border-radius:14px;font-weight:700;font-size:19px}
+.b-ok{background:var(--good);color:#04130b}
+.b-pass{background:var(--panel);border:1px solid var(--line)}
+.hostbtns.slim button{padding:11px 10px;font-size:15px}
+button:disabled{opacity:.35;cursor:default}
+.mic{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--muted);padding:8px;border-radius:999px;border:1px dashed var(--line)}
+.mic.on{color:var(--good);border-style:solid;border-color:color-mix(in srgb,var(--good) 50%,var(--line))}
+.mic.on::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--good);animation:pulse 1s infinite}
+.thinking{text-align:center;color:var(--muted);padding:16px;font-size:16px}
+
+/* ---------- modal ---------- */
+.ov{position:fixed;inset:0;z-index:20;background:rgba(6,10,18,.72);display:flex;align-items:flex-end;justify-content:center;
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px;animation:up .25s ease-out}
+.sheet h2{font-family:var(--font-d);font-size:44px;line-height:1;margin:0;text-wrap:balance}
+.sheet p{margin:0;line-height:1.5;color:var(--muted)}
+.sheet .btns{display:flex;flex-direction:column;gap:8px}
+@keyframes up{from{transform:translateY(24px);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app" dir="rtl" lang="he">
+  <!-- HOME -->
+  <section class="scr scroll" id="scr-home">
+    <div class="brand">
+      <h1>טריטו<span>ריה</span></h1>
+      <div class="mini-grid" aria-hidden="true" id="miniGrid"></div>
+    </div>
+    <p class="tag">כל משבצת היא שחקן, ולכל שחקן קטגוריה. מאתגרים שכן, שני שעונים רצים, עונים בקול. למי שנגמר הזמן ראשון יוצא, והמנצח לוקח לו את השטח. מי שמשתלט על כל הלוח מנצח.</p>
+
+    <div class="field">
+      <span class="flabel">מי משחק</span>
+      <div class="seg" data-key="mode">
+        <button data-v="cpu">אני נגד המחשב</button>
+        <button data-v="friends">חברים על מכשיר אחד</button>
+      </div>
+    </div>
+
+    <div id="cpuFields">
+      <div class="field">
+        <label for="myName">השם שלך</label>
+        <input class="inp" id="myName" maxlength="14" autocomplete="off">
+      </div>
+      <div class="field">
+        <span class="flabel">גודל הלוח</span>
+        <div class="seg" data-key="size" data-num="1">
+          <button data-v="4">4 שחקנים</button>
+          <button data-v="9">9 שחקנים</button>
+          <button data-v="16">16 שחקנים</button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="flabel">רמת המחשב</span>
+        <div class="seg" data-key="diff">
+          <button data-v="easy">קל</button>
+          <button data-v="normal">רגיל</button>
+          <button data-v="hard">קשה</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="friendFields" hidden>
+      <div class="field">
+        <label for="friendName">שחקנים (2 עד 16)</label>
+        <div class="row">
+          <input class="inp" id="friendName" maxlength="14" placeholder="שם של שחקן" autocomplete="off">
+          <button class="ghost" id="addFriend">הוספה</button>
+        </div>
+        <div class="chips" id="friendList"></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="flabel">איך עונים</span>
+      <div class="seg" data-key="answer">
+        <button data-v="voice">🎤 בקול</button>
+        <button data-v="choices">4 תשובות</button>
+        <button data-v="host">מנחה מסמן</button>
+      </div>
+      <p class="hint" id="answerHint"></p>
+    </div>
+
+    <div class="field">
+      <span class="flabel">זמן לכל שחקן בדו־קרב</span>
+      <div class="seg" data-key="time" data-num="1">
+        <button data-v="30">30 שניות</button>
+        <button data-v="45">45 שניות</button>
+        <button data-v="60">60 שניות</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="row" style="justify-content:space-between">
+        <span class="flabel">קטגוריות במשחק</span>
+        <button class="chip" id="allCats">הכל</button>
+      </div>
+      <div class="chips" id="catChips"></div>
+    </div>
+
+    <div class="home-foot">
+      <button class="big" id="startBtn">מתחילים</button>
+    </div>
+  </section>
+
+  <!-- BOARD -->
+  <section class="scr" id="scr-board" hidden>
+    <div class="topbar">
+      <div class="logo">טריטו<span>ריה</span></div>
+      <div class="row">
+        <span class="pill" id="aliveCount"></span>
+        <button class="pill" id="menuBtn" aria-label="תפריט">☰</button>
+      </div>
+    </div>
+    <div class="scroll" style="flex:1;min-height:0">
+      <div class="board-wrap"><div class="board" id="board"></div></div>
+      <div class="status" id="bstatus"></div>
+      <div class="actions" id="bactions"></div>
+      <div class="roster" id="roster"></div>
+    </div>
+  </section>
+
+  <!-- DUEL -->
+  <section class="scr" id="scr-duel" hidden>
+    <div class="duel-top">
+      <div class="cat-badge"><span class="ci" id="dIcon"></span><span id="dCat"></span></div>
+      <button class="pill" id="duelExit" aria-label="יציאה">✕</button>
+    </div>
+    <div class="clocks" id="clocks"></div>
+    <div class="turn" id="turn"></div>
+    <div class="stage" id="stage"></div>
+    <div class="feed" id="feed"></div>
+    <div class="controls" id="controls"></div>
+  </section>
+</div>
+
+<div class="ov" id="ov" hidden><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* =====================================================================
+   CONTENT. Each line: prompt → answer|alias|alias
+   ===================================================================== */
+const CATS_RAW = [
+{id:'animals',name:'חיות',icon:'🦁',kind:'pic',ask:'איזו חיה?',data:`
+🐘→פיל
+🦒→ג'ירפה|גירפה
+🦓→זברה
+🦁→אריה
+🐯→טיגריס|נמר
+🐻→דוב
+🐼→פנדה|דוב פנדה
+🐨→קואלה
+🦘→קנגורו
+🐪→גמל
+🦔→קיפוד
+🐢→צב
+🐍→נחש
+🦎→לטאה|זיקית
+🐊→תנין
+🐸→צפרדע
+🐙→תמנון
+🦈→כריש
+🐬→דולפין
+🐳→לווייתן|לויתן
+🦀→סרטן
+🐌→חילזון|שבלול
+🦋→פרפר
+🐝→דבורה
+🐞→פרת משה רבנו|חיפושית
+🦉→ינשוף
+🐧→פינגווין
+🦩→פלמינגו
+🦜→תוכי
+🐿️→סנאי
+🦇→עטלף
+🦏→קרנף
+🦛→היפופוטם|היפו
+🦍→גורילה|קוף
+🐺→זאב
+🦊→שועל
+🐇→ארנב|ארנבת
+🦆→ברווז
+🦢→ברבור
+🦚→טווס
+🐓→תרנגול
+🐄→פרה
+🐖→חזיר
+🐑→כבשה|כבש
+🐐→עז|תיש
+🐎→סוס
+🦥→עצלן
+🦦→לוטרה
+🦨→בואש
+🐜→נמלה
+🕷️→עכביש
+🦂→עקרב
+🐋→לווייתן|לויתן
+🦭→כלב ים|פוקה
+🐆→נמר|ברדלס
+`},
+{id:'flags',name:'דגלים',icon:'🏳️',kind:'pic',ask:'של איזו מדינה הדגל?',data:`
+🇮🇱→ישראל
+🇺🇸→ארצות הברית|ארהב|אמריקה
+🇬🇧→בריטניה|אנגליה|הממלכה המאוחדת
+🇫🇷→צרפת
+🇩🇪→גרמניה
+🇮🇹→איטליה
+🇪🇸→ספרד
+🇵🇹→פורטוגל
+🇳🇱→הולנד
+🇧🇪→בלגיה
+🇨🇭→שווייץ|שוויץ
+🇦🇹→אוסטריה
+🇬🇷→יוון
+🇹🇷→טורקיה
+🇨🇾→קפריסין
+🇪🇬→מצרים
+🇯🇴→ירדן
+🇯🇵→יפן
+🇨🇳→סין
+🇰🇷→דרום קוריאה|קוריאה
+🇮🇳→הודו
+🇹🇭→תאילנד
+🇻🇳→וייטנאם|ויטנאם
+🇦🇺→אוסטרליה
+🇳🇿→ניו זילנד
+🇨🇦→קנדה
+🇲🇽→מקסיקו
+🇧🇷→ברזיל
+🇦🇷→ארגנטינה
+🇨🇱→צ'ילה|צילה
+🇨🇴→קולומביה
+🇺🇾→אורוגוואי|אורוגווי
+🇸🇪→שוודיה
+🇳🇴→נורווגיה
+🇩🇰→דנמרק
+🇫🇮→פינלנד
+🇮🇪→אירלנד
+🇵🇱→פולין
+🇺🇦→אוקראינה
+🇷🇺→רוסיה
+🇨🇿→צ'כיה|צכיה
+🇭🇺→הונגריה
+🇷🇴→רומניה
+🇭🇷→קרואטיה
+🇿🇦→דרום אפריקה
+🇳🇬→ניגריה
+🇲🇦→מרוקו
+🇯🇲→ג'מייקה|גמייקה
+🇮🇸→איסלנד
+🇸🇦→ערב הסעודית|סעודיה
+🇦🇪→איחוד האמירויות|האמירויות|אמירויות
+🇵🇪→פרו
+🇪🇹→אתיופיה
+🇬🇪→גאורגיה|גרוזיה
+`},
+{id:'capitals',name:'ערי בירה',icon:'🏛️',kind:'text',ask:'מה עיר הבירה?',data:`
+צרפת→פריז|פריס
+איטליה→רומא
+ספרד→מדריד
+גרמניה→ברלין
+בריטניה→לונדון
+יוון→אתונה
+מצרים→קהיר
+יפן→טוקיו
+רוסיה→מוסקבה
+טורקיה→אנקרה
+אוסטרליה→קנברה
+קנדה→אוטווה
+ארצות הברית→וושינגטון|וושינגטון די סי
+הולנד→אמסטרדם
+פורטוגל→ליסבון
+אוסטריה→וינה
+הונגריה→בודפשט
+צ'כיה→פראג
+פולין→ורשה
+ארגנטינה→בואנוס איירס
+ברזיל→ברזיליה
+תאילנד→בנגקוק
+דרום קוריאה→סיאול
+שוודיה→שטוקהולם
+נורווגיה→אוסלו
+דנמרק→קופנהגן
+אירלנד→דבלין
+ירדן→עמאן|עמן
+שווייץ→ברן
+בלגיה→בריסל
+פינלנד→הלסינקי
+אוקראינה→קייב|קיוב
+הודו→ניו דלהי|דלהי
+סין→בייג'ינג|בייגינג|בייג'ין|פקין
+יוון→אתונה
+רומניה→בוקרשט
+ישראל→ירושלים
+`},
+{id:'general',name:'ידע כללי',icon:'🧠',kind:'text',ask:'',data:`
+כמה ימים יש בשנה מעוברת (לועזית)?→366|שלוש מאות שישים ושש
+מה הכוכב הקרוב ביותר לכדור הארץ?→השמש|שמש
+כמה צלעות יש למשושה?→6|שש
+מה הנוסחה הכימית של מים?→H2O|אייץ' טו או|איץ טו או
+מהו כוכב הלכת הגדול ביותר במערכת השמש?→צדק|יופיטר
+מי צייר את המונה ליזה?→לאונרדו דה וינצ'י|דה וינצ'י|דה וינצי|לאונרדו
+מהו ההר הגבוה בעולם?→האוורסט|אוורסט|הר האוורסט
+באיזו יבשת נמצאת מצרים?→אפריקה
+מי כתב את מילות "התקווה"?→נפתלי הרץ אימבר|אימבר
+מהו האוקיינוס הגדול בעולם?→האוקיינוס השקט|השקט
+כמה רגליים יש לעכביש?→8|שמונה
+איזה גז אנחנו צריכים לנשום כדי לחיות?→חמצן
+כמה שחקנים יש לכל קבוצת כדורסל על המגרש?→5|חמישה|חמש
+איזו מתכת נוזלית בטמפרטורת החדר?→כספית
+מי היה ראש הממשלה הראשון של ישראל?→דוד בן גוריון|בן גוריון
+כמה מיתרים יש לגיטרה רגילה?→6|שש|שישה
+מה המדינה הגדולה בעולם בשטחה?→רוסיה
+מהו המקום הנמוך ביותר על פני כדור הארץ?→ים המלח
+כמה דקות יש בשעה?→60|שישים
+מה צבע הדם?→אדום
+כמה צבעים יש בקשת בענן?→7|שבעה|שבע
+מהו כוכב הלכת הקרוב ביותר לשמש?→כוכב חמה|מרקורי|חמה
+כמה שניות יש בדקה?→60|שישים
+מהי היבשת הקרה ביותר?→אנטארקטיקה
+באיזו עיר נמצא מגדל אייפל?→פריז|פריס
+מה שמה של הספינה שטבעה ב־1912 אחרי התנגשות בקרחון?→טיטניק|הטיטניק
+כמה עצמות יש בגוף של אדם בוגר?→206|מאתיים ושש
+מי פיתח את תורת היחסות?→אלברט איינשטיין|איינשטיין
+מה הבירה של ישראל?→ירושלים
+באיזו שנה הוקמה מדינת ישראל?→1948|אלף תשע מאות ארבעים ושמונה|תש"ח
+כמה ימים יש בשבוע?→7|שבעה|שבע
+מהו בעל החיים היבשתי המהיר ביותר?→ברדלס|צ'יטה
+מה היא שפת האם בברזיל?→פורטוגזית
+`},
+{id:'football',name:'כדורגל',icon:'⚽',kind:'text',ask:'מי או מה?',data:`
+צהוב־שחור, האצטדיון: טדי בירושלים→בית"ר ירושלים|ביתר ירושלים|ביתר
+הצהובים מבלומפילד, תל אביב→מכבי תל אביב|מכבי תא
+הירוקים מסמי עופר, חיפה→מכבי חיפה
+האדומים של תל אביב→הפועל תל אביב|הפועל תא
+האדומים מהנגב, אצטדיון טרנר→הפועל באר שבע
+הכתומים משכונת התקווה→בני יהודה
+הקבוצה מהגליל שמשחקת באצטדיון דוחא→בני סכנין|סכנין
+"המלאבסים"→מכבי פתח תקווה|מכבי פתח תקוה
+הקבוצה מקאמפ נואו→ברצלונה|בארסה|ברסה
+"המלכותית" מסנטיאגו ברנבאו→ריאל מדריד|ריאל
+"השדים האדומים" מאולד טראפורד→מנצ'סטר יונייטד|מנצסטר יונייטד|יונייטד
+אנפילד, "You'll Never Walk Alone"→ליברפול
+"התותחנים" מצפון לונדון→ארסנל
+"הגברת הזקנה" מטורינו→יובנטוס
+"הבווארים" מאליאנץ ארנה→באיירן מינכן|באיירן
+האצטדיון: פארק דה פרינס→פריז סן ז'רמן|פריז|פסז|פ ס ז
+"הבלוז" מסטמפורד ברידג'→צ'לסי|צלסי
+"הנראצורי", כחול־שחור ממילאנו→אינטר|אינטר מילאנו
+"הרוסונרי", אדום־שחור ממילאנו→מילאן|איי סי מילאן
+הארגנטינאי עם הכי הרבה כדורי זהב→ליונל מסי|מסי
+CR7→כריסטיאנו רונאלדו|רונאלדו|כריסטיאנו
+"המלך" הברזילאי, 3 גביעי עולם→פלה
+"יד האלוהים"→דייגו מראדונה|מראדונה
+מי זכתה במונדיאל 2022?→ארגנטינה
+איפה התקיים מונדיאל 2022?→קטאר|קטר
+כמה שחקנים יש לקבוצה על המגרש?→11|אחד עשר|אחת עשרה
+החלוץ הנורווגי של מנצ'סטר סיטי→ארלינג הולאנד|הולאנד|הלנד
+הכוכב הצרפתי שעבר מפריז לריאל מדריד ב־2024→קיליאן אמבפה|אמבפה
+הקשר הישראלי ששיחק בליברפול, צ'לסי וארסנל→יוסי בניון|בניון
+המאמן הספרדי של מנצ'סטר סיטי→פפ גווארדיולה|גווארדיולה|פפ
+מה צבע הכרטיס שמוציא שחקן מהמשחק?→אדום
+כמה דקות נמשך משחק כדורגל רגיל?→90|תשעים
+`},
+{id:'logos',name:'לוגואים',icon:'🏷️',kind:'text',ask:'של איזה מותג הלוגו?',data:`
+תפוח עם ביס בצד→אפל
+"וי" מעוגל ("סווש")→נייקי|נייק
+שלושה פסים→אדידס
+M צהובה גדולה→מקדונלדס|מקדונלד
+ציפור כחולה קטנה (לפני ה־X)→טוויטר|טויטר|איקס
+האות f לבנה על כחול→פייסבוק
+מצלמה בצבעי סגול־ורוד־כתום→אינסטגרם
+משולש "פליי" לבן על מלבן אדום→יוטיוב|יו טיוב
+בתולת ים ירוקה בעיגול→סטארבקס
+ארבעה ריבועים צבעוניים→מיקרוסופט
+כוכב משולש בתוך עיגול→מרצדס
+ארבע טבעות משולבות→אאודי|אודי
+סוס דוהר שחור על רקע צהוב→פרארי
+חץ מחייך מתחת לשם→אמזון
+רוח רפאים לבנה על רקע צהוב→סנאפצ'ט|סנאפצט|סנפצ'ט
+שפופרת טלפון בתוך בועה ירוקה→וואטסאפ|ווטסאפ|וטסאפ
+תו מוזיקלי שחור עם הילה ורודה־טורקיזית→טיקטוק|טיק טוק
+כתב יד אדום מסולסל של משקה→קוקה קולה|קולה|קוקה-קולה
+רוח רפאים מחייכת, אפליקציית ניווט ישראלית→וייז|ווייז|ויז
+האות G בארבעה צבעים→גוגל
+לוגו ורוד עם הכיתוב "Barbie"→ברבי
+עכבר עם שתי אוזניים עגולות גדולות→דיסני|מיקי מאוס
+האות N אדומה על שחור→נטפליקס
+לבנה צבעונית עם שש "בליטות"→לגו
+`},
+{id:'israeli-singers',name:'זמרים ישראלים',icon:'🎤',kind:'text',ask:'מי הזמר/ת?',data:`
+זכתה באירוויזיון 2018 עם "Toy"→נטע ברזילי|נטע
+זכתה באירוויזיון 1998 עם "Diva"→דנה אינטרנשיונל|דנה
+הזוכה הישראלי הראשון באירוויזיון, 1978, "א־ב־ני־בי"→יזהר כהן
+"הללויה", אירוויזיון 1979, עם להקת חלב ודבש→גלי עטרי
+"ירח" ו"תרצי"→שלמה ארצי|ארצי
+"אני ואתה" ו"עוף גוזל"→אריק איינשטיין|איינשטיין
+כתבה את "ירושלים של זהב"→נעמי שמר
+"אם ננעלו" כבש את העולם→עופרה חזה
+"כמו סינדרלה", "המלכה" של הזמר המזרחי→שרית חדד
+"Hurricane", אירוויזיון 2024→עדן גולן
+"Unicorn", אירוויזיון 2023→נועה קירל
+"Golden Boy", אירוויזיון 2015→נדב גדג'|נדב גדג
+"Set Me Free", אירוויזיון 2022→מיכאל בן דוד
+"Dance Forever", אירוויזיון 2025→יובל רפאל
+זכתה בעונה הראשונה של "כוכב נולד"→נינט טייב|נינט
+`},
+{id:'athletes',name:'ספורטאים',icon:'🏅',kind:'text',ask:'מי הספורטאי/ת?',data:`
+הישראלי הראשון שנבחר בדראפט ה־NBA ושיחק בליגה→עומרי כספי|כספי
+ישראלי שנבחר במקום 9 בדראפט ה־NBA 2020→דני אבדיה|אבדיה
+מדליית זהב בהתעמלות אמנותית, טוקיו 2020→לינוי אשרם|לינוי
+מדליית זהב בקרקע, טוקיו 2020→ארטיום דולגופיאט|דולגופיאט
+מדליית הזהב האולימפית הראשונה של ישראל, גלישת רוח 2004→גל פרידמן
+6 אליפויות NBA עם שיקגו בולס→מייקל ג'ורדן|ג'ורדן|גורדן
+שיא העולם ב־100 מטר, "הברק" מג'מייקה→יוסיין בולט|בולט
+טניסאי שוויצרי עם 20 תארי גראנד סלאם→רוג'ר פדרר|פדרר
+"מלך החימר" הספרדי, 14 אליפויות ברולאן גארוס→רפאל נדאל|נדאל
+השחיין עם 23 מדליות זהב אולימפיות→מייקל פלפס|פלפס
+המתאגרף שאמר "מרחף כמו פרפר, עוקץ כמו דבורה"→מוחמד עלי
+הג'ודוקאית שזכתה במדליה האולימפית הראשונה של ישראל, 1992→יעל ארד
+אגדת לוס אנג'לס לייקרס, מספר 24 ו־8→קובי בראיינט|קובי
+`},
+{id:'famous',name:'מפורסמים',icon:'⭐',kind:'text',ask:'מי זה?',data:`
+E=mc²→אלברט איינשטיין|איינשטיין
+ראש הממשלה הראשונה (אישה) של ישראל→גולדה מאיר|גולדה
+"אם תרצו, אין זו אגדה"→בנימין זאב הרצל|הרצל|תיאודור הרצל
+האסטרונאוט הישראלי הראשון→אילן רמון
+"מלך הפופ"→מייקל ג'קסון|מייקל גקסון|ג'קסון
+מייסד טסלה ו־SpaceX→אילון מאסק|מאסק
+מייסד־שותף של אפל, האיש עם החולצה השחורה→סטיב ג'ובס|ג'ובס|גובס
+השחקנית הישראלית שגילמה את וונדר וומן→גל גדות
+הזמרת של "Eras Tour"→טיילור סוויפט|טיילור|סוויפט
+הנשיא האמריקאי הראשון→ג'ורג' וושינגטון|וושינגטון
+גילה את חוק הכבידה, לפי האגדה בזכות תפוח→אייזיק ניוטון|ניוטון
+כתב את "רומיאו ויוליה"→ויליאם שייקספיר|שייקספיר|שקספיר
+מנהיג תנועת זכויות האזרח, "I Have a Dream"→מרטין לותר קינג|מרטין לותר קינג ג'וניור
+המלכה הבריטית ששלטה 70 שנה→אליזבת|המלכה אליזבת|אליזבת השנייה
+יצר את מיקי מאוס→וולט דיסני|דיסני
+`},
+{id:'fruit',name:'פירות וירקות',icon:'🍉',kind:'pic',ask:'מה זה?',data:`
+🍎→תפוח|תפוח עץ
+🍌→בננה
+🍇→ענבים|ענב
+🍉→אבטיח
+🍓→תות|תות שדה
+🍒→דובדבן|דובדבנים
+🍑→אפרסק
+🍍→אננס
+🥝→קיווי
+🥭→מנגו
+🍋→לימון
+🍊→תפוז|קלמנטינה
+🍐→אגס
+🥥→קוקוס
+🥑→אבוקדו
+🍅→עגבנייה|עגבניה
+🥕→גזר
+🥒→מלפפון
+🌽→תירס
+🥔→תפוח אדמה|תפוד
+🍆→חציל
+🥦→ברוקולי
+🧄→שום
+🧅→בצל
+🌶️→פלפל חריף|פלפל|צילי
+🫑→פלפל|גמבה
+🍄→פטרייה|פטריה
+🫐→אוכמניות|אוכמנית
+🍈→מלון
+🥬→חסה|כרוב
+🫒→זית|זיתים
+🥜→בוטנים|בוטן
+`},
+{id:'food',name:'אוכל',icon:'🍕',kind:'pic',ask:'מה המאכל?',data:`
+🍕→פיצה
+🍔→המבורגר|בורגר
+🌭→נקניקייה|נקניקיה|הוט דוג
+🍟→צ'יפס|ציפס
+🌮→טאקו
+🥙→פיתה|שווארמה|שוארמה|פלאפל
+🧆→פלאפל
+🍣→סושי
+🍜→ראמן|מרק|נודלס
+🍝→ספגטי|פסטה
+🥗→סלט
+🍩→דונאט|סופגנייה|סופגניה
+🍪→עוגייה|עוגיה|עוגיות
+🎂→עוגת יום הולדת|עוגה
+🧁→קאפקייק|מאפין
+🍦→גלידה
+🍫→שוקולד
+🍿→פופקורן
+🥐→קרואסון
+🥨→בייגלה|פרעצל
+🥞→פנקייק|פנקייקים|חביתיות
+🧇→וופל
+🥚→ביצה
+🍳→חביתה|ביצת עין|ביצה
+🧀→גבינה
+🍞→לחם
+🍯→דבש
+🥛→חלב
+☕→קפה
+🍵→תה
+🥟→כופתאות|כיסונים|דמפלינג
+🍭→סוכרייה על מקל|סוכריה|לוליפופ
+🥓→בייקון
+🍦→גלידה
+`},
+{id:'sports',name:'ענפי ספורט',icon:'🏀',kind:'pic',ask:'איזה ענף?',data:`
+⚽→כדורגל
+🏀→כדורסל
+🏈→פוטבול|כדורגל אמריקאי
+⚾→בייסבול
+🎾→טניס
+🏐→כדורעף|כדור עף
+🏉→רוגבי
+🎱→ביליארד|סנוקר
+🏓→טניס שולחן|פינג פונג|פינגפונג
+🏸→בדמינטון
+🏒→הוקי|הוקי קרח
+⛳→גולף
+🏹→קשתות|חץ וקשת
+🥊→איגרוף|אגרוף
+🥋→קראטה|ג'ודו|גודו|אומנויות לחימה
+⛷️→סקי
+🏄→גלישה|גלישת גלים
+🏊→שחייה|שחיה
+🚴→רכיבה על אופניים|אופניים
+🏋️→הרמת משקולות|משקולות
+🤺→סייף
+🏇→מרוץ סוסים|רכיבה על סוסים
+🧗→טיפוס|טיפוס קירות
+🛹→סקייטבורד|סקייט
+⛸️→החלקה על הקרח|החלקה
+🤿→צלילה
+🎳→באולינג
+♟️→שחמט|שח
+🤸→התעמלות|התעמלות קרקע
+🥏→פריזבי|אולטימייט
+`},
+{id:'jobs',name:'מקצועות',icon:'👩‍🚒',kind:'pic',ask:'מה המקצוע?',data:`
+👮→שוטר|שוטרת
+🧑‍🚒→כבאי|כבאית
+🧑‍⚕️→רופא|רופאה|אח|אחות
+🧑‍🍳→שף|טבח|טבחית|שפית
+🧑‍🏫→מורה|גננת
+🧑‍🌾→חקלאי|חקלאית|איכר
+👷→פועל בניין|בנאי|פועל
+🧑‍✈️→טייס|טייסת
+🧑‍🚀→אסטרונאוט|אסטרונאוטית|אסטרונאוטית
+🧑‍🎤→זמר|זמרת
+🕵️→בלש|בלשית|מרגל
+💂→שומר|שומרת
+🧑‍🔬→מדען|מדענית
+🧑‍💻→מתכנת|מתכנתת
+🧑‍🎨→צייר|ציירת|אמן
+🧑‍🔧→מכונאי|מוסכניק|מכונאית
+🧙→קוסם|מכשף
+🤡→ליצן|ליצנית
+🧑‍⚖️→שופט|שופטת
+🥷→נינג'ה|נינגה
+🧑‍🏭→עובד מפעל|רתך|פועל
+`},
+{id:'transport',name:'כלי תחבורה',icon:'🚌',kind:'pic',ask:'מה זה?',data:`
+🚗→מכונית|רכב|אוטו
+🚕→מונית
+🚌→אוטובוס
+🚑→אמבולנס
+🚒→כבאית|מכונית כיבוי
+🚓→ניידת|ניידת משטרה|מכונית משטרה
+🚚→משאית
+🚜→טרקטור
+🏍️→אופנוע
+🛵→קטנוע|וספה
+🚲→אופניים|אופנים
+🛴→קורקינט
+🚂→רכבת|קטר
+🚇→רכבת תחתית|מטרו
+🚁→מסוק|הליקופטר
+✈️→מטוס
+🚀→חללית|טיל
+🛸→עב"ם|עבם|צלחת מעופפת
+⛵→מפרשית|סירת מפרש
+🚤→סירת מנוע|סירה
+🛳️→אונייה|ספינה|אוניה
+🚠→רכבל
+🎈→בלון
+🛶→קאנו|קיאק|סירה
+🚛→משאית|סמיטריילר
+🛺→טוקטוק|ריקשה
+`},
+{id:'objects',name:'חפצים',icon:'🔑',kind:'pic',ask:'מה זה?',data:`
+⏰→שעון מעורר|שעון
+☂️→מטרייה|מטריה
+🔑→מפתח
+🔒→מנעול
+💡→נורה|נורה חשמלית
+📱→טלפון|סמארטפון|פלאפון|נייד
+💻→מחשב נייד|לפטופ|מחשב
+⌚→שעון יד|שעון
+📷→מצלמה
+🎸→גיטרה
+🎹→פסנתר|קלידים|אורגן
+🥁→תוף|תופים
+🎺→חצוצרה
+🎻→כינור
+🪑→כיסא|כסא
+🛏️→מיטה
+🚪→דלת
+🔨→פטיש
+✂️→מספריים
+📚→ספרים|ספר
+✏️→עיפרון|עפרון
+🎒→תיק|ילקוט|תרמיל
+👓→משקפיים
+🧦→גרביים|גרב
+👟→נעל|נעלי ספורט|נעליים
+🧢→כובע|כובע מצחייה
+🎁→מתנה
+🕯️→נר
+🧲→מגנט
+🪁→עפיפון
+🔦→פנס
+🧸→דובי|דובון|בובה
+`},
+{id:'nature',name:'טבע ומזג אוויר',icon:'🌈',kind:'pic',ask:'מה זה?',data:`
+☀️→שמש
+🌧️→גשם|ענן גשם
+⛈️→סערה|ברקים|סופת רעמים
+❄️→שלג|פתית שלג
+🌈→קשת|קשת בענן
+🌪️→טורנדו|סופה|הוריקן
+🌊→גל|ים|גלים
+🌋→הר געש
+🏔️→הר|הר מושלג|הרים
+🏜️→מדבר
+🏝️→אי
+🌵→קקטוס|צבר|צמח
+🌴→דקל|עץ דקל|תמר
+🌲→אורן|עץ
+🌻→חמנייה|חמניה
+🌹→ורד
+🌷→צבעוני|פרח
+🍁→עלה|עלה שלכת|סתיו
+🌙→ירח|סהר
+⭐→כוכב
+☁️→ענן
+🔥→אש|להבה
+💧→טיפה|מים|טיפת מים
+🌍→כדור הארץ|עולם
+⚡→ברק|חשמל
+☄️→שביט|מטאור|כוכב שביט
+`},
+{id:'movies',name:'סרטים באימוג׳י',icon:'🎬',kind:'pic',ask:'איזה סרט?',data:`
+🦁👑→מלך האריות
+❄️👸→פרוזן|לשבור את הקרח
+🕷️🧑→ספיידרמן|ספיידר מן|איש העכביש
+🦇🧑→באטמן|בטמן
+🧙‍♂️⚡👓→הארי פוטר
+🚢🧊💔→טיטניק
+🦖🏝️→פארק היורה|יורה
+🐠🔍→מוצאים את נמו|נמו
+🤠🚀🧸→צעצוע של סיפור
+👻🚫→מכסחי השדים
+🧞‍♂️🪔→אלאדין|אלדין
+🐭👨‍🍳→רטטוי
+👸🍎💤→שלגיה|שלגיה ושבעת הגמדים
+🏠🎈👴→למעלה|אפ
+🟢👹🧅→שרק
+🦈🏖️→מלתעות
+🧜‍♀️🌊→בת הים הקטנה|אריאל
+🐼🥋→קונג פו פנדה
+🍫🏭🎫→צ'רלי והשוקולדה|צרלי והשוקולדה|צ'רלי בממלכת השוקולד
+🌹🐻→היפה והחיה
+🐘👂🎪→דמבו
+🦕⏳🧪→פארק היורה|עולם היורה
+🤖🗑️🌱→וול־אי|וולי|וול אי|וול-אי
+👽📞🏠→אי טי|E.T|אי.טי
+`},
+{id:'cities',name:'ערים בישראל',icon:'🏙️',kind:'text',ask:'איזו עיר?',data:`
+"העיר שלא עוצרת"→תל אביב|תל אביב יפו
+בירת הנגב→באר שבע
+העיר הדרומית ביותר, על חוף ים סוף→אילת
+עיר נמל בצפון, עם הגנים הבהאים→חיפה
+עיר הקבלה בגליל העליון→צפת
+העיר על חוף הכנרת→טבריה
+"אם המושבות"→פתח תקווה|פתח תקוה|פתח תקווה
+כנסיית הבשורה→נצרת
+נמל עתיק ושעון יפו→יפו
+נמל הורדוס ותיאטרון רומי על הים→קיסריה
+חומות, מבצר ונמל עתיק, אתר מורשת עולמית→עכו
+מכון ויצמן למדע→רחובות
+עיירה על שפת מכתש→מצפה רמון
+יקבים ואחוזת הברון רוטשילד→זכרון יעקב|זיכרון יעקב
+נקראת על שם שמונת לוחמי תל חי→קריית שמונה|קרית שמונה
+הנמל הגדול בדרום, ליד אשקלון→אשדוד
+בין ירושלים לתל אביב, "עיר המכבים"→מודיעין
+עיר היהלומים והטיילת בשרון→נתניה
+עיר הבירה→ירושלים
+`},
+{id:'english',name:'מאנגלית לעברית',icon:'🔤',kind:'text',ask:'מה זה בעברית?',data:`
+Dog→כלב
+Cat→חתול|חתולה
+House→בית
+Water→מים
+Book→ספר
+Sun→שמש
+Car→מכונית|רכב|אוטו
+Apple→תפוח
+Friend→חבר|חברה
+School→בית ספר
+Bread→לחם
+Moon→ירח
+Tree→עץ
+Chair→כיסא|כסא
+Window→חלון
+Door→דלת
+Happy→שמח|שמחה
+Big→גדול|גדולה
+Small→קטן|קטנה
+Red→אדום
+Blue→כחול
+Green→ירוק
+Yellow→צהוב
+Black→שחור
+White→לבן
+Teacher→מורה
+Milk→חלב
+Fish→דג
+Bird→ציפור
+Horse→סוס
+Morning→בוקר
+Night→לילה|ערב
+Love→אהבה
+Kitchen→מטבח
+Butterfly→פרפר
+`},
+{id:'holidays',name:'חגים ומועדים',icon:'🕎',kind:'text',ask:'איזה חג?',data:`
+סופגניות, סביבונים ונרות→חנוכה
+תחפושות, רעשנים ומגילת אסתר→פורים
+מצות, הגדה וליל סדר→פסח
+סוכה, לולב ואתרוג→סוכות
+שופר, תפוח בדבש ורימונים→ראש השנה
+צום, כל נדרי ונעילה→יום כיפור|כיפור|יום הכיפורים
+מאכלי חלב, ביכורים ומתן תורה→שבועות
+מדורות, חצים וקשת→ל"ג בעומר|לג בעומר
+נטיעת עצים ופירות יבשים→ט"ו בשבט|טו בשבט
+מנגל, דגלים וזיקוקים→יום העצמאות|עצמאות
+עץ מקושט, סנטה קלאוס ומתנות→חג המולד|כריסמס
+דלעות מגולפות ו"ממתק או תעלול"→האלווין|הלווין|הלואין
+הודו ממולא בנובמבר באמריקה→חג ההודיה|תנקסגיבינג
+הקפות עם ספרי תורה→שמחת תורה
+מסיבה ב־31 בדצמבר בחצות→סילבסטר|ראש השנה האזרחית
+`},
+{id:'cartoons',name:'דמויות מצוירות',icon:'🐭',kind:'text',ask:'מי הדמות?',data:`
+עכבר עם אוזניים עגולות ומכנסיים אדומים→מיקי מאוס|מיקי
+ספוג צהוב שגר באננס מתחת לים→בובספוג|בוב ספוג
+יצורים כחולים קטנים עם כובעים לבנים→הדרדסים|דרדסים|דרדס
+אינסטלטור איטלקי עם כובע אדום ושפם→מריו|סופר מריו
+פוקימון צהוב חשמלי→פיקאצ'ו|פיקצו|פיקאצו
+דוב צהוב בחולצה אדומה שאוהב דבש→פו הדב|פו|וויני הפו
+חתול כתום שמת על לזניה→גרפילד|גארפילד
+ארנב אפור: "מה קורה, דוקטור?"→באגס באני|באגס
+אבא צהוב שאוהב סופגניות→הומר סימפסון|הומר
+מפלצת ירוקה שגרה בביצה→שרק
+מלכה עם כוחות קרח ששרה "לעזוב"→אלזה
+חתול ועכבר שרודפים זה אחרי זה→טום וג'רי|טום וגרי
+קאובוי צעצוע עם נחש במגף→וודי|שריף וודי
+אסטרונאוט צעצוע: "לאינסוף ומעבר לו"→באז שנות אור|באז
+ברווז עם חולצת מלחים כחולה ומזג חם→דונלד דאק|דונלד
+כלב חום שהוא החבר של מיקי→פלוטו
+קיפוד כחול ומהיר במיוחד→סוניק
+`},
+{id:'body',name:'גוף האדם',icon:'🫀',kind:'pic',ask:'מה החלק בגוף?',data:`
+👁️→עין
+👂→אוזן
+👃→אף
+👄→פה|שפתיים
+👅→לשון
+🦷→שן|שיניים
+🦶→כף רגל|רגל
+🦵→רגל|ברך
+✋→יד|כף יד
+💪→שריר|זרוע|יד
+🧠→מוח
+🫀→לב
+🫁→ריאות|ריאה
+🦴→עצם
+👍→אגודל|אצבע
+💅→ציפורניים|ציפורן
+`},
+{id:'math',name:'חשבון מהיר',icon:'➗',kind:'gen',ask:'כמה זה?',data:''}
+];
+
+function parseCats(){
+  return CATS_RAW.map(c=>{
+    const items=[]; const seen=new Set();
+    c.data.split('\n').map(s=>s.trim()).filter(Boolean).forEach(line=>{
+      const i=line.indexOf('→'); if(i<0) return;
+      let p=line.slice(0,i).trim();
+      const a=line.slice(i+1).split('|').map(x=>x.trim()).filter(Boolean);
+      if(seen.has(p)) return; seen.add(p);
+      items.push({p,a});
+    });
+    return {...c,items};
+  });
+}
+const CATS = parseCats();
+const catById = id => CATS.find(c=>c.id===id);
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick = a=>a[Math.random()*a.length|0];
+const sleep = ms=>new Promise(r=>setTimeout(r,ms));
+const store={
+  get(k,d){try{const v=localStorage.getItem('terr.'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('terr.'+k,JSON.stringify(v))}catch(e){}}
+};
+
+const FINALS={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+function norm(s){
+  return String(s).toLowerCase()
+    .replace(/[֑-ׇ]/g,'')
+    .replace(/[ךםןףץ]/g,c=>FINALS[c])
+    .replace(/[^\p{L}\p{N}\s]/gu,'')
+    .replace(/\s+/g,' ').trim();
+}
+function lev(a,b){
+  if(a===b) return 0; const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,i)=>i), cur=new Array(n+1);
+  for(let i=1;i<=m;i++){cur[0]=i;for(let j=1;j<=n;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1))}[prev,cur]=[cur,prev]}
+  return prev[n];
+}
+function stripPrefix(w){return w.length>3 && /^[הוש]/.test(w) ? w.slice(1) : w}
+function matches(text, answers){
+  const t=norm(text); if(!t) return false;
+  const words=t.split(' ');
+  const tJoined=t.replace(/ /g,'');
+  for(const raw of answers){
+    const v=norm(raw); if(!v) continue;
+    const vars=new Set([v]); if(v.length>3 && v[0]==='ה') vars.add(v.slice(1));
+    for(const a of vars){
+      if((' '+t+' ').includes(' '+a+' ')) return true;
+      const aj=a.replace(/ /g,'');
+      if(aj.length>=4 && tJoined.includes(aj)) return true;
+      const n=a.split(' ').length;
+      const tol = aj.length<=3 ? 0 : aj.length<=5 ? 1 : 2;
+      for(let i=0;i+n<=words.length;i++){
+        const win=words.slice(i,i+n); win[0]=win[0];
+        const cand=win.join(''); const cand2=stripPrefix(win[0])+win.slice(1).join('');
+        if(lev(cand,aj)<=tol || lev(cand2,aj)<=tol) return true;
+      }
+    }
+  }
+  return false;
+}
+const PASS_RE=/(^| )(דלג|דילוג|פאס|פס|תעביר|תעבירי|הבא|לא יודע|לא יודעת)( |$)/;
+
+/* sounds */
+let AC=null;
+function beep(f,dur,type='sine',vol=.15,delay=0){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const t=AC.currentTime+delay, o=AC.createOscillator(), g=AC.createGain();
+    o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0008,t+dur);
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t+dur+.02);
+  }catch(e){}
+}
+const SFX={
+  ok(){beep(660,.12,'sine',.18);beep(990,.16,'sine',.18,.09)},
+  pass(){beep(240,.28,'square',.06)},
+  tick(){beep(1300,.03,'square',.03)},
+  go(){beep(880,.25,'triangle',.2)},
+  lose(){beep(300,.25,'sawtooth',.08);beep(200,.45,'sawtooth',.08,.22)},
+  win(){[523,659,784,1046].forEach((f,i)=>beep(f,.18,'triangle',.16,i*.11))}
+};
+
+/* =====================================================================
+   SETTINGS + HOME
+   ===================================================================== */
+const DEF={mode:'cpu',name:'',size:9,diff:'normal',answer:'voice',time:45,cats:CATS.map(c=>c.id),friends:[]};
+const SET=Object.assign({},DEF,store.get('set',{}));
+SET.cats=SET.cats.filter(id=>catById(id)); if(!SET.cats.length) SET.cats=DEF.cats.slice();
+const saveSet=()=>store.set('set',SET);
+
+const COLORS=[8,205,140,45,282,330,172,24,228,96,302,186,60,252,350,155].map(h=>`hsl(${h} 62% 48%)`);
+const BOT_NAMES=['נועה','איתי','מאיה','עומר','תמר','יונתן','שירה','אורי','ליה','דניאל','רוני','אלון','הדר','גיא','יעל','עידו','מיכל','אריאל','נגה','בן'];
+
+function buildMiniGrid(){
+  const g=$('#miniGrid'); g.innerHTML='';
+  [0,0,1,2,0,1,2,2,3].forEach(i=>{const e=document.createElement('i');e.style.background=COLORS[[0,1,3,4][i]];g.appendChild(e)});
+}
+
+function renderHome(){
+  document.querySelectorAll('.seg[data-key]').forEach(seg=>{
+    const k=seg.dataset.key;
+    seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',String(SET[k])===b.dataset.v));
+  });
+  $('#cpuFields').hidden = SET.mode!=='cpu';
+  $('#friendFields').hidden = SET.mode!=='friends';
+  $('#myName').value = SET.name;
+  const fl=$('#friendList'); fl.innerHTML='';
+  SET.friends.forEach((n,i)=>{
+    const c=document.createElement('button'); c.className='chip'; c.innerHTML=`<span class="dot" style="background:${COLORS[i%COLORS.length]}"></span>${esc(n)}<span class="x">✕</span>`;
+    c.setAttribute('aria-label','להסיר את '+n);
+    c.onclick=()=>{SET.friends.splice(i,1);saveSet();renderHome()};
+    fl.appendChild(c);
+  });
+  if(!SET.friends.length){fl.innerHTML='<span class="hint">הוסיפו לפחות שני שחקנים.</span>'}
+  const hints={
+    voice:'אומרים את התשובה בקול והמשחק מזהה לבד. אומרים "דלג" כדי לעבור (3 שניות קנס). אם המיקרופון לא זמין, יש כפתורי "נכון" ו"דלג".',
+    choices:'מופיעות 4 תשובות ולוחצים על הנכונה. טעות נחשבת דילוג: 3 שניות קנס.',
+    host:'כמו בטלוויזיה: מישהו אחד מחזיק את הטלפון ולוחץ "נכון" או "דלג" לפי מה שהשחקנים אומרים.'
+  };
+  $('#answerHint').textContent=hints[SET.answer];
+  const cc=$('#catChips'); cc.innerHTML='';
+  CATS.forEach(c=>{
+    const on=SET.cats.includes(c.id);
+    const b=document.createElement('button'); b.className='chip '+(on?'on':'off');
+    b.innerHTML=`<span>${c.icon}</span>${esc(c.name)}`; b.setAttribute('aria-pressed',on);
+    b.onclick=()=>{ if(on) SET.cats=SET.cats.filter(x=>x!==c.id); else SET.cats.push(c.id); saveSet(); renderHome(); };
+    cc.appendChild(b);
+  });
+  $('#allCats').textContent = SET.cats.length===CATS.length ? 'נקה הכל' : 'בחר הכל';
+  const ok = SET.cats.length>0 && (SET.mode==='cpu' || SET.friends.length>=2);
+  $('#startBtn').disabled=!ok;
+}
+document.querySelectorAll('.seg[data-key]').forEach(seg=>{
+  seg.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    SET[seg.dataset.key]= seg.dataset.num ? Number(b.dataset.v) : b.dataset.v;
+    saveSet(); renderHome();
+  });
+});
+$('#myName').addEventListener('input',e=>{SET.name=e.target.value.trim();saveSet()});
+function addFriend(){
+  const i=$('#friendName'); const v=i.value.trim(); if(!v||SET.friends.length>=16) return;
+  SET.friends.push(v); i.value=''; saveSet(); renderHome(); i.focus();
+}
+$('#addFriend').onclick=addFriend;
+$('#friendName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addFriend()}});
+$('#allCats').onclick=()=>{SET.cats = SET.cats.length===CATS.length ? [] : CATS.map(c=>c.id); saveSet(); renderHome()};
+$('#startBtn').onclick=()=>{ beep(1,.01,'sine',.0001); Mic.prepare(); newGame(); };
+
+/* =====================================================================
+   MICROPHONE: Claude dictation when the page runs as an artifact,
+   the browser's speech recognition everywhere else.
+   ===================================================================== */
+const Mic={
+  d:null, SR:null, rec:null, want:false, state:'off', denied:false, seg:0, consumed:new Map(), tried:false,
+  async init(){
+    try{
+      if(window.claude && typeof window.claude.use==='function'){
+        const d=await window.claude.use('dictation');
+        if(d){
+          this.d=d;
+          d.onPartial(({text})=>{ if(text) onSpeech('d'+this.seg,[text],false) });
+          d.onFinal(({text})=>{ onSpeech('d'+this.seg,[text],true); this.seg++; });
+          d.onState(({state,reason})=>{
+            if(reason==='not_granted'||reason==='unavailable') this.denied=true;
+            this.setState(state==='listening'?'on':(state==='starting'?'starting':'off'));
+          });
+        }
+      }
+    }catch(e){}
+    if(!this.d) this.SR = window.SpeechRecognition||window.webkitSpeechRecognition||null;
+  },
+  available(){ return !!(this.d||this.SR) && !this.denied },
+  prepare(){},
+  start(){
+    if(!this.available()) return;
+    this.want=true; this.consumed.clear();
+    if(this.d){
+      this.d.start({language:'he'}).catch(e=>{
+        if(e && (e.code==='not_granted'||e.code==='unavailable')) this.denied=true;
+        this.setState('off');
+      });
+      return;
+    }
+    if(!this.rec){
+      const r=new this.SR();
+      r.lang='he-IL'; r.continuous=true; r.interimResults=true; r.maxAlternatives=4;
+      r.onstart=()=>this.setState('on');
+      r.onresult=e=>{
+        for(let i=e.resultIndex;i<e.results.length;i++){
+          const res=e.results[i], alts=[];
+          for(let j=0;j<res.length;j++) alts.push(res[j].transcript);
+          onSpeech('w'+this.seg+'_'+i,alts,res.isFinal);
+        }
+      };
+      r.onerror=e=>{ if(e.error==='not-allowed'||e.error==='service-not-allowed'||e.error==='audio-capture'){ this.denied=true; this.want=false; this.setState('off'); } };
+      r.onend=()=>{
+        this.seg++; this.setState('off');
+        if(this.want && !this.denied) setTimeout(()=>{ if(this.want){ try{r.start()}catch(e){} } },120);
+      };
+      this.rec=r;
+    }
+    try{ this.rec.start() }catch(e){}
+  },
+  stop(){
+    this.want=false;
+    if(this.d) this.d.stop().catch(()=>{});
+    if(this.rec){ try{this.rec.stop()}catch(e){} }
+    this.setState('off');
+  },
+  setState(s){ this.state=s; renderMic(); }
+};
+Mic.init();
+
+/* =====================================================================
+   GAME STATE
+   ===================================================================== */
+let G=null;   // game
+let D=null;   // duel
+
+function newGame(){
+  const s=SET;
+  let players;
+  if(s.mode==='cpu'){
+    const bots=shuffle(BOT_NAMES.slice()).slice(0,s.size-1);
+    players=[{name:s.name||'אני',human:true},...bots.map(n=>({name:n,human:false}))];
+  }else{
+    players=s.friends.map(n=>({name:n,human:true}));
+  }
+  const n=players.length;
+  const cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols), total=rows*cols;
+  const cats=shuffle(s.cats.slice());
+  shuffle(players);
+  players=players.map((p,i)=>({...p,id:i,color:COLORS[i%COLORS.length],cat:cats[i%cats.length],alive:true}));
+  const tiles=new Array(total).fill(-1);
+  const order=shuffle([...Array(total).keys()]);
+  players.forEach((p,i)=>tiles[order[i]]=p.id);
+  // leftover tiles go to a neighbouring player
+  let guard=0;
+  while(tiles.includes(-1) && guard++<100){
+    tiles.forEach((o,i)=>{ if(o!==-1) return; const nb=adjTiles(i,rows,cols).map(j=>tiles[j]).filter(x=>x!==-1); if(nb.length) tiles[i]=pick(nb); });
+  }
+  G={players,tiles,rows,cols,bag:{},auto:false,hl:null,targets:null,attacker:null,busy:false,flash:null};
+  try{ navigator.wakeLock && navigator.wakeLock.request('screen').catch(()=>{}) }catch(e){}
+  show('board'); renderBoard(); nextTurn();
+}
+
+function adjTiles(i,rows,cols){
+  const r=Math.floor(i/cols), c=i%cols, out=[];
+  if(r>0) out.push(i-cols); if(r<rows-1) out.push(i+cols);
+  if(c>0) out.push(i-1); if(c<cols-1) out.push(i+1);
+  return out;
+}
+const alive=()=>G.players.filter(p=>p.alive);
+const humansAlive=()=>alive().some(p=>p.human);
+function neighbors(pid){
+  const s=new Set();
+  G.tiles.forEach((o,i)=>{ if(o!==pid) return; adjTiles(i,G.rows,G.cols).forEach(j=>{ if(G.tiles[j]!==pid) s.add(G.tiles[j]) }) });
+  return [...s].map(id=>G.players[id]);
+}
+function anchorTile(pid){
+  const own=G.tiles.map((o,i)=>o===pid?i:-1).filter(i=>i>=0);
+  if(!own.length) return -1;
+  const cr=own.reduce((s,i)=>s+Math.floor(i/G.cols),0)/own.length, cc=own.reduce((s,i)=>s+i%G.cols,0)/own.length;
+  let best=own[0],bd=1e9;
+  own.forEach(i=>{const d=(Math.floor(i/G.cols)-cr)**2+(i%G.cols-cc)**2; if(d<bd){bd=d;best=i}});
+  return best;
+}
+
+function show(name){
+  ['home','board','duel'].forEach(n=>$('#scr-'+n).hidden = n!==name);
+}
+
+/* ---------- board ---------- */
+function renderBoard(){
+  const b=$('#board'); b.innerHTML='';
+  b.style.gridTemplateColumns=`repeat(${G.cols},1fr)`;
+  b.classList.toggle('small',G.cols>=4);
+  const anchors=new Map(); G.players.forEach(p=>{ if(p.alive) anchors.set(anchorTile(p.id),p) });
+  G.tiles.forEach((o,i)=>{
+    const p=G.players[o]; const t=document.createElement('div'); t.className='tile';
+    t.style.backgroundColor=p.color;
+    const r=Math.floor(i/G.cols), c=i%G.cols, W=3;
+    const same=j=>G.tiles[j]===o;
+    t.style.borderTopWidth = (r>0&&same(i-G.cols))?'0':W+'px';
+    t.style.borderBottomWidth = (r<G.rows-1&&same(i+G.cols))?'0':W+'px';
+    t.style.borderLeftWidth = (c>0&&same(i-1))?'0':W+'px';
+    t.style.borderRightWidth = (c<G.cols-1&&same(i+1))?'0':W+'px';
+    if(anchors.has(i)){
+      const cat=catById(p.cat);
+      t.innerHTML=`<span class="ic">${cat.icon}</span><span class="nm">${esc(p.name)}</span><span class="cn">${esc(cat.name)}</span>`;
+    }
+    if(G.hl===o) t.classList.add('hl');
+    if(G.targets){
+      if(G.targets.has(o)){ t.classList.add('tgt'); t.onclick=()=>{ if(G.attacker) attack(G.attacker,p) }; }
+      else if(o!==G.hl) t.classList.add('dim');
+    }
+    if(G.flash===o) t.classList.add('flash');
+    b.appendChild(t);
+  });
+  $('#aliveCount').textContent=`נשארו ${alive().length}`;
+  const ro=$('#roster'); ro.innerHTML='';
+  G.players.slice().sort((a,b)=>(b.alive-a.alive)||(countTiles(b.id)-countTiles(a.id))).forEach(p=>{
+    const cat=catById(p.cat);
+    const c=document.createElement('span'); c.className='chip'+(p.alive?'':' out');
+    c.innerHTML=`<span class="dot" style="background:${p.color}"></span>${esc(p.name)} ${p.alive?`<span style="opacity:.7">${cat.icon} ${countTiles(p.id)}</span>`:''}`;
+    ro.appendChild(c);
+  });
+}
+const countTiles=pid=>G.tiles.filter(o=>o===pid).length;
+function setStatus(html){ $('#bstatus').innerHTML=html }
+function setActions(list){
+  const a=$('#bactions'); a.innerHTML='';
+  list.forEach(x=>{ const b=document.createElement('button'); b.className=x.cls||'big'; b.innerHTML=x.label; b.onclick=x.fn; a.appendChild(b) });
+}
+
+async function nextTurn(){
+  G.targets=null; G.attacker=null; G.flash=null;
+  if(alive().length===1) return gameOver(alive()[0]);
+  renderBoard();
+  if(G.auto || (SET.mode==='cpu' && !humansAlive())){
+    setStatus('הגרלה…'); setActions([]); await sleep(450); return spin();
+  }
+  setStatus('מי תוקף עכשיו? לוחצים להגרלה');
+  setActions([{label:'🎲 הגרלה',fn:spin}]);
+}
+
+async function spin(){
+  setActions([]);
+  const al=alive(); const chosen=pick(al);
+  const steps=G.auto?6:14;
+  for(let k=0;k<steps;k++){
+    G.hl = k===steps-1 ? chosen.id : pick(al).id;
+    renderBoard(); SFX.tick();
+    await sleep(G.auto?60:55+k*k*1.2);
+  }
+  G.hl=chosen.id; renderBoard();
+  setStatus(`<b>${esc(chosen.name)}</b> נבחר/ה לתקוף`);
+  await sleep(G.auto?250:600);
+  chooseTarget(chosen);
+}
+
+async function chooseTarget(p){
+  const nb=neighbors(p.id);
+  if(!nb.length) return nextTurn();
+  G.hl=p.id;
+  if(p.human){
+    G.attacker=p; G.targets=new Set(nb.map(x=>x.id)); renderBoard();
+    setStatus(`<b>${esc(p.name)}</b>, את מי מאתגרים? הקטגוריה תהיה של היריב`);
+    const a=$('#bactions'); a.innerHTML='';
+    const list=document.createElement('div'); list.className='tgt-list';
+    nb.forEach(x=>{
+      const cat=catById(x.cat);
+      const b=document.createElement('button'); b.className='tgt-btn';
+      b.innerHTML=`<span class="dot" style="background:${x.color}"></span><b>${esc(x.name)}</b><span>${cat.icon} ${esc(cat.name)}</span>`;
+      b.onclick=()=>attack(p,x); list.appendChild(b);
+    });
+    a.appendChild(list);
+  }else{
+    // bots prefer a human neighbour now and then, otherwise random
+    const hum=nb.filter(x=>x.human);
+    const target = hum.length && Math.random()<.5 ? pick(hum) : pick(nb);
+    G.targets=new Set([target.id]); renderBoard();
+    setStatus(`<b>${esc(p.name)}</b> בוחר/ת יריב…`);
+    await sleep(G.auto?250:900);
+    attack(p,target);
+  }
+}
+
+function attack(a,d){
+  G.targets=null; G.attacker=null;
+  const cat=catById(d.cat);
+  if(!a.human && !d.human) return simulate(a,d,cat);
+  openDuel(a,d,cat);
+}
+
+async function simulate(a,d,cat){
+  setActions([]);
+  G.hl=a.id; G.targets=new Set([d.id]); renderBoard();
+  setStatus(`⚔️ <b>${esc(a.name)}</b> נגד <b>${esc(d.name)}</b><br><span style="color:var(--muted)">${cat.icon} ${esc(cat.name)}</span>`);
+  await sleep(G.auto?700:1700);
+  const pA = .5;
+  const w = Math.random()<pA ? a : d, l = w===a ? d : a;
+  setStatus(`<b>${esc(w.name)}</b> ניצח/ה את <b>${esc(l.name)}</b>`);
+  resolve(w,l);
+  await sleep(G.auto?500:1100);
+  afterDuel(w,l);
+}
+
+function resolve(w,l){
+  G.tiles=G.tiles.map(o=>o===l.id?w.id:o);
+  l.alive=false; G.hl=w.id; G.targets=null; G.flash=w.id;
+  renderBoard();
+}
+
+function afterDuel(w,l){
+  G.flash=null;
+  if(alive().length===1) return gameOver(w);
+  if(SET.mode==='cpu' && l.human){
+    SFX.lose();
+    return modal({
+      title:'הודחת',
+      text:`${w.name} לקח/ה לך את השטח. נשארו ${alive().length} שחקנים על הלוח.`,
+      buttons:[
+        {label:'לצפות בהמשך',fn:()=>{G.auto=true;nextTurn()}},
+        {label:'משחק חדש',cls:'ghost',fn:()=>newGame()},
+      ]
+    });
+  }
+  const canGo = neighbors(w.id).length>0;
+  if(w.human){
+    const lc=catById(l.cat), wc=catById(w.cat);
+    let keep=w.cat;
+    const body=document.createElement('div');
+    body.style.cssText='display:flex;flex-direction:column;gap:10px';
+    if(l.cat!==w.cat){
+      body.innerHTML=`<p>איזו קטגוריה תהיה שלך מעכשיו? מי שיאתגר אותך יקבל אותה.</p>
+        <div class="seg" id="keepSeg"><button data-v="${w.cat}" class="on">${wc.icon} ${esc(wc.name)}</button><button data-v="${l.cat}">${lc.icon} ${esc(lc.name)}</button></div>`;
+      body.querySelector('#keepSeg').onclick=e=>{const b=e.target.closest('button'); if(!b) return; keep=b.dataset.v; body.querySelectorAll('#keepSeg button').forEach(x=>x.classList.toggle('on',x===b))};
+    }
+    const btns=[];
+    if(canGo) btns.push({label:'לאתגר עוד שכן',fn:()=>{w.cat=keep;renderBoard();chooseTarget(w)}});
+    btns.push({label:'חזרה להגרלה',cls:canGo?'ghost':'big',fn:()=>{w.cat=keep;nextTurn()}});
+    return modal({title:`${w.name} ניצח/ה!`,node:body,buttons:btns});
+  }
+  // bot winner
+  if(l.cat!==w.cat && Math.random()<.4) w.cat=l.cat;
+  if(canGo && Math.random()<.35){ setStatus(`<b>${esc(w.name)}</b> ממשיך/ה לתקוף`); setTimeout(()=>chooseTarget(w),G.auto?300:900); }
+  else nextTurn();
+}
+
+function gameOver(w){
+  G.auto=false; SFX.win(); renderBoard();
+  setStatus(`🏆 <b>${esc(w.name)}</b> שולט/ת בכל הלוח`); setActions([]);
+  modal({
+    title:`${w.name} כבש/ה את כל הלוח`,
+    text: w.human ? 'ניצחון מלא. כל המשבצות בצבע שלך.' : 'המחשב לקח הפעם. רוצה עוד סיבוב?',
+    buttons:[
+      {label:'משחק חדש',fn:()=>newGame()},
+      {label:'למסך הראשי',cls:'ghost',fn:()=>{show('home');renderHome()}},
+    ]
+  });
+}
+
+/* ---------- modal ---------- */
+function modal({title,text,node,buttons}){
+  const s=$('#sheet'); s.innerHTML='';
+  const h=document.createElement('h2'); h.textContent=title; s.appendChild(h);
+  if(text){const p=document.createElement('p'); p.textContent=text; s.appendChild(p)}
+  if(node) s.appendChild(node);
+  const bw=document.createElement('div'); bw.className='btns';
+  buttons.forEach(x=>{const b=document.createElement('button'); b.className=x.cls||'big'; b.textContent=x.label; b.onclick=()=>{closeModal();x.fn()}; bw.appendChild(b)});
+  s.appendChild(bw);
+  $('#ov').hidden=false;
+  const f=bw.querySelector('button'); f && f.focus({preventScroll:true});
+}
+function closeModal(){ $('#ov').hidden=true }
+
+$('#menuBtn').onclick=()=>modal({
+  title:'תפריט',
+  buttons:[
+    {label:'להמשיך לשחק',fn:()=>{}},
+    {label:'משחק חדש עם אותן הגדרות',cls:'ghost',fn:()=>newGame()},
+    {label:'למסך הראשי',cls:'ghost',fn:()=>{G.auto=false;show('home');renderHome()}},
+  ]
+});
+
+/* =====================================================================
+   DUEL
+   ===================================================================== */
+const DIFF={easy:{think:3600,acc:.62},normal:{think:2700,acc:.76},hard:{think:1900,acc:.88}};
+
+function drawItem(cat){
+  if(cat.kind==='gen') return genMath();
+  const bag=G.bag[cat.id] && G.bag[cat.id].length ? G.bag[cat.id] : (G.bag[cat.id]=shuffle([...cat.items.keys()]));
+  return cat.items[bag.pop()];
+}
+function genMath(){
+  const t=Math.random(); let p,v;
+  if(t<.4){const a=2+(Math.random()*10|0), b=2+(Math.random()*9|0); p=`${a} × ${b}`; v=a*b;}
+  else if(t<.75){const a=5+(Math.random()*60|0), b=2+(Math.random()*30|0); p=`${a} + ${b}`; v=a+b;}
+  else {const a=20+(Math.random()*70|0), b=2+(Math.random()*(a-2)|0); p=`${a} − ${b}`; v=a-b;}
+  return {p,a:[String(v)],num:v};
+}
+function options(cat,item){
+  if(cat.kind==='gen'){
+    const s=new Set([item.num]);
+    while(s.size<4){ const d=item.num+((Math.random()*10|0)-5)||item.num+7; if(d>=0) s.add(d) }
+    return shuffle([...s].map(String));
+  }
+  const pool=[...new Set(cat.items.map(x=>x.a[0]))].filter(x=>x!==item.a[0]);
+  return shuffle([item.a[0],...shuffle(pool).slice(0,3)]);
+}
+
+function openDuel(a,d,cat){
+  closeModal();
+  const T=SET.time*1000;
+  D={p:[a,d],t:[T,T],T,active:0,cat,item:null,lock:false,running:false,raf:0,last:0,botTimer:0,lockTimer:0,ended:false};
+  show('duel');
+  $('#dIcon').textContent=cat.icon; $('#dCat').textContent=cat.name;
+  renderClocks(); $('#turn').textContent=''; $('#feed').textContent=''; $('#feed').className='feed';
+  const st=$('#stage');
+  st.innerHTML=`<div class="intro">
+    <div class="vs">${esc(a.name)}<em>נגד</em>${esc(d.name)}</div>
+    <div>${cat.icon} הקטגוריה של ${esc(d.name)}: <b>${esc(cat.name)}</b></div>
+    <div class="hint">${esc(a.name)} מתחיל/ה. תשובה נכונה מעבירה את השעון ליריב. ${SET.answer==='voice'?'אומרים "דלג" כדי לדלג (3 שניות קנס).':'דילוג עולה 3 שניות.'}</div>
+  </div>`;
+  const c=$('#controls'); c.innerHTML='';
+  const go=document.createElement('button'); go.className='big'; go.textContent='התחילו';
+  go.onclick=()=>{
+    if(SET.answer==='voice' && Mic.available()) Mic.start();  // must run inside the click
+    beep(1,.01,'sine',.0001);
+    countdown();
+  };
+  c.appendChild(go);
+}
+
+function renderClocks(){
+  const box=$('#clocks');
+  if(!box.children.length || box.dataset.k!==D.p.map(p=>p.id).join()){
+    box.dataset.k=D.p.map(p=>p.id).join(); box.innerHTML='';
+    D.p.forEach((p,i)=>{
+      const c=document.createElement('div'); c.className='clock'; c.style.color=p.color;
+      c.innerHTML=`<div class="who" style="color:var(--text)"><span class="dot" style="background:${p.color}"></span>${esc(p.name)}${p.human?'':' 🤖'}</div><div class="t" style="color:inherit"></div><div class="bar"><i></i></div>`;
+      box.appendChild(c);
+    });
+  }
+  [...box.children].forEach((c,i)=>{
+    const ms=Math.max(0,D.t[i]);
+    c.querySelector('.t').textContent = ms<10000 ? (ms/1000).toFixed(1) : String(Math.ceil(ms/1000));
+    c.querySelector('.bar i').style.transform=`scaleX(${ms/D.T})`;
+    c.classList.toggle('act',D.running && D.active===i);
+    c.classList.toggle('low',ms<5000);
+    c.querySelector('.t').style.color = (D.running&&D.active===i) ? '' : 'var(--text)';
+  });
+}
+
+async function countdown(){
+  const c=$('#controls'); c.innerHTML=''; renderControls(true);
+  const st=$('#stage');
+  for(const n of [3,2,1]){ st.innerHTML=`<div class="cd">${n}</div>`; SFX.tick(); await sleep(650); if(!D||D.ended) return; }
+  SFX.go();
+  D.running=true; D.last=performance.now();
+  nextQuestion();
+  D.raf=requestAnimationFrame(tick);
+}
+
+function tick(now){
+  if(!D||!D.running) return;
+  const dt=Math.min(250,now-D.last); D.last=now;
+  const before=D.t[D.active];
+  D.t[D.active]-=dt;
+  if(before>3000 && D.t[D.active]<=3000) {} // room for a warning sound
+  if(D.t[D.active]<=0){ D.t[D.active]=0; renderClocks(); return endDuel(1-D.active); }
+  renderClocks();
+  D.raf=requestAnimationFrame(tick);
+}
+document.addEventListener('visibilitychange',()=>{ if(D&&D.running) D.last=performance.now() });
+
+const cur=()=>D.p[D.active];
+
+function nextQuestion(){
+  if(!D||!D.running) return;
+  D.lock=false; D.item=drawItem(D.cat);
+  const p=cur();
+  $('#turn').innerHTML=`התור של <b style="color:${p.color}">${esc(p.name)}</b>`;
+  const st=$('#stage');
+  const ask=D.cat.ask?`<div class="ask">${esc(D.cat.ask)}</div>`:'';
+  st.innerHTML = D.cat.kind==='pic' ? `${ask}<div class="pic">${D.item.p}</div>` : `${ask}<div class="txt" dir="auto">${esc(D.item.p)}</div>`;
+  renderClocks();
+  renderControls();
+  clearTimeout(D.botTimer);
+  if(!p.human){
+    const cfg=DIFF[SET.diff]||DIFF.normal;
+    const delay=cfg.think*(.45+Math.random()*1.0);
+    D.botTimer=setTimeout(()=>{
+      if(!D||!D.running||D.lock) return;
+      if(Math.random()<cfg.acc){ $('#feed').className='feed ok'; $('#feed').textContent=`${p.name}: ${D.item.a[0]} ✓`; correct(); }
+      else pass();
+    },delay);
+  }
+}
+
+function renderControls(disabled){
+  const c=$('#controls'); c.innerHTML='';
+  if(!D) return;
+  const p=cur(); const humanTurn = p.human && D.running && !disabled;
+  if(D.running && !p.human){
+    c.innerHTML=`<div class="thinking">🤖 ${esc(p.name)} חושב/ת…</div>`;
+  }else if(SET.answer==='choices'){
+    const g=document.createElement('div'); g.className='opts';
+    (D.item?options(D.cat,D.item):['','','','']).forEach(o=>{
+      const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.disabled=!humanTurn;
+      b.onclick=()=>{
+        if(D.lock) return;
+        if(D.item.a[0]===o){ b.classList.add('right'); correct(); }
+        else { b.classList.add('wrong'); g.querySelectorAll('.opt').forEach(x=>{ if(x.textContent===D.item.a[0]) x.classList.add('right') }); pass(); }
+      };
+      g.appendChild(b);
+    });
+    c.appendChild(g);
+    const sk=document.createElement('button'); sk.className='ghost'; sk.textContent='דלג'; sk.disabled=!humanTurn; sk.onclick=()=>pass();
+    c.appendChild(sk);
+  }else{
+    const h=document.createElement('div'); h.className='hostbtns'+(SET.answer==='voice'&&Mic.available()?' slim':'');
+    h.innerHTML=`<button class="b-ok">✓ נכון</button><button class="b-pass">דלג</button>`;
+    h.children[0].disabled=!humanTurn; h.children[1].disabled=!humanTurn;
+    h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass();
+    c.appendChild(h);
+  }
+  if(SET.answer==='voice'){
+    const m=document.createElement('button'); m.className='mic'; m.id='micPill';
+    m.onclick=()=>{ if(Mic.available() && Mic.state!=='on') Mic.start() };
+    c.appendChild(m); renderMic();
+  }
+}
+function renderMic(){
+  const m=$('#micPill'); if(!m) return;
+  m.classList.toggle('on',Mic.state==='on');
+  if(!Mic.available()){ m.textContent= Mic.denied ? 'המיקרופון חסום. אפשר לסמן עם הכפתורים' : 'זיהוי דיבור לא זמין בדפדפן הזה. משתמשים בכפתורים'; m.disabled=true; }
+  else if(Mic.state==='on'){ m.textContent='מקשיב… אמרו את התשובה'; m.disabled=false; }
+  else if(Mic.state==='starting'){ m.textContent='🎤 מפעיל מיקרופון…'; m.disabled=false; }
+  else { m.textContent='🎤 המיקרופון כבוי. לחצו להפעלה'; m.disabled=false; }
+}
+
+function onSpeech(key,alts,isFinal){
+  if(!D||!D.running) return;
+  const show0=alts[0]||'';
+  if(!D.lock && !$('#feed').classList.contains('ok')) $('#feed').textContent = show0 ? `"${show0.trim()}"` : '';
+  if(D.lock || !cur().human) return;
+  const used=Mic.consumed.get(key)||0;
+  for(const alt of alts){
+    const n=norm(alt); const fresh=n.slice(used).trim();
+    if(!fresh) continue;
+    if(matches(fresh,D.item.a)){ Mic.consumed.set(key,n.length); $('#feed').className='feed ok'; $('#feed').textContent=`✓ ${D.item.a[0]}`; return correct(); }
+  }
+  for(const alt of alts){
+    const n=norm(alt); const fresh=n.slice(used).trim();
+    if(PASS_RE.test(fresh)){ Mic.consumed.set(key,n.length); return pass(); }
+  }
+}
+
+function correct(){
+  if(!D||!D.running||D.lock) return;
+  clearTimeout(D.botTimer);
+  SFX.ok();
+  const fb=$('#feed'); if(!fb.classList.contains('ok')){ fb.className='feed ok'; fb.textContent=`✓ ${D.item.a[0]}`; }
+  setTimeout(()=>{ if(fb.classList.contains('ok')){ fb.className='feed'; fb.textContent=''; } },1200);
+  D.active=1-D.active;
+  nextQuestion();
+}
+
+function pass(){
+  if(!D||!D.running||D.lock) return;
+  clearTimeout(D.botTimer);
+  D.lock=true; SFX.pass();
+  const st=$('#stage');
+  const r=document.createElement('div'); r.className='reveal';
+  r.innerHTML=`<small>התשובה</small>${esc(D.item.a[0])}<small>3 שניות קנס, השעון ממשיך</small>`;
+  st.appendChild(r);
+  renderControls(true);
+  D.lockTimer=setTimeout(()=>{ if(D&&D.running) nextQuestion() },3000);
+}
+
+function endDuel(winnerIdx){
+  if(!D||D.ended) return;
+  D.running=false; D.ended=true;
+  cancelAnimationFrame(D.raf); clearTimeout(D.botTimer); clearTimeout(D.lockTimer);
+  Mic.stop();
+  const w=D.p[winnerIdx], l=D.p[1-winnerIdx];
+  renderClocks();
+  (w.human?SFX.win:SFX.lose)();
+  $('#turn').textContent='';
+  $('#stage').innerHTML=`<div class="reveal good" style="position:static;width:100%"><small>הזמן של ${esc(l.name)} נגמר</small>${esc(w.name)} ניצח/ה<small>${esc(D.item?('התשובה האחרונה: '+D.item.a[0]):'')}</small></div>`;
+  $('#controls').innerHTML='';
+  const c=$('#controls'); const b=document.createElement('button'); b.className='big'; b.textContent='חזרה ללוח';
+  b.onclick=()=>finishDuel(w,l); c.appendChild(b);
+}
+function finishDuel(w,l){
+  D=null; show('board');
+  setActions([]); setStatus(`<b>${esc(w.name)}</b> לוקח/ת את השטח של <b>${esc(l.name)}</b>`);
+  resolve(w,l);
+  setTimeout(()=>afterDuel(w,l),900);
+}
+
+$('#duelExit').onclick=()=>{
+  const wasRunning=D&&D.running;
+  if(wasRunning){ D.running=false; cancelAnimationFrame(D.raf); clearTimeout(D.botTimer); }
+  modal({title:'לעזוב את הדו־קרב?',text:'הדו־קרב יבוטל וחוזרים ללוח בלי מנצח.',buttons:[
+    {label:'להמשיך לשחק',fn:()=>{ if(wasRunning&&D){ D.running=true; D.last=performance.now(); D.raf=requestAnimationFrame(tick); if(!D.lock) nextQuestion(); } }},
+    {label:'חזרה ללוח',cls:'ghost',fn:()=>{ if(D){clearTimeout(D.lockTimer);D.ended=true} Mic.stop(); D=null; show('board'); nextTurn(); }},
+  ]});
+};
+
+/* boot */
+buildMiniGrid();
+renderHome();
+show('home');
+</script>
+
+</body></html>
