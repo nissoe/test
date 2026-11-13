@@ -939,7 +939,7 @@ const Mic={
   prepare(){},
   start(){
     if(!this.available()) return;
-    this.want=true; this.consumed.clear();
+    this.want=true; this.consumed.clear(); this.userStart=true; this.err=null;
     if(this.d){
       this.d.start({language:'he'}).catch(e=>{
         if(e && (e.code==='not_granted'||e.code==='unavailable')) this.denied=true;
@@ -950,7 +950,7 @@ const Mic={
     if(!this.rec){
       const r=new this.SR();
       r.lang='he-IL'; r.continuous=true; r.interimResults=true; r.maxAlternatives=4;
-      r.onstart=()=>this.setState('on');
+      r.onstart=()=>{ this.userStart=false; this.setState('on'); };
       r.onresult=e=>{
         for(let i=e.resultIndex;i<e.results.length;i++){
           const res=e.results[i], alts=[];
@@ -958,7 +958,15 @@ const Mic={
           onSpeech('w'+this.seg+'_'+i,alts,res.isFinal);
         }
       };
-      r.onerror=e=>{ if(e.error==='not-allowed'||e.error==='service-not-allowed'||e.error==='audio-capture'){ this.denied=true; this.want=false; this.setState('off'); } };
+      r.onerror=e=>{
+        if(['not-allowed','service-not-allowed','audio-capture'].includes(e.error)){
+          this.want=false;
+          // only a failure right after the player's own tap means it is really blocked;
+          // a failed automatic restart (common on iPhone) just needs another tap
+          if(this.userStart){ this.denied=true; this.err=e.error; }
+          this.setState('off');
+        }
+      };
       r.onend=()=>{
         this.seg++; this.setState('off');
         if(this.want && !this.denied) setTimeout(()=>{ if(this.want){ try{r.start()}catch(e){} } },120);
@@ -1413,7 +1421,7 @@ function renderControls(disabled){
   }
   if(SET.answer==='voice'){
     const m=document.createElement('button'); m.className='mic'; m.id='micPill';
-    m.onclick=()=>{ if(Mic.available() && Mic.state!=='on') Mic.start() };
+    m.onclick=()=>{ if(Mic.denied && !Mic.inClaude){ Mic.denied=false; } if(Mic.available() && Mic.state!=='on') Mic.start() };
     c.appendChild(m); renderMic();
   }
 }
@@ -1424,7 +1432,13 @@ function renderMic(){
     if(Mic.inClaude){
       m.outerHTML=`<a class="mic" id="micPill" href="${SITE_URL}" target="_blank" rel="noopener">🎤 כאן אין מיקרופון. לחצו לפתיחת המשחק בדפדפן ושם עונים בקול</a>`;
     }else{
-      m.textContent= Mic.denied ? 'המיקרופון חסום: אשרו גישה למיקרופון בהגדרות הדפדפן לאתר הזה' : 'זיהוי דיבור לא זמין בדפדפן הזה (נסו Chrome או Safari)'; m.disabled=true;
+      const why={
+        'not-allowed':'הדפדפן חוסם את המיקרופון לאתר הזה. אשרו גישה בהגדרות האתר ולחצו כאן שוב',
+        'service-not-allowed':'שירות זיהוי הדיבור כבוי. באייפון: הגדרות ← כללי ← מקלדת ← הפעלת "הכתבה". לחצו כאן לנסות שוב',
+        'audio-capture':'לא נמצא מיקרופון, או שאפליקציה אחרת משתמשת בו. לחצו כאן לנסות שוב'
+      };
+      if(Mic.denied){ m.textContent=(why[Mic.err]||why['not-allowed'])+(Mic.err?` (${Mic.err})`:''); m.disabled=false; }
+      else { m.textContent='זיהוי דיבור לא זמין בדפדפן הזה. נסו Chrome באנדרואיד או Safari באייפון'; m.disabled=true; }
     }
   }
   else if(Mic.state==='on'){ m.textContent='מקשיב… אמרו את התשובה'; m.disabled=false; }
