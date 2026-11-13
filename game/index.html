@@ -124,6 +124,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-
 .hostbtns.slim button{padding:11px 10px;font-size:15px}
 button:disabled{opacity:.35;cursor:default}
 .mic{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--muted);padding:8px;border-radius:999px;border:1px dashed var(--line)}
+a.mic{text-decoration:none;color:var(--amber);border-color:var(--amber);text-align:center}
 .mic.on{color:var(--good);border-style:solid;border-color:color-mix(in srgb,var(--good) 50%,var(--line))}
 .mic.on::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--good);animation:pulse 1s infinite}
 .thinking{text-align:center;color:var(--muted);padding:16px;font-size:16px}
@@ -1070,6 +1071,7 @@ $('#startBtn').onclick=()=>{ beep(1,.01,'sine',.0001); Mic.prepare(); newGame();
    MICROPHONE: Claude dictation when the page runs as an artifact,
    the browser's speech recognition everywhere else.
    ===================================================================== */
+const SITE_URL='https://raw.githack.com/nissoe/test/claude/zen-dirac-yy51m3/game/index.html';
 const Mic={
   d:null, SR:null, rec:null, want:false, state:'off', denied:false, seg:0, consumed:new Map(), tried:false,
   async init(){
@@ -1087,7 +1089,9 @@ const Mic={
         }
       }
     }catch(e){}
-    if(!this.d) this.SR = window.SpeechRecognition||window.webkitSpeechRecognition||null;
+    // Inside the Claude viewer the browser's own recognizer is always refused, so only use it on a normal site.
+    this.inClaude = !!(window.claude && typeof window.claude.use==='function');
+    if(!this.d && !this.inClaude) this.SR = window.SpeechRecognition||window.webkitSpeechRecognition||null;
   },
   available(){ return !!(this.d||this.SR) && !this.denied },
   prepare(){},
@@ -1536,7 +1540,13 @@ function renderControls(disabled){
 function renderMic(){
   const m=$('#micPill'); if(!m) return;
   m.classList.toggle('on',Mic.state==='on');
-  if(!Mic.available()){ m.textContent= Mic.denied ? 'המיקרופון חסום. אפשר לסמן עם הכפתורים' : 'זיהוי דיבור לא זמין בדפדפן הזה. משתמשים בכפתורים'; m.disabled=true; }
+  if(!Mic.available()){
+    if(Mic.inClaude){
+      m.outerHTML=`<a class="mic" id="micPill" href="${SITE_URL}" target="_blank" rel="noopener">🎤 כאן אין מיקרופון. לחצו לפתיחת המשחק בדפדפן ושם עונים בקול</a>`;
+    }else{
+      m.textContent= Mic.denied ? 'המיקרופון חסום: אשרו גישה למיקרופון בהגדרות הדפדפן לאתר הזה' : 'זיהוי דיבור לא זמין בדפדפן הזה (נסו Chrome או Safari)'; m.disabled=true;
+    }
+  }
   else if(Mic.state==='on'){ m.textContent='מקשיב… אמרו את התשובה'; m.disabled=false; }
   else if(Mic.state==='starting'){ m.textContent='🎤 מפעיל מיקרופון…'; m.disabled=false; }
   else { m.textContent='🎤 המיקרופון כבוי. לחצו להפעלה'; m.disabled=false; }
