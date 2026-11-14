@@ -1273,6 +1273,7 @@ SCREENS.home=(s)=>{
       <button class="big" id="hPlay">משחק חדש</button>
       <div class="menu-grid">
         <button class="tile-btn" id="hDaily"><span class="ti">📅</span><b>אתגר יומי ${dailyDone!=null?'':'<span class="daily-badge">חדש</span>'}</b><small>${dailyDone!=null?`היום: ${dailyDone} נקודות`:'60 שניות, כמה שיותר תשובות'}</small></button>
+        ${Mic.inClaude?'':`<button class="tile-btn" id="hOnline" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:12px"><span class="ti" style="font-size:30px">🌐</span><span style="display:flex;flex-direction:column;gap:2px"><b>משחק אונליין</b><small>כל אחד מהטלפון שלו, או טלוויזיה כמסך ראשי</small></span></button>`}
         <button class="tile-btn" id="hMine"><span class="ti">📸</span><b>הקטגוריות שלי</b><small>${MYCATS.length?MYCATS.length+' קטגוריות':'יוצרים עם תמונות מהטלפון'}</small></button>
         <button class="tile-btn" id="hStats"><span class="ti">🏅</span><b>הישגים</b><small>${STATS.ach.length}/${ACH.length} הישגים · ${STATS.wins} ניצחונות</small></button>
         <button class="tile-btn" id="hSettings"><span class="ti">⚙️</span><b>הגדרות</b><small>צלילים, מוזיקה ודיווחים</small></button>
@@ -1286,6 +1287,7 @@ SCREENS.home=(s)=>{
   if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); const sp=seasonPack(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
   $('#hMine').onclick=()=>{ SND.click(); go('mycats'); };
+  if($('#hOnline')) $('#hOnline').onclick=()=>{ SND.click(); go('online'); };
   $('#hStats').onclick=()=>{ SND.click(); go('stats'); };
   $('#hSettings').onclick=()=>{ SND.click(); openSettings(); };
   $('#hHow').onclick=()=>go('onboarding');
@@ -1319,10 +1321,11 @@ SCREENS.setup=(s)=>{
   s.classList.add('scroll');
   const render=()=>{
     const validCats=SET.cats.filter(id=>catById(id));
-    s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">משחק חדש</div><span style="width:40px"></span></div>
-    <div class="field" style="border:0"><span class="flabel">מי משחק</span>
+    const OL=SETUP_ONLINE&&ON;
+    s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">${OL?'הגדרות החדר':'משחק חדש'}</div><span style="width:40px"></span></div>
+    <div class="field" style="border:0;${OL?'display:none':''}"><span class="flabel">מי משחק</span>
       <div class="seg" data-key="mode"><button data-v="cpu">אני נגד המחשב</button><button data-v="friends">חברים על מכשיר אחד</button></div></div>
-    ${SET.mode==='cpu'?`
+    ${OL?'':SET.mode==='cpu'?`
       <div class="field"><span class="flabel">השחקן שלך</span><div class="players"><div class="pl" id="meRow"><span class="av" style="background:${COLORS[0]}">${SET.me.av}</span><b>${esc(SET.me.name||'אני')}</b><span class="g">${SET.me.g==='f'?'שחקנית':'שחקן'} · עריכה</span></div></div></div>
       <div class="field"><span class="flabel">גודל הלוח</span><div class="seg" data-key="size" data-num="1"><button data-v="4">4 שחקנים</button><button data-v="9">9 שחקנים</button><button data-v="16">16 שחקנים</button></div></div>
       <div class="field"><span class="flabel">רמת המחשב</span><div class="seg" data-key="diff"><button data-v="easy">קל</button><button data-v="normal">רגיל</button><button data-v="hard">קשה</button></div></div>`
@@ -1343,8 +1346,8 @@ SCREENS.setup=(s)=>{
     <div class="sticky-foot"><button class="big" id="startBtn">לזירה!</button></div>`;
     s.querySelectorAll('.seg[data-key]').forEach(seg=>{ seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',String(SET[seg.dataset.key])===b.dataset.v));
       seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return; SND.click(); SET[seg.dataset.key]=seg.dataset.num?Number(b.dataset.v):seg.dataset.bool?b.dataset.v==='true':b.dataset.v; saveSet(); render(); }; });
-    $('#back').onclick=()=>go('home');
-    if(SET.mode==='cpu') $('#meRow').onclick=()=>editPlayer(SET.me,true,()=>{saveSet();render()});
+    $('#back').onclick=()=>{ if(OL){ SETUP_ONLINE=false; go('lobby'); } else go('home'); };
+    if(OL){} else if(SET.mode==='cpu') $('#meRow').onclick=()=>editPlayer(SET.me,true,()=>{saveSet();render()});
     else {
       const add=()=>{ const i=$('#fName'); const v=i.value.trim(); if(!v||SET.friends.length>=16) return; const used=SET.friends.map(f=>f.av); SET.friends.push({name:v,av:pick(AVATARS.filter(a=>!used.includes(a))),g:'m'}); saveSet(); render(); setTimeout(()=>$('#fName')&&$('#fName').focus(),0); };
       $('#fAdd').onclick=add; $('#fName').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();add()} };
@@ -1353,8 +1356,9 @@ SCREENS.setup=(s)=>{
     s.querySelectorAll('#catChips .chip').forEach(b=>b.onclick=()=>{ const id=b.dataset.c; SET.cats=SET.cats.includes(id)?SET.cats.filter(x=>x!==id):[...SET.cats,id]; saveSet(); render(); });
     $('#allCats').onclick=()=>{ SET.cats = validCats.length>=allCatIds().length ? [] : allCatIds(); saveSet(); render(); };
     const ok=validCats.some(id=>allCatIds().includes(id)) && (SET.mode==='cpu'||SET.friends.length>=2);
-    $('#startBtn').disabled=!ok;
-    $('#startBtn').onclick=()=>{ SND.init(); SND.whoosh(); newGame(); };
+    $('#startBtn').disabled=OL?!validCats.length:!ok;
+    if(OL) $('#startBtn').textContent='שמירה וחזרה לחדר';
+    $('#startBtn').onclick=()=>{ SND.init(); if(OL){ SETUP_ONLINE=false; go('lobby'); return; } SND.whoosh(); newGame(); };
   };
   render();
 };
@@ -1378,22 +1382,23 @@ function editPlayer(p,isMe,done,remove){
    GAME
    ===================================================================== */
 let G=null, D=null;
-function newGame(){
+function newGame(override){
   if(!SET.cats) SET.cats=CATS.filter(c=>!c.mine).map(c=>c.id);
   const s=SET; let players;
-  if(s.mode==='cpu'){
+  if(override) players=override;
+  else if(s.mode==='cpu'){
     const bots=shuffle(BOT_NAMES.slice()).slice(0,s.size-1), used=[s.me.av];
     players=[{name:s.me.name||'אני',av:s.me.av,g:s.me.g,human:true},...bots.map(([n,g])=>{ const av=pick(AVATARS.filter(a=>!used.includes(a))); used.push(av); return {name:n,av,g,human:false}; })];
   } else players=s.friends.map(f=>({...f,human:true}));
   const n=players.length, cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols), total=rows*cols;
-  let pool=s.cats.filter(id=>catById(id)&&allCatIds().includes(id)); if(!pool.length) pool=allCatIds();
+  let pool=s.cats.filter(id=>catById(id)&&allCatIds().includes(id)&&!(override&&catById(id).mine)); if(!pool.length) pool=allCatIds().filter(id=>!catById(id).mine);
   const cats=shuffle(pool.slice());
   shuffle(players);
   players=players.map((p,i)=>({...p,id:i,color:COLORS[i%COLORS.length],cat:cats[i%cats.length],alive:true,pw:SET.powers?[pick(PW_KEYS)]:[]}));
   const tiles=new Array(total).fill(-1), order=shuffle([...Array(total).keys()]);
   players.forEach((p,i)=>tiles[order[i]]=p.id);
   let guard=0; while(tiles.includes(-1)&&guard++<100) tiles.forEach((o,i)=>{ if(o!==-1) return; const nb=adjTiles(i,rows,cols).map(j=>tiles[j]).filter(x=>x!==-1); if(nb.length) tiles[i]=pick(nb); });
-  G={players,tiles,rows,cols,used:{},auto:false,hl:null,targets:null,attacker:null};
+  G={players,tiles,rows,cols,used:{},auto:false,hl:null,targets:null,attacker:null}; if(ON){ ON.over=null; ON.prompt=null; ON.pending=null; ON.ready=new Set(); }
   STATS.games++; saveStats(); checkAch();
   try{ navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{}) }catch(e){}
   go('board'); nextTurn();
@@ -1414,7 +1419,7 @@ SCREENS.board=(s)=>{
       <div class="board-stage"><div class="board" id="board"></div><div class="spot" id="spot"></div></div>
       <div class="status" id="bstatus"></div><div class="actions" id="bactions"></div><div class="roster" id="roster"></div>
     </div>`;
-  $('#menuBtn').onclick=()=>modal({title:'תפריט',buttons:[
+  $('#menuBtn').onclick=()=>ON?modal({title:'תפריט',text:`חדר ${ON.code}`,buttons:[{label:'להמשיך לשחק',fn:()=>{}},{label:ON.role==='host'?'סגירת החדר ויציאה':'יציאה מהחדר',cls:'ghost',fn:()=>leaveRoom()}]}):modal({title:'תפריט',buttons:[
     {label:'להמשיך לשחק',fn:()=>{}},
     {label:'משחק חדש עם אותן הגדרות',cls:'ghost',fn:()=>newGame()},
     {label:'הגדרות',cls:'ghost',fn:()=>openSettings()},
@@ -1434,7 +1439,7 @@ function renderBoard(){
     if(sL) t.style.marginLeft='-1px'; if(sT) t.style.marginTop='-1px';
     if(anchors.has(i)){ const cat=catById(p.cat); t.classList.add('anchor'); t.innerHTML=`<span class="av">${p.av}</span><span class="nm">${esc(p.name)}</span><span class="cn">${cat.icon} ${esc(cat.name)}</span>`; }
     if(G.hl===o) t.classList.add('hl');
-    if(G.targets){ if(G.targets.has(o)){ t.classList.add('tgt'); t.onclick=()=>{ if(G.attacker) attack(G.attacker,p) }; } else if(o!==G.hl) t.classList.add('dim'); }
+    if(G.targets){ if(G.targets.has(o)){ t.classList.add('tgt'); t.onclick=()=>{ if(G.client){ if(G.pick) G.pick(p.id); return; } if(G.attacker) attack(G.attacker,p) }; } else if(o!==G.hl) t.classList.add('dim'); }
     b.appendChild(t);
   });
   const segs=[], hls=[];
@@ -1446,13 +1451,14 @@ function renderBoard(){
     (hls.length?`<path d="${hls.join('')}" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke" style="filter:drop-shadow(0 0 6px rgba(255,255,255,.8))"/>`:'');
   b.appendChild(sv);
   $('#aliveCount').textContent=`נשארו ${alive().length}`;
+  pushState();
   const ro=$('#roster'); ro.innerHTML='';
   G.players.slice().sort((a,b)=>(b.alive-a.alive)||(countTiles(b.id)-countTiles(a.id))).forEach(p=>{
     const c=document.createElement('span'); c.className='chip'+(p.alive?'':' out');
-    c.innerHTML=`<span style="font-size:16px">${p.av}</span>${esc(p.name)} ${p.alive?`<span style="opacity:.7">${catById(p.cat).icon} ${countTiles(p.id)}</span>${p.pw&&p.pw.length?`<span class="pw-mini">${p.pw.map(k=>POWERS[k].ic).join('')}</span>`:''}`:''}`; ro.appendChild(c);
+    c.innerHTML=`<span style="font-size:16px">${esc(p.av)}</span>${esc(p.name)} ${p.alive?`<span style="opacity:.7">${catById(p.cat).icon} ${countTiles(p.id)}</span>${p.pw&&p.pw.length?`<span class="pw-mini">${p.pw.map(k=>POWERS[k].ic).join('')}</span>`:''}`:''}`; ro.appendChild(c);
   });
 }
-function setStatus(h){ const e=$('#bstatus'); if(e) e.innerHTML='<div>'+h+'</div>' }
+function setStatus(h){ const e=$('#bstatus'); if(e) e.innerHTML=/^<div>/.test(h)?h:'<div>'+h+'</div>'; pushState(); }
 function setActions(list){ const a=$('#bactions'); if(!a) return; a.innerHTML=''; list.forEach(x=>{ const b=document.createElement('button'); b.className=x.cls||'big'; b.innerHTML=x.label; b.onclick=x.fn; a.appendChild(b) }); }
 function moveSpot(pid,on=true){
   const sp=$('#spot'), b=$('#board'); if(!sp||!b) return;
@@ -1486,6 +1492,13 @@ async function spin(){
 async function chooseTarget(p){
   const nb=neighbors(p.id); if(!nb.length) return nextTurn();
   G.hl=p.id;
+  if(isRemote(p)){
+    G.attacker=null; G.targets=new Set(nb.map(x=>x.id)); renderBoard(); moveSpot(p.id); setActions([]);
+    setStatus(`📱 <b>${esc(p.name)}</b> ${G_(p,'בוחר','בוחרת')} את מי לאתגר…`);
+    const r=await askRemote(p,'target',{ids:nb.map(x=>x.id),joker:p.pw.includes('joker')},40000);
+    const t=r&&G.players[r.id]; G.joker=!!(r&&r.joker);
+    return attack(p,t&&nb.includes(t)?t:pick(nb));
+  }
   if(p.human){
     G.attacker=p; G.targets=new Set(nb.map(x=>x.id)); renderBoard(); moveSpot(p.id);
     setStatus(`<b>${esc(p.name)}</b>, ${G_(p,'את מי אתה מאתגר?','את מי את מאתגרת?')}<br><span style="font-size:14px;color:var(--muted)">הדו־קרב יהיה בקטגוריה של היריב</span>`);
@@ -1512,7 +1525,8 @@ async function attack(a,d){
   G.joker=false;
   if(d.pw&&d.pw.includes('shield')){
     let use;
-    if(d.human&&!G.auto) use=await new Promise(res=>modal({title:`${a.name} ${G_(a,'תוקף','תוקפת')} את ${d.name}!`,text:`ל${d.name} יש 🛡️ מגן. להפעיל אותו ולחסום את ההתקפה?`,buttons:[{label:'🛡️ להפעיל מגן',fn:()=>res(true)},{label:'לא, נלחמים',cls:'ghost',fn:()=>res(false)}]}));
+    if(isRemote(d)&&!G.auto){ setStatus(`🛡️ <b>${esc(d.name)}</b> ${G_(d,'מחליט','מחליטה')} אם להפעיל מגן…`); const r=await askRemote(d,'shield',{by:a.id},15000); use=!!(r&&r.use); }
+    else if(d.human&&!G.auto) use=await new Promise(res=>modal({title:`${a.name} ${G_(a,'תוקף','תוקפת')} את ${d.name}!`,text:`ל${d.name} יש 🛡️ מגן. להפעיל אותו ולחסום את ההתקפה?`,buttons:[{label:'🛡️ להפעיל מגן',fn:()=>res(true)},{label:'לא, נלחמים',cls:'ghost',fn:()=>res(false)}]}));
     else use=Math.random()<.6;
     if(use){ usePw(d,'shield'); renderBoard();
       if(!G.auto){ const st=$('.board-stage'); const f=document.createElement('div'); f.className='shield-fx'; f.textContent='🛡️'; st.appendChild(f); setTimeout(()=>f.remove(),1300);
@@ -1552,12 +1566,17 @@ async function capture(w,l){
 }
 function afterDuel(w,l){
   if(alive().length===1) return gameOver(w);
-  if(SET.mode==='cpu'&&l.human){
+  if(ON&&localHuman(l)){ toast('💥','הודחת','המשחק ממשיך, אפשר לצפות'); }
+  if(!ON&&SET.mode==='cpu'&&l.human){
     SND.lose(); buzz(200);
     return modal({title:G_(l,'הודחת','הודחת'),text:`${w.name} ${G_(w,'לקח','לקחה')} לך את השטח. נשארו ${alive().length} שחקנים על הלוח.`,buttons:[
       {label:'לצפות בהמשך',fn:()=>{G.auto=true;nextTurn()}},{label:'משחק חדש',cls:'ghost',fn:()=>newGame()},{label:'למסך הראשי',cls:'ghost',fn:()=>go('home')}]});
   }
   const canGo=neighbors(w.id).length>0;
+  if(isRemote(w)){
+    setStatus(`<b>${esc(w.name)}</b> ${G_(w,'מחליט','מחליטה')} מה הלאה…`);
+    return askRemote(w,'after',{lc:l.cat,canGo},25000).then(r=>{ if(r&&r.keep&&(r.keep===w.cat||r.keep===l.cat)) w.cat=r.keep; renderBoard(); if(r&&r.go&&canGo) chooseTarget(w); else nextTurn(); });
+  }
   if(w.human){
     const lc=catById(l.cat), wc=catById(w.cat); let keep=w.cat;
     const body=document.createElement('div'); body.style.cssText='display:flex;flex-direction:column;gap:10px';
@@ -1574,7 +1593,8 @@ function afterDuel(w,l){
 function gameOver(w){
   G.auto=false; if(SCREEN!=='board') go('board'); renderBoard(); moveSpot(w.id);
   SND.setMood(null); SND.win(); FX.confetti(220); buzz([60,40,60,40,120]); screenFlash('rgba(255,220,160,.6)');
-  if(w.human){ STATS.wins++; if(G.players.length>=16) STATS.bigWin=true; saveStats(); checkAch(); }
+  if(ON){ ON.over=w.id; pushState(); }
+  if(localHuman(w)){ STATS.wins++; if(G.players.length>=16) STATS.bigWin=true; saveStats(); checkAch(); }
   setStatus(`🏆 <b>${esc(w.name)}</b> ${G_(w,'שולט','שולטת')} בכל הלוח`); setActions([]);
   setTimeout(()=>modal({title:`${w.av} ${w.name} ${G_(w,'כבש','כבשה')} את כל הלוח!`,text:w.human?'ניצחון מלא. כל המשבצות בצבע שלך.':'המחשב לקח הפעם. עוד סיבוב?',
     buttons:[{label:'משחק חדש',fn:()=>newGame()},{label:'למסך הראשי',cls:'ghost',fn:()=>go('home')}]}),900);
@@ -1647,6 +1667,12 @@ function openDuel(a,d,cat){
 };
 SCREENS.duel=(s)=>{
   const {p:[a,d],cat}=D;
+  if(D.mirror){
+    s.innerHTML=`<div class="duel-top"><div class="cat-badge"><span class="ci">${cat.icon}</span><span>${esc(cat.name)}</span></div><button class="iconbtn" id="duelExit" aria-label="תפריט">☰</button></div><div class="clocks" id="clocks"></div><div class="turn" id="turn"></div><div class="stage" id="stage"></div><div class="feed" id="feed"></div><div class="controls" id="controls"></div>`;
+    renderClocks(true); SND.setMood('duel');
+    $('#duelExit').onclick=()=>modal({title:'תפריט',text:`חדר ${ON?ON.code:''}`,buttons:[{label:'להמשיך',fn:()=>{}},{label:'יציאה מהחדר',cls:'ghost',fn:()=>leaveRoom()}]});
+    return;
+  }
   s.innerHTML=`<div class="duel-top"><div class="cat-badge"><span class="ci">${cat.icon}</span><span>${esc(cat.name)}</span></div><button class="iconbtn" id="duelExit" aria-label="יציאה">✕</button></div>
     <div class="clocks" id="clocks"></div><div class="turn" id="turn"></div><div class="stage" id="stage"></div><div class="feed" id="feed"></div><div class="controls" id="controls"></div>`;
   renderClocks(true);
@@ -1655,8 +1681,10 @@ SCREENS.duel=(s)=>{
     <p class="hint" style="max-width:34ch">${esc(a.name)} ${G_(a,'מתחיל','מתחילה')}. תשובה נכונה מעבירה את השעון. ${SET.answer==='voice'?'אומרים "דלג" כדי לדלג.':'דילוג עולה 3 שניות.'}</p>`;
   SND.whoosh(); setTimeout(()=>{ SND.slam(); buzz(80); shakeEl($('#stage')); },380);
   const c=$('#controls'), go_=document.createElement('button'); go_.className='big'; go_.textContent='התחילו';
-  go_.onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); SND.init(); countdown(); };
+  go_.onclick=()=>{ if(SET.answer==='voice'&&Mic.available()&&D.p.some(localHuman)) Mic.start(); SND.init(); countdown(); };
   c.appendChild(go_);
+  if(ON&&D.p.some(isRemote)){ const w=document.createElement('p'); w.className='hint'; w.style.textAlign='center'; w.textContent=D.p.some(localHuman)?'השחקן השני מאשר מהטלפון שלו. אפשר גם להתחיל מכאן.':'הדו־קרב יתחיל לבד כששני השחקנים יאשרו בטלפון.'; c.appendChild(w); }
+  if(ON) pushState();
   D.next=drawItem(cat); preload(D.next,cat);
   $('#duelExit').onclick=()=>{
     const was=D&&D.running; if(was){ D.running=false; cancelAnimationFrame(D.raf); clearTimeout(D.botTimer); }
@@ -1678,11 +1706,12 @@ function renderClocks(build){
     const nw=performance.now(); c.classList.toggle('frozen',nw<D.freezeUntil[i]); c.classList.toggle('bombed',nw<D.doubleUntil[i]||D.bombNext[i]); });
 }
 async function countdown(){
+  if(D.counting||D.running) return; D.counting=true; pushState();
   $('#controls').innerHTML=''; const st=$('#stage');
   for(const n of ['3','2','1']){ st.innerHTML=`<div class="cd">${n}</div>`; SND.tick(); SND.tone(440,.12,{type:'triangle',vol:.15}); buzz(25); await sleep(700); if(!D||D.ended) return; }
   st.innerHTML=`<div class="cd" style="font-size:110px">יאללה!</div>`; SND.go(); screenFlash('rgba(255,210,140,.45)'); buzz(60); await sleep(380);
   if(!D||D.ended) return;
-  D.running=true; D.last=performance.now(); nextQuestion(); D.raf=requestAnimationFrame(tick);
+  D.running=true; D.counting=false; D.last=performance.now(); nextQuestion(); D.raf=requestAnimationFrame(tick);
 }
 function tick(now){
   if(!D||!D.running) return;
@@ -1692,7 +1721,7 @@ function tick(now){
   const ms=D.t[D.active], vig=$('#vignette');
   if(ms<10000&&ms>0){ vig.classList.add('on'); const sec=Math.ceil(ms/1000); if(sec!==D.beatAt){ D.beatAt=sec; SND.heart(); if(sec<=3) buzz(40); } } else vig.classList.remove('on');
   if(D.t[D.active]<=0){ D.t[D.active]=0; renderClocks(); return endDuel(1-D.active); }
-  renderClocks(); D.raf=requestAnimationFrame(tick);
+  renderClocks(); if(ON&&now-(D.pushAt||0)>1000){ D.pushAt=now; pushState(); } D.raf=requestAnimationFrame(tick);
 }
 document.addEventListener('visibilitychange',()=>{ if(D&&D.running) D.last=performance.now() });
 const cur=()=>D.p[D.active];
@@ -1705,6 +1734,7 @@ function nextQuestion(){
   D.loading=IMG_KINDS.has(D.cat.kind);
   renderControls();
   const item=D.item;
+  pushState();
   renderQuestion($('#stage'),D.cat,item,()=>{ if(!D||D.item!==item) return; D.loading=false; D.fails=0; D.last=performance.now(); renderControls(); armBot(); },
     ()=>{ if(!D||D.item!==item) return; D.fails++; if(D.fails>=5) return imagesDown(); D.next=null; D.qn--; nextQuestion(); });
 }
@@ -1720,7 +1750,12 @@ function imagesDown(){
 }
 function renderControls(){
   const c=$('#controls'); if(!c||!D) return; c.innerHTML='';
-  const p=cur(), humanTurn=p.human&&D.running&&!D.lock&&!D.loading;
+  const p=cur(), humanTurn=p.human&&!p.remote&&D.running&&!D.lock&&!D.loading;
+  if(D.running&&isRemote(p)){
+    c.innerHTML=`<div class="thinking">📱 ${esc(p.name)} ${G_(p,'עונה','עונה')} מהטלפון</div>`;
+    const h=document.createElement('div'); h.className='hostbtns slim'; h.innerHTML=`<button class="b-ok">✓ נכון</button><button class="b-pass">דלג</button>`;
+    const en=!D.lock&&!D.loading; h.children[0].disabled=!en; h.children[1].disabled=!en; h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); c.appendChild(h); return;
+  }
   if(D.running&&!p.human){ c.innerHTML=`<div class="thinking"><span>🤖</span> ${esc(p.name)} ${G_(p,'חושב','חושבת')}…</div>`; }
   else if(SET.answer==='choices'){
     const g=document.createElement('div'); g.className='opts';
@@ -1741,6 +1776,7 @@ function renderControls(){
     c.insertBefore(bar,c.firstChild); }
 }
 function duelPower(k){
+  if(D&&D.mirror){ if(!D.running||D.lock||D.loading||!localHuman(cur())) return; const me=cur(); const i=me.pw.indexOf(k); if(i<0) return; me.pw.splice(i,1); SND.badge(); sendInput('power',{k,qn:D.qn}); renderControls(); return; }
   if(!D||!D.running||D.lock||D.loading) return;
   const me=D.active, p=D.p[me], opp=1-me; if(!usePw(p,k)) return;
   const clocks=$('#clocks').children, fb=$('#feed'); fb.className='feed';
@@ -1753,7 +1789,7 @@ function duelPower(k){
     if(SET.answer==='choices'){ let n=0; document.querySelectorAll('#controls .opt').forEach(o=>{ if(n<2&&o.textContent!==D.item.a[0]&&!o.disabled){ o.disabled=true; o.style.opacity='.2'; n++; } }); fb.textContent='💡 שתי תשובות שגויות נמחקו'; }
     else { const a=D.item.a[0]; fb.textContent=`💡 מתחיל ב־"${a[0]}" · ${a.replace(/[\s'"־-]/g,'').length} אותיות${a.includes(' ')?' · '+a.split(' ').length+' מילים':''}`; } }
   else if(k==='skip'){ SND.whoosh(); D.hist.push({item:D.item,ok:false,by:me}); D.streak[me]=0; fb.textContent=`⏭️ דילוג חינם · התשובה: ${D.item.a[0]}`; nextQuestion(); }
-  renderClocks(); if(k!=='skip') renderControls(); if(k==='hint'&&SET.answer==='choices'){ let n=0; document.querySelectorAll('#controls .opt').forEach(o=>{ if(n<2&&o.textContent!==D.item.a[0]){ o.disabled=true; o.style.opacity='.2'; n++; } }); }
+  renderClocks(); pushState(); if(k!=='skip') renderControls(); if(k==='hint'&&SET.answer==='choices'){ let n=0; document.querySelectorAll('#controls .opt').forEach(o=>{ if(n<2&&o.textContent!==D.item.a[0]){ o.disabled=true; o.style.opacity='.2'; n++; } }); }
 }
 function renderMic(){
   const m=$('#micPill'); if(!m) return; m.classList.toggle('on',Mic.state==='on');
@@ -1770,18 +1806,19 @@ function onSpeech(key,alts){
   if(DAILY&&DAILY.running) return dailySpeech(key,alts);
   if(!D||!D.running) return;
   const fb=$('#feed'); if(!D.lock&&!fb.classList.contains('ok')) fb.textContent=alts[0]?`"${alts[0].trim()}"`:'';
-  if(D.lock||D.loading||!cur().human) return;
+  if(D.lock||D.loading||!localHuman(cur())) return;
   const used=Mic.consumed.get(key)||0;
   for(const alt of alts){ const n=norm(alt), fresh=n.slice(used).trim(); if(fresh&&matches(fresh,D.item.a)){ Mic.consumed.set(key,n.length); return correct(); } }
   for(const alt of alts){ const n=norm(alt), fresh=n.slice(used).trim(); if(PASS_RE.test(fresh)){ Mic.consumed.set(key,n.length); return pass(); } }
 }
 function correct(){
+  if(D&&D.mirror){ if(!D.running||D.lock||D.loading||!localHuman(cur())) return; D.lock=true; SND.ok(); buzz(25); FX.elBurst($('#stage .qcard'),'#38e09a',24,6); sendInput('answer',{ok:true,qn:D.qn}); renderControls(); return; }
   if(!D||!D.running||D.lock||D.loading) return;
   clearTimeout(D.botTimer);
   const p=cur(); SND.ok(); buzz(25);
   D.hist.push({item:D.item,ok:true,by:D.active});
   D.streak[D.active]++;
-  if(p.human){ STATS.correct++; STATS.catCorrect[D.cat.id]=(STATS.catCorrect[D.cat.id]||0)+1; if(D.streak[D.active]>STATS.bestStreak) STATS.bestStreak=D.streak[D.active]; saveStats(); checkAch(); }
+  if(localHuman(p)){ STATS.correct++; STATS.catCorrect[D.cat.id]=(STATS.catCorrect[D.cat.id]||0)+1; if(D.streak[D.active]>STATS.bestStreak) STATS.bestStreak=D.streak[D.active]; saveStats(); checkAch(); }
   const fb=$('#feed'); fb.className='feed'; void fb.offsetWidth; fb.className='feed ok'; fb.textContent=`✓ ${D.item.a[0]}${p.human?'':` (${p.name})`}`;
   setTimeout(()=>{ if(fb.classList.contains('ok')){ fb.className='feed'; fb.textContent=''; } },1300);
   const card=$('#stage .qcard'); if(card){ FX.elBurst(card,'#38e09a',30,7); card.classList.add('out-ok'); }
@@ -1789,28 +1826,31 @@ function correct(){
   if(D.bombNext[D.active]){ D.bombNext[D.active]=false; D.doubleUntil[D.active]=performance.now()+6000+(IMG_KINDS.has(D.cat.kind)?700:0);
     setTimeout(()=>{ SND.slam(); screenFlash('rgba(255,120,40,.45)'); buzz([60,30,60]); FX.elBurst($('#clocks').children[D.active],'#ff8a3d',40,8); const fb=$('#feed'); fb.className='feed'; fb.textContent=`💣 בום! השעון של ${D.p[D.active].name} רץ כפול`; },200); }
   setTimeout(()=>nextQuestion(),reduced?0:170);
+  pushState();
 }
 function pass(){
+  if(D&&D.mirror){ if(!D.running||D.lock||D.loading||!localHuman(cur())) return; sendInput('answer',{ok:false,qn:D.qn}); return; }
   if(!D||!D.running||D.lock||D.loading) return;
   clearTimeout(D.botTimer);
   const p=cur(); D.lock=true; SND.pass(); buzz([15,30,15]); D.streak[D.active]=0;
-  D.hist.push({item:D.item,ok:false,by:D.active}); if(p.human){ STATS.passes++; saveStats(); }
+  D.hist.push({item:D.item,ok:false,by:D.active}); if(localHuman(p)){ STATS.passes++; saveStats(); }
   const st=$('#stage'); shakeEl(st);
   const r=document.createElement('div'); r.className='reveal';
   r.innerHTML=`${D.cat.kind==='crest'?`<img src="${D.item.p}" alt="" class="rv-img">`:''}<small>התשובה</small>${esc(D.item.a[0])}<small>3 שניות קנס, השעון ממשיך</small>`;
   st.appendChild(r); renderControls();
   D.lockTimer=setTimeout(()=>{ if(D&&D.running) nextQuestion() },3000);
+  pushState();
 }
 function endDuel(wi){
   if(!D||D.ended) return;
   D.running=false; D.ended=true; cancelAnimationFrame(D.raf); clearTimeout(D.botTimer); clearTimeout(D.lockTimer); Mic.stop();
   $('#vignette').classList.remove('on');
-  const w=D.p[wi], l=D.p[1-wi], human=w.human||l.human;
+  const w=D.p[wi], l=D.p[1-wi], human=w.human||l.human; D.win=wi; pushState();
   renderClocks(); SND.setMood(null);
-  if(w.human){ SND.win(); FX.confetti(120); screenFlash('rgba(56,224,154,.35)'); } else { SND.lose(); }
+  if(w.human&&(!ON||localHuman(w)||!D.p.some(localHuman))){ SND.win(); FX.confetti(120); screenFlash('rgba(56,224,154,.35)'); } else { SND.lose(); }
   buzz(w.human?[50,40,90]:250);
-  grantPower(w);
-  if(w.human){ STATS.duels++; STATS.duelWins++; if(D.t[wi]<3000) STATS.comeback=true; } if(l.human){ STATS.duels++; }
+  grantPower(w,isRemote(w));
+  if(localHuman(w)){ STATS.duels++; STATS.duelWins++; if(D.t[wi]<3000) STATS.comeback=true; } if(localHuman(l)){ STATS.duels++; }
   saveStats(); checkAch();
   $('#turn').textContent='';
   const hist=D.hist, cat=D.cat;
@@ -1820,6 +1860,7 @@ function endDuel(wi){
   const c=$('#controls'); c.innerHTML=''; const b=document.createElement('button'); b.className='big'; b.textContent='חזרה ללוח';
   b.onclick=async()=>{ D=null; go('board'); setActions([]); setStatus(`<b>${esc(w.name)}</b> ${G_(w,'לוקח','לוקחת')} את השטח של <b>${esc(l.name)}</b>`); await sleep(350); await capture(w,l); await sleep(400); afterDuel(w,l); };
   c.appendChild(b);
+  if(ON) setTimeout(()=>{ if(b.isConnected) b.click(); },5000);
 }
 
 /* =====================================================================
@@ -1835,6 +1876,7 @@ SCREENS.daily=(s)=>{
       <div style="font-size:72px">📅</div>
       <p class="hint" style="font-size:16px;max-width:32ch">60 שניות, תמונות מכל הקטגוריות. כמה שיותר תשובות נכונות. דילוג מראה את התשובה ועולה זמן. השאלות זהות לכל מי שמשחק היום.</p>
       ${done!=null?`<div class="big-num">${done}</div><p class="hint">התוצאה שלך היום</p>`:''}
+      <div id="dBoard" style="width:100%;text-align:start;display:flex;flex-direction:column;gap:8px"></div>
       <div class="stat-grid" style="width:100%"><div class="stat"><b>${Object.keys(STATS.daily).length}</b><small>ימים</small></div><div class="stat"><b>${best}</b><small>שיא</small></div><div class="stat"><b>${streakDays()}</b><small>ימים ברצף</small></div></div>
     </div>
     <div class="menu">${done!=null?`<button class="big" id="dShare">שיתוף התוצאה</button><button class="ghost" id="dAgain">לשחק שוב (בלי ניקוד)</button>`:`<button class="big" id="dGo">מתחילים</button>`}</div>`;
@@ -1843,6 +1885,7 @@ SCREENS.daily=(s)=>{
   if($('#dGo')) $('#dGo').onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); start(false); };
   if($('#dAgain')) $('#dAgain').onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); start(true); };
   if($('#dShare')) $('#dShare').onclick=()=>shareDaily(done);
+  if(done!=null) dailyBoard($('#dBoard'));
 };
 function streakDays(){ let n=0; const d=new Date(); for(;;){ const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); if(STATS.daily[k]==null) break; n++; d.setDate(d.getDate()-1); } return n; }
 function shareDaily(score){
@@ -1902,7 +1945,7 @@ function dailyPass(){ const Y=DAILY; if(!Y.running||Y.lock||Y.loading) return; Y
   setTimeout(()=>{ if(DAILY===Y&&Y.running){ Y.i++; dailyNext(); } },1600); }
 function dailyEnd(){
   const Y=DAILY; Y.running=false; cancelAnimationFrame(Y.raf); Mic.stop(); $('#vignette').classList.remove('on'); SND.setMood(null);
-  if(!Y.practice){ STATS.daily[todayKey()]=Y.score; saveStats(); checkAch(); }
+  if(!Y.practice){ STATS.daily[todayKey()]=Y.score; saveStats(); checkAch(); dailySubmit(Y.score); }
   SND.win(); FX.confetti(Y.score>=10?200:80);
   $('#dyStage').innerHTML=`<div class="result"><div class="big-num">${Y.score}</div><h3>${Y.score>=20?'מדהים!':Y.score>=12?'יפה מאוד!':'כל הכבוד!'}</h3><p class="hint">${Y.practice?'סיבוב אימון, לא נשמר':'תשובות נכונות ב־60 שניות'}</p></div>`;
   const c=$('#dyCtl'); c.innerHTML=''; const b=document.createElement('button'); b.className='big'; b.textContent='שיתוף התוצאה'; b.onclick=()=>shareDaily(Y.score); c.appendChild(b);
@@ -1987,12 +2030,278 @@ SCREENS.credits=(s)=>{
 };
 
 /* =====================================================================
+   ONLINE: rooms on Firebase. The host's device runs the game; every
+   phone mirrors it and sends its own answers and choices back.
+   ===================================================================== */
+const FB_CFG={apiKey:"AIzaSyBizXqeKBCML7KMlsdl1BIPrak0RGQRi4c",authDomain:"territorianisso.firebaseapp.com",databaseURL:"https://territorianisso-default-rtdb.europe-west1.firebasedatabase.app",projectId:"territorianisso",appId:"1:677306737146:web:775485b60b9dfe64968443"};
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('script')); document.head.appendChild(s); }); }
+const NET={
+  ready:null, uid:null, db:null, offset:0,
+  load(){
+    if(this.ready) return this.ready;
+    this.ready=(async()=>{
+      if(window.__LOCALNET){ this.db=window.__LOCALNET; this.uid=this.db.uid; return true; }
+      const base='https://cdn.jsdelivr.net/npm/firebase@10.12.2/';
+      for(const f of ['firebase-app-compat.js','firebase-auth-compat.js','firebase-database-compat.js']) await loadScript(base+f);
+      if(!firebase.apps.length) firebase.initializeApp(FB_CFG);
+      const cred=await firebase.auth().signInAnonymously(); this.uid=cred.user.uid;
+      this.db=firebase.database();
+      this.db.ref('.info/serverTimeOffset').on('value',s=>this.offset=s.val()||0);
+      return true;
+    })().catch(e=>{ this.ready=null; throw e; });
+    return this.ready;
+  },
+  now(){ return Date.now()+this.offset },
+  ref(p){ return this.db.ref(p) }
+};
+let ON=null;   // {code, role, hostPlays, players, ver, prompt, promptN, lastIn, offs:[]}
+const netErr=e=>{ const m=String(e&&(e.code||e.message)||e); return /ADMIN_ONLY|operation-not-allowed|admin-restricted/i.test(m)?'השרת עדיין לא מוגדר: צריך להפעיל התחברות אנונימית ב־Firebase.':/permission/i.test(m)?'השרת חסם את הפעולה: צריך להדביק את חוקי האבטחה ב־Firebase.':'אין חיבור לשרת. בדקו את האינטרנט ונסו שוב.'; };
+function onlineOff(){ if(ON){ ON.offs.forEach(f=>{try{f()}catch(e){}}); } ON=null; }
+function listen(path,cb){ const r=NET.ref(path); const h=s=>cb(s.val()); r.on('value',h); ON.offs.push(()=>r.off('value',h)); }
+function meCard(){ return {name:(SET.me.name||'שחקן').slice(0,20),av:SET.me.av,g:SET.me.g,t:NET.now()} }
+
+SCREENS.online=(s)=>{
+  s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">משחק אונליין</div><span style="width:40px"></span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center">
+      <div class="card" style="display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
+        <div style="font-size:56px">🌐</div><p class="hint" style="font-size:15px">כל אחד משחק מהטלפון שלו. מכשיר אחד פותח חדר, והשאר מצטרפים עם הקוד. אפשר גם לפתוח חדר מטלוויזיה או ממחשב ולהשתמש בו כמסך ראשי.</p>
+        <div class="pl" id="olMe" style="width:100%;cursor:pointer"><span class="av" style="background:${COLORS[0]}">${SET.me.av}</span><b>${esc(SET.me.name||'שחקן')}</b><span class="g">עריכה</span></div>
+      </div>
+      <button class="big" id="olCreate">פתיחת חדר חדש</button>
+      <div class="row"><input class="inp" id="olCode" inputmode="numeric" maxlength="4" placeholder="קוד חדר (4 ספרות)" style="text-align:center;font-size:22px;letter-spacing:6px"><button class="ghost" style="width:auto;white-space:nowrap" id="olJoin">הצטרפות</button></div>
+      <p class="hint" id="olMsg" style="text-align:center;min-height:20px"></p>
+    </div>`;
+  $('#back').onclick=()=>go('home');
+  $('#olMe').onclick=()=>editPlayer(SET.me,true,()=>{saveSet();go('online')});
+  const msg=t=>{ $('#olMsg').textContent=t; };
+  const busy=b=>{ $('#olCreate').disabled=b; $('#olJoin').disabled=b; };
+  $('#olCreate').onclick=async()=>{ busy(true); msg('מתחבר…'); try{ await NET.load(); await createRoom(); }catch(e){ msg(netErr(e)); busy(false); } };
+  $('#olJoin').onclick=async()=>{ const code=$('#olCode').value.trim(); if(!/^\d{4}$/.test(code)) return msg('הקוד הוא 4 ספרות.'); busy(true); msg('מתחבר…');
+    try{ await NET.load(); const r=await joinRoom(code); if(r) { msg(r); busy(false); } }catch(e){ msg(netErr(e)); busy(false); } };
+  const pre=(location.hash.match(/^#room(\d{4})$/)||[])[1]; if(pre){ $('#olCode').value=pre; }
+};
+async function createRoom(){
+  for(let i=0;i<12;i++){
+    const code=String(1000+Math.floor(Math.random()*9000));
+    const res=await NET.ref(`rooms/${code}/host`).transaction(cur=>cur===null?NET.uid:undefined);
+    if(res.committed){
+      await NET.ref(`rooms/${code}/created`).set(NET.now());
+      onlineOff(); ON={code,role:'host',hostPlays:true,players:{},ver:0,prompt:null,promptN:0,lastIn:{},offs:[],ready:new Set()};
+      await NET.ref(`rooms/${code}/players/${NET.uid}`).set(meCard());
+      go('lobby'); return;
+    }
+  }
+  throw new Error('no code');
+}
+async function joinRoom(code){
+  const snap=await NET.ref(`rooms/${code}`).once('value'); const room=snap.val();
+  if(!room||!room.host) return 'לא מצאנו חדר עם הקוד הזה.';
+  if(room.state&&room.state.scr&&!(room.players&&room.players[NET.uid])) return 'המשחק בחדר הזה כבר התחיל.';
+  await NET.ref(`rooms/${code}/players/${NET.uid}`).set(meCard());
+  onlineOff(); ON={code,role:'client',players:{},offs:[],seq:0,lastV:0};
+  go('lobby'); return null;
+}
+SCREENS.lobby=(s)=>{
+  if(!ON) return go('online');
+  SND.setMood('board');
+  const host=ON.role==='host';
+  s.classList.add('scroll');
+  s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="יציאה">✕</button><div class="logo" style="font-size:34px">חדר משחק</div><span style="width:40px"></span></div>
+    <div class="card" style="text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center">
+      <span class="flabel">קוד החדר</span><div class="big-num" style="letter-spacing:10px">${ON.code}</div>
+      <p class="hint">${host?'שתפו את הקוד. כל אחד נכנס למשחק ← "משחק אונליין" ← מקליד את הקוד.':'מחכים שהמארח יתחיל את המשחק…'}</p>
+      ${host?'<button class="ghost" id="lbShare" style="width:auto">העתקת הזמנה</button>':''}
+    </div>
+    <div class="field"><span class="flabel" id="lbCount">שחקנים בחדר</span><div class="players" id="lbList"></div></div>
+    ${host?`<div class="field"><span class="flabel">המכשיר הזה</span><div class="seg" id="lbRole"><button data-v="1">גם משחק</button><button data-v="0">רק מסך ראשי</button></div>
+      <p class="hint">"מסך ראשי" מתאים לטלוויזיה או למחשב: הוא מציג את הלוח והשאלות, וכולם עונים מהטלפונים.</p></div>
+      <div class="field"><span class="flabel">שחקני מחשב שיצטרפו</span><div class="seg" id="lbBots">${[0,1,2,3,5,8].map(n=>`<button data-v="${n}">${n}</button>`).join('')}</div></div>
+      <div class="field"><button class="ghost" id="lbSet">הגדרות משחק: ${SET.time} שניות · ${{voice:'בקול',choices:'4 תשובות',host:'סימון עצמי'}[SET.answer]} · כוחות ${SET.powers?'פועלים':'כבויים'}</button></div>
+      <div class="sticky-foot"><button class="big" id="lbStart">התחלת המשחק</button></div>`:''}`;
+  $('#back').onclick=()=>modal({title:'לצאת מהחדר?',buttons:[{label:'יציאה',fn:()=>leaveRoom()},{label:'להישאר',cls:'ghost',fn:()=>{}}]});
+  const draw=()=>{ const ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
+    $('#lbCount').textContent=`שחקנים בחדר (${ps.length})`;
+    $('#lbList').innerHTML=ps.map(([u,p],i)=>`<div class="pl"><span class="av" style="background:${COLORS[i%COLORS.length]}">${esc(p.av||'🙂')}</span><b>${esc(p.name)}</b><span class="g">${u===NET.uid?'את/ה':''}</span></div>`).join('')||'<p class="hint">עוד אין שחקנים.</p>';
+    if(host){ const n=ps.length+(ON.bots||0); $('#lbStart').disabled=n<2; $('#lbStart').textContent=n<2?'צריך לפחות 2 שחקנים':`התחלת המשחק (${n} שחקנים)`; } };
+  if(!ON.listening){ ON.listening=true; listen(`rooms/${ON.code}/players`,v=>{ ON.players=v||{}; if(SCREEN==='lobby') draw(); });
+    if(!host) listen(`rooms/${ON.code}/state`,v=>{ if(v) clientState(v); });
+    if(!host) listen(`rooms/${ON.code}/host`,v=>{ if(v===null&&ON){ onlineOff(); go('home'); toast('🚪','המארח סגר את החדר'); } }); }
+  draw();
+  if(host){
+    ON.bots=ON.bots||0;
+    const segs=()=>{ s.querySelectorAll('#lbRole button').forEach(b=>b.classList.toggle('on',(b.dataset.v==='1')===ON.hostPlays)); s.querySelectorAll('#lbBots button').forEach(b=>b.classList.toggle('on',+b.dataset.v===ON.bots)); };
+    segs();
+    $('#lbRole').onclick=async e=>{ const b=e.target.closest('button'); if(!b) return; ON.hostPlays=b.dataset.v==='1'; segs();
+      const r=NET.ref(`rooms/${ON.code}/players/${NET.uid}`); if(ON.hostPlays) await r.set(meCard()); else await r.remove(); };
+    $('#lbBots').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; ON.bots=+b.dataset.v; segs(); draw(); };
+    $('#lbSet').onclick=()=>{ SETUP_ONLINE=true; go('setup'); };
+    $('#lbShare').onclick=()=>{ const t=`בואו לשחק טריטוריה! 🎮\nנכנסים ל"משחק אונליין" ומקלידים את הקוד: ${ON.code}\n${location.origin+location.pathname}#room${ON.code}`;
+      (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('📋','ההזמנה הועתקה','אפשר להדביק בוואטסאפ')).catch(()=>modal({title:'הזמנה',text:t,buttons:[{label:'סגירה',fn:()=>{}}]})); };
+    $('#lbStart').onclick=()=>hostStart();
+  }
+};
+let SETUP_ONLINE=false;
+async function leaveRoom(){
+  try{ if(ON){ if(ON.role==='host') await NET.ref(`rooms/${ON.code}`).remove(); else await NET.ref(`rooms/${ON.code}/players/${NET.uid}`).remove(); } }catch(e){}
+  onlineOff(); G=null; D=null; go('home');
+}
+
+/* ---------- host side ---------- */
+function hostStart(){
+  const ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
+  const used=ps.map(([,p])=>p.av);
+  let players=ps.map(([u,p])=>({name:String(p.name||'שחקן').slice(0,20),av:p.av||'🙂',g:p.g==='f'?'f':'m',human:true,remote:u===NET.uid?undefined:u}));
+  const bots=shuffle(BOT_NAMES.slice()).slice(0,ON.bots||0).map(([n,g])=>{ const av=pick(AVATARS.filter(a=>!used.includes(a))); used.push(av); return {name:n,av,g,human:false}; });
+  players=players.concat(bots);
+  listen(`rooms/${ON.code}/inputs`,v=>hostInputs(v||{}));
+  newGame(players);
+}
+const isRemote=p=>!!(p&&p.remote);
+const localHuman=p=>!!(p&&p.human&&!p.remote);
+function itemRef(cat,item){ if(!item) return null; const i=cat.items.indexOf(item); return i>=0?{i}:{g:{p:item.p,a:item.a}}; }
+function itemFrom(cat,ref){ if(!ref) return null; return ref.g?ref.g:cat.items[ref.i]; }
+let pushT=0;
+function pushState(){
+  if(!ON||ON.role!=='host'||!G) return;
+  if(pushT) return; pushT=setTimeout(()=>{ pushT=0; if(!ON||!G) return;
+    const perf=performance.now(), toSrv=x=>x>perf?Math.round(x-perf+NET.now()):0;
+    const st=$('#bstatus');
+    const v={v:++ON.ver,at:NET.now(),scr:(SCREEN==='duel'&&D)?'duel':'board',answer:SET.answer,powers:!!SET.powers,
+      b:{rows:G.rows,cols:G.cols,tiles:G.tiles,hl:G.hl==null?-1:G.hl,targets:G.targets?[...G.targets]:[],status:st?st.innerHTML:(ON.lastStatus||''),
+        players:G.players.map(p=>({id:p.id,name:p.name,av:p.av,g:p.g||'m',color:p.color,cat:p.cat,alive:p.alive,pw:p.pw||[],uid:p.remote||(localHuman(p)?NET.uid:''),bot:!p.human}))},
+      prompt:ON.prompt||null, over:ON.over==null?-1:ON.over};
+    if(st) ON.lastStatus=st.innerHTML;
+    if(D) v.d={p:D.p.map(x=>x.id),t:D.t.map(Math.round),T:D.T,active:D.active,cat:D.cat.id,item:itemRef(D.cat,D.item),qn:D.qn,lock:!!D.lock,running:!!D.running,ended:!!D.ended,
+      started:!!(D.running||D.ended||D.counting),win:D.win==null?-1:D.win,freeze:D.freezeUntil.map(toSrv),dbl:D.doubleUntil.map(toSrv),bomb:D.bombNext.map(Boolean),
+      feed:(($('#feed')||{}).textContent||'').slice(0,120),hist:D.hist.slice(-40).map(h=>({r:itemRef(D.cat,h.item),ok:h.ok})),ready:[...(ON.ready||[])]};
+    NET.ref(`rooms/${ON.code}/state`).set(v).catch(()=>{});
+  },90);
+}
+function askRemote(p,kind,data,ms){
+  return new Promise(res=>{
+    const id=++ON.promptN; ON.prompt={to:p.remote,kind,id,data:data||{}}; ON.pending={id,res,to:p.remote};
+    pushState();
+    if(ms) setTimeout(()=>{ if(ON&&ON.pending&&ON.pending.id===id){ ON.pending=null; ON.prompt=null; pushState(); res(null); } },ms);
+  });
+}
+function hostInputs(all){
+  for(const [uid,inp] of Object.entries(all)){
+    if(!inp||ON.lastIn[uid]>=inp.seq) continue; ON.lastIn[uid]=inp.seq;
+    const k=inp.kind, val=inp.val||{};
+    if(ON.pending&&ON.pending.to===uid&&val.pid===ON.pending.id){ const r=ON.pending.res; ON.pending=null; ON.prompt=null; r(val); pushState(); continue; }
+    if(!D) continue;
+    const ap=D.p[D.active];
+    if(k==='ready'){ ON.ready.add(uid); pushState(); const dueling=D.p.filter(isRemote).map(p=>p.remote); if(!D.running&&!D.counting&&!D.ended&&D.p.every(p=>!localHuman(p))&&dueling.every(u=>ON.ready.has(u))) countdown(); continue; }
+    if(!D.running||!ap||ap.remote!==uid||val.qn!==D.qn) continue;
+    if(k==='answer'){ if(val.ok) correct(); else pass(); }
+    else if(k==='power'&&POWERS[val.k]) duelPower(val.k);
+  }
+}
+
+/* ---------- client side ---------- */
+function sendInput(kind,val){ if(!ON) return; ON.seq=(ON.seq||0)+1; NET.ref(`rooms/${ON.code}/inputs/${NET.uid}`).set({seq:ON.seq,kind,val:val||{},t:NET.now()}).catch(()=>{}); }
+let CL=null;   // last state seen by this phone
+function clientState(v){
+  if(!ON||ON.role!=='client'||v.v<=(ON.lastV||0)) return; ON.lastV=v.v; CL=v;
+  SET.answer=v.answer; SET.powers=v.powers;
+  const me=NET.uid;
+  G={client:true,rows:v.b.rows,cols:v.b.cols,tiles:v.b.tiles,hl:v.b.hl<0?null:v.b.hl,targets:null,attacker:null,auto:false,used:{},
+     players:v.b.players.map(p=>({...p,human:p.uid===me,pw:p.pw||[]}))};
+  const myPrompt=v.prompt&&v.prompt.to===me?v.prompt:null;
+  if(v.b.targets&&v.b.targets.length) G.targets=new Set(v.b.targets);
+  if(v.over>=0){ const w=G.players[v.over]; if(SCREEN!=='board') go('board'); renderBoard(); setStatus(v.b.status); setActions([]);
+    if(!ON.overShown){ ON.overShown=true; SND.win(); FX.confetti(200); setTimeout(()=>modal({title:`${w.av} ${w.name} ${G_(w,'כבש','כבשה')} את כל הלוח!`,text:w.uid===me?'ניצחון מלא!':'תודה על המשחק!',buttons:[{label:'יציאה מהחדר',fn:()=>leaveRoom()}]}),700); }
+    return; }
+  if(v.scr==='duel'&&v.d){ clientDuel(v,myPrompt); return; }
+  if(D&&D.mirror){ D=null; $('#vignette').classList.remove('on'); }
+  if(SCREEN!=='board') go('board');
+  renderBoard(); setStatus(v.b.status); setActions([]);
+  const mine=G.players.find(p=>p.uid===me);
+  if(mine&&!mine.alive&&!ON.outShown){ ON.outShown=true; SND.lose(); toast('💥','הודחת מהמשחק','אפשר להמשיך לצפות'); }
+  if(myPrompt&&ON.answered!==myPrompt.id) clientPrompt(myPrompt);
+}
+function clientPrompt(pr){
+  const me=G.players.find(p=>p.uid===NET.uid); const reply=val=>{ ON.answered=pr.id; sendInput(pr.kind,{...val,pid:pr.id}); closeModal(); setActions([]); };
+  SND.badge(); buzz([40,30,40]);
+  if(pr.kind==='target'){
+    const ids=pr.data.ids||[]; G.targets=new Set(ids); G.pick=id=>reply({id,joker:!!G.joker}); renderBoard();
+    setStatus(`<b>${esc(me.name)}</b>, ${G_(me,'את מי אתה מאתגר?','את מי את מאתגרת?')}`);
+    const a=$('#bactions'); a.innerHTML=''; const list=document.createElement('div'); list.className='tgt-list'; G.joker=false;
+    if(pr.data.joker){ const jb=document.createElement('button'); jb.className='pw'; jb.style.alignSelf='center'; const paint=()=>{ jb.textContent=G.joker?`🃏 ג'וקר פעיל: הדו־קרב בקטגוריה שלך`:`🃏 להפעיל ג'וקר`; }; paint(); jb.onclick=()=>{ G.joker=!G.joker; paint(); }; a.appendChild(jb); }
+    ids.map(i=>G.players[i]).forEach(x=>{ const cat=catById(x.cat), b=document.createElement('button'); b.className='tgt-btn'; b.innerHTML=`<span class="av" style="background:${x.color}">${esc(x.av)}</span><b>${esc(x.name)}</b><span>${cat.icon} ${esc(cat.name)}</span>`; b.onclick=()=>G.pick(x.id); list.appendChild(b); });
+    a.appendChild(list);
+  } else if(pr.kind==='shield'){
+    const by=G.players[pr.data.by];
+    modal({title:`${by.name} ${G_(by,'תוקף','תוקפת')} אותך!`,text:'יש לך 🛡️ מגן. להפעיל אותו ולחסום את ההתקפה?',buttons:[{label:'🛡️ להפעיל מגן',fn:()=>reply({use:true})},{label:'לא, נלחמים',cls:'ghost',fn:()=>reply({use:false})}]});
+  } else if(pr.kind==='after'){
+    const n=document.createElement('div'); let keep=me.cat;
+    if(pr.data.lc&&pr.data.lc!==me.cat){ const wc=catById(me.cat), lc=catById(pr.data.lc);
+      n.innerHTML=`<p>איזו קטגוריה תהיה שלך מעכשיו?</p><div class="seg" id="kp"><button data-v="${me.cat}" class="on">${wc.icon} ${esc(wc.name)}</button><button data-v="${pr.data.lc}">${lc.icon} ${esc(lc.name)}</button></div>`;
+      n.querySelector('#kp').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; keep=b.dataset.v; n.querySelectorAll('#kp button').forEach(x=>x.classList.toggle('on',x===b)); }; }
+    const btns=[]; if(pr.data.canGo) btns.push({label:'לאתגר עוד שכן',fn:()=>reply({keep,go:true})});
+    btns.push({label:'חזרה להגרלה',cls:pr.data.canGo?'ghost':'big',fn:()=>reply({keep,go:false})});
+    modal({title:'ניצחת!',node:n,buttons:btns});
+  }
+}
+function clientDuel(v,myPrompt){
+  const d=v.d, cat=catById(d.cat); if(!cat) return;
+  const ps=d.p.map(i=>G.players[i]); const fresh=!D||!D.mirror||D.key!==d.p.join()+':'+cat.id;
+  const perf=performance.now(), fromSrv=x=>x?perf+(x-NET.now()):0;
+  const prevQn=D&&D.mirror?D.qn:-1, prevEnded=D&&D.mirror&&D.ended;
+  D=Object.assign(fresh?{mirror:true,key:d.p.join()+':'+cat.id,lock:false,loading:false}:D,{p:ps,T:d.T,active:d.active,cat,qn:d.qn,running:d.running,ended:d.ended,
+    snapT:d.t.slice(),snapAt:v.at,serverLock:d.lock,freezeUntil:d.freeze.map(fromSrv),doubleUntil:d.dbl.map(fromSrv),bombNext:d.bomb,hist:(d.hist||[]).map(h=>({item:itemFrom(cat,h.r),ok:h.ok})),
+    item:itemFrom(cat,d.item),streak:[0,0],win:d.win});
+  D.t=d.t.slice();
+  if(fresh||SCREEN!=='duel'){ go('duel'); }
+  const amIn=ps.some(p=>p.uid===NET.uid);
+  if(!d.started){
+    const st=$('#stage'), c=$('#controls'); renderClocks(true);
+    st.innerHTML=`<div class="vs"><div class="side l" style="--pc:${ps[0].color}"><div class="disc" style="background:${ps[0].color}">${esc(ps[0].av)}</div><b>${esc(ps[0].name)}</b></div><div class="x">VS</div><div class="side r" style="--pc:${ps[1].color}"><div class="disc" style="background:${ps[1].color}">${esc(ps[1].av)}</div><b>${esc(ps[1].name)}</b></div></div><div class="intro-cat">${cat.icon} ${esc(cat.name)}</div>`;
+    c.innerHTML='';
+    if(amIn){ const ready=(d.ready||[]).includes(NET.uid); const b=document.createElement('button'); b.className='big'; b.textContent=ready?'מחכים ליריב…':(SET.answer==='voice'?'🎤 אני מוכן/ה':'אני מוכן/ה'); b.disabled=ready;
+      b.onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); SND.init(); sendInput('ready',{}); b.disabled=true; b.textContent='מחכים ליריב…'; }; c.appendChild(b); }
+    else c.innerHTML='<div class="thinking">👀 צופים בדו־קרב</div>';
+    if(fresh){ SND.whoosh(); setTimeout(()=>{SND.slam();buzz(60)},380); }
+    return;
+  }
+  if(d.ended){ if(!prevEnded){ Mic.stop(); $('#vignette').classList.remove('on'); const w=ps[d.win], l=ps[1-d.win];
+      if(w.uid===NET.uid){ SND.win(); FX.confetti(120); } else if(l.uid===NET.uid) SND.lose();
+      $('#turn').textContent=''; renderClocks();
+      $('#stage').innerHTML=`<div class="result"><div class="crown">${esc(w.av)}</div><h3 style="color:${w.color}">${esc(w.name)} ${G_(w,'ניצח','ניצחה')}!</h3><div class="replay">${D.hist.filter(h=>h.item).map(h=>`<div class="rp ${h.ok?'ok':'no'}"><div class="th">${thumbHTML(cat,h.item)}</div><span>${esc(h.item.a[0])}</span></div>`).join('')}</div></div>`;
+      $('#controls').innerHTML='<div class="thinking">חוזרים ללוח…</div>'; }
+    return; }
+  if(fresh||prevQn!==d.qn){
+    if(prevQn>=0&&prevQn!==d.qn&&D.hist.length&&D.hist[D.hist.length-1].ok) { SND.ok(); FX.elBurst($('#stage .qcard'),'#38e09a',24,6); }
+    D.lock=false; D.loading=IMG_KINDS.has(cat.kind);
+    const p=D.p[D.active]; $('#turn').innerHTML=`התור של <b style="color:${p.color}">${esc(p.av)} ${esc(p.name)}</b>`; BG.setTint(hexToRgb(p.color));
+    const item=D.item; renderControls();
+    renderQuestion($('#stage'),cat,item,()=>{ if(D&&D.mirror&&D.item===item){ D.loading=false; renderControls(); } },()=>{});
+    if(!D.tick){ D.tick=true; const loop=()=>{ if(!D||!D.mirror||!D.running){ if(D) D.tick=false; return; } const now=NET.now(); const el=Math.max(0,now-Math.max(D.snapAt,D.freezeUntil[D.active]?D.freezeUntil[D.active]-performance.now()+now:0));
+        D.t=D.snapT.slice(); D.t[D.active]=Math.max(0,D.snapT[D.active]-el); renderClocks(); const ms=D.t[D.active]; $('#vignette').classList.toggle('on',ms<10000&&ms>0); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  } else if(d.lock&&!D.lock){ D.lock=true; SND.pass(); shakeEl($('#stage')); const r=document.createElement('div'); r.className='reveal'; r.innerHTML=`<small>התשובה</small>${esc(D.item.a[0])}`; $('#stage').appendChild(r); renderControls(); }
+  else renderControls();
+  const fb=$('#feed'); if(d.feed&&fb&&!fb.classList.contains('ok')) fb.textContent=d.feed;
+}
+
+/* ---------- daily leaderboard ---------- */
+async function dailySubmit(score){ if(Mic.inClaude) return; try{ await NET.load(); await NET.ref(`daily/${todayKey()}/${NET.uid}`).set({name:(SET.me.name||'שחקן').slice(0,20),av:SET.me.av,score}); }catch(e){} }
+async function dailyBoard(el){
+  if(Mic.inClaude||!el) return;
+  el.innerHTML='<p class="hint" style="text-align:center">טוען את טבלת היום…</p>';
+  try{ await NET.load(); const s=await NET.ref(`daily/${todayKey()}`).orderByChild('score').limitToLast(10).once('value'); const rows=[]; s.forEach(c=>{ rows.push({uid:c.key,...c.val()}); });
+    rows.sort((a,b)=>b.score-a.score);
+    el.innerHTML=rows.length?`<span class="flabel">טבלת היום</span><div class="list">${rows.map((r,i)=>`<div class="li" style="${r.uid===NET.uid?'border-color:var(--amber)':''}"><b style="width:22px;text-align:center">${i+1}</b><span style="font-size:22px">${esc(r.av||'🙂')}</span><div><b>${esc(r.name)}</b></div><b style="color:var(--amber)">${r.score}</b></div>`).join('')}</div>`:'<p class="hint" style="text-align:center">עוד אין תוצאות היום. היו הראשונים!</p>';
+  }catch(e){ el.innerHTML=''; }
+}
+
+
+/* =====================================================================
    BOOT
    ===================================================================== */
 BG.init(); FX.init();
 IDB.open().then(async ok=>{ if(ok){ MYCATS=await IDB.all(); syncMyCats(); if(SCREEN==='home') go('home'); } });
 if(SET.mode==='friends'&&!SET.friends.length) SET.mode='cpu';
-go(store.get('onboarded',false)?'home':'onboarding');
+go(store.get('onboarded',false)?(/^#room\d{4}$/.test(location.hash)&&!Mic.inClaude?'online':'home'):'onboarding');
 if('serviceWorker' in navigator && !Mic.inClaude && location.protocol==='https:'){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 </script>
 
