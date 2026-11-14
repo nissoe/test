@@ -110,14 +110,12 @@ h2.title{font-family:var(--font-d);font-size:46px;line-height:1;margin:0}
 
 /* ---------- board ---------- */
 .board-stage{position:relative;display:flex;justify-content:center;padding-block:6px 4px}
-.board{position:relative;display:grid;width:100%;max-width:min(100%,58vh);direction:ltr;border-radius:18px;padding:5px;
+.board{position:relative;display:grid;width:100%;max-width:min(100%,58vh);direction:ltr;border-radius:18px;padding:5px;overflow:hidden;
   background:linear-gradient(180deg,#0e1830,#0a1122);box-shadow:0 20px 50px rgba(0,0,0,.55),0 0 0 1px var(--line),inset 0 0 40px rgba(0,0,0,.6)}
 .tile{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  border:0 solid #0b1324;transition:filter .25s,opacity .25s,background-color .5s,transform .25s;padding:2px;overflow:hidden;
-  background-image:linear-gradient(150deg,rgba(255,255,255,.28),rgba(255,255,255,0) 45%,rgba(0,0,0,.28));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -2px 0 rgba(0,0,0,.25)}
-.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);transform:translateX(-120%);pointer-events:none}
-.tile.anchor::after{animation:sheen 6s ease-in-out infinite}
+  transition:filter .25s,opacity .25s,background-color .5s;padding:2px;overflow:visible;
+  background-image:linear-gradient(150deg,rgba(255,255,255,.26),rgba(255,255,255,0) 40%,rgba(0,0,0,.30))}
+.tile>*{position:relative;z-index:1}
 .tile .av{font-size:clamp(20px,8vw,40px);line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 .tile .nm{font-size:clamp(10px,2.9vw,13px);font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.7);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile .cn{font-size:clamp(9px,2.3vw,11px);opacity:.95;text-shadow:0 1px 2px rgba(0,0,0,.7);white-space:nowrap;background:rgba(0,0,0,.25);border-radius:999px;padding:1px 6px}
@@ -125,15 +123,16 @@ h2.title{font-family:var(--font-d);font-size:46px;line-height:1;margin:0}
 .board.small .tile .av{font-size:clamp(16px,6vw,28px)}
 .tile.dim{filter:saturate(.2) brightness(.45)}
 .tile.hl{filter:brightness(1.3);z-index:2}
-.tile.hl::before{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 3px #fff,inset 0 0 22px rgba(255,255,255,.7)}
+.tile.hl{box-shadow:none}
+.board .edges{position:absolute;inset:5px;width:calc(100% - 10px);height:calc(100% - 10px);pointer-events:none;z-index:3;overflow:visible}
 .tile.tgt{cursor:pointer;animation:tgt 1s ease-in-out infinite;z-index:1}
-@keyframes tgt{50%{filter:brightness(1.45);transform:scale(.96)}}
+@keyframes tgt{50%{filter:brightness(1.45)}}
 .tile.cap{animation:cap .6s cubic-bezier(.2,.9,.3,1.4) both}
 @keyframes cap{0%{transform:scale(1) rotateY(0);filter:brightness(1)}45%{transform:scale(.6) rotateY(90deg);filter:brightness(2.2)}100%{transform:scale(1) rotateY(0);filter:brightness(1)}}
 .spot{position:absolute;pointer-events:none;border-radius:50%;width:160px;height:160px;margin:-80px 0 0 -80px;
   background:radial-gradient(circle,rgba(255,240,200,.55),rgba(255,200,120,.18) 40%,transparent 70%);mix-blend-mode:screen;transition:left .12s ease-out,top .12s ease-out;z-index:4;opacity:0}
 .spot.on{opacity:1}
-.status{min-height:56px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:18px;line-height:1.4;padding-block:12px 8px;text-wrap:balance}
+.status{min-height:56px;display:grid;place-items:center;text-align:center;font-size:18px;line-height:1.4;padding-block:12px 8px;text-wrap:balance}
 .status b{color:var(--amber)}
 .actions{display:flex;flex-direction:column;gap:8px}
 .tgt-list{display:flex;flex-direction:column;gap:8px}
@@ -1344,6 +1343,7 @@ function editPlayer(p,isMe,done,remove){
    ===================================================================== */
 let G=null, D=null;
 function newGame(){
+  if(!SET.cats) SET.cats=CATS.filter(c=>!c.mine).map(c=>c.id);
   const s=SET; let players;
   if(s.mode==='cpu'){
     const bots=shuffle(BOT_NAMES.slice()).slice(0,s.size-1), used=[s.me.av];
@@ -1392,14 +1392,23 @@ function renderBoard(){
   G.tiles.forEach((o,i)=>{
     const p=G.players[o], t=document.createElement('div'); t.className='tile'; t.dataset.i=i; t.style.backgroundColor=p.color;
     const r=Math.floor(i/G.cols), c=i%G.cols, W=3, same=j=>G.tiles[j]===o;
-    t.style.borderTopWidth=(r>0&&same(i-G.cols))?'0':W+'px'; t.style.borderBottomWidth=(r<G.rows-1&&same(i+G.cols))?'0':W+'px';
-    t.style.borderLeftWidth=(c>0&&same(i-1))?'0':W+'px'; t.style.borderRightWidth=(c<G.cols-1&&same(i+1))?'0':W+'px';
-    const rad=8; t.style.borderRadius=[ (r===0||!same(i-G.cols))&&(c===0||!same(i-1))?rad:0, (r===0||!same(i-G.cols))&&(c===G.cols-1||!same(i+1))?rad:0, (r===G.rows-1||!same(i+G.cols))&&(c===G.cols-1||!same(i+1))?rad:0, (r===G.rows-1||!same(i+G.cols))&&(c===0||!same(i-1))?rad:0 ].map(v=>v+'px').join(' ');
+    const sT=r>0&&same(i-G.cols), sL=c>0&&same(i-1);
+    t.style.backgroundSize=`${G.cols*100}% ${G.rows*100}%`;
+    t.style.backgroundPosition=`${G.cols>1?c/(G.cols-1)*100:0}% ${G.rows>1?r/(G.rows-1)*100:0}%`;
+    if(sL) t.style.marginLeft='-1px'; if(sT) t.style.marginTop='-1px';
     if(anchors.has(i)){ const cat=catById(p.cat); t.classList.add('anchor'); t.innerHTML=`<span class="av">${p.av}</span><span class="nm">${esc(p.name)}</span><span class="cn">${cat.icon} ${esc(cat.name)}</span>`; }
     if(G.hl===o) t.classList.add('hl');
     if(G.targets){ if(G.targets.has(o)){ t.classList.add('tgt'); t.onclick=()=>{ if(G.attacker) attack(G.attacker,p) }; } else if(o!==G.hl) t.classList.add('dim'); }
     b.appendChild(t);
   });
+  const segs=[], hls=[];
+  const own=(r,c)=>(r<0||c<0||r>=G.rows||c>=G.cols)?-1:G.tiles[r*G.cols+c];
+  for(let r=0;r<=G.rows;r++) for(let c=0;c<G.cols;c++){ const A=own(r-1,c),B=own(r,c); if(A!==B){ if(A!==-1&&B!==-1) segs.push(`M${c} ${r}H${c+1}`); if(G.hl!=null&&(A===G.hl||B===G.hl)) hls.push(`M${c} ${r}H${c+1}`); } }
+  for(let c=0;c<=G.cols;c++) for(let r=0;r<G.rows;r++){ const A=own(r,c-1),B=own(r,c); if(A!==B){ if(A!==-1&&B!==-1) segs.push(`M${c} ${r}V${r+1}`); if(G.hl!=null&&(A===G.hl||B===G.hl)) hls.push(`M${c} ${r}V${r+1}`); } }
+  const sv=document.createElementNS('http://www.w3.org/2000/svg','svg'); sv.setAttribute('class','edges'); sv.setAttribute('viewBox',`0 0 ${G.cols} ${G.rows}`); sv.setAttribute('preserveAspectRatio','none');
+  sv.innerHTML=`<path d="${segs.join('')}" stroke="#0b1324" stroke-width="6" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke"/>`+
+    (hls.length?`<path d="${hls.join('')}" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke" style="filter:drop-shadow(0 0 6px rgba(255,255,255,.8))"/>`:'');
+  b.appendChild(sv);
   $('#aliveCount').textContent=`נשארו ${alive().length}`;
   const ro=$('#roster'); ro.innerHTML='';
   G.players.slice().sort((a,b)=>(b.alive-a.alive)||(countTiles(b.id)-countTiles(a.id))).forEach(p=>{
@@ -1407,7 +1416,7 @@ function renderBoard(){
     c.innerHTML=`<span style="font-size:16px">${p.av}</span>${esc(p.name)} ${p.alive?`<span style="opacity:.7">${catById(p.cat).icon} ${countTiles(p.id)}</span>`:''}`; ro.appendChild(c);
   });
 }
-function setStatus(h){ const e=$('#bstatus'); if(e) e.innerHTML=h }
+function setStatus(h){ const e=$('#bstatus'); if(e) e.innerHTML='<div>'+h+'</div>' }
 function setActions(list){ const a=$('#bactions'); if(!a) return; a.innerHTML=''; list.forEach(x=>{ const b=document.createElement('button'); b.className=x.cls||'big'; b.innerHTML=x.label; b.onclick=x.fn; a.appendChild(b) }); }
 function moveSpot(pid,on=true){
   const sp=$('#spot'), b=$('#board'); if(!sp||!b) return;
