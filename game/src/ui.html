@@ -551,6 +551,8 @@ function grantPower(p,quiet){
 const usePw=(p,k)=>{ const i=p.pw.indexOf(k); if(i>=0){ p.pw.splice(i,1); return true; } return false; };
 const SET=Object.assign({},DEF,store.get('set2',{}));
 const saveSet=()=>store.set('set2',SET);
+/* repair: an older version saved the seasonal pack as the only category */
+if(SET.cats&&SET.cats.length===1&&catById(SET.cats[0])&&catById(SET.cats[0]).season){ SET.cats=null; saveSet(); }
 /* categories added in an update start switched on */
 (()=>{ const all=CATS.filter(c=>!c.mine).map(c=>c.id), known=store.get('knownCats',null);
   if(SET.cats){ const add=known?all.filter(id=>!known.includes(id)):all.filter(id=>!SET.cats.includes(id)); if(add.length){ SET.cats=[...new Set([...SET.cats,...add])]; saveSet(); } }
@@ -677,7 +679,7 @@ SCREENS.home=(s)=>{
     </div>
     <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>`;
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
-  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
+  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); THEME=sp.id; go('setup'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
   if($('#hOnline')) $('#hOnline').onclick=()=>{ SND.click(); go('online'); };
   $('#hMine').onclick=()=>{ SND.click(); go('mycats'); };
@@ -687,6 +689,7 @@ SCREENS.home=(s)=>{
   $('#hHow').onclick=()=>go('onboarding');
   $('#hCredits').onclick=()=>go('credits');
 };
+let THEME=null;   // one-game theme (seasonal pack); never saved
 function seasonPack(){ const m=new Date().getMonth()+1; return CATS.find(c=>c.season&&c.season.includes(m)&&!(Mic.inClaude&&IMG_KINDS.has(c.kind))); }
 /* ---------- settings sheet ---------- */
 function openSettings(){
@@ -720,7 +723,7 @@ SCREENS.setup=(s)=>{
   s.classList.add('scroll');
   const render=()=>{
     const validCats=SET.cats.filter(id=>catById(id));
-    const OL=SETUP_ONLINE&&ON;
+    const OL=SETUP_ONLINE&&ON; const TH=!OL&&THEME&&catById(THEME);
     s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">${OL?'הגדרות החדר':'משחק חדש'}</div><span style="width:40px"></span></div>
     <div class="field" style="border:0;${OL?'display:none':''}"><span class="flabel">מי משחק</span>
       <div class="seg" data-key="mode"><button data-v="cpu">אני נגד המחשב</button><button data-v="friends">חברים על מכשיר אחד</button></div></div>
@@ -732,6 +735,7 @@ SCREENS.setup=(s)=>{
       <div class="field"><span class="flabel">שחקנים (2 עד 16)</span>
         <div class="row"><input class="inp" id="fName" maxlength="14" placeholder="שם של שחקן או שחקנית" autocomplete="off"><button class="ghost" style="width:auto" id="fAdd">הוספה</button></div>
         <div class="players" id="fList">${SET.friends.map((f,i)=>`<div class="pl" data-i="${i}"><span class="av" style="background:${COLORS[i%COLORS.length]}">${f.av}</span><b>${esc(f.name)}</b><span class="g">${f.g==='f'?'שחקנית':'שחקן'}${f.time?` · ⏱️ ${f.time} שנ׳`:''} · עריכה</span></div>`).join('')||'<p class="hint">הוסיפו לפחות שני שחקנים.</p>'}</div></div>`}
+    ${TH?`<div class="card" style="display:flex;align-items:center;gap:10px;border-color:var(--amber);margin-bottom:8px"><span style="font-size:30px">${TH.icon}</span><div style="flex:1"><b>משחק בנושא: ${esc(TH.name)}</b><br><small style="color:var(--muted)">כל השחקנים מקבלים את הקטגוריה הזו, רק בסבב הזה</small></div><button class="ghost" style="width:auto" id="thOff">ביטול</button></div>`:''}
     <div class="field"><span class="flabel">🎙️ קריין</span><div class="seg" id="setNarr"><button data-v="1" class="${NARR.on?'on':''}">עם קריין</button><button data-v="0" class="${NARR.on?'':'on'}">בלי קריין</button></div></div>
     <div class="field"><span class="flabel">מצב ילדים</span><div class="seg" data-key="kids" data-bool="1"><button data-v="false">רגיל</button><button data-v="true">🧸 מצב ילדים</button></div>
       <p class="hint">${SET.kids?'קטגוריות קלות, דקה לכל שחקן, השעון עוצר כשמדלגים, ומחשב קל.':'במצב ילדים: קטגוריות קלות, יותר זמן ובלי קנס על דילוג.'}</p></div>
@@ -744,6 +748,7 @@ SCREENS.setup=(s)=>{
     <div class="field"><div class="row" style="justify-content:space-between"><span class="flabel">קטגוריות (${validCats.length})</span><button class="chip" id="allCats">${validCats.length>=allCatIds().length?'נקה הכל':'בחר הכל'}</button></div>
       <div class="chips" id="catChips">${CATS.map(c=>{const on=SET.cats.includes(c.id), blocked=Mic.inClaude&&NET_KINDS.has(c.kind);
         return `<button class="chip ${on&&!blocked?'on':'off'}" data-c="${c.id}" ${blocked?'disabled':''}><span>${c.icon}</span>${esc(c.name)} ${c.season?'<span style="font-size:11px;color:var(--amber)">✨ עונתי</span> ':''}<span style="opacity:.6;font-size:12px">${c.kind==='gen'?'∞':c.items.length}</span></button>`}).join('')}</div>
+      ${validCats.length>0&&validCats.length<3?`<p class="hint" style="color:var(--amber)">⚠️ נבחרו רק ${validCats.length===1?'קטגוריה אחת':'שתי קטגוריות'}, כך שכל השחקנים יקבלו את אותה קטגוריה. כדאי לבחור עוד.</p>`:''}
       <p class="hint">${Mic.inClaude?`קטגוריות התמונות לא נטענות בתוך Claude. <a href="${SITE_URL}" target="_blank" rel="noopener" style="color:var(--amber)">פתחו את המשחק בדפדפן</a> כדי לשחק בהן.`:'המספר ליד כל קטגוריה הוא כמות הפריטים בה.'}</p></div>
     <div class="sticky-foot"><button class="big" id="startBtn">לזירה!</button></div>`;
     s.querySelectorAll('.seg[data-key]').forEach(seg=>{ seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',String(SET[seg.dataset.key])===b.dataset.v));
@@ -755,6 +760,7 @@ SCREENS.setup=(s)=>{
       $('#fAdd').onclick=add; $('#fName').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();add()} };
       s.querySelectorAll('#fList .pl').forEach(r=>r.onclick=()=>{ const i=+r.dataset.i; editPlayer(SET.friends[i],false,()=>{saveSet();render()},()=>{SET.friends.splice(i,1);saveSet();render()}); });
     }
+    if($('#thOff')) $('#thOff').onclick=()=>{ THEME=null; render(); };
     $('#setNarr').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; NARR.on=b.dataset.v==='1'; store.set('narr',NARR.on); SND.init(); if(NARR.on) NARR.say('welcome'); else NARR.stop(); render(); };
     s.querySelectorAll('#catChips .chip').forEach(b=>b.onclick=()=>{ const id=b.dataset.c; SET.cats=SET.cats.includes(id)?SET.cats.filter(x=>x!==id):[...SET.cats,id]; saveSet(); render(); });
     $('#allCats').onclick=()=>{ SET.cats = validCats.length>=allCatIds().length ? [] : allCatIds(); saveSet(); render(); };
@@ -798,6 +804,7 @@ function newGame(override){
   } else players=s.friends.map(f=>({...f,human:true}));
   const n=players.length, cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols), total=rows*cols;
   let pool=s.cats.filter(id=>catById(id)&&allCatIds().includes(id)&&!(override&&catById(id).mine)); if(!pool.length) pool=allCatIds().filter(id=>!catById(id).mine);
+  if(THEME&&!override&&catById(THEME)){ pool=[THEME]; THEME=null; }
   if(s.kids&&!(ON&&ON.pub)){ const k=pool.filter(id=>KIDS_CATS.includes(id)); pool=k.length?k:KIDS_CATS.filter(id=>allCatIds().includes(id)); }
   const cats=shuffle(pool.slice());
   shuffle(players);
