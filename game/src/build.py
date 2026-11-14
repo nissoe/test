@@ -7,7 +7,10 @@ cred_path=os.path.join(here,'credits.json')
 cred=json.load(open(cred_path,encoding='utf8')) if os.path.exists(cred_path) else {}
 import datetime,zoneinfo
 stamp=datetime.datetime.now(zoneinfo.ZoneInfo('Asia/Jerusalem')).strftime('%d.%m %H:%M')
-data+='\nconst BUILD="'+stamp+'";'
+import subprocess
+try: n=int(subprocess.check_output(['git','rev-list','--count','HEAD'],cwd=root).strip())+1
+except Exception: n=0
+data+='\nconst BUILD="'+stamp+'";\nconst VERSION="1.'+str(n)+'";'
 data+='\nconst CREDITS='+json.dumps(cred,ensure_ascii=False,separators=(',',':'))+';\n'
 online=open(os.path.join(here,'online.js'),encoding='utf8').read()
 hero=open(os.path.join(here,'hero-board.svg'),encoding='utf8').read()

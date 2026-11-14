@@ -38,7 +38,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 #flash{position:fixed;inset:0;pointer-events:none;z-index:6;opacity:0;background:#fff}
 #flash.go{animation:flash .45s ease-out}
 @keyframes flash{0%{opacity:.55}100%{opacity:0}}
-#app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;max-width:600px;margin:0 auto;
+#ver{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 2px);text-align:center;font-size:10.5px;color:var(--muted);opacity:.75;pointer-events:none;z-index:15;font-variant-numeric:tabular-nums;letter-spacing:.3px}
+#app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;max-width:600px;margin:0 auto;padding-bottom:14px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .scr{flex:1;min-height:0;display:flex;flex-direction:column;padding-block:12px;animation:scrIn .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes scrIn{from{opacity:0;transform:translateY(14px) scale(.985)}}
@@ -317,6 +318,7 @@ a.mic{color:var(--amber);border-color:var(--amber)}
 <div id="flash"></div>
 <div id="app" dir="rtl" lang="he"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
+<div id="ver" dir="rtl"></div>
 <div class="ov" id="ov" hidden><div class="sheet" id="sheet" dir="rtl"></div></div>
 <div id="toasts" dir="rtl"></div>
 
@@ -636,8 +638,7 @@ SCREENS.home=(s)=>{
         ${row('hSettings','⚙️','הגדרות','צלילים, מוזיקה ודיווחים')}
       </div>
     </div>
-    <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>
-    <p class="hint" style="text-align:center;opacity:.6;font-size:12px">גרסה ${BUILD}</p>`;
+    <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>`;
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
   if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
@@ -665,6 +666,7 @@ function openSettings(){
   if(REPORTS.length){ const txt=REPORTS.map(r=>`${r.cat} | ${r.a} | ${r.u}`).join('\n'); n.querySelector('#sList').value=txt;
     n.querySelector('#sCopy').onclick=()=>{ const ta=n.querySelector('#sList'); (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('📋','הרשימה הועתקה')).catch(()=>{ta.select();toast('📋','סמנו והעתיקו את הטקסט')}); };
     n.querySelector('#sClear').onclick=()=>{ REPORTS=[]; store.set('reports',REPORTS); closeModal(); openSettings(); }; }
+  const v=document.createElement('p'); v.className='hint'; v.style.textAlign='center'; v.textContent=`גרסה ${VERSION} · עודכנה ${BUILD}`; n.appendChild(v);
   modal({title:'הגדרות',node:n,buttons:[{label:'סגירה',fn:()=>{}}]});
 }
 
@@ -1427,6 +1429,7 @@ SCREENS.credits=(s)=>{
    BOOT
    ===================================================================== */
 BG.init(); FX.init();
+$('#ver').textContent=`גרסה ${VERSION} · ${BUILD}`;
 IDB.open().then(async ok=>{ if(ok){ MYCATS=await IDB.all(); syncMyCats(); if(SCREEN==='home') go('home'); } });
 if(SET.mode==='friends'&&!SET.friends.length) SET.mode='cpu';
 go(store.get('onboarded',false)?(/^#room\d{4}$/.test(location.hash)&&!Mic.inClaude?'online':'home'):'onboarding');
