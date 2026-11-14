@@ -7,7 +7,8 @@ cred_path=os.path.join(here,'credits.json')
 cred=json.load(open(cred_path,encoding='utf8')) if os.path.exists(cred_path) else {}
 data+='\nconst CREDITS='+json.dumps(cred,ensure_ascii=False,separators=(',',':'))+';\n'
 online=open(os.path.join(here,'online.js'),encoding='utf8').read()
-page=ui.replace('/*__DATA__*/',data).replace('/*__ONLINE__*/',online)
+hero=open(os.path.join(here,'hero-board.svg'),encoding='utf8').read()
+page=ui.replace('<!--HERO-->',hero).replace('/*__DATA__*/',data).replace('/*__ONLINE__*/',online)
 open(os.path.join(root,'app.html'),'w',encoding='utf8').write(page)
 head=('<!doctype html>\n<html lang="he" dir="rtl"><head><meta charset="utf-8">'
  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'

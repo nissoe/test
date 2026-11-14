@@ -93,3 +93,16 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
 </svg>'''
 open(__file__.replace('icon_gen.py','icon-art.svg'),'w').write(svg)
 print('ok')
+
+# hero drawing for the home screen: the same board, transparent, no title
+import re as _re
+hero=svg
+hero=_re.sub(r'<rect width="1024" height="1024" fill="url\(#bg\)"/>','',hero)
+hero=_re.sub(r'  <rect y="\{?[0-9]+\}?" width="1024".*?\n','',hero)
+hero=_re.sub(r'  <g stroke="url\(#gridfade\)".*?</g>\n','',hero,flags=_re.S)
+hero=_re.sub(r'  <ellipse cx="512" cy="500" rx="520".*?/>\n','',hero)
+hero=_re.sub(r'  <text .*?</text>\n','',hero,flags=_re.S)
+hero=_re.sub(r'  <g filter="url\(#titleglow\)">.*?</g>\n','',hero,flags=_re.S)
+hero=_re.sub(r'<path d="M2[0-9]{2} [0-9]+l10 26.*?/>|<path d="M8[0-9]{2} [0-9]+l[68] .*?/>|<path d="M1[0-9]{2} [0-9]+l6 15.*?/>','',hero)
+hero=hero.replace('viewBox="0 0 1024 1024"','viewBox="150 40 724 640" class="hero-art" aria-hidden="true"')
+open(__file__.replace('icon_gen.py','hero-board.svg'),'w').write(hero)

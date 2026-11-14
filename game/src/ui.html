@@ -81,19 +81,23 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 h2.title{font-family:var(--font-d);font-size:46px;line-height:1;margin:0}
 
 /* ---------- home ---------- */
-.home-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding-block:18px 8px}
-.home-hero .logo{font-size:min(28vw,128px)}
+.home-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding-block:6px 10px}
+.home-hero .logo{font-size:min(23vw,104px)}
 .home-hero .tag{color:var(--muted);line-height:1.5;margin:0;max-width:34ch}
-.hero-board{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:150px;transform:perspective(500px) rotateX(38deg) rotateZ(-8deg);margin-block:6px 4px}
-.hero-board i{aspect-ratio:1;border-radius:4px;display:block;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
-.menu{display:flex;flex-direction:column;gap:10px;padding-top:8px}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile-btn{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px;border-radius:16px;background:rgba(22,35,61,.8);border:1px solid var(--line);text-align:start;backdrop-filter:blur(6px);transition:transform .12s}
-.tile-btn:active{transform:scale(.97)}
-.tile-btn .ti{font-size:24px}
-.tile-btn b{font-size:16px}
-.tile-btn small{color:var(--muted);font-size:12px;line-height:1.35}
-.daily-badge{font-size:12px;color:#231403;background:var(--amber);border-radius:999px;padding:2px 8px;font-weight:700}
+.hero-wrap{width:min(46vw,190px);animation:float 4s ease-in-out infinite}
+.hero-art{display:block;width:100%;height:auto;overflow:visible}
+.menu{display:flex;flex-direction:column;gap:12px;padding-top:6px}
+.mlist{display:flex;flex-direction:column;gap:8px}
+.mrow{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:12px;width:100%;min-height:70px;padding:10px 14px;border-radius:16px;
+  background:rgba(22,35,61,.82);border:1px solid var(--line);text-align:start;backdrop-filter:blur(6px);transition:transform .12s,border-color .2s}
+.mrow:active{transform:scale(.98)}
+.mrow:hover{border-color:color-mix(in srgb,var(--amber) 50%,var(--line))}
+.mrow .mi{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:var(--panel-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.mrow .mt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.mrow b{font-size:17px;display:flex;align-items:center;gap:8px}
+.mrow small{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .chev{color:var(--muted);font-size:24px;line-height:1}
+.mtag{font-size:11px;font-weight:700;color:#231403;background:var(--amber);border-radius:999px;padding:2px 8px}
 .foot-links{display:flex;justify-content:center;gap:16px;padding-block:14px 4px}
 .foot-links button{color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
 
@@ -603,40 +607,36 @@ SCREENS.onboarding=(s)=>{
 /* ---------- home ---------- */
 SCREENS.home=(s)=>{
   SND.setMood('board'); BG.setTint([255,181,71]);
-  const dailyDone=STATS.daily[todayKey()];
+  const dailyDone=STATS.daily[todayKey()], sp=seasonPack();
   s.classList.add('scroll');
-  const heroCols=['#e8553a','#2f8fd8','#2fbf71','#e0a428','#9b5de5','#e0457b','#20b2aa','#f08a24'];
+  const row=(id,ic,title,sub,tag)=>`<button class="mrow" id="${id}"><span class="mi">${ic}</span><span class="mt"><b>${title}${tag?` <span class="mtag">${tag}</span>`:''}</b><small>${sub}</small></span><span class="chev" aria-hidden="true">‹</span></button>`;
   s.innerHTML=`<div class="home-hero">
-      <div class="hero-board" id="heroBoard">${Array.from({length:16},()=>`<i></i>`).join('')}</div>
+      <div class="hero-wrap"><!--HERO--></div>
       <h1 class="logo">טריטוריה</h1>
       <p class="tag">טריוויה של שטחים. רואים תמונה, אומרים תשובה, כובשים את הלוח.</p>
     </div>
     <div class="menu">
-      ${seasonPack()?`<button class="tile-btn season" id="hSeason" style="flex-direction:row;align-items:center;gap:12px;border-color:var(--amber);background:linear-gradient(120deg,rgba(255,181,71,.18),rgba(22,35,61,.85))"><span class="ti" style="font-size:34px">${seasonPack().icon}</span><span style="display:flex;flex-direction:column;gap:2px"><b>חבילה עונתית: ${esc(seasonPack().name)}</b><small>${seasonPack().items.length} תמונות חדשות · לחצו למשחק בנושא</small></span></button>`:''}
       <button class="big" id="hPlay">משחק חדש</button>
-      <div class="menu-grid">
-        <button class="tile-btn" id="hDaily"><span class="ti">📅</span><b>אתגר יומי ${dailyDone!=null?'':'<span class="daily-badge">חדש</span>'}</b><small>${dailyDone!=null?`היום: ${dailyDone} נקודות`:'60 שניות, כמה שיותר תשובות'}</small></button>
-        ${Mic.inClaude?'':`<button class="tile-btn" id="hOnline" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:12px"><span class="ti" style="font-size:30px">🌐</span><span style="display:flex;flex-direction:column;gap:2px"><b>משחק אונליין</b><small>כל אחד מהטלפון שלו, או טלוויזיה כמסך ראשי</small></span></button>`}
-        <button class="tile-btn" id="hMine"><span class="ti">📸</span><b>הקטגוריות שלי</b><small>${MYCATS.length?MYCATS.length+' קטגוריות':'יוצרים עם תמונות מהטלפון'}</small></button>
-        <button class="tile-btn" id="hStats"><span class="ti">🏅</span><b>הישגים</b><small>${STATS.ach.length}/${ACH.length} הישגים · ${STATS.wins} ניצחונות</small></button>
-        <button class="tile-btn" id="hSettings"><span class="ti">⚙️</span><b>הגדרות</b><small>צלילים, מוזיקה ודיווחים</small></button>
+      <div class="mlist">
+        ${sp?row('hSeason',sp.icon,esc(sp.name),`${sp.items.length} תמונות בנושא העונה`,'עונתי'):''}
+        ${row('hDaily','📅','אתגר יומי',dailyDone!=null?`התוצאה שלך היום: ${dailyDone}`:'60 שניות, אותן שאלות לכולם',dailyDone!=null?'':'חדש')}
+        ${Mic.inClaude?'':row('hOnline','🌐','משחק אונליין','משחק פתוח או חדר פרטי עם חברים')}
+        ${row('hMine','📸','הקטגוריות שלי',MYCATS.length?`${MYCATS.length} קטגוריות`:'יוצרים קטגוריה מתמונות בטלפון')}
+        ${row('hStats','🏅','הישגים',`${STATS.ach.length} מתוך ${ACH.length} · ${STATS.wins} ניצחונות`)}
+        ${row('hSettings','⚙️','הגדרות','צלילים, מוזיקה ודיווחים')}
       </div>
     </div>
     <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>`;
-  const hb=[...$('#heroBoard').children];
-  const paint=()=>hb.forEach(t=>t.style.background=pick(heroCols));
-  paint(); const iv=setInterval(()=>{ if(SCREEN!=='home') return clearInterval(iv); const t=pick(hb); t.style.transition='background .6s'; t.style.background=pick(heroCols); },700);
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
-  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); const sp=seasonPack(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
+  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
-  $('#hMine').onclick=()=>{ SND.click(); go('mycats'); };
   if($('#hOnline')) $('#hOnline').onclick=()=>{ SND.click(); go('online'); };
+  $('#hMine').onclick=()=>{ SND.click(); go('mycats'); };
   $('#hStats').onclick=()=>{ SND.click(); go('stats'); };
   $('#hSettings').onclick=()=>{ SND.click(); openSettings(); };
   $('#hHow').onclick=()=>go('onboarding');
   $('#hCredits').onclick=()=>go('credits');
 };
-
 function seasonPack(){ const m=new Date().getMonth()+1; return CATS.find(c=>c.season&&c.season.includes(m)&&!(Mic.inClaude&&IMG_KINDS.has(c.kind))); }
 /* ---------- settings sheet ---------- */
 function openSettings(){
