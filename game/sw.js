@@ -1,5 +1,5 @@
 // Offline support: the game shell is cached; photos are cached as they are seen.
-const SHELL='terr-shell-v3', IMGS='terr-img-v1';
+const SHELL='terr-shell-v4', IMGS='terr-img-v1';
 self.addEventListener('install',e=>{e.waitUntil(caches.open(SHELL).then(c=>c.addAll(['./','./index.html','./icon.svg','./icon-180.png','./icon-192.png','./icon-512.png','./manifest.webmanifest'])).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==SHELL&&k!==IMGS).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{

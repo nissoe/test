@@ -9,6 +9,8 @@
     <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter>
     <filter id="lineglow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="crownglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="titlegrad" gradientUnits="userSpaceOnUse" x1="0" y1="700" x2="0" y2="850"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#ffe1ad"/><stop offset="1" stop-color="#ffb547"/></linearGradient>
+    <filter id="titleglow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="12" result="b"/><feFlood flood-color="#ffb547" flood-opacity=".55"/><feComposite in2="b" operator="in" result="g"/><feOffset in="SourceAlpha" dy="5" result="o"/><feFlood flood-color="#1a0d00" flood-opacity=".55"/><feComposite in2="o" operator="in" result="sh"/><feMerge><feMergeNode in="g"/><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
   <rect width="1024" height="1024" fill="url(#bg)"/>
   <!-- arena floor -->
@@ -16,6 +18,7 @@
     <path d="M512 640L-200 1024M512 640L0 1024M512 640L200 1024M512 640L380 1024M512 640L512 1024M512 640L644 1024M512 640L824 1024M512 640L1024 1024M512 640L1224 1024"/>
     <path d="M0 800H1024M0 880H1024M0 960H1024"/>
   </g>
+  <g transform="translate(512 400) scale(.78) translate(-512 -470)">
   <ellipse cx="512" cy="650" rx="380" ry="170" fill="url(#glow)"/>
   <!-- board slab -->
   <g transform="translate(512 636) scale(1 .58) rotate(45) translate(-170 -170)">
@@ -50,5 +53,9 @@
     <path d="M806 214l8 20 20 8-20 8-8 20-8-20-20-8 20-8z" opacity=".8"/>
     <path d="M820 470l6 15 15 6-15 6-6 15-6-15-15-6 15-6z" opacity=".6"/>
     <path d="M190 520l6 15 15 6-15 6-6 15-6-15-15-6 15-6z" opacity=".55"/>
+  </g>
+  </g>
+  <g filter="url(#titleglow)">
+    <text x="512" y="842" text-anchor="middle" direction="rtl" font-family="Karantina" font-weight="700" font-size="206" letter-spacing="2" fill="url(#titlegrad)">טריטוריה</text>
   </g>
 </svg>
