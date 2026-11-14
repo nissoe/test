@@ -732,6 +732,7 @@ SCREENS.setup=(s)=>{
       <div class="field"><span class="flabel">שחקנים (2 עד 16)</span>
         <div class="row"><input class="inp" id="fName" maxlength="14" placeholder="שם של שחקן או שחקנית" autocomplete="off"><button class="ghost" style="width:auto" id="fAdd">הוספה</button></div>
         <div class="players" id="fList">${SET.friends.map((f,i)=>`<div class="pl" data-i="${i}"><span class="av" style="background:${COLORS[i%COLORS.length]}">${f.av}</span><b>${esc(f.name)}</b><span class="g">${f.g==='f'?'שחקנית':'שחקן'}${f.time?` · ⏱️ ${f.time} שנ׳`:''} · עריכה</span></div>`).join('')||'<p class="hint">הוסיפו לפחות שני שחקנים.</p>'}</div></div>`}
+    <div class="field"><span class="flabel">🎙️ קריין</span><div class="seg" id="setNarr"><button data-v="1" class="${NARR.on?'on':''}">עם קריין</button><button data-v="0" class="${NARR.on?'':'on'}">בלי קריין</button></div></div>
     <div class="field"><span class="flabel">מצב ילדים</span><div class="seg" data-key="kids" data-bool="1"><button data-v="false">רגיל</button><button data-v="true">🧸 מצב ילדים</button></div>
       <p class="hint">${SET.kids?'קטגוריות קלות, דקה לכל שחקן, השעון עוצר כשמדלגים, ומחשב קל.':'במצב ילדים: קטגוריות קלות, יותר זמן ובלי קנס על דילוג.'}</p></div>
     <div class="field"><span class="flabel">רמת השאלות</span><div class="seg" data-key="qdiff"><button data-v="easy">קלות</button><button data-v="mixed">מתחילות קל ומתקשות</button><button data-v="hard">קשות</button></div></div>
@@ -754,6 +755,7 @@ SCREENS.setup=(s)=>{
       $('#fAdd').onclick=add; $('#fName').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();add()} };
       s.querySelectorAll('#fList .pl').forEach(r=>r.onclick=()=>{ const i=+r.dataset.i; editPlayer(SET.friends[i],false,()=>{saveSet();render()},()=>{SET.friends.splice(i,1);saveSet();render()}); });
     }
+    $('#setNarr').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; NARR.on=b.dataset.v==='1'; store.set('narr',NARR.on); SND.init(); if(NARR.on) NARR.say('welcome'); else NARR.stop(); render(); };
     s.querySelectorAll('#catChips .chip').forEach(b=>b.onclick=()=>{ const id=b.dataset.c; SET.cats=SET.cats.includes(id)?SET.cats.filter(x=>x!==id):[...SET.cats,id]; saveSet(); render(); });
     $('#allCats').onclick=()=>{ SET.cats = validCats.length>=allCatIds().length ? [] : allCatIds(); saveSet(); render(); };
     const ok=validCats.some(id=>allCatIds().includes(id)) && (SET.mode==='cpu'||SET.friends.length>=2);
