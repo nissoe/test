@@ -184,6 +184,9 @@ h2.title{font-family:var(--font-d);font-size:46px;line-height:1;margin:0}
 .logo-card{width:min(60vw,240px);aspect-ratio:1;max-width:100%;background:#fff;border-radius:28px;display:flex;align-items:center;justify-content:center;padding:14%;box-shadow:0 16px 40px rgba(0,0,0,.45)}
 .logo-card.dark{background:#1d2433}
 .logo-card svg{width:100%;height:100%}
+.qcard .pic.sil{filter:brightness(0) invert(1) drop-shadow(0 0 22px rgba(255,255,255,.55))}
+.ph.blurin{animation:blurIn 9s cubic-bezier(.3,0,.6,1) forwards}
+@keyframes blurIn{from{filter:blur(28px) saturate(.6)}to{filter:blur(0) saturate(1)}}
 .loading{color:var(--muted);font-size:15px;display:flex;flex-direction:column;align-items:center;gap:10px}
 .loading::before{content:"";width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--amber);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -575,7 +578,10 @@ const Mic={
     try{ this.rec.start() }catch(e){}
   },
   stop(){ this.want=false; if(this.d) this.d.stop().catch(()=>{}); if(this.rec){ try{this.rec.stop()}catch(e){} } this.setState('off'); },
-  setState(s){ this.state=s; renderMic(); }
+  setState(s){ this.state=s; renderMic(); },
+  lastLen:new Map(),
+  /* called when a new question starts: anything already said is ignored */
+  turnStart(){ for(const [k,n] of this.lastLen) this.consumed.set(k,Math.max(this.consumed.get(k)||0,n)); }
 };
 Mic.init();
 
@@ -684,7 +690,7 @@ SCREENS.setup=(s)=>{
     <div class="field"><span class="flabel">זמן לכל שחקן בדו־קרב</span><div class="seg" data-key="time" data-num="1"><button data-v="30">30 שניות</button><button data-v="45">45 שניות</button><button data-v="60">60 שניות</button></div></div>
     <div class="field"><div class="row" style="justify-content:space-between"><span class="flabel">קטגוריות (${validCats.length})</span><button class="chip" id="allCats">${validCats.length>=allCatIds().length?'נקה הכל':'בחר הכל'}</button></div>
       <div class="chips" id="catChips">${CATS.map(c=>{const on=SET.cats.includes(c.id), blocked=Mic.inClaude&&IMG_KINDS.has(c.kind);
-        return `<button class="chip ${on&&!blocked?'on':'off'}" data-c="${c.id}" ${blocked?'disabled':''}><span>${c.icon}</span>${esc(c.name)} ${c.season?'<span style="font-size:11px;color:var(--amber)">✨ עונתי</span> ':''}<span style="opacity:.6;font-size:12px">${c.items.length}</span></button>`}).join('')}</div>
+        return `<button class="chip ${on&&!blocked?'on':'off'}" data-c="${c.id}" ${blocked?'disabled':''}><span>${c.icon}</span>${esc(c.name)} ${c.season?'<span style="font-size:11px;color:var(--amber)">✨ עונתי</span> ':''}<span style="opacity:.6;font-size:12px">${c.kind==='gen'?'∞':c.items.length}</span></button>`}).join('')}</div>
       <p class="hint">${Mic.inClaude?`קטגוריות התמונות לא נטענות בתוך Claude. <a href="${SITE_URL}" target="_blank" rel="noopener" style="color:var(--amber)">פתחו את המשחק בדפדפן</a> כדי לשחק בהן.`:'המספר ליד כל קטגוריה הוא כמות הפריטים בה.'}</p></div>
     <div class="sticky-foot"><button class="big" id="startBtn">לזירה!</button></div>`;
     s.querySelectorAll('.seg[data-key]').forEach(seg=>{ seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',String(SET[seg.dataset.key])===b.dataset.v));
@@ -986,17 +992,19 @@ function renderQuestion(box,cat,item,onReady,onFail){
     f.onclick=e=>{ e.stopPropagation(); REPORTS.push({cat:cat.name,a:item.a[0],u:item.p.slice(0,200)}); store.set('reports',REPORTS); toast('⚑','התמונה סומנה','הרשימה נמצאת בהגדרות'); f.disabled=true; }; return f; };
   if(IMG_KINDS.has(cat.kind)){
     box.innerHTML=`${ask}<div class="loading">טוען תמונה…</div>`;
-    const img=new Image(); img.alt=''; img.className='ph'+(cat.kind==='crest'?' sil':'')+(cat.kind==='map'?' map':'');
+    const img=new Image(); img.alt=''; img.className='ph'+(cat.kind==='crest'?' sil':'')+(cat.kind==='map'?' map':'')+(cat.blur?' blurin':'');
     if(cat.kind==='crest') img.crossOrigin='anonymous';
     img.onload=()=>{ if(cat.kind==='crest'&&isOpaque(img)) img.classList.replace('sil','gray'); const w=document.createElement('div'); w.className='ph-wrap'; w.appendChild(img); wrap.appendChild(w); if(!cat.mine) wrap.appendChild(flag()); box.innerHTML=ask; box.appendChild(wrap); onReady&&onReady(); };
     img.onerror=()=>onFail&&onFail();
     img.src=item.p; return;
   }
   if(cat.kind==='logo'){ const [hex,d]=LOGOS[item.p]; wrap.innerHTML=`<div class="logo-card${lum(hex)>.75?' dark':''}"><svg viewBox="0 0 24 24" role="img" aria-label="לוגו"><path fill="#${hex}" d="${d}"/></svg></div>`; }
-  else if(cat.kind==='pic') wrap.innerHTML=`<div class="pic">${item.p}</div>`;
+  else if(cat.kind==='pic'){ const n=emojiCount(item.p), st=n>1?` style="font-size:min(${Math.floor(78/n)}vw,${Math.floor(300/n)}px);white-space:nowrap;letter-spacing:.05em"`:'';
+    wrap.innerHTML=`<div class="pic${cat.sil?' sil':''}"${st}>${item.p}</div>`; }
   else wrap.innerHTML=`<div class="txt" dir="auto">${esc(item.p)}</div>`;
   box.innerHTML=ask; box.appendChild(wrap); onReady&&onReady();
 }
+function emojiCount(t){ try{ return [...new Intl.Segmenter('he',{granularity:'grapheme'}).segment(t)].filter(x=>x.segment.trim()).length; }catch(e){ return Math.max(1,Math.round([...t].length/2)); } }
 function thumbHTML(cat,item){
   if(IMG_KINDS.has(cat.kind)) return `<img src="${item.p}" alt="" loading="lazy"${cat.kind==='crest'?' style="object-fit:contain;background:#fff"':''}>`;
   if(cat.kind==='logo'){ const [hex,d]=LOGOS[item.p]; return `<svg viewBox="0 0 24 24" width="38" height="38"><path fill="#${hex}" d="${d}"/></svg>`; }
@@ -1071,7 +1079,7 @@ document.addEventListener('visibilitychange',()=>{ if(D&&D.running) D.last=perfo
 const cur=()=>D.p[D.active];
 function nextQuestion(){
   if(!D||!D.running) return;
-  D.lock=false; D.item=D.next||drawItem(D.cat); D.qn++; D.next=drawItem(D.cat); preload(D.next,D.cat);
+  D.lock=false; D.item=D.next||drawItem(D.cat); D.qn++; D.next=drawItem(D.cat); preload(D.next,D.cat); Mic.turnStart();
   const p=cur(); BG.setTint(hexToRgb(p.color));
   $('#turn').innerHTML=`התור של <b style="color:${p.color}">${p.av} ${esc(p.name)}</b>`;
   const fb=$('#feed'); if(!fb.classList.contains('ok')) fb.textContent='';
@@ -1143,7 +1151,7 @@ function renderControls(){
     h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); }
     c.appendChild(h);
   }
-  if(SET.answer==='voice'){ const m=document.createElement('button'); m.className='mic'; m.id='micPill'; m.onclick=()=>{ if(Mic.denied&&!Mic.inClaude) Mic.denied=false; if(Mic.available()&&Mic.state!=='on') Mic.start(); }; c.appendChild(m); renderMic(); }
+  if(SET.answer==='voice'&&D.p.some(localHuman)){ const m=document.createElement('button'); m.className='mic'; m.id='micPill'; m.onclick=()=>{ if(Mic.denied&&!Mic.inClaude) Mic.denied=false; if(Mic.available()&&Mic.state!=='on') Mic.start(); }; c.appendChild(m); renderMic(); }
   const dp=(p.pw||[]).filter(k=>POWERS[k].at==='duel');
   if(SET.powers&&humanTurn&&dp.length){ const bar=document.createElement('div'); bar.className='pw-bar';
     [...new Set(dp)].forEach(k=>{ const n=dp.filter(x=>x===k).length, b=document.createElement('button'); b.className='pw'; b.innerHTML=`${POWERS[k].ic} ${POWERS[k].n}${n>1?' ×'+n:''}`; b.title=POWERS[k].d; b.onclick=()=>duelPower(k); bar.appendChild(b); });
@@ -1172,15 +1180,17 @@ function renderMic(){
     const why={'not-allowed':'הדפדפן חוסם את המיקרופון. אשרו גישה בהגדרות האתר ולחצו כאן שוב','service-not-allowed':'שירות זיהוי הדיבור כבוי. באייפון: הגדרות ← כללי ← מקלדת ← "הפעלת הכתבה". לחצו כאן לנסות שוב','audio-capture':'לא נמצא מיקרופון, או שאפליקציה אחרת משתמשת בו. לחצו כאן לנסות שוב'};
     if(Mic.denied){ m.textContent=(why[Mic.err]||why['not-allowed'])+(Mic.err?` (${Mic.err})`:''); m.disabled=false; }
     else { m.textContent='זיהוי דיבור לא זמין בדפדפן הזה. נסו Chrome באנדרואיד או Safari באייפון'; m.disabled=true; }
-  } else if(Mic.state==='on'){ m.innerHTML='<span class="eq"><i></i><i></i><i></i><i></i></span> מקשיב… אמרו את התשובה'; m.disabled=false; }
+  } else if(Mic.state==='on'&&D&&D.running&&!localHuman(cur())&&!(DAILY&&DAILY.running)){ m.textContent='🎤 המיקרופון ממתין לתור שלך'; m.classList.remove('on'); m.disabled=false; }
+  else if(Mic.state==='on'){ m.innerHTML='<span class="eq"><i></i><i></i><i></i><i></i></span> מקשיב… אמרו את התשובה'; m.disabled=false; }
   else if(Mic.state==='starting'){ m.textContent='🎤 מפעיל מיקרופון…'; m.disabled=false; }
   else { m.textContent='🎤 המיקרופון כבוי. לחצו להפעלה'; m.disabled=false; }
 }
 function onSpeech(key,alts){
+  Mic.lastLen.set(key,Math.max(0,...alts.map(a=>norm(a).length)));
   if(DAILY&&DAILY.running) return dailySpeech(key,alts);
   if(!D||!D.running) return;
-  const fb=$('#feed'); if(!D.lock&&!fb.classList.contains('ok')) fb.textContent=alts[0]?`"${alts[0].trim()}"`:'';
-  if(D.lock||D.loading||!localHuman(cur())) return;
+  if(D.lock||D.loading||!localHuman(cur())) return;   // not this phone's turn: ignore and show nothing
+  const fb=$('#feed'); if(!fb.classList.contains('ok')){ const used=Mic.consumed.get(key)||0, f=norm(alts[0]||'').slice(used).trim(); fb.textContent=f?`"${f}"`:''; }
   const used=Mic.consumed.get(key)||0;
   for(const alt of alts){ const n=norm(alt), fresh=n.slice(used).trim(); if(fresh&&matches(fresh,D.item.a)){ Mic.consumed.set(key,n.length); return correct(); } }
   for(const alt of alts){ const n=norm(alt), fresh=n.slice(used).trim(); if(PASS_RE.test(fresh)){ Mic.consumed.set(key,n.length); return pass(); } }
@@ -1290,7 +1300,7 @@ function dailyTick(now){
 }
 function dailyNext(){
   const Y=DAILY; if(!Y.running) return; if(Y.i>=Y.qs.length) return dailyEnd();
-  const [cat,item]=Y.qs[Y.i]; Y.lock=false; Y.loading=IMG_KINDS.has(cat.kind);
+  const [cat,item]=Y.qs[Y.i]; Y.lock=false; Y.loading=IMG_KINDS.has(cat.kind); Mic.turnStart();
   if(Y.qs[Y.i+1]) preload(Y.qs[Y.i+1][1],Y.qs[Y.i+1][0]);
   $('#dyIcon').textContent=cat.icon; $('#dyCat').textContent=cat.name;
   dailyControls();
