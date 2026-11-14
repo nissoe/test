@@ -5,6 +5,9 @@ ui=open(os.path.join(here,'ui.html'),encoding='utf8').read()
 data=open(os.path.join(here,'data.js'),encoding='utf8').read()
 cred_path=os.path.join(here,'credits.json')
 cred=json.load(open(cred_path,encoding='utf8')) if os.path.exists(cred_path) else {}
+import datetime,zoneinfo
+stamp=datetime.datetime.now(zoneinfo.ZoneInfo('Asia/Jerusalem')).strftime('%d.%m %H:%M')
+data+='\nconst BUILD="'+stamp+'";'
 data+='\nconst CREDITS='+json.dumps(cred,ensure_ascii=False,separators=(',',':'))+';\n'
 online=open(os.path.join(here,'online.js'),encoding='utf8').read()
 hero=open(os.path.join(here,'hero-board.svg'),encoding='utf8').read()

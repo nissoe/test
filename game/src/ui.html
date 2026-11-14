@@ -513,6 +513,10 @@ function grantPower(p,quiet){
 const usePw=(p,k)=>{ const i=p.pw.indexOf(k); if(i>=0){ p.pw.splice(i,1); return true; } return false; };
 const SET=Object.assign({},DEF,store.get('set2',{}));
 const saveSet=()=>store.set('set2',SET);
+/* categories added in an update start switched on */
+(()=>{ const all=CATS.filter(c=>!c.mine).map(c=>c.id), known=store.get('knownCats',null);
+  if(SET.cats){ const add=known?all.filter(id=>!known.includes(id)):all.filter(id=>!SET.cats.includes(id)); if(add.length){ SET.cats=[...new Set([...SET.cats,...add])]; saveSet(); } }
+  store.set('knownCats',all); })();
 const STATS=Object.assign({games:0,wins:0,duels:0,duelWins:0,correct:0,passes:0,bestStreak:0,catCorrect:{},daily:{},ach:[]},store.get('stats',{}));
 const saveStats=()=>store.set('stats',STATS);
 let REPORTS=store.get('reports',[]);
@@ -632,7 +636,8 @@ SCREENS.home=(s)=>{
         ${row('hSettings','⚙️','הגדרות','צלילים, מוזיקה ודיווחים')}
       </div>
     </div>
-    <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>`;
+    <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>
+    <p class="hint" style="text-align:center;opacity:.6;font-size:12px">גרסה ${BUILD}</p>`;
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
   if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
