@@ -225,6 +225,19 @@ a.mic{color:var(--amber);border-color:var(--amber)}
 .mic .eq i{width:3px;background:var(--good);border-radius:2px;animation:eq .8s ease-in-out infinite}
 .mic .eq i:nth-child(2){animation-delay:.15s}.mic .eq i:nth-child(3){animation-delay:.3s}.mic .eq i:nth-child(4){animation-delay:.45s}
 @keyframes eq{0%,100%{height:4px}50%{height:14px}}
+.pw-bar{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pw{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:700;
+  background:linear-gradient(180deg,#3a3f8f,#232a63);border:1px solid #7f8cff;box-shadow:0 0 14px rgba(127,140,255,.45);animation:pwIn .4s cubic-bezier(.2,.9,.3,1.4) both}
+.pw:active{transform:scale(.95)}
+@keyframes pwIn{from{transform:scale(.4);opacity:0}}
+.clock.frozen{border-color:#7fdcff!important;box-shadow:0 0 30px #7fdcff!important}
+.clock.frozen .t{color:#d5f4ff!important;text-shadow:0 0 18px #7fdcff!important;animation:none!important}
+.clock.frozen::after{content:"❄️";position:absolute;top:6px;left:10px;font-size:20px;animation:float 1.5s ease-in-out infinite}
+.clock.bombed{border-color:#ff8a3d!important;box-shadow:0 0 30px #ff6a1d!important}
+.clock.bombed::after{content:"💣";position:absolute;top:6px;left:10px;font-size:20px;animation:beat .5s infinite}
+.pw-mini{font-size:12px;letter-spacing:1px}
+.shield-fx{position:absolute;inset:0;display:grid;place-items:center;font-size:120px;z-index:6;pointer-events:none;animation:shieldFx 1.2s ease-out forwards;filter:drop-shadow(0 0 30px #7fdcff)}
+@keyframes shieldFx{0%{transform:scale(.2);opacity:0}30%{transform:scale(1.15);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(1.4);opacity:0}}
 .thinking{text-align:center;color:var(--muted);padding:16px;font-size:16px}
 .thinking span{display:inline-block;animation:bob 1s infinite}
 @keyframes bob{50%{transform:translateY(-4px)}}
@@ -469,7 +482,23 @@ const hexToRgb=c=>{ const m=/hsl\((\d+)/.exec(c); if(m){ const h=+m[1]/360, s=.6
 const AVATARS=['🦁','🐯','🦊','🐼','🐨','🐸','🦉','🦄','🐙','🦖','🐳','🦅','🐺','🐻','🐧','🦒','🐝','🦋','🚀','⚡','🔥','🌟','👑','🎯','🎸','⚽','🏀','🍕','🌵','🎩','🤖','👽','🧠','💎'];
 const COLORS=[8,205,140,45,282,330,172,24,228,96,302,186,60,252,350,155].map(h=>`hsl(${h} 62% 50%)`);
 const BOT_NAMES=[['נועה','f'],['איתי','m'],['מאיה','f'],['עומר','m'],['תמר','f'],['יונתן','m'],['שירה','f'],['אורי','m'],['ליה','f'],['דניאל','m'],['רוני','f'],['אלון','m'],['הדר','f'],['גיא','m'],['יעל','f'],['עידו','m'],['מיכל','f'],['אריאל','m'],['נגה','f'],['בן','m']];
-const DEF={mode:'cpu',me:{name:'',av:'🦁',g:'m'},size:9,diff:'normal',qdiff:'mixed',answer:'voice',time:45,cats:null,friends:[]};
+const DEF={mode:'cpu',me:{name:'',av:'🦁',g:'m'},size:9,diff:'normal',qdiff:'mixed',answer:'voice',time:45,cats:null,friends:[],powers:true};
+const POWERS={
+  freeze:{ic:'❄️',n:'עצירת זמן',d:'השעון שלך עוצר ל־5 שניות',at:'duel'},
+  skip:{ic:'⏭️',n:'דילוג חינם',d:'מדלגים בלי קנס של 3 שניות',at:'duel'},
+  hint:{ic:'💡',n:'רמז',d:'האות הראשונה ומספר האותיות (ב־4 תשובות: מוחק שתי שגויות)',at:'duel'},
+  steal:{ic:'🧲',n:'גניבת זמן',d:'לוקחים 5 שניות מהשעון של היריב',at:'duel'},
+  bomb:{ic:'💣',n:'פצצת זמן',d:'בתור הבא של היריב, השעון שלו רץ כפול ל־6 שניות',at:'duel'},
+  shield:{ic:'🛡️',n:'מגן',d:'חוסם התקפה אחת עליך',at:'defend'},
+  joker:{ic:'🃏',n:"ג'וקר",d:'תוקפים בקטגוריה שלך במקום של היריב',at:'attack'},
+};
+const PW_KEYS=Object.keys(POWERS);
+function grantPower(p,quiet){
+  if(!SET.powers||!p.pw||p.pw.length>=3) return;
+  const k=pick(PW_KEYS); p.pw.push(k);
+  if(p.human&&!quiet&&!(G&&G.auto)){ const P=POWERS[k]; setTimeout(()=>{ toast(P.ic,`${p.name} ${G_(p,'קיבל','קיבלה')} כוח: ${P.n}`,P.d); SND.badge(); },500); }
+}
+const usePw=(p,k)=>{ const i=p.pw.indexOf(k); if(i>=0){ p.pw.splice(i,1); return true; } return false; };
 const SET=Object.assign({},DEF,store.get('set2',{}));
 const saveSet=()=>store.set('set2',SET);
 const STATS=Object.assign({games:0,wins:0,duels:0,duelWins:0,correct:0,passes:0,bestStreak:0,catCorrect:{},daily:{},ach:[]},store.get('stats',{}));
@@ -578,6 +607,7 @@ SCREENS.home=(s)=>{
       <p class="tag">טריוויה של שטחים. רואים תמונה, אומרים תשובה, כובשים את הלוח.</p>
     </div>
     <div class="menu">
+      ${seasonPack()?`<button class="tile-btn season" id="hSeason" style="flex-direction:row;align-items:center;gap:12px;border-color:var(--amber);background:linear-gradient(120deg,rgba(255,181,71,.18),rgba(22,35,61,.85))"><span class="ti" style="font-size:34px">${seasonPack().icon}</span><span style="display:flex;flex-direction:column;gap:2px"><b>חבילה עונתית: ${esc(seasonPack().name)}</b><small>${seasonPack().items.length} תמונות חדשות · לחצו למשחק בנושא</small></span></button>`:''}
       <button class="big" id="hPlay">משחק חדש</button>
       <div class="menu-grid">
         <button class="tile-btn" id="hDaily"><span class="ti">📅</span><b>אתגר יומי ${dailyDone!=null?'':'<span class="daily-badge">חדש</span>'}</b><small>${dailyDone!=null?`היום: ${dailyDone} נקודות`:'60 שניות, כמה שיותר תשובות'}</small></button>
@@ -591,6 +621,7 @@ SCREENS.home=(s)=>{
   const paint=()=>hb.forEach(t=>t.style.background=pick(heroCols));
   paint(); const iv=setInterval(()=>{ if(SCREEN!=='home') return clearInterval(iv); const t=pick(hb); t.style.transition='background .6s'; t.style.background=pick(heroCols); },700);
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
+  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); const sp=seasonPack(); SET.cats=[sp.id]; saveSet(); go('setup'); toast(sp.icon,'החבילה העונתית נבחרה','אפשר להוסיף עוד קטגוריות'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
   $('#hMine').onclick=()=>{ SND.click(); go('mycats'); };
   $('#hStats').onclick=()=>{ SND.click(); go('stats'); };
@@ -599,6 +630,7 @@ SCREENS.home=(s)=>{
   $('#hCredits').onclick=()=>go('credits');
 };
 
+function seasonPack(){ const m=new Date().getMonth()+1; return CATS.find(c=>c.season&&c.season.includes(m)&&!(Mic.inClaude&&IMG_KINDS.has(c.kind))); }
 /* ---------- settings sheet ---------- */
 function openSettings(){
   const n=document.createElement('div'); n.style.cssText='display:flex;flex-direction:column;gap:12px';
@@ -639,14 +671,16 @@ SCREENS.setup=(s)=>{
     <div class="field"><span class="flabel">רמת השאלות</span><div class="seg" data-key="qdiff"><button data-v="easy">קלות</button><button data-v="mixed">מתחילות קל ומתקשות</button><button data-v="hard">קשות</button></div></div>
     <div class="field"><span class="flabel">איך עונים</span><div class="seg" data-key="answer"><button data-v="voice">🎤 בקול</button><button data-v="choices">4 תשובות</button><button data-v="host">מנחה מסמן</button></div>
       <p class="hint">${{voice:'אומרים את התשובה בקול. "דלג" כדי לעבור (3 שניות קנס).',choices:'לוחצים על התשובה הנכונה. טעות עולה 3 שניות.',host:'מישהו מחזיק את הטלפון ולוחץ "נכון" או "דלג".'}[SET.answer]}</p></div>
+    <div class="field"><span class="flabel">כוחות מיוחדים</span><div class="seg" data-key="powers" data-bool="1"><button data-v="true">פועלים</button><button data-v="false">כבויים</button></div>
+      <p class="hint">${SET.powers?'כל שחקן מתחיל עם כוח אחד ומקבל עוד אחד על כל ניצחון בדו־קרב (עד 3): '+PW_KEYS.map(k=>POWERS[k].ic+' '+POWERS[k].n).join(' · '):'משחק קלאסי, בלי כוחות.'}</p></div>
     <div class="field"><span class="flabel">זמן לכל שחקן בדו־קרב</span><div class="seg" data-key="time" data-num="1"><button data-v="30">30 שניות</button><button data-v="45">45 שניות</button><button data-v="60">60 שניות</button></div></div>
     <div class="field"><div class="row" style="justify-content:space-between"><span class="flabel">קטגוריות (${validCats.length})</span><button class="chip" id="allCats">${validCats.length>=allCatIds().length?'נקה הכל':'בחר הכל'}</button></div>
       <div class="chips" id="catChips">${CATS.map(c=>{const on=SET.cats.includes(c.id), blocked=Mic.inClaude&&IMG_KINDS.has(c.kind);
-        return `<button class="chip ${on&&!blocked?'on':'off'}" data-c="${c.id}" ${blocked?'disabled':''}><span>${c.icon}</span>${esc(c.name)} <span style="opacity:.6;font-size:12px">${c.items.length}</span></button>`}).join('')}</div>
+        return `<button class="chip ${on&&!blocked?'on':'off'}" data-c="${c.id}" ${blocked?'disabled':''}><span>${c.icon}</span>${esc(c.name)} ${c.season?'<span style="font-size:11px;color:var(--amber)">✨ עונתי</span> ':''}<span style="opacity:.6;font-size:12px">${c.items.length}</span></button>`}).join('')}</div>
       <p class="hint">${Mic.inClaude?`קטגוריות התמונות לא נטענות בתוך Claude. <a href="${SITE_URL}" target="_blank" rel="noopener" style="color:var(--amber)">פתחו את המשחק בדפדפן</a> כדי לשחק בהן.`:'המספר ליד כל קטגוריה הוא כמות הפריטים בה.'}</p></div>
     <div class="sticky-foot"><button class="big" id="startBtn">לזירה!</button></div>`;
     s.querySelectorAll('.seg[data-key]').forEach(seg=>{ seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',String(SET[seg.dataset.key])===b.dataset.v));
-      seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return; SND.click(); SET[seg.dataset.key]=seg.dataset.num?Number(b.dataset.v):b.dataset.v; saveSet(); render(); }; });
+      seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return; SND.click(); SET[seg.dataset.key]=seg.dataset.num?Number(b.dataset.v):seg.dataset.bool?b.dataset.v==='true':b.dataset.v; saveSet(); render(); }; });
     $('#back').onclick=()=>go('home');
     if(SET.mode==='cpu') $('#meRow').onclick=()=>editPlayer(SET.me,true,()=>{saveSet();render()});
     else {
@@ -693,7 +727,7 @@ function newGame(){
   let pool=s.cats.filter(id=>catById(id)&&allCatIds().includes(id)); if(!pool.length) pool=allCatIds();
   const cats=shuffle(pool.slice());
   shuffle(players);
-  players=players.map((p,i)=>({...p,id:i,color:COLORS[i%COLORS.length],cat:cats[i%cats.length],alive:true}));
+  players=players.map((p,i)=>({...p,id:i,color:COLORS[i%COLORS.length],cat:cats[i%cats.length],alive:true,pw:SET.powers?[pick(PW_KEYS)]:[]}));
   const tiles=new Array(total).fill(-1), order=shuffle([...Array(total).keys()]);
   players.forEach((p,i)=>tiles[order[i]]=p.id);
   let guard=0; while(tiles.includes(-1)&&guard++<100) tiles.forEach((o,i)=>{ if(o!==-1) return; const nb=adjTiles(i,rows,cols).map(j=>tiles[j]).filter(x=>x!==-1); if(nb.length) tiles[i]=pick(nb); });
@@ -753,7 +787,7 @@ function renderBoard(){
   const ro=$('#roster'); ro.innerHTML='';
   G.players.slice().sort((a,b)=>(b.alive-a.alive)||(countTiles(b.id)-countTiles(a.id))).forEach(p=>{
     const c=document.createElement('span'); c.className='chip'+(p.alive?'':' out');
-    c.innerHTML=`<span style="font-size:16px">${p.av}</span>${esc(p.name)} ${p.alive?`<span style="opacity:.7">${catById(p.cat).icon} ${countTiles(p.id)}</span>`:''}`; ro.appendChild(c);
+    c.innerHTML=`<span style="font-size:16px">${p.av}</span>${esc(p.name)} ${p.alive?`<span style="opacity:.7">${catById(p.cat).icon} ${countTiles(p.id)}</span>${p.pw&&p.pw.length?`<span class="pw-mini">${p.pw.map(k=>POWERS[k].ic).join('')}</span>`:''}`:''}`; ro.appendChild(c);
   });
 }
 function setStatus(h){ const e=$('#bstatus'); if(e) e.innerHTML='<div>'+h+'</div>' }
@@ -794,17 +828,39 @@ async function chooseTarget(p){
     G.attacker=p; G.targets=new Set(nb.map(x=>x.id)); renderBoard(); moveSpot(p.id);
     setStatus(`<b>${esc(p.name)}</b>, ${G_(p,'את מי אתה מאתגר?','את מי את מאתגרת?')}<br><span style="font-size:14px;color:var(--muted)">הדו־קרב יהיה בקטגוריה של היריב</span>`);
     const a=$('#bactions'); a.innerHTML=''; const list=document.createElement('div'); list.className='tgt-list';
+    G.joker=false;
+    if(p.pw.includes('joker')){ const jb=document.createElement('button'); jb.className='pw'; jb.style.alignSelf='center';
+      const paint=()=>{ jb.innerHTML=G.joker?`🃏 ג'וקר פעיל: הדו־קרב בקטגוריה שלך (${catById(p.cat).icon} ${esc(catById(p.cat).name)})`:`🃏 להפעיל ג'וקר: לתקוף בקטגוריה שלך`; list.querySelectorAll('.tgt-btn span:last-child').forEach((sp,k)=>{ const c=catById(G.joker?p.cat:nb[k].cat); sp.textContent=c.icon+' '+c.name; }); };
+      jb.onclick=()=>{ G.joker=!G.joker; SND.click(); paint(); }; a.appendChild(jb); setTimeout(paint,0); }
     nb.forEach(x=>{ const cat=catById(x.cat), b=document.createElement('button'); b.className='tgt-btn';
       b.innerHTML=`<span class="av" style="background:${x.color}">${x.av}</span><b>${esc(x.name)}</b><span>${cat.icon} ${esc(cat.name)}</span>`; b.onclick=()=>attack(p,x); list.appendChild(b); });
     a.appendChild(list);
   } else {
     const hum=nb.filter(x=>x.human), target=hum.length&&Math.random()<.5?pick(hum):pick(nb);
+    G.joker=p.pw.includes('joker')&&Math.random()<.35;
     G.targets=new Set([target.id]); renderBoard(); moveSpot(p.id);
     setStatus(`<b>${esc(p.name)}</b> ${G_(p,'בוחר','בוחרת')} יריב…`);
     await sleep(G.auto?250:900); attack(p,target);
   }
 }
-function attack(a,d){ G.targets=null; G.attacker=null; SND.click(); const cat=catById(d.cat); if(!a.human&&!d.human) return simulate(a,d,cat); openDuel(a,d,cat); }
+async function attack(a,d){
+  G.targets=null; G.attacker=null; SND.click();
+  let cat=catById(d.cat);
+  if(G.joker&&usePw(a,'joker')){ cat=catById(a.cat); G.joker=false; if(!G.auto){ setStatus(`🃏 <b>${esc(a.name)}</b> ${G_(a,'שולף','שולפת')} ג'וקר! הדו־קרב בקטגוריה ${cat.icon} ${esc(cat.name)}`); SND.whoosh(); FX.elBurst($('#bstatus'),'#c58bff',30,6); await sleep(1300); } }
+  G.joker=false;
+  if(d.pw&&d.pw.includes('shield')){
+    let use;
+    if(d.human&&!G.auto) use=await new Promise(res=>modal({title:`${a.name} ${G_(a,'תוקף','תוקפת')} את ${d.name}!`,text:`ל${d.name} יש 🛡️ מגן. להפעיל אותו ולחסום את ההתקפה?`,buttons:[{label:'🛡️ להפעיל מגן',fn:()=>res(true)},{label:'לא, נלחמים',cls:'ghost',fn:()=>res(false)}]}));
+    else use=Math.random()<.6;
+    if(use){ usePw(d,'shield'); renderBoard();
+      if(!G.auto){ const st=$('.board-stage'); const f=document.createElement('div'); f.className='shield-fx'; f.textContent='🛡️'; st.appendChild(f); setTimeout(()=>f.remove(),1300);
+        SND.slam(); SND.tone(1200,.4,{type:'sine',vol:.15,to:600}); buzz([40,40,40]); FX.elBurst(st,'#7fdcff',40,8); }
+      setStatus(`🛡️ <b>${esc(d.name)}</b> ${G_(d,'חסם','חסמה')} את ההתקפה של <b>${esc(a.name)}</b>!`);
+      await sleep(G.auto?400:1800); return nextTurn(); }
+  }
+  if(!a.human&&!d.human) return simulate(a,d,cat);
+  openDuel(a,d,cat);
+}
 async function simulate(a,d,cat){
   setActions([]); G.hl=a.id; G.targets=new Set([d.id]); renderBoard();
   setStatus(`${a.av} <b>${esc(a.name)}</b> נגד ${d.av} <b>${esc(d.name)}</b><br><span style="color:var(--muted);font-size:15px">${cat.icon} ${esc(cat.name)}</span>`);
@@ -812,6 +868,7 @@ async function simulate(a,d,cat){
   await sleep(G.auto?650:1700);
   const w=Math.random()<.5?a:d, l=w===a?d:a;
   setStatus(`<b>${esc(w.name)}</b> ${G_(w,'ניצח','ניצחה')} את <b>${esc(l.name)}</b>`);
+  grantPower(w,true);
   await capture(w,l);
   await sleep(G.auto?300:700);
   afterDuel(w,l);
@@ -923,7 +980,7 @@ function thumbHTML(cat,item){
 function openDuel(a,d,cat){
   closeModal();
   const T=SET.time*1000;
-  D={p:[a,d],t:[T,T],T,active:0,cat,item:null,next:null,lock:false,running:false,raf:0,last:0,botTimer:0,lockTimer:0,ended:false,qn:0,hist:[],streak:[0,0],loading:false,fails:0,beatAt:0};
+  D={p:[a,d],t:[T,T],T,active:0,cat,item:null,next:null,lock:false,running:false,raf:0,last:0,botTimer:0,lockTimer:0,ended:false,qn:0,hist:[],streak:[0,0],loading:false,fails:0,beatAt:0,freezeUntil:[0,0],doubleUntil:[0,0],bombNext:[false,false]};
   go('duel'); SND.setMood('duel'); BG.setTint(hexToRgb(a.color));
 };
 SCREENS.duel=(s)=>{
@@ -955,7 +1012,8 @@ function renderClocks(build){
     c.querySelector('.t').textContent=ms<10000?(ms/1000).toFixed(1):String(Math.ceil(ms/1000));
     c.querySelector('.bar i').style.transform=`scaleX(${ms/D.T})`;
     c.classList.toggle('act',act); c.classList.toggle('low',ms<10000);
-    c.style.borderColor=act?D.p[i].color:''; c.style.boxShadow=act?`0 0 26px ${D.p[i].color}`:''; });
+    c.style.borderColor=act?D.p[i].color:''; c.style.boxShadow=act?`0 0 26px ${D.p[i].color}`:'';
+    const nw=performance.now(); c.classList.toggle('frozen',nw<D.freezeUntil[i]); c.classList.toggle('bombed',nw<D.doubleUntil[i]||D.bombNext[i]); });
 }
 async function countdown(){
   $('#controls').innerHTML=''; const st=$('#stage');
@@ -967,7 +1025,8 @@ async function countdown(){
 function tick(now){
   if(!D||!D.running) return;
   const dt=Math.min(250,now-D.last); D.last=now;
-  if(!D.loading) D.t[D.active]-=dt;
+  const nowp=performance.now(); let k=1; if(nowp<D.freezeUntil[D.active]) k=0; else if(nowp<D.doubleUntil[D.active]) k=2;
+  if(!D.loading) D.t[D.active]-=dt*k;
   const ms=D.t[D.active], vig=$('#vignette');
   if(ms<10000&&ms>0){ vig.classList.add('on'); const sec=Math.ceil(ms/1000); if(sec!==D.beatAt){ D.beatAt=sec; SND.heart(); if(sec<=3) buzz(40); } } else vig.classList.remove('on');
   if(D.t[D.active]<=0){ D.t[D.active]=0; renderClocks(); return endDuel(1-D.active); }
@@ -990,7 +1049,8 @@ function nextQuestion(){
 function armBot(){
   clearTimeout(D.botTimer); const p=cur(); if(p.human) return;
   const cfg=DIFF[SET.diff]||DIFF.normal, delay=cfg.think*(.45+Math.random());
-  D.botTimer=setTimeout(()=>{ if(!D||!D.running||D.lock) return; if(Math.random()<cfg.acc){ correct(); } else pass(); },delay);
+  if(SET.powers&&p.pw&&Math.random()<.22){ const k=['freeze','steal','bomb'].find(x=>p.pw.includes(x)); if(k) setTimeout(()=>{ if(D&&D.running&&cur()===p&&!D.lock) duelPower(k); },400); }
+  D.botTimer=setTimeout(()=>{ if(!D||!D.running||D.lock) return; if(Math.random()<cfg.acc){ correct(); } else if(p.pw&&p.pw.includes('skip')) duelPower('skip'); else pass(); },delay);
 }
 function imagesDown(){
   if(!D) return; D.running=false; D.ended=true; cancelAnimationFrame(D.raf); clearTimeout(D.botTimer); clearTimeout(D.lockTimer); Mic.stop(); D=null;
@@ -1002,7 +1062,8 @@ function renderControls(){
   if(D.running&&!p.human){ c.innerHTML=`<div class="thinking"><span>🤖</span> ${esc(p.name)} ${G_(p,'חושב','חושבת')}…</div>`; }
   else if(SET.answer==='choices'){
     const g=document.createElement('div'); g.className='opts';
-    (D.item?options(D.cat,D.item):['','','','']).forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.disabled=!humanTurn;
+    if(D.item&&D.optsFor!==D.item){ D.opts=options(D.cat,D.item); D.optsFor=D.item; }
+    (D.item?D.opts:['','','','']).forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.disabled=!humanTurn;
       b.onclick=()=>{ if(D.lock) return; if(D.item.a[0]===o){ b.classList.add('right'); correct(); } else { b.classList.add('wrong'); g.querySelectorAll('.opt').forEach(x=>{ if(x.textContent===D.item.a[0]) x.classList.add('right') }); pass(); } };
       g.appendChild(b); });
     c.appendChild(g); const sk=document.createElement('button'); sk.className='ghost'; sk.textContent='דלג'; sk.disabled=!humanTurn; sk.onclick=()=>pass(); c.appendChild(sk);
@@ -1012,6 +1073,25 @@ function renderControls(){
     h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); c.appendChild(h);
   }
   if(SET.answer==='voice'){ const m=document.createElement('button'); m.className='mic'; m.id='micPill'; m.onclick=()=>{ if(Mic.denied&&!Mic.inClaude) Mic.denied=false; if(Mic.available()&&Mic.state!=='on') Mic.start(); }; c.appendChild(m); renderMic(); }
+  const dp=(p.pw||[]).filter(k=>POWERS[k].at==='duel');
+  if(SET.powers&&humanTurn&&dp.length){ const bar=document.createElement('div'); bar.className='pw-bar';
+    [...new Set(dp)].forEach(k=>{ const n=dp.filter(x=>x===k).length, b=document.createElement('button'); b.className='pw'; b.innerHTML=`${POWERS[k].ic} ${POWERS[k].n}${n>1?' ×'+n:''}`; b.title=POWERS[k].d; b.onclick=()=>duelPower(k); bar.appendChild(b); });
+    c.insertBefore(bar,c.firstChild); }
+}
+function duelPower(k){
+  if(!D||!D.running||D.lock||D.loading) return;
+  const me=D.active, p=D.p[me], opp=1-me; if(!usePw(p,k)) return;
+  const clocks=$('#clocks').children, fb=$('#feed'); fb.className='feed';
+  if(k==='freeze'){ D.freezeUntil[me]=performance.now()+5000; SND.tone(1800,.6,{type:'sine',vol:.12,to:900}); SND.noise(.5,{vol:.12,freq:6000,type:'highpass'}); FX.elBurst(clocks[me],'#bfeaff',36,5); fb.textContent=`❄️ ${p.name} ${G_(p,'עצר','עצרה')} את השעון ל־5 שניות`; }
+  else if(k==='steal'){ const take=Math.min(5000,Math.max(0,D.t[opp]-1000)); D.t[opp]-=take; D.t[me]+=take; SND.whoosh(); SND.tone(500,.3,{type:'triangle',vol:.15,to:1000});
+    const a=clocks[opp].getBoundingClientRect(), b=clocks[me].getBoundingClientRect(); for(let i=0;i<24;i++) setTimeout(()=>FX.burst(a.left+a.width/2+(b.left-a.left)*i/24,a.top+a.height/2,'#ffd27e',3,2),i*18);
+    fb.textContent=`🧲 ${p.name} ${G_(p,'גנב','גנבה')} ${Math.round(take/1000)} שניות!`; }
+  else if(k==='bomb'){ D.bombNext[opp]=true; SND.tone(300,.2,{type:'square',vol:.08}); fb.textContent=`💣 הפצצה תתפוצץ בתור הבא של ${D.p[opp].name}`; }
+  else if(k==='hint'){ SND.badge();
+    if(SET.answer==='choices'){ let n=0; document.querySelectorAll('#controls .opt').forEach(o=>{ if(n<2&&o.textContent!==D.item.a[0]&&!o.disabled){ o.disabled=true; o.style.opacity='.2'; n++; } }); fb.textContent='💡 שתי תשובות שגויות נמחקו'; }
+    else { const a=D.item.a[0]; fb.textContent=`💡 מתחיל ב־"${a[0]}" · ${a.replace(/[\s'"־-]/g,'').length} אותיות${a.includes(' ')?' · '+a.split(' ').length+' מילים':''}`; } }
+  else if(k==='skip'){ SND.whoosh(); D.hist.push({item:D.item,ok:false,by:me}); D.streak[me]=0; fb.textContent=`⏭️ דילוג חינם · התשובה: ${D.item.a[0]}`; nextQuestion(); }
+  renderClocks(); if(k!=='skip') renderControls(); if(k==='hint'&&SET.answer==='choices'){ let n=0; document.querySelectorAll('#controls .opt').forEach(o=>{ if(n<2&&o.textContent!==D.item.a[0]){ o.disabled=true; o.style.opacity='.2'; n++; } }); }
 }
 function renderMic(){
   const m=$('#micPill'); if(!m) return; m.classList.toggle('on',Mic.state==='on');
@@ -1044,6 +1124,8 @@ function correct(){
   setTimeout(()=>{ if(fb.classList.contains('ok')){ fb.className='feed'; fb.textContent=''; } },1300);
   const card=$('#stage .qcard'); if(card){ FX.elBurst(card,'#38e09a',30,7); card.classList.add('out-ok'); }
   D.active=1-D.active;
+  if(D.bombNext[D.active]){ D.bombNext[D.active]=false; D.doubleUntil[D.active]=performance.now()+6000+(IMG_KINDS.has(D.cat.kind)?700:0);
+    setTimeout(()=>{ SND.slam(); screenFlash('rgba(255,120,40,.45)'); buzz([60,30,60]); FX.elBurst($('#clocks').children[D.active],'#ff8a3d',40,8); const fb=$('#feed'); fb.className='feed'; fb.textContent=`💣 בום! השעון של ${D.p[D.active].name} רץ כפול`; },200); }
   setTimeout(()=>nextQuestion(),reduced?0:170);
 }
 function pass(){
@@ -1065,6 +1147,7 @@ function endDuel(wi){
   renderClocks(); SND.setMood(null);
   if(w.human){ SND.win(); FX.confetti(120); screenFlash('rgba(56,224,154,.35)'); } else { SND.lose(); }
   buzz(w.human?[50,40,90]:250);
+  grantPower(w);
   if(w.human){ STATS.duels++; STATS.duelWins++; if(D.t[wi]<3000) STATS.comeback=true; } if(l.human){ STATS.duels++; }
   saveStats(); checkAch();
   $('#turn').textContent='';
