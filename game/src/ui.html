@@ -601,6 +601,7 @@ function syncMyCats(){
 /* =====================================================================
    MICROPHONE
    ===================================================================== */
+const CONTACT_EMAIL='';   // set before publishing to the store
 const SITE_URL='https://raw.githack.com/nissoe/test/claude/zen-dirac-yy51m3/game/index.html';
 const Mic={
   d:null,SR:null,rec:null,want:false,state:'off',denied:false,seg:0,consumed:new Map(),err:null,userStart:false,
@@ -682,7 +683,7 @@ SCREENS.home=(s)=>{
         ${row('hSettings','⚙️','הגדרות','צלילים, מוזיקה ודיווחים')}
       </div>
     </div>
-    <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>`;
+    <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button><button id="hPrivacy">פרטיות</button></div>`;
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
   if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); if(!SET.cats) SET.cats=CATS.filter(c=>!c.mine).map(c=>c.id); if(!SET.cats.includes(sp.id)) SET.cats.push(sp.id); saveSet(); go('setup'); toast(sp.icon,'החבילה נוספה לקטגוריות','היא תופיע לצד כל השאר'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
@@ -693,6 +694,7 @@ SCREENS.home=(s)=>{
   $('#hSettings').onclick=()=>{ SND.click(); openSettings(); };
   $('#hHow').onclick=()=>go('onboarding');
   $('#hCredits').onclick=()=>go('credits');
+  $('#hPrivacy').onclick=()=>go('privacy');
 };
 function seasonPack(){ const m=new Date().getMonth()+1; return CATS.find(c=>c.season&&c.season.includes(m)&&!(Mic.inClaude&&IMG_KINDS.has(c.kind))); }
 /* ---------- settings sheet ---------- */
@@ -1588,6 +1590,27 @@ SCREENS.mycat=(s,id)=>{
 };
 
 /* =====================================================================
+   PRIVACY POLICY
+   ===================================================================== */
+SCREENS.privacy=(s)=>{
+  s.classList.add('scroll');
+  const mail=CONTACT_EMAIL?`<a href="mailto:${CONTACT_EMAIL}" style="color:var(--amber)">${CONTACT_EMAIL}</a>`:'(כתובת ליצירת קשר תתווסף בקרוב)';
+  s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">מדיניות פרטיות</div><span style="width:40px"></span></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:12px;line-height:1.7;font-size:15px">
+    <p style="margin:0"><b>בקצרה:</b> טריטוריה לא מבקשת שם אמיתי, מייל או טלפון, ולא מוכרת מידע לאף אחד.</p>
+    <p style="margin:0"><b>מיקרופון.</b> כשבוחרים לענות בקול, הדיבור מומר לטקסט על ידי שירות זיהוי הדיבור של הדפדפן או המכשיר (למשל של Google או Apple), לפי המדיניות שלהם. המשחק משתמש בטקסט רק כדי לבדוק אם התשובה נכונה, ולא שומר הקלטות או טקסט.</p>
+    <p style="margin:0"><b>מה נשמר במכשיר שלך.</b> הגדרות, הישגים, ליגה משפחתית ו"הקטגוריות שלי" (כולל תמונות שהעלית) נשמרים רק במכשיר. מחיקת נתוני האפליקציה מוחקת אותם.</p>
+    <p style="margin:0"><b>משחק אונליין.</b> כשמשחקים אונליין, משתמשים בחיבור אנונימי של Firebase (Google). בשרת נשמרים זמנית: הכינוי והדמות שבחרת, מצב המשחק בחדר, ותוצאות האתגר היומי (כינוי וניקוד). חדרים נמחקים כשהמשחק נסגר.</p>
+    <p style="margin:0"><b>שיתוף קטגוריות.</b> קטגוריה שבחרת לשתף, כולל התמונות שבה, נשמרת בשרת עם קוד, וכל מי שיש לו את הקוד יכול להוריד אותה. אל תשתפו תמונות של אנשים בלי הסכמתם.</p>
+    <p style="margin:0"><b>תמונות במשחק.</b> נטענות מוויקיפדיה ומוויקישיתוף, שמקבלות את כתובת ה-IP של המכשיר כמו בכל גלישה.</p>
+    <p style="margin:0"><b>ילדים.</b> המשחק מיועד לכל המשפחה ולא אוסף מידע אישי מילדים.</p>
+    <p style="margin:0"><b>יצירת קשר, דיווח על תוכן או בקשה למחיקה:</b> ${mail}</p>
+    <p style="margin:0;color:var(--muted);font-size:13px">עודכן: ${BUILD.split(' ')[0]}</p>
+  </div>`;
+  $('#back').onclick=()=>go('home');
+};
+
+/* =====================================================================
    CREDITS
    ===================================================================== */
 SCREENS.credits=(s)=>{
@@ -1596,7 +1619,7 @@ SCREENS.credits=(s)=>{
   s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">קרדיטים</div><span style="width:40px"></span></div>
     <div class="card" style="display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.6">
       <p style="margin:0">התמונות לקוחות מוויקיפדיה ומוויקישיתוף. הזכויות שמורות ליוצרים, לפי הרישיון של כל תמונה. לחצו על קטגוריה כדי לראות את הצלם והרישיון של כל תמונה.</p>
-      <p style="margin:0;color:var(--muted)">לוגואים: Simple Icons (CC0). סמלי קבוצות ולוגואים הם סימני מסחר של בעליהם ומוצגים לצורך זיהוי בלבד. אימוג'י: גופן המערכת של המכשיר.</p>
+      <p style="margin:0;color:var(--muted)">קריין: קול סינתטי של Microsoft Azure. אימוג'י: גופן המערכת של המכשיר.</p>
     </div>
     <div class="chips" id="crCats" style="padding-block:14px">${cats.map(c=>`<button class="chip" data-c="${c.id}">${c.icon} ${esc(c.name)}</button>`).join('')}</div>
     <div id="crList"></div>`;

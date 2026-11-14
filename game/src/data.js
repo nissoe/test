@@ -941,7 +941,8 @@ const catById = id => CATS.find(c=>c.id===id);
   const seen2=new Set(); const media=pick(['movies','tv','il-songs','media-extra']).filter(x=>!seen2.has(x.p)&&seen2.add(x.p));
   CATS.push({id:'emoji-media',name:'סרטים, סדרות ושירים באימוג׳י',icon:'🎬',kind:'pic',ask:'איזה סרט, סדרה או שיר?',items:media});
   /* small categories are not offered on their own (they feed the ones above) */
-  const HIDE=['animals','food','fruit','sports','jobs','transport','objects','nature','body','movies','tv','il-songs','media-extra'];
+  const HIDE=['animals','food','fruit','sports','jobs','transport','objects','nature','body','movies','tv','il-songs','media-extra',
+    /* trademarks: not offered in the public version */ 'crests','logos'];
   for(let i=CATS.length-1;i>=0;i--) if(HIDE.includes(CATS[i].id)) CATS.splice(i,1);
 })();
 
