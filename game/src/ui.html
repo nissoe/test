@@ -462,14 +462,19 @@ SND.duck=function(on){ if(!this.ctx||!this.mus) return; const base=this.mood&&th
 const NARR={
   on:store.get('narr',true), cur:null, last:{}, busyUntil:0, token:0,
   has(ev){ return typeof VOICE!=='undefined'&&VOICE[ev]&&VOICE[ev].length },
+  quietNow(){ return !!(D&&D.running&&!D.mirror&&typeof localHuman==='function'&&localHuman(D.p[D.active]))||!!(D&&D.mirror&&D.running&&D.p[D.active]&&D.p[D.active].human)||!!(DAILY&&DAILY.running); },
   say(ev,{soft=false,force=false}={}){ if(!this.on||!this.has(ev)) return; if(G&&G.auto&&!force) return; if(soft&&this.busy()) return;
+    if(['ten','streak5','streak10','pw-freeze','pw-steal','pw-bomb','pw-hint','capture'].includes(ev)&&this.quietNow()) return;
     const list=VOICE[ev]; let fn=pick(list); if(list.length>1){ let g=0; while(fn===this.last[ev]&&g++<5) fn=pick(list); } this.last[ev]=fn; this.play('voice/'+fn); },
   seq(evs,gap=120){ if(!this.on) return; const t=++this.token; const next=i=>{ if(i>=evs.length||t!==this.token) return; const ev=evs[i]; if(!this.has(ev)) return next(i+1);
       const list=VOICE[ev], fn=pick(list); this.play('voice/'+fn,()=>setTimeout(()=>next(i+1),gap),true); }; next(0); },
   play(src,onend,keepToken){ try{ if(!keepToken) this.token++; if(this.cur){ this.cur.onended=null; this.cur.pause(); }
-      const a=new Audio(src); this.cur=a; this.busyUntil=Date.now()+6000; SND.duck(true);
-      const done=()=>{ if(this.cur!==a) return; this.busyUntil=Date.now()+250; SND.duck(false); setTimeout(()=>Mic.turnStart(),260); onend&&onend(); };
-      a.onended=done; a.onerror=done; a.play().catch(done); }catch(e){} },
+      const a=new Audio(src); this.cur=a; this.busyUntil=Date.now()+1500; SND.duck(true);
+      a.onloadedmetadata=()=>{ if(this.cur===a&&isFinite(a.duration)) this.busyUntil=Date.now()+Math.min(4000,a.duration*1000)+150; };
+      a.onplaying=()=>{ if(this.cur===a) this.busyUntil=Date.now()+(isFinite(a.duration)?Math.min(4000,a.duration*1000):1500)+150; };
+      const done=()=>{ if(this.cur!==a) return; this.busyUntil=Date.now()+200; SND.duck(false); if(!this.quietNow()) setTimeout(()=>{ if(!this.quietNow()) Mic.turnStart(); },210); onend&&onend(); };
+      const fail=()=>{ if(this.cur!==a) return; this.busyUntil=0; SND.duck(false); onend&&onend(); };
+      a.onended=done; a.onerror=fail; a.play().catch(fail); }catch(e){ this.busyUntil=0; } },
   stop(){ this.token++; if(this.cur){ this.cur.onended=null; this.cur.pause(); this.cur=null; } this.busyUntil=0; SND.duck(false); },
   busy(){ return Date.now()<this.busyUntil; }
 };
@@ -1358,7 +1363,7 @@ function renderMic(){
 }
 function onSpeech(key,alts){
   Mic.lastLen.set(key,Math.max(0,...alts.map(a=>norm(a).length)));
-  if(NARR.busy()) return;   // the narrator is talking: never treat it as an answer
+  if(NARR.busy()&&!NARR.quietNow()) return;   // narrator talking during someone else's turn: ignore; on your own turn always listen
   if(DAILY&&DAILY.running) return dailySpeech(key,alts);
   if(!D||!D.running) return;
   if(D.lock||D.loading||!localHuman(cur())) return;   // not this phone's turn: ignore and show nothing
