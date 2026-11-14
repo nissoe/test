@@ -104,7 +104,7 @@ SCREENS.lobby=(s)=>{
     ${host?`<div class="field"><span class="flabel">המכשיר הזה</span><div class="seg" id="lbRole"><button data-v="1">גם משחק</button><button data-v="0">רק מסך ראשי</button></div>
       <p class="hint">"מסך ראשי" מתאים לטלוויזיה או למחשב: הוא מציג את הלוח והשאלות, וכולם עונים מהטלפונים.</p></div>
       <div class="field"><span class="flabel">שחקני מחשב שיצטרפו</span><div class="seg" id="lbBots">${[0,1,2,3,5,8].map(n=>`<button data-v="${n}">${n}</button>`).join('')}</div></div>
-      <div class="field"><button class="ghost" id="lbSet">הגדרות משחק: ${SET.time} שניות · ${{voice:'בקול',choices:'4 תשובות',host:'סימון עצמי'}[SET.answer]} · כוחות ${SET.powers?'פועלים':'כבויים'}</button></div>
+      <div class="field"><button class="ghost" id="lbSet">הגדרות משחק: ${SET.time} שניות · ${{voice:'בקול',type:'הקלדה',choices:'4 תשובות',host:'סימון עצמי'}[SET.answer]} · כוחות ${SET.powers?'פועלים':'כבויים'}</button></div>
       <div class="sticky-foot"><button class="big" id="lbStart">התחלת המשחק</button></div>`:''}`;
   $('#back').onclick=()=>modal({title:'לצאת מהחדר?',buttons:[{label:'יציאה',fn:()=>leaveRoom()},{label:'להישאר',cls:'ghost',fn:()=>{}}]});
   const draw=()=>{ const ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
@@ -278,10 +278,13 @@ function clientDuel(v,myPrompt){
   if(fresh||SCREEN!=='duel'){ go('duel'); }
   const amIn=ps.some(p=>p.uid===NET.uid);
   if(!d.started){
+    const ready=(d.ready||[]).includes(NET.uid), ik=D.key+'|'+ready;
+    if(!fresh&&D.introKey===ik&&$('#stage .vs')) return;
+    D.introKey=ik;
     const st=$('#stage'), c=$('#controls'); renderClocks(true);
     st.innerHTML=`<div class="vs"><div class="side l" style="--pc:${ps[0].color}"><div class="disc" style="background:${ps[0].color}">${esc(ps[0].av)}</div><b>${esc(ps[0].name)}</b></div><div class="x">VS</div><div class="side r" style="--pc:${ps[1].color}"><div class="disc" style="background:${ps[1].color}">${esc(ps[1].av)}</div><b>${esc(ps[1].name)}</b></div></div><div class="intro-cat">${cat.icon} ${esc(cat.name)}</div>`;
     c.innerHTML='';
-    if(amIn){ const ready=(d.ready||[]).includes(NET.uid); const b=document.createElement('button'); b.className='big'; b.textContent=ready?'מחכים ליריב…':(SET.answer==='voice'?'🎤 אני מוכן/ה':'אני מוכן/ה'); b.disabled=ready;
+    if(amIn){ const b=document.createElement('button'); b.className='big'; b.textContent=ready?'מחכים ליריב…':(SET.answer==='voice'?'🎤 אני מוכן/ה':'אני מוכן/ה'); b.disabled=ready;
       b.onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); SND.init(); sendInput('ready',{}); b.disabled=true; b.textContent='מחכים ליריב…'; }; c.appendChild(b); }
     else c.innerHTML='<div class="thinking">👀 צופים בדו־קרב</div>';
     if(fresh){ SND.whoosh(); setTimeout(()=>{SND.slam();buzz(60)},380); }

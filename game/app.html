@@ -225,6 +225,11 @@ a.mic{color:var(--amber);border-color:var(--amber)}
 .mic .eq i{width:3px;background:var(--good);border-radius:2px;animation:eq .8s ease-in-out infinite}
 .mic .eq i:nth-child(2){animation-delay:.15s}.mic .eq i:nth-child(3){animation-delay:.3s}.mic .eq i:nth-child(4){animation-delay:.45s}
 @keyframes eq{0%,100%{height:4px}50%{height:14px}}
+.type-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+.type-row .inp{font-size:20px;padding:14px;text-align:center;border-width:2px}
+.type-row .inp:focus{border-color:var(--amber);box-shadow:0 0 16px var(--glow);outline:none}
+.type-row .inp.bad{border-color:var(--bad);animation:shake .35s}
+.type-row .ghost{width:auto;padding-inline:18px}
 .pw-bar{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .pw{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:700;
   background:linear-gradient(180deg,#3a3f8f,#232a63);border:1px solid #7f8cff;box-shadow:0 0 14px rgba(127,140,255,.45);animation:pwIn .4s cubic-bezier(.2,.9,.3,1.4) both}
@@ -1332,8 +1337,8 @@ SCREENS.setup=(s)=>{
         <div class="row"><input class="inp" id="fName" maxlength="14" placeholder="שם של שחקן או שחקנית" autocomplete="off"><button class="ghost" style="width:auto" id="fAdd">הוספה</button></div>
         <div class="players" id="fList">${SET.friends.map((f,i)=>`<div class="pl" data-i="${i}"><span class="av" style="background:${COLORS[i%COLORS.length]}">${f.av}</span><b>${esc(f.name)}</b><span class="g">${f.g==='f'?'שחקנית':'שחקן'} · עריכה</span></div>`).join('')||'<p class="hint">הוסיפו לפחות שני שחקנים.</p>'}</div></div>`}
     <div class="field"><span class="flabel">רמת השאלות</span><div class="seg" data-key="qdiff"><button data-v="easy">קלות</button><button data-v="mixed">מתחילות קל ומתקשות</button><button data-v="hard">קשות</button></div></div>
-    <div class="field"><span class="flabel">איך עונים</span><div class="seg" data-key="answer"><button data-v="voice">🎤 בקול</button><button data-v="choices">4 תשובות</button><button data-v="host">מנחה מסמן</button></div>
-      <p class="hint">${{voice:'אומרים את התשובה בקול. "דלג" כדי לעבור (3 שניות קנס).',choices:'לוחצים על התשובה הנכונה. טעות עולה 3 שניות.',host:'מישהו מחזיק את הטלפון ולוחץ "נכון" או "דלג".'}[SET.answer]}</p></div>
+    <div class="field"><span class="flabel">איך עונים</span><div class="seg" data-key="answer"><button data-v="voice">🎤 בקול</button><button data-v="type">⌨️ הקלדה</button><button data-v="choices">4 תשובות</button><button data-v="host">מנחה מסמן</button></div>
+      <p class="hint">${{type:'מקלידים את התשובה. תשובה נכונה נקלטת מיד, בלי ללחוץ על שליחה.',voice:'אומרים את התשובה בקול. "דלג" כדי לעבור (3 שניות קנס).',choices:'לוחצים על התשובה הנכונה. טעות עולה 3 שניות.',host:'מישהו מחזיק את הטלפון ולוחץ "נכון" או "דלג".'}[SET.answer]}</p></div>
     <div class="field"><span class="flabel">כוחות מיוחדים</span><div class="seg" data-key="powers" data-bool="1"><button data-v="true">פועלים</button><button data-v="false">כבויים</button></div>
       <p class="hint">${SET.powers?'כל שחקן מתחיל עם כוח אחד ומקבל עוד אחד על כל ניצחון בדו־קרב (עד 3): '+PW_KEYS.map(k=>POWERS[k].ic+' '+POWERS[k].n).join(' · '):'משחק קלאסי, בלי כוחות.'}</p></div>
     <div class="field"><span class="flabel">זמן לכל שחקן בדו־קרב</span><div class="seg" data-key="time" data-num="1"><button data-v="30">30 שניות</button><button data-v="45">45 שניות</button><button data-v="60">60 שניות</button></div></div>
@@ -1747,9 +1752,36 @@ function imagesDown(){
   if(!D) return; D.running=false; D.ended=true; cancelAnimationFrame(D.raf); clearTimeout(D.botTimer); clearTimeout(D.lockTimer); Mic.stop(); D=null;
   modal({title:'התמונות לא נטענות',text:Mic.inClaude?'בתוך Claude אי אפשר לטעון תמונות מאתרים אחרים. פתחו את המשחק בדפדפן.':'נראה שאין חיבור לאינטרנט. הדו־קרב בוטל.',buttons:[{label:'חזרה ללוח',fn:()=>nextTurn()}]});
 }
+const typingMode=()=>SET.answer==='type'||(ON&&ON.pub&&SET.answer==='voice'&&!Mic.available());
+/* a typed-answer box that stays focused between questions (so the phone keyboard stays open) */
+function typeRow(onTry,onSkip,enabled,key){
+  let row=document.getElementById('typeRow');
+  if(!row){ row=document.createElement('div'); row.id='typeRow'; row.className='type-row';
+    row.innerHTML=`<input class="inp" id="typeIn" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="send" placeholder="הקלידו את התשובה"><button class="ghost" id="typeSkip">דלג</button>`; }
+  const inp=row.querySelector('#typeIn'), sk=row.querySelector('#typeSkip');
+  if(row.dataset.key!==String(key)){ row.dataset.key=String(key); inp.value=''; inp.classList.remove('bad'); }
+  inp.disabled=!enabled; sk.disabled=!enabled;
+  inp.oninput=()=>{ inp.classList.remove('bad'); if(inp.value.trim()) onTry(inp.value,false); };
+  inp.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); if(inp.value.trim()&&!onTry(inp.value,true)){ inp.classList.remove('bad'); void inp.offsetWidth; inp.classList.add('bad'); SND.tone(180,.15,{type:'square',vol:.05}); } } };
+  sk.onclick=()=>onSkip();
+  return row;
+}
 function renderControls(){
-  const c=$('#controls'); if(!c||!D) return; c.innerHTML='';
+  const c=$('#controls'); if(!c||!D) return;
   const p=cur(), humanTurn=p.human&&!p.remote&&D.running&&!D.lock&&!D.loading;
+  if(p.human&&!p.remote&&D.running&&typingMode()){
+    const tryIt=(v)=>{ if(D&&D.item&&!D.lock&&!D.loading&&matches(v,D.item.a)){ correct(); return true; } return false; };
+    const row=typeRow(tryIt,()=>pass(),humanTurn,D.qn);
+    [...c.children].forEach(ch=>{ if(ch!==row) ch.remove(); });
+    if(!row.isConnected) c.appendChild(row);
+    const dp=(p.pw||[]).filter(k=>POWERS[k].at==='duel');
+    if(SET.powers&&humanTurn&&dp.length){ const bar=document.createElement('div'); bar.className='pw-bar';
+      [...new Set(dp)].forEach(k=>{ const n=dp.filter(x=>x===k).length, b=document.createElement('button'); b.className='pw'; b.innerHTML=`${POWERS[k].ic} ${POWERS[k].n}${n>1?' ×'+n:''}`; b.title=POWERS[k].d; b.onclick=()=>duelPower(k); bar.appendChild(b); });
+      c.insertBefore(bar,row); }
+    if(humanTurn){ const inp=row.querySelector('#typeIn'); if(document.activeElement!==inp) inp.focus({preventScroll:true}); }
+    return;
+  }
+  c.innerHTML='';
   if(D.running&&isRemote(p)){
     c.innerHTML=`<div class="thinking">📱 ${esc(p.name)} ${G_(p,'עונה','עונה')} מהטלפון</div>`;
     if(ON&&ON.pub) return;
@@ -1757,7 +1789,7 @@ function renderControls(){
     const en=!D.lock&&!D.loading; h.children[0].disabled=!en; h.children[1].disabled=!en; h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); c.appendChild(h); return;
   }
   if(D.running&&!p.human){ c.innerHTML=`<div class="thinking"><span>🤖</span> ${esc(p.name)} ${G_(p,'חושב','חושבת')}…</div>`; }
-  else if(SET.answer==='choices'||(ON&&ON.pub&&!Mic.available())){
+  else if(SET.answer==='choices'){
     const g=document.createElement('div'); g.className='opts';
     if(D.item&&D.optsFor!==D.item){ D.opts=options(D.cat,D.item); D.optsFor=D.item; }
     (D.item?D.opts:['','','','']).forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.disabled=!humanTurn;
@@ -1925,8 +1957,11 @@ function dailyNext(){
   renderQuestion($('#dyStage'),cat,item,()=>{ if(DAILY!==Y||Y.qs[Y.i][1]!==item) return; Y.loading=false; Y.last=performance.now(); dailyControls(); },()=>{ Y.i++; dailyNext(); });
 }
 function dailyControls(){
-  const Y=DAILY, c=$('#dyCtl'); if(!c) return; c.innerHTML=''; const [cat,item]=Y.qs[Y.i]||[]; if(!cat) return;
+  const Y=DAILY, c=$('#dyCtl'); if(!c) return; const [cat,item]=Y.qs[Y.i]||[]; if(!cat){ c.innerHTML=''; return; }
   const en=!Y.lock&&!Y.loading;
+  if(typingMode()){ const row=typeRow(v=>{ if(!Y.lock&&!Y.loading&&matches(v,Y.qs[Y.i][1].a)){ dailyOk(); return true; } return false; },()=>dailyPass(),en,Y.i);
+    [...c.children].forEach(ch=>{ if(ch!==row) ch.remove(); }); if(!row.isConnected) c.appendChild(row); if(en){ const inp=row.querySelector('#typeIn'); if(document.activeElement!==inp) inp.focus({preventScroll:true}); } return; }
+  c.innerHTML='';
   if(SET.answer==='choices'){ const g=document.createElement('div'); g.className='opts';
     options(cat,item).forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.disabled=!en; b.onclick=()=>{ if(item.a[0]===o){ b.classList.add('right'); dailyOk(); } else { b.classList.add('wrong'); dailyPass(); } }; g.appendChild(b); }); c.appendChild(g); }
   const h=document.createElement('div'); h.className='hostbtns'+(SET.answer!=='host'?' slim':''); h.innerHTML=SET.answer==='choices'?`<button class="b-pass" style="grid-column:1/-1">דלג</button>`:`<button class="b-ok">✓ נכון</button><button class="b-pass">דלג</button>`;
@@ -2137,7 +2172,7 @@ SCREENS.lobby=(s)=>{
     ${host?`<div class="field"><span class="flabel">המכשיר הזה</span><div class="seg" id="lbRole"><button data-v="1">גם משחק</button><button data-v="0">רק מסך ראשי</button></div>
       <p class="hint">"מסך ראשי" מתאים לטלוויזיה או למחשב: הוא מציג את הלוח והשאלות, וכולם עונים מהטלפונים.</p></div>
       <div class="field"><span class="flabel">שחקני מחשב שיצטרפו</span><div class="seg" id="lbBots">${[0,1,2,3,5,8].map(n=>`<button data-v="${n}">${n}</button>`).join('')}</div></div>
-      <div class="field"><button class="ghost" id="lbSet">הגדרות משחק: ${SET.time} שניות · ${{voice:'בקול',choices:'4 תשובות',host:'סימון עצמי'}[SET.answer]} · כוחות ${SET.powers?'פועלים':'כבויים'}</button></div>
+      <div class="field"><button class="ghost" id="lbSet">הגדרות משחק: ${SET.time} שניות · ${{voice:'בקול',type:'הקלדה',choices:'4 תשובות',host:'סימון עצמי'}[SET.answer]} · כוחות ${SET.powers?'פועלים':'כבויים'}</button></div>
       <div class="sticky-foot"><button class="big" id="lbStart">התחלת המשחק</button></div>`:''}`;
   $('#back').onclick=()=>modal({title:'לצאת מהחדר?',buttons:[{label:'יציאה',fn:()=>leaveRoom()},{label:'להישאר',cls:'ghost',fn:()=>{}}]});
   const draw=()=>{ const ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
@@ -2311,10 +2346,13 @@ function clientDuel(v,myPrompt){
   if(fresh||SCREEN!=='duel'){ go('duel'); }
   const amIn=ps.some(p=>p.uid===NET.uid);
   if(!d.started){
+    const ready=(d.ready||[]).includes(NET.uid), ik=D.key+'|'+ready;
+    if(!fresh&&D.introKey===ik&&$('#stage .vs')) return;
+    D.introKey=ik;
     const st=$('#stage'), c=$('#controls'); renderClocks(true);
     st.innerHTML=`<div class="vs"><div class="side l" style="--pc:${ps[0].color}"><div class="disc" style="background:${ps[0].color}">${esc(ps[0].av)}</div><b>${esc(ps[0].name)}</b></div><div class="x">VS</div><div class="side r" style="--pc:${ps[1].color}"><div class="disc" style="background:${ps[1].color}">${esc(ps[1].av)}</div><b>${esc(ps[1].name)}</b></div></div><div class="intro-cat">${cat.icon} ${esc(cat.name)}</div>`;
     c.innerHTML='';
-    if(amIn){ const ready=(d.ready||[]).includes(NET.uid); const b=document.createElement('button'); b.className='big'; b.textContent=ready?'מחכים ליריב…':(SET.answer==='voice'?'🎤 אני מוכן/ה':'אני מוכן/ה'); b.disabled=ready;
+    if(amIn){ const b=document.createElement('button'); b.className='big'; b.textContent=ready?'מחכים ליריב…':(SET.answer==='voice'?'🎤 אני מוכן/ה':'אני מוכן/ה'); b.disabled=ready;
       b.onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); SND.init(); sendInput('ready',{}); b.disabled=true; b.textContent='מחכים ליריב…'; }; c.appendChild(b); }
     else c.innerHTML='<div class="thinking">👀 צופים בדו־קרב</div>';
     if(fresh){ SND.whoosh(); setTimeout(()=>{SND.slam();buzz(60)},380); }
