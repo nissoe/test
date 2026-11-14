@@ -27,7 +27,7 @@ let ON=null;   // {code, role, hostPlays, players, ver, prompt, promptN, lastIn,
 const netErr=e=>{ const m=String(e&&(e.code||e.message)||e); return /ADMIN_ONLY|operation-not-allowed|admin-restricted/i.test(m)?'השרת עדיין לא מוגדר: צריך להפעיל התחברות אנונימית ב־Firebase.':/permission/i.test(m)?'השרת חסם את הפעולה: צריך להדביק את חוקי האבטחה ב־Firebase.':'אין חיבור לשרת. בדקו את האינטרנט ונסו שוב.'; };
 function onlineOff(){ if(ON){ ON.offs.forEach(f=>{try{f()}catch(e){}}); } ON=null; }
 function listen(path,cb){ const r=NET.ref(path); const h=s=>cb(s.val()); r.on('value',h); ON.offs.push(()=>r.off('value',h)); }
-function meCard(){ return {name:(SET.me.name||'שחקן').slice(0,20),av:SET.me.av,g:SET.me.g,t:NET.now()} }
+function meCard(){ return {name:(SET.me.name||'שחקן').slice(0,20),av:SET.me.av,g:SET.me.g,tm:SET.me.time||0,t:NET.now()} }
 
 SCREENS.online=(s)=>{
   s.classList.add('scroll');
@@ -170,10 +170,10 @@ function hostStart(){
   let ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
   if(ON.pub){ ps=ps.slice(0,ON.pub); ON.bots=Math.max(0,ON.pub-ps.length); }
   const used=ps.map(([,p])=>p.av);
-  let players=ps.map(([u,p])=>({name:String(p.name||'שחקן').slice(0,20),av:p.av||'🙂',g:p.g==='f'?'f':'m',human:true,remote:u===NET.uid?undefined:u}));
+  let players=ps.map(([u,p])=>({name:String(p.name||'שחקן').slice(0,20),av:p.av||'🙂',g:p.g==='f'?'f':'m',time:ON.pub?0:Math.min(120,Math.max(0,+p.tm||0)),human:true,remote:u===NET.uid?undefined:u}));
   const bots=shuffle(BOT_NAMES.slice()).slice(0,ON.bots||0).map(([n,g])=>{ const av=pick(AVATARS.filter(a=>!used.includes(a))); used.push(av); return {name:n,av,g,human:false}; });
   players=players.concat(bots);
-  listen(`rooms/${ON.code}/inputs`,v=>hostInputs(v||{}));
+  if(!ON.inputsOn){ ON.inputsOn=true; listen(`rooms/${ON.code}/inputs`,v=>hostInputs(v||{})); }
   newGame(players);
   ON.beat=setInterval(()=>{ if(ON&&G) pushState(); },8000); ON.offs.push(()=>clearInterval(ON.beat));
 }
@@ -192,7 +192,8 @@ function pushState(){
         players:G.players.map(p=>({id:p.id,name:p.name,av:p.av,g:p.g||'m',color:p.color,cat:p.cat,alive:p.alive,pw:p.pw||[],uid:p.remote||(localHuman(p)?NET.uid:''),bot:!p.human}))},
       prompt:ON.prompt||null, over:ON.over==null?-1:ON.over};
     if(st) ON.lastStatus=st.innerHTML;
-    if(D) v.d={p:D.p.map(x=>x.id),t:D.t.map(Math.round),T:D.T,active:D.active,cat:D.cat.id,item:itemRef(D.cat,D.item),qn:D.qn,lock:!!D.lock,running:!!D.running,ended:!!D.ended,
+    if(G.final) v.b.final=G.final.score;
+    if(D) v.d={p:D.p.map(x=>x.id),t:D.t.map(Math.round),T:D.T,Tp:(D.Tp||[D.T,D.T]).map(Math.round),active:D.active,cat:D.cat.id,item:itemRef(D.cat,D.item),qn:D.qn,lock:!!D.lock,running:!!D.running,ended:!!D.ended,
       started:!!(D.running||D.ended||D.counting),win:D.win==null?-1:D.win,freeze:D.freezeUntil.map(toSrv),dbl:D.doubleUntil.map(toSrv),bomb:D.bombNext.map(Boolean),
       feed:(($('#feed')||{}).textContent||'').slice(0,120),hist:D.hist.slice(-40).map(h=>({r:itemRef(D.cat,h.item),ok:h.ok})),ready:[...(ON.ready||[])]};
     NET.ref(`rooms/${ON.code}/state`).set(v).catch(()=>{});
@@ -232,6 +233,7 @@ function clientState(v){
      players:v.b.players.map(p=>({...p,human:p.uid===me,pw:p.pw||[]}))};
   const myPrompt=v.prompt&&v.prompt.to===me?v.prompt:null;
   if(v.b.targets&&v.b.targets.length) G.targets=new Set(v.b.targets);
+  if(v.over<0&&ON.overShown){ ON.overShown=false; ON.outShown=false; closeModal(); }
   if(v.over>=0){ const w=G.players[v.over]; if(SCREEN!=='board') go('board'); renderBoard(); setStatus(v.b.status); setActions([]);
     if(!ON.overShown){ ON.overShown=true; SND.win(); FX.confetti(200); setTimeout(()=>modal({title:`${w.av} ${w.name} ${G_(w,'כבש','כבשה')} את כל הלוח!`,text:w.uid===me?'ניצחון מלא!':'תודה על המשחק!',buttons:[{label:'יציאה מהחדר',fn:()=>leaveRoom()}]}),700); }
     return; }
@@ -271,7 +273,7 @@ function clientDuel(v,myPrompt){
   const ps=d.p.map(i=>G.players[i]); const fresh=!D||!D.mirror||D.key!==d.p.join()+':'+cat.id;
   const perf=performance.now(), fromSrv=x=>x?perf+(x-NET.now()):0;
   const prevQn=D&&D.mirror?D.qn:-1, prevEnded=D&&D.mirror&&D.ended;
-  D=Object.assign(fresh?{mirror:true,key:d.p.join()+':'+cat.id,lock:false,loading:false}:D,{p:ps,T:d.T,active:d.active,cat,qn:d.qn,running:d.running,ended:d.ended,
+  D=Object.assign(fresh?{mirror:true,key:d.p.join()+':'+cat.id,lock:false,loading:false}:D,{p:ps,T:d.T,Tp:d.Tp||[d.T,d.T],active:d.active,cat,qn:d.qn,running:d.running,ended:d.ended,
     snapT:d.t.slice(),snapAt:v.at,serverLock:d.lock,freezeUntil:d.freeze.map(fromSrv),doubleUntil:d.dbl.map(fromSrv),bombNext:d.bomb,hist:(d.hist||[]).map(h=>({item:itemFrom(cat,h.r),ok:h.ok})),
     item:itemFrom(cat,d.item),streak:[0,0],win:d.win});
   D.t=d.t.slice();
@@ -318,4 +320,47 @@ async function dailyBoard(el){
     rows.sort((a,b)=>b.score-a.score);
     el.innerHTML=rows.length?`<span class="flabel">טבלת היום</span><div class="list">${rows.map((r,i)=>`<div class="li" style="${r.uid===NET.uid?'border-color:var(--amber)':''}"><b style="width:22px;text-align:center">${i+1}</b><span style="font-size:22px">${esc(r.av||'🙂')}</span><div><b>${esc(r.name)}</b></div><b style="color:var(--amber)">${r.score}</b></div>`).join('')}</div>`:'<p class="hint" style="text-align:center">עוד אין תוצאות היום. היו הראשונים!</p>';
   }catch(e){ el.innerHTML=''; }
+}
+
+/* ---------- rematch in the same room ---------- */
+function rematchRoom(){ if(!ON||ON.role!=='host') return; ON.started=false; ON.over=null; ON.prompt=null; ON.pending=null; if(ON.saved) Object.assign(SET,ON.saved); hostStart(); }
+
+/* ---------- emoji reactions (everyone in the room sees them) ---------- */
+const REACTS=['👏','😂','🔥','😱','🤯','❤️'];
+function floatEmoji(e){ if(!REACTS.includes(e)) return; const f=document.createElement('div'); f.className='floaty'; f.textContent=e; f.style.left=(10+Math.random()*75)+'%'; document.body.appendChild(f); setTimeout(()=>f.remove(),2700); SND.tone(900+Math.random()*400,.08,{type:'sine',vol:.05}); }
+function reactHook(name){
+  document.querySelectorAll('.react-btn,.react-bar').forEach(x=>x.remove());
+  if(!ON||!(name==='board'||name==='duel')) return;
+  if(!ON.reactOn){ ON.reactOn=true; ON.reactSeen={}; ON.reactFrom=NET.now(); listen(`rooms/${ON.code}/react`,v=>{ for(const [u,r] of Object.entries(v||{})){ if(!r||!r.t||u===NET.uid) continue; if(r.t>(ON.reactSeen[u]||ON.reactFrom)){ ON.reactSeen[u]=r.t; floatEmoji(r.e); } } }); }
+  const b=document.createElement('button'); b.className='react-btn'; b.textContent='😀'; b.setAttribute('aria-label','תגובה');
+  b.onclick=()=>{ let bar=document.querySelector('.react-bar'); if(bar){ bar.remove(); return; } bar=document.createElement('div'); bar.className='react-bar';
+    REACTS.forEach(e=>{ const x=document.createElement('button'); x.textContent=e; x.onclick=()=>{ floatEmoji(e); NET.ref(`rooms/${ON.code}/react/${NET.uid}`).set({e,t:NET.now()}).catch(()=>{}); bar.remove(); }; bar.appendChild(x); });
+    document.body.appendChild(bar); };
+  document.body.appendChild(b);
+}
+
+/* ---------- share my category with the family ---------- */
+async function shareCat(c){
+  try{
+    toast('📤','מעלה את הקטגוריה…'); await NET.load();
+    const data={owner:NET.uid,name:String(c.name).slice(0,40),icon:c.icon||'📸',t:NET.now(),items:c.items.map(x=>({img:x.img,a:x.a.map(t=>String(t).slice(0,40)).slice(0,6)}))};
+    if(JSON.stringify(data).length>9e6) return modal({title:'הקטגוריה גדולה מדי',text:'נסו לשתף קטגוריה עם פחות תמונות.',buttons:[{label:'סגירה',fn:()=>{}}]});
+    let code=c.shared;
+    if(!code){ for(let i=0;i<10;i++){ const k=String(100000+Math.floor(Math.random()*900000)); const ex=(await NET.ref(`shared/${k}`).once('value')).val(); if(!ex){ code=k; break; } } }
+    await NET.ref(`shared/${code}`).set(data); c.shared=code; await IDB.put(c);
+    const t=`הוסיפו את הקטגוריה "${c.name}" לטריטוריה 📸\nבמשחק: "הקטגוריות שלי" ← מקלידים את הקוד ${code}`;
+    modal({title:`קוד: ${code}`,text:'שלחו את הקוד למשפחה. מי שמקליד אותו ב"הקטגוריות שלי" מקבל עותק של הקטגוריה.',buttons:[
+      {label:'העתקת הודעה',fn:()=>{ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('📋','ההודעה הועתקה')).catch(()=>toast('📋','הקוד: '+code)); }},{label:'סגירה',cls:'ghost',fn:()=>{}}]});
+  }catch(e){ modal({title:'השיתוף לא הצליח',text:netErr(e),buttons:[{label:'סגירה',fn:()=>{}}]}); }
+}
+async function importSharedCat(code){
+  if(!/^\d{6}$/.test(code)) return toast('⚠️','הקוד הוא 6 ספרות');
+  try{
+    await NET.load(); const v=(await NET.ref(`shared/${code}`).once('value')).val();
+    if(!v||!Array.isArray(v.items)) return toast('🤷','לא מצאנו קטגוריה עם הקוד הזה');
+    const c={id:'my-'+Date.now(),name:String(v.name||'קטגוריה').slice(0,40),icon:v.icon||'📸',from:code,
+      items:v.items.filter(x=>x&&typeof x.img==='string'&&x.img.startsWith('data:image/')&&Array.isArray(x.a)).map(x=>({img:x.img,a:x.a.map(String).slice(0,6)}))};
+    MYCATS.push(c); await IDB.put(c); syncMyCats(); STATS.created=true; saveStats(); checkAch();
+    SND.ok(); toast(c.icon,'הקטגוריה נוספה',`${c.name} · ${c.items.length} תמונות`); go('mycats');
+  }catch(e){ toast('⚠️',netErr(e)); }
 }
