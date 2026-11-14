@@ -811,6 +811,7 @@ async function nextTurn(){
   renderBoard(); moveSpot(0,false);
   if(G.auto||(SET.mode==='cpu'&&!humansAlive())){ setStatus('הגרלה…'); setActions([]); await sleep(400); return spin(); }
   setStatus('מי תוקף עכשיו?'); setActions([{label:'🎲 הגרלה',fn:spin}]);
+  if(ON&&ON.role==='host'){ const g=G; setTimeout(()=>{ if(G===g&&SCREEN==='board'&&$('#bactions .big')&&$('#bactions .big').textContent.includes('הגרלה')) spin(); },2500); }
 }
 async function spin(){
   setActions([]); SND.init();
@@ -1091,11 +1092,12 @@ function renderControls(){
   const p=cur(), humanTurn=p.human&&!p.remote&&D.running&&!D.lock&&!D.loading;
   if(D.running&&isRemote(p)){
     c.innerHTML=`<div class="thinking">📱 ${esc(p.name)} ${G_(p,'עונה','עונה')} מהטלפון</div>`;
+    if(ON&&ON.pub) return;
     const h=document.createElement('div'); h.className='hostbtns slim'; h.innerHTML=`<button class="b-ok">✓ נכון</button><button class="b-pass">דלג</button>`;
     const en=!D.lock&&!D.loading; h.children[0].disabled=!en; h.children[1].disabled=!en; h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); c.appendChild(h); return;
   }
   if(D.running&&!p.human){ c.innerHTML=`<div class="thinking"><span>🤖</span> ${esc(p.name)} ${G_(p,'חושב','חושבת')}…</div>`; }
-  else if(SET.answer==='choices'){
+  else if(SET.answer==='choices'||(ON&&ON.pub&&!Mic.available())){
     const g=document.createElement('div'); g.className='opts';
     if(D.item&&D.optsFor!==D.item){ D.opts=options(D.cat,D.item); D.optsFor=D.item; }
     (D.item?D.opts:['','','','']).forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.disabled=!humanTurn;
@@ -1104,8 +1106,10 @@ function renderControls(){
     c.appendChild(g); const sk=document.createElement('button'); sk.className='ghost'; sk.textContent='דלג'; sk.disabled=!humanTurn; sk.onclick=()=>pass(); c.appendChild(sk);
   } else {
     const h=document.createElement('div'); h.className='hostbtns'+(SET.answer==='voice'&&Mic.available()?' slim':'');
-    h.innerHTML=`<button class="b-ok">✓ נכון</button><button class="b-pass">דלג</button>`; h.children[0].disabled=!humanTurn; h.children[1].disabled=!humanTurn;
-    h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); c.appendChild(h);
+    if(ON&&ON.pub){ h.style.gridTemplateColumns='1fr'; h.innerHTML=`<button class="b-pass">דלג</button>`; h.children[0].disabled=!humanTurn; h.children[0].onclick=()=>pass(); }
+    else { h.innerHTML=`<button class="b-ok">✓ נכון</button><button class="b-pass">דלג</button>`; h.children[0].disabled=!humanTurn; h.children[1].disabled=!humanTurn;
+    h.children[0].onclick=()=>correct(); h.children[1].onclick=()=>pass(); }
+    c.appendChild(h);
   }
   if(SET.answer==='voice'){ const m=document.createElement('button'); m.className='mic'; m.id='micPill'; m.onclick=()=>{ if(Mic.denied&&!Mic.inClaude) Mic.denied=false; if(Mic.available()&&Mic.state!=='on') Mic.start(); }; c.appendChild(m); renderMic(); }
   const dp=(p.pw||[]).filter(k=>POWERS[k].at==='duel');

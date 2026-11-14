@@ -30,48 +30,67 @@ function listen(path,cb){ const r=NET.ref(path); const h=s=>cb(s.val()); r.on('v
 function meCard(){ return {name:(SET.me.name||'שחקן').slice(0,20),av:SET.me.av,g:SET.me.g,t:NET.now()} }
 
 SCREENS.online=(s)=>{
+  s.classList.add('scroll');
+  const size=store.get('pubSize',4);
   s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">משחק אונליין</div><span style="width:40px"></span></div>
-    <div style="flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center">
-      <div class="card" style="display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
-        <div style="font-size:56px">🌐</div><p class="hint" style="font-size:15px">כל אחד משחק מהטלפון שלו. מכשיר אחד פותח חדר, והשאר מצטרפים עם הקוד. אפשר גם לפתוח חדר מטלוויזיה או ממחשב ולהשתמש בו כמסך ראשי.</p>
-        <div class="pl" id="olMe" style="width:100%;cursor:pointer"><span class="av" style="background:${COLORS[0]}">${SET.me.av}</span><b>${esc(SET.me.name||'שחקן')}</b><span class="g">עריכה</span></div>
-      </div>
-      <button class="big" id="olCreate">פתיחת חדר חדש</button>
-      <div class="row"><input class="inp" id="olCode" inputmode="numeric" maxlength="4" placeholder="קוד חדר (4 ספרות)" style="text-align:center;font-size:22px;letter-spacing:6px"><button class="ghost" style="width:auto;white-space:nowrap" id="olJoin">הצטרפות</button></div>
-      <p class="hint" id="olMsg" style="text-align:center;min-height:20px"></p>
-    </div>`;
+    <div class="pl" id="olMe" style="cursor:pointer;margin-bottom:12px"><span class="av" style="background:${COLORS[0]}">${SET.me.av}</span><b>${esc(SET.me.name||'שחקן')}</b><span class="g">השם והדמות שלך · עריכה</span></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:10px">
+      <b style="font-size:18px">🌍 משחק פתוח</b>
+      <p class="hint">נכנסים למשחק עם שחקנים מכל מקום. המשחק מתחיל לבד כשהחדר מתמלא.</p>
+      <div class="seg" id="olSize">${[4,6,8].map(n=>`<button data-v="${n}" class="${n===size?'on':''}">${n} שחקנים</button>`).join('')}</div>
+      <button class="big" id="olFind">חיפוש משחק</button>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <b style="font-size:18px">🔒 חדר פרטי עם חברים</b>
+      <p class="hint">פותחים חדר ושולחים לחברים את הקוד. אפשר גם להשתמש בטלוויזיה או במחשב כמסך ראשי.</p>
+      <button class="ghost" id="olCreate">פתיחת חדר פרטי</button>
+      <div class="row"><input class="inp" id="olCode" inputmode="numeric" maxlength="4" placeholder="קוד חדר" style="text-align:center;font-size:22px;letter-spacing:6px"><button class="ghost" style="width:auto;white-space:nowrap" id="olJoin">הצטרפות</button></div>
+    </div>
+    <p class="hint" id="olMsg" style="text-align:center;min-height:20px;padding-top:10px"></p>`;
   $('#back').onclick=()=>go('home');
   $('#olMe').onclick=()=>editPlayer(SET.me,true,()=>{saveSet();go('online')});
+  $('#olSize').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; store.set('pubSize',+b.dataset.v); s.querySelectorAll('#olSize button').forEach(x=>x.classList.toggle('on',x===b)); };
   const msg=t=>{ $('#olMsg').textContent=t; };
-  const busy=b=>{ $('#olCreate').disabled=b; $('#olJoin').disabled=b; };
+  const busy=b=>{ ['olCreate','olJoin','olFind'].forEach(i=>$('#'+i).disabled=b); };
+  $('#olFind').onclick=async()=>{ busy(true); msg('מחפש משחק…'); try{ await NET.load(); await findPublic(store.get('pubSize',4)); }catch(e){ msg(netErr(e)); busy(false); } };
   $('#olCreate').onclick=async()=>{ busy(true); msg('מתחבר…'); try{ await NET.load(); await createRoom(); }catch(e){ msg(netErr(e)); busy(false); } };
   $('#olJoin').onclick=async()=>{ const code=$('#olCode').value.trim(); if(!/^\d{4}$/.test(code)) return msg('הקוד הוא 4 ספרות.'); busy(true); msg('מתחבר…');
-    try{ await NET.load(); const r=await joinRoom(code); if(r) { msg(r); busy(false); } }catch(e){ msg(netErr(e)); busy(false); } };
-  const pre=(location.hash.match(/^#room(\d{4})$/)||[])[1]; if(pre){ $('#olCode').value=pre; }
+    try{ await NET.load(); const r=await joinRoom(code); if(r){ msg(r); busy(false); } }catch(e){ msg(netErr(e)); busy(false); } };
+  const pre=(location.hash.match(/^#room(\d{4})$/)||[])[1]; if(pre) $('#olCode').value=pre;
 };
-async function createRoom(){
+const PUB_SET={time:45,answer:'voice',powers:true,qdiff:'mixed'};
+async function findPublic(size){
+  const v=(await NET.ref(`open/${size}`).once('value')).val()||{}, now=NET.now();
+  const cands=Object.entries(v).filter(([,r])=>r&&r.n<size&&now-(r.t||0)<4*60*1000).sort((a,b)=>b[1].n-a[1].n);
+  for(const [code] of cands){ try{ const err=await joinRoom(code,size); if(!err) return; }catch(e){} }
+  await createRoom(size);
+}
+async function createRoom(pub){
   for(let i=0;i<12;i++){
     const code=String(1000+Math.floor(Math.random()*9000));
     const res=await NET.ref(`rooms/${code}/host`).transaction(cur=>cur===null?NET.uid:undefined);
     if(res.committed){
       await NET.ref(`rooms/${code}/created`).set(NET.now());
-      onlineOff(); ON={code,role:'host',hostPlays:true,players:{},ver:0,prompt:null,promptN:0,lastIn:{},offs:[],ready:new Set()};
+      onlineOff(); ON={code,role:'host',hostPlays:true,players:{},ver:0,prompt:null,promptN:0,lastIn:{},offs:[],ready:new Set(),pub:pub||0,born:Date.now()};
       await NET.ref(`rooms/${code}/players/${NET.uid}`).set(meCard());
+      if(pub) await NET.ref(`open/${pub}/${code}`).set({host:NET.uid,n:1,t:NET.now()});
       go('lobby'); return;
     }
   }
   throw new Error('no code');
 }
-async function joinRoom(code){
+async function joinRoom(code,pub){
   const snap=await NET.ref(`rooms/${code}`).once('value'); const room=snap.val();
   if(!room||!room.host) return 'לא מצאנו חדר עם הקוד הזה.';
   if(room.state&&room.state.scr&&!(room.players&&room.players[NET.uid])) return 'המשחק בחדר הזה כבר התחיל.';
+  if(pub&&Object.keys(room.players||{}).length>=pub) return 'החדר מלא.';
   await NET.ref(`rooms/${code}/players/${NET.uid}`).set(meCard());
-  onlineOff(); ON={code,role:'client',players:{},offs:[],seq:0,lastV:0};
+  onlineOff(); ON={code,role:'client',players:{},offs:[],seq:0,lastV:0,pub:pub||0,born:Date.now()};
   go('lobby'); return null;
 }
 SCREENS.lobby=(s)=>{
   if(!ON) return go('online');
+  if(ON.pub) return pubLobby(s);
   SND.setMood('board');
   const host=ON.role==='host';
   s.classList.add('scroll');
@@ -110,20 +129,53 @@ SCREENS.lobby=(s)=>{
   }
 };
 let SETUP_ONLINE=false;
-async function leaveRoom(){
-  try{ if(ON){ if(ON.role==='host') await NET.ref(`rooms/${ON.code}`).remove(); else await NET.ref(`rooms/${ON.code}/players/${NET.uid}`).remove(); } }catch(e){}
-  onlineOff(); G=null; D=null; go('home');
+function pubLobby(s){
+  SND.setMood('board'); const host=ON.role==='host', size=ON.pub;
+  s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="ביטול">✕</button><div class="logo" style="font-size:34px">משחק פתוח</div><span style="width:40px"></span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center">
+      <div class="loading" style="font-size:18px;color:var(--text)">מחפשים שחקנים</div>
+      <div class="big-num" id="pbN">1/${size}</div>
+      <div class="players" id="pbList" style="width:100%"></div>
+      <p class="hint" id="pbHint">המשחק יתחיל לבד כשיגיעו ${size} שחקנים.</p>
+      <div id="pbAct" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
+    </div>`;
+  $('#back').onclick=()=>leaveRoom(true);
+  const draw=()=>{ const ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0)).slice(0,size);
+    $('#pbN').textContent=`${ps.length}/${size}`;
+    $('#pbList').innerHTML=ps.map(([u,p],i)=>`<div class="pl" style="animation:pwIn .4s both"><span class="av" style="background:${COLORS[i%COLORS.length]}">${esc(p.av||'🙂')}</span><b>${esc(p.name)}</b><span class="g">${u===NET.uid?'את/ה':''}</span></div>`).join('');
+    if(host){ NET.ref(`open/${size}/${ON.code}`).update({n:ps.length}).catch(()=>{}); if(ps.length>=size&&!ON.started) hostStart(); }
+    const waited=(Date.now()-ON.born)/1000, act=$('#pbAct'); if(!act) return; act.innerHTML='';
+    if(host&&waited>35&&ps.length>=2){ const b=document.createElement('button'); b.className='big'; b.textContent=`להתחיל עכשיו (${size-ps.length} שחקני מחשב ישלימו)`; b.onclick=()=>hostStart(); act.appendChild(b); }
+    if(waited>35&&ps.length<2){ const b=document.createElement('button'); b.className='ghost'; b.textContent='לשחק בינתיים נגד המחשב'; b.onclick=()=>{ leaveRoom(true).then(()=>{ SET.mode='cpu'; go('setup'); }); }; act.appendChild(b); }
+  };
+  if(!ON.listening){ ON.listening=true;
+    listen(`rooms/${ON.code}/players`,v=>{ ON.players=v||{}; if(SCREEN==='lobby') draw(); });
+    if(!host){ listen(`rooms/${ON.code}/state`,v=>{ if(v) clientState(v); });
+      listen(`rooms/${ON.code}/host`,v=>{ if(v===null&&ON&&!ON.started){ const sz=ON.pub; onlineOff(); toast('🔄','החדר נסגר, מחפשים חדר אחר'); findPublic(sz).catch(()=>go('online')); } }); }
+    ON.timer=setInterval(()=>{ if(!ON||SCREEN!=='lobby') return clearInterval(ON&&ON.timer); draw();
+      if(host&&!ON.started&&(Date.now()-ON.born)/1000>90&&Object.keys(ON.players||{}).length>=2) hostStart(); },3000);
+    ON.offs.push(()=>clearInterval(ON.timer)); }
+  draw();
+}
+async function leaveRoom(quiet){
+  try{ if(ON){ if(ON.pub&&ON.role==='host') await NET.ref(`open/${ON.pub}/${ON.code}`).remove(); if(ON.role==='host') await NET.ref(`rooms/${ON.code}`).remove(); else await NET.ref(`rooms/${ON.code}/players/${NET.uid}`).remove(); } }catch(e){}
+  if(ON&&ON.saved) Object.assign(SET,ON.saved);
+  onlineOff(); CL=null; G=null; D=null; Mic.stop(); if(!quiet) go('home'); else go('online');
 }
 
 /* ---------- host side ---------- */
 function hostStart(){
-  const ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
+  if(ON.started) return; ON.started=true;
+  if(ON.pub){ NET.ref(`open/${ON.pub}/${ON.code}`).remove().catch(()=>{}); ON.saved={...SET}; Object.assign(SET,PUB_SET); SET.cats=allCatIds().filter(id=>!catById(id).mine); }
+  let ps=Object.entries(ON.players||{}).sort((a,b)=>(a[1].t||0)-(b[1].t||0));
+  if(ON.pub){ ps=ps.slice(0,ON.pub); ON.bots=Math.max(0,ON.pub-ps.length); }
   const used=ps.map(([,p])=>p.av);
   let players=ps.map(([u,p])=>({name:String(p.name||'שחקן').slice(0,20),av:p.av||'🙂',g:p.g==='f'?'f':'m',human:true,remote:u===NET.uid?undefined:u}));
   const bots=shuffle(BOT_NAMES.slice()).slice(0,ON.bots||0).map(([n,g])=>{ const av=pick(AVATARS.filter(a=>!used.includes(a))); used.push(av); return {name:n,av,g,human:false}; });
   players=players.concat(bots);
   listen(`rooms/${ON.code}/inputs`,v=>hostInputs(v||{}));
   newGame(players);
+  ON.beat=setInterval(()=>{ if(ON&&G) pushState(); },8000); ON.offs.push(()=>clearInterval(ON.beat));
 }
 const isRemote=p=>!!(p&&p.remote);
 const localHuman=p=>!!(p&&p.human&&!p.remote);
@@ -135,7 +187,7 @@ function pushState(){
   if(pushT) return; pushT=setTimeout(()=>{ pushT=0; if(!ON||!G) return;
     const perf=performance.now(), toSrv=x=>x>perf?Math.round(x-perf+NET.now()):0;
     const st=$('#bstatus');
-    const v={v:++ON.ver,at:NET.now(),scr:(SCREEN==='duel'&&D)?'duel':'board',answer:SET.answer,powers:!!SET.powers,
+    const v={v:++ON.ver,pub:ON.pub||0,at:NET.now(),scr:(SCREEN==='duel'&&D)?'duel':'board',answer:SET.answer,powers:!!SET.powers,
       b:{rows:G.rows,cols:G.cols,tiles:G.tiles,hl:G.hl==null?-1:G.hl,targets:G.targets?[...G.targets]:[],status:st?st.innerHTML:(ON.lastStatus||''),
         players:G.players.map(p=>({id:p.id,name:p.name,av:p.av,g:p.g||'m',color:p.color,cat:p.cat,alive:p.alive,pw:p.pw||[],uid:p.remote||(localHuman(p)?NET.uid:''),bot:!p.human}))},
       prompt:ON.prompt||null, over:ON.over==null?-1:ON.over};
@@ -171,7 +223,9 @@ function hostInputs(all){
 function sendInput(kind,val){ if(!ON) return; ON.seq=(ON.seq||0)+1; NET.ref(`rooms/${ON.code}/inputs/${NET.uid}`).set({seq:ON.seq,kind,val:val||{},t:NET.now()}).catch(()=>{}); }
 let CL=null;   // last state seen by this phone
 function clientState(v){
-  if(!ON||ON.role!=='client'||v.v<=(ON.lastV||0)) return; ON.lastV=v.v; CL=v;
+  if(!ON||ON.role!=='client'||v.v<=(ON.lastV||0)) return; ON.lastV=v.v; CL=v; ON.pub=v.pub||0; ON.started=true; ON.seen=Date.now();
+  if(!ON.watch){ ON.watch=setInterval(()=>{ if(ON&&ON.role==='client'&&Date.now()-ON.seen>30000&&!ON.lostShown){ ON.lostShown=true; modal({title:'החיבור למארח אבד',text:'המכשיר שפתח את החדר התנתק או נסגר.',buttons:[{label:'יציאה',fn:()=>leaveRoom()},{label:'לחכות עוד',cls:'ghost',fn:()=>{ ON.lostShown=false; ON.seen=Date.now(); }}]}); } },5000); ON.offs.push(()=>clearInterval(ON.watch)); }
+  if(v.b&&!v.b.players.some(p=>p.uid===NET.uid)){ const sz=ON.pub; NET.ref(`rooms/${ON.code}/players/${NET.uid}`).remove().catch(()=>{}); onlineOff(); CL=null; G=null; toast('🔄','החדר התמלא, מחפשים חדר אחר'); if(sz) findPublic(sz).catch(()=>go('online')); else go('online'); return; }
   SET.answer=v.answer; SET.powers=v.powers;
   const me=NET.uid;
   G={client:true,rows:v.b.rows,cols:v.b.cols,tiles:v.b.tiles,hl:v.b.hl<0?null:v.b.hl,targets:null,attacker:null,auto:false,used:{},
