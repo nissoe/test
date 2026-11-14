@@ -679,7 +679,7 @@ SCREENS.home=(s)=>{
     </div>
     <div class="foot-links"><button id="hHow">איך משחקים</button><button id="hCredits">קרדיטים</button></div>`;
   $('#hPlay').onclick=()=>{ SND.click(); go('setup'); };
-  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); THEME=sp.id; go('setup'); };
+  if($('#hSeason')) $('#hSeason').onclick=()=>{ SND.click(); if(!SET.cats) SET.cats=CATS.filter(c=>!c.mine).map(c=>c.id); if(!SET.cats.includes(sp.id)) SET.cats.push(sp.id); saveSet(); go('setup'); toast(sp.icon,'החבילה נוספה לקטגוריות','היא תופיע לצד כל השאר'); };
   $('#hDaily').onclick=()=>{ SND.click(); go('daily'); };
   if($('#hOnline')) $('#hOnline').onclick=()=>{ SND.click(); go('online'); };
   $('#hMine').onclick=()=>{ SND.click(); go('mycats'); };
@@ -689,7 +689,6 @@ SCREENS.home=(s)=>{
   $('#hHow').onclick=()=>go('onboarding');
   $('#hCredits').onclick=()=>go('credits');
 };
-let THEME=null;   // one-game theme (seasonal pack); never saved
 function seasonPack(){ const m=new Date().getMonth()+1; return CATS.find(c=>c.season&&c.season.includes(m)&&!(Mic.inClaude&&IMG_KINDS.has(c.kind))); }
 /* ---------- settings sheet ---------- */
 function openSettings(){
@@ -723,7 +722,7 @@ SCREENS.setup=(s)=>{
   s.classList.add('scroll');
   const render=()=>{
     const validCats=SET.cats.filter(id=>catById(id));
-    const OL=SETUP_ONLINE&&ON; const TH=!OL&&THEME&&catById(THEME);
+    const OL=SETUP_ONLINE&&ON;
     s.innerHTML=`<div class="topbar"><button class="iconbtn" id="back" aria-label="חזרה">→</button><div class="logo" style="font-size:34px">${OL?'הגדרות החדר':'משחק חדש'}</div><span style="width:40px"></span></div>
     <div class="field" style="border:0;${OL?'display:none':''}"><span class="flabel">מי משחק</span>
       <div class="seg" data-key="mode"><button data-v="cpu">אני נגד המחשב</button><button data-v="friends">חברים על מכשיר אחד</button></div></div>
@@ -735,7 +734,6 @@ SCREENS.setup=(s)=>{
       <div class="field"><span class="flabel">שחקנים (2 עד 16)</span>
         <div class="row"><input class="inp" id="fName" maxlength="14" placeholder="שם של שחקן או שחקנית" autocomplete="off"><button class="ghost" style="width:auto" id="fAdd">הוספה</button></div>
         <div class="players" id="fList">${SET.friends.map((f,i)=>`<div class="pl" data-i="${i}"><span class="av" style="background:${COLORS[i%COLORS.length]}">${f.av}</span><b>${esc(f.name)}</b><span class="g">${f.g==='f'?'שחקנית':'שחקן'}${f.time?` · ⏱️ ${f.time} שנ׳`:''} · עריכה</span></div>`).join('')||'<p class="hint">הוסיפו לפחות שני שחקנים.</p>'}</div></div>`}
-    ${TH?`<div class="card" style="display:flex;align-items:center;gap:10px;border-color:var(--amber);margin-bottom:8px"><span style="font-size:30px">${TH.icon}</span><div style="flex:1"><b>משחק בנושא: ${esc(TH.name)}</b><br><small style="color:var(--muted)">כל השחקנים מקבלים את הקטגוריה הזו, רק בסבב הזה</small></div><button class="ghost" style="width:auto" id="thOff">ביטול</button></div>`:''}
     <div class="field"><span class="flabel">🎙️ קריין</span><div class="seg" id="setNarr"><button data-v="1" class="${NARR.on?'on':''}">עם קריין</button><button data-v="0" class="${NARR.on?'':'on'}">בלי קריין</button></div></div>
     <div class="field"><span class="flabel">מצב ילדים</span><div class="seg" data-key="kids" data-bool="1"><button data-v="false">רגיל</button><button data-v="true">🧸 מצב ילדים</button></div>
       <p class="hint">${SET.kids?'קטגוריות קלות, דקה לכל שחקן, השעון עוצר כשמדלגים, ומחשב קל.':'במצב ילדים: קטגוריות קלות, יותר זמן ובלי קנס על דילוג.'}</p></div>
@@ -745,8 +743,11 @@ SCREENS.setup=(s)=>{
     <div class="field"><span class="flabel">כוחות מיוחדים</span><div class="seg" data-key="powers" data-bool="1"><button data-v="true">פועלים</button><button data-v="false">כבויים</button></div>
       <p class="hint">${SET.powers?'כל שחקן מתחיל עם כוח אחד ומקבל עוד אחד על כל ניצחון בדו־קרב (עד 3): '+PW_KEYS.map(k=>POWERS[k].ic+' '+POWERS[k].n).join(' · '):'משחק קלאסי, בלי כוחות.'}</p></div>
     <div class="field"><span class="flabel">זמן לכל שחקן בדו־קרב</span><p class="hint">אפשר לתת לכל שחקן זמן אישי (למשל יותר לילדים): לוחצים על השחקן ← "זמן אישי".</p><div class="seg" data-key="time" data-num="1"><button data-v="30">30 שניות</button><button data-v="45">45 שניות</button><button data-v="60">60 שניות</button></div></div>
-    <div class="field"><div class="row" style="justify-content:space-between"><span class="flabel">קטגוריות (${validCats.length})</span><button class="chip" id="allCats">${validCats.length>=allCatIds().length?'נקה הכל':'בחר הכל'}</button></div>
-      <div class="chips" id="catChips">${CATS.map(c=>{const on=SET.cats.includes(c.id), blocked=Mic.inClaude&&NET_KINDS.has(c.kind);
+    <div class="field"><span class="flabel">✨ חבילות עונתיות</span>
+      <div class="chips" id="seasonChips">${CATS.filter(c=>c.season&&allCatIds().includes(c.id)).map(c=>`<button class="chip ${SET.cats.includes(c.id)?'on':'off'}" data-c="${c.id}">${c.icon} ${esc(c.name)} · ${SET.cats.includes(c.id)?'כלולה':'לא כלולה'}</button>`).join('')}</div>
+      <p class="hint">חבילה כלולה מצטרפת לשאר הקטגוריות, היא לא מחליפה אותן.</p></div>
+    <div class="field"><div class="row" style="justify-content:space-between"><span class="flabel">קטגוריות (${validCats.filter(id=>!catById(id).season).length})</span><button class="chip" id="allCats">${validCats.length>=allCatIds().length?'נקה הכל':'בחר הכל'}</button></div>
+      <div class="chips" id="catChips">${CATS.filter(c=>!c.season).map(c=>{const on=SET.cats.includes(c.id), blocked=Mic.inClaude&&NET_KINDS.has(c.kind);
         return `<button class="chip ${on&&!blocked?'on':'off'}" data-c="${c.id}" ${blocked?'disabled':''}><span>${c.icon}</span>${esc(c.name)} ${c.season?'<span style="font-size:11px;color:var(--amber)">✨ עונתי</span> ':''}<span style="opacity:.6;font-size:12px">${c.kind==='gen'?'∞':c.items.length}</span></button>`}).join('')}</div>
       ${validCats.length>0&&validCats.length<3?`<p class="hint" style="color:var(--amber)">⚠️ נבחרו רק ${validCats.length===1?'קטגוריה אחת':'שתי קטגוריות'}, כך שכל השחקנים יקבלו את אותה קטגוריה. כדאי לבחור עוד.</p>`:''}
       <p class="hint">${Mic.inClaude?`קטגוריות התמונות לא נטענות בתוך Claude. <a href="${SITE_URL}" target="_blank" rel="noopener" style="color:var(--amber)">פתחו את המשחק בדפדפן</a> כדי לשחק בהן.`:'המספר ליד כל קטגוריה הוא כמות הפריטים בה.'}</p></div>
@@ -760,8 +761,8 @@ SCREENS.setup=(s)=>{
       $('#fAdd').onclick=add; $('#fName').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();add()} };
       s.querySelectorAll('#fList .pl').forEach(r=>r.onclick=()=>{ const i=+r.dataset.i; editPlayer(SET.friends[i],false,()=>{saveSet();render()},()=>{SET.friends.splice(i,1);saveSet();render()}); });
     }
-    if($('#thOff')) $('#thOff').onclick=()=>{ THEME=null; render(); };
     $('#setNarr').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; NARR.on=b.dataset.v==='1'; store.set('narr',NARR.on); SND.init(); if(NARR.on) NARR.say('welcome'); else NARR.stop(); render(); };
+    s.querySelectorAll('#seasonChips .chip').forEach(b=>b.onclick=()=>{ const id=b.dataset.c; SET.cats=SET.cats.includes(id)?SET.cats.filter(x=>x!==id):[...SET.cats,id]; saveSet(); render(); });
     s.querySelectorAll('#catChips .chip').forEach(b=>b.onclick=()=>{ const id=b.dataset.c; SET.cats=SET.cats.includes(id)?SET.cats.filter(x=>x!==id):[...SET.cats,id]; saveSet(); render(); });
     $('#allCats').onclick=()=>{ SET.cats = validCats.length>=allCatIds().length ? [] : allCatIds(); saveSet(); render(); };
     const ok=validCats.some(id=>allCatIds().includes(id)) && (SET.mode==='cpu'||SET.friends.length>=2);
@@ -804,7 +805,6 @@ function newGame(override){
   } else players=s.friends.map(f=>({...f,human:true}));
   const n=players.length, cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols), total=rows*cols;
   let pool=s.cats.filter(id=>catById(id)&&allCatIds().includes(id)&&!(override&&catById(id).mine)); if(!pool.length) pool=allCatIds().filter(id=>!catById(id).mine);
-  if(THEME&&!override&&catById(THEME)){ pool=[THEME]; THEME=null; }
   if(s.kids&&!(ON&&ON.pub)){ const k=pool.filter(id=>KIDS_CATS.includes(id)); pool=k.length?k:KIDS_CATS.filter(id=>allCatIds().includes(id)); }
   const cats=shuffle(pool.slice());
   shuffle(players);
