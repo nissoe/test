@@ -11,6 +11,8 @@ import subprocess
 try: n=int(subprocess.check_output(['git','rev-list','--count','HEAD'],cwd=root).strip())+1
 except Exception: n=0
 data+='\nconst BUILD="'+stamp+'";\nconst VERSION="1.'+str(n)+'";'
+vp=os.path.join(root,'voice','voice.json')
+data+='\nconst VOICE='+(open(vp,encoding='utf8').read() if os.path.exists(vp) else 'null')+';'
 data+='\nconst CREDITS='+json.dumps(cred,ensure_ascii=False,separators=(',',':'))+';\n'
 online=open(os.path.join(here,'online.js'),encoding='utf8').read()
 hero=open(os.path.join(here,'hero-board.svg'),encoding='utf8').read()

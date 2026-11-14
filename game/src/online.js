@@ -235,7 +235,7 @@ function clientState(v){
   if(v.b.targets&&v.b.targets.length) G.targets=new Set(v.b.targets);
   if(v.over<0&&ON.overShown){ ON.overShown=false; ON.outShown=false; closeModal(); }
   if(v.over>=0){ const w=G.players[v.over]; if(SCREEN!=='board') go('board'); renderBoard(); setStatus(v.b.status); setActions([]);
-    if(!ON.overShown){ ON.overShown=true; SND.win(); FX.confetti(200); setTimeout(()=>modal({title:`${w.av} ${w.name} ${G_(w,'כבש','כבשה')} את כל הלוח!`,text:w.uid===me?'ניצחון מלא!':'תודה על המשחק!',buttons:[{label:'יציאה מהחדר',fn:()=>leaveRoom()}]}),700); }
+    if(!ON.overShown){ ON.overShown=true; SND.win(); NARR.say('win',{force:true}); FX.confetti(200); setTimeout(()=>modal({title:`${w.av} ${w.name} ${G_(w,'כבש','כבשה')} את כל הלוח!`,text:w.uid===me?'ניצחון מלא!':'תודה על המשחק!',buttons:[{label:'יציאה מהחדר',fn:()=>leaveRoom()}]}),700); }
     return; }
   if(v.scr==='duel'&&v.d){ clientDuel(v,myPrompt); return; }
   if(D&&D.mirror){ D=null; $('#vignette').classList.remove('on'); }
@@ -289,11 +289,11 @@ function clientDuel(v,myPrompt){
     if(amIn){ const b=document.createElement('button'); b.className='big'; b.textContent=ready?'מחכים ליריב…':(SET.answer==='voice'?'🎤 אני מוכן/ה':'אני מוכן/ה'); b.disabled=ready;
       b.onclick=()=>{ if(SET.answer==='voice'&&Mic.available()) Mic.start(); SND.init(); sendInput('ready',{}); b.disabled=true; b.textContent='מחכים ליריב…'; }; c.appendChild(b); }
     else c.innerHTML='<div class="thinking">👀 צופים בדו־קרב</div>';
-    if(fresh){ SND.whoosh(); setTimeout(()=>{SND.slam();buzz(60)},380); }
+    if(fresh){ SND.whoosh(); setTimeout(()=>{SND.slam();buzz(60);NARR.seq(['duel','cat-'+cat.id])},380); }
     return;
   }
   if(d.ended){ if(!prevEnded){ Mic.stop(); $('#vignette').classList.remove('on'); const w=ps[d.win], l=ps[1-d.win];
-      if(w.uid===NET.uid){ SND.win(); FX.confetti(120); } else if(l.uid===NET.uid) SND.lose();
+      NARR.say('timeup'); if(w.uid===NET.uid){ SND.win(); FX.confetti(120); } else if(l.uid===NET.uid) SND.lose();
       $('#turn').textContent=''; renderClocks();
       $('#stage').innerHTML=`<div class="result"><div class="crown">${esc(w.av)}</div><h3 style="color:${w.color}">${esc(w.name)} ${G_(w,'ניצח','ניצחה')}!</h3><div class="replay">${D.hist.filter(h=>h.item).map(h=>`<div class="rp ${h.ok?'ok':'no'}"><div class="th">${thumbHTML(cat,h.item)}</div><span>${esc(h.item.a[0])}</span></div>`).join('')}</div></div>`;
       $('#controls').innerHTML='<div class="thinking">חוזרים ללוח…</div>'; }
