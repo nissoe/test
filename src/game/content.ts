@@ -31,10 +31,10 @@ export const WORLDS: WorldMeta[] = [
     id: 'w2', name: { he: 'מראה', en: 'Mirror' }, color: '#3ee8ff',
     intro: {
       icon: '⇄',
-      title: { he: 'תאומי מראה', en: 'Mirror twins' },
+      title: { he: 'עולם המראות', en: 'World of mirrors' },
       body: {
-        he: 'רק בלוקים צבעוניים מחוברים לתאום (אותו צבע ואותו סמל). הזז אחד — התאום שלו זז אותו מרחק בכיוון ההפוך. בלוקים אפורים זזים לבד. אם אחד התאומים חסום, שניהם נעצרים.',
-        en: 'Only colored blocks have a twin (same color, same symbol). Move one and its twin moves the same distance the opposite way. Gray blocks move alone. If either twin is blocked, both stop.',
+        he: 'מכאן והלאה יש שני זוגות של תאומי מראה על אותו לוח. זכור: כל זוג מזוהה בצבע ובסמל משלו, ותאום חסום עוצר גם את בן הזוג שלו.',
+        en: 'From here on there are two pairs of mirror twins on the same board. Each pair has its own color and symbol, and a blocked twin stops its partner too.',
       },
     },
     demo: 'mirror',
@@ -43,10 +43,10 @@ export const WORLDS: WorldMeta[] = [
     id: 'w3', name: { he: 'מקביל', en: 'Parallel' }, color: '#7cff6b',
     intro: {
       icon: '⇉',
-      title: { he: 'תאומים מקבילים', en: 'Parallel twins' },
+      title: { he: 'מקביל ומראה יחד', en: 'Parallel meets mirror' },
       body: {
-        he: 'תאומים מקבילים זזים יחד באותו כיוון ובאותו מרחק. על הקשת שמחברת ביניהם מופיע ⇉ (מקביל) או ⇄ (מראה) — בעולם הזה יש את שניהם.',
-        en: 'Parallel twins move together, the same way and the same distance. The arc between them shows ⇉ (parallel) or ⇄ (mirror) — this world has both.',
+        he: 'בעולם הזה זוג מקביל וזוג מראה חולקים את אותו לוח. לפני כל מהלך בדוק את הסמל על הקשת: ⇉ זז איתך, ⇄ זז נגדך.',
+        en: 'Here a parallel pair and a mirror pair share the board. Check the arc symbol before each move: ⇉ moves with you, ⇄ moves against you.',
       },
     },
     demo: 'parallel',
@@ -127,6 +127,34 @@ export const WORLDS: WorldMeta[] = [
     },
   },
 ];
+
+/** Intros shown before a specific level (mechanics introduced mid-world). */
+export const LEVEL_INTROS: Record<string, { icon: string; color: string; title: L; body: L; demo: WorldMeta['demo']; guide: boolean }> = {
+  'w1-004': {
+    icon: '⇄', color: '#3ee8ff', demo: 'mirror', guide: true,
+    title: { he: 'הכירו את התאומים', en: 'Meet the twins' },
+    body: {
+      he: 'שני בלוקים באותו צבע ועם אותו סמל הם תאומים. הזז אחד — התאום שלו זז אותו מרחק בכיוון ההפוך, כמו במראה ⇄. בלוקים אפורים זזים לבד. אם אחד התאומים חסום, שניהם נעצרים.',
+      en: 'Two blocks with the same color and symbol are twins. Move one and its twin moves the same distance the opposite way, like a mirror ⇄. Gray blocks move alone. If either twin is blocked, both stop.',
+    },
+  },
+  'w1-010': {
+    icon: '⇉', color: '#7cff6b', demo: 'parallel', guide: true,
+    title: { he: 'תאומים מקבילים', en: 'Parallel twins' },
+    body: {
+      he: 'יש גם תאומים שזזים יחד באותו כיוון ובאותו מרחק. על הקשת שמחברת ביניהם מופיע ⇉ (מקביל) במקום ⇄ (מראה).',
+      en: 'Some twins move together, the same way and the same distance. The arc between them shows ⇉ (parallel) instead of ⇄ (mirror).',
+    },
+  },
+  'w1-015': {
+    icon: '⇄⇉', color: '#ffc845', demo: 'parallel', guide: false,
+    title: { he: 'שני זוגות', en: 'Two pairs' },
+    body: {
+      he: 'עכשיו יש על הלוח זוג מראה וזוג מקביל. כל זוג בצבע ובסמל משלו — בדוק את הסמל על הקשת לפני שאתה גורר.',
+      en: 'Now a mirror pair and a parallel pair share the board. Each pair has its own color and symbol — check the arc symbol before you drag.',
+    },
+  },
+};
 
 export type ChallengeId = 'clock' | 'exact' | 'fog' | 'rush' | 'daily';
 export interface ChallengeMeta {

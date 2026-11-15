@@ -33,8 +33,16 @@ const pair = (kind: LinkKind) => ({ size: 2, kind });
 
 const worlds: PackSpec[] = [
   {
-    id: 'w1', count: 20, target: (i) => [1, 2, 2, 3, 3, 4, 4, 5, 5, 4, 6, 6, 7, 7, 5, 8, 8, 9, 9, 10][i],
-    cfg: (i) => ({ w: i < 6 ? 5 : 6, h: i < 6 ? 5 : 6, blocks: [lerpI(1, 7, i), lerpI(2, 9, i)] }),
+    // 1-3: learn to drag. 4-9: first mirror twins. 10-14: first parallel twins. 15-20: both together.
+    id: 'w1', count: 20, target: (i) => [1, 2, 3, 3, 4, 4, 5, 5, 6, 4, 5, 5, 6, 7, 6, 7, 8, 8, 9, 10][i],
+    cfg: (i) => {
+      const size = i < 6 ? 5 : 6;
+      const base: GenCfg = { w: size, h: size, blocks: [lerpI(2, 6, i), lerpI(3, 8, i)] };
+      if (i < 3) return { ...base, blocks: [i, i + 1] };
+      if (i < 9) return { ...base, groups: [pair('mirror')], require: 'link' };
+      if (i < 14) return { ...base, groups: [pair('parallel')], require: 'link' };
+      return { ...base, groups: [pair('parallel'), pair('mirror')], require: 'link' };
+    },
     max: (o, i) => o + Math.max(2, Math.round(o * (i < 10 ? 0.8 : 0.5))),
   },
   {

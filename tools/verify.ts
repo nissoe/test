@@ -54,6 +54,19 @@ for (const [name, levels] of Object.entries(packs)) {
         }
     }
   }
+  if (name === 'w1') {
+    // Levels 1-3 have no twins, 4-9 only mirror pairs, 10-14 only parallel pairs.
+    levels.forEach((lv, i) => {
+      const signs = new Map<number, number[]>();
+      for (const b of lv.blocks) if (b.group !== undefined) signs.set(b.group, [...(signs.get(b.group) ?? []), b.sign ?? 1]);
+      const kinds = [...signs.values()].map((s) => (s[0] === s[1] ? 'P' : 'M')).sort().join('');
+      const want = i < 3 ? '' : i < 9 ? 'M' : i < 14 ? 'P' : 'MP';
+      if (kinds !== want) {
+        bad++;
+        console.error(`${lv.id}: twins ${kinds || 'none'}, expected ${want || 'none'}`);
+      }
+    });
+  }
   console.log(`${name}: ${levels.length} levels checked`);
 }
 console.log(`${total} levels, ${bad} problems`);

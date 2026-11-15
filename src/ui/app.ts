@@ -1,6 +1,6 @@
 import { GameScene } from '../render/scene';
 import { Session } from '../game/session';
-import { CHALLENGES, RUSH_SECONDS, WORLDS, dailyLevel, dayIndex, packLevels, starsFor, type ChallengeId } from '../game/content';
+import { CHALLENGES, LEVEL_INTROS, RUSH_SECONDS, WORLDS, dailyLevel, dayIndex, packLevels, starsFor, type ChallengeId } from '../game/content';
 import { LocalSaveStore, defaultProfile, type Profile, type SaveStore } from '../services/save';
 import { SKINS, THEMES } from '../render/skins';
 import { getLang, setLang, t, tr } from '../i18n';
@@ -417,10 +417,15 @@ export class App {
     const lv = packLevels(pack)[index];
     const w = WORLDS.find((x) => x.id === pack)!;
     const begin = () => this.begin({ mode: 'campaign', pack, index, level: lv, session: new Session(lv), ended: false });
+    const li = LEVEL_INTROS[lv.id];
     if (index === 0 && !this.profile.seenIntros.includes(pack)) {
       this.profile.seenIntros.push(pack);
       this.save();
       this.intro(w.intro.icon, tr(w.intro.title), tr(w.intro.body), w.color, begin, w.demo);
+    } else if (li && !this.profile.seenIntros.includes(lv.id)) {
+      this.profile.seenIntros.push(lv.id);
+      this.save();
+      this.intro(li.icon, tr(li.title), tr(li.body), li.color, begin, li.demo);
     } else begin();
   }
 
@@ -458,7 +463,7 @@ export class App {
     if (play.mode === 'campaign' && play.pack === 'w1' && play.index === 0) {
       this.toast(t('tutDrag'), 3500);
       setTimeout(() => this.tutorialHand(play), 1300);
-    } else if (play.mode === 'campaign' && play.index === 0 && ['w2', 'w3', 'w5'].includes(play.pack)) {
+    } else if (play.mode === 'campaign' && (LEVEL_INTROS[play.level.id]?.guide || (play.index === 0 && play.pack === 'w5'))) {
       this.toast(t('tutTwin'), 4000);
       setTimeout(() => this.twinHand(play), 1300);
     }
