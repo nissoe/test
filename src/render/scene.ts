@@ -430,7 +430,8 @@ export class GameScene {
       mat.emissiveIntensity = baseEmissive = 0.18;
     }
     if (blk.ice) {
-      mat.color.lerp(new THREE.Color('#e8f6ff'), 0.55);
+      mat.color.lerp(new THREE.Color('#bfeaff'), blk.group >= 0 && !this.fog ? 0.35 : 0.75);
+      mat.emissive.set('#5fc8ff');
       mat.roughness = 0.08;
       mat.metalness = 0;
       if (this.quality === 'high') {
@@ -443,7 +444,7 @@ export class GameScene {
       }
       mat.clearcoatMap = null;
       mat.roughnessMap = frostTexture();
-      mat.emissiveIntensity = baseEmissive = 0.06;
+      mat.emissiveIntensity = baseEmissive = 0.22;
     }
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
@@ -454,7 +455,7 @@ export class GameScene {
     // Glyph on top: group symbol, or a diamond on gold.
     const showGlyph = blk.gold || (blk.group >= 0 && !this.fog) || blk.ice;
     if (showGlyph) {
-      const tex = blk.gold ? glyphTexture(3) : blk.ice ? glyphTexture(5) : glyphTexture(blk.group);
+      const tex = blk.gold ? glyphTexture(3) : blk.group >= 0 && !this.fog ? glyphTexture(blk.group) : glyphTexture(5);
       const gm = new THREE.Mesh(
         new THREE.PlaneGeometry(0.5, 0.5),
         new THREE.MeshBasicMaterial({ map: tex, transparent: true, color: blk.gold ? '#fff4c9' : '#ffffff', opacity: blk.ice ? 0.5 : 0.9, depthWrite: false, toneMapped: false }),

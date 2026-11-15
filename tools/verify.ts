@@ -42,6 +42,18 @@ for (const [name, levels] of Object.entries(packs)) {
       console.error(`${lv.id}: solution does not win`);
     }
   }
+  // Curriculum: horizontal<->vertical (cross) links are only taught from world 5 on.
+  if (['w1', 'w2', 'w3', 'w4', 'rush', 'daily'].includes(name)) {
+    for (const lv of levels) {
+      const axes = new Map<number, Set<string>>();
+      for (const b of lv.blocks) if (b.group !== undefined) axes.set(b.group, (axes.get(b.group) ?? new Set()).add(b.axis));
+      for (const set of axes.values())
+        if (set.size > 1) {
+          bad++;
+          console.error(`${lv.id}: cross link before world 5`);
+        }
+    }
+  }
   console.log(`${name}: ${levels.length} levels checked`);
 }
 console.log(`${total} levels, ${bad} problems`);
