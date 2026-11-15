@@ -26,6 +26,8 @@ interface BlockView {
   vel: number;
   target: number;
   exiting: number; // seconds since exit started, -1 if not
+  /** Red flash timer when this twin blocks a drag. */
+  blocked: number;
   baseEmissive: number;
   pulse: number;
 }
@@ -45,6 +47,7 @@ export interface SceneEvents {
   onBump(): void;
   onDragStart(b: number): void;
   onTick(dt: number): void;
+  onTwinBlocked?(): void;
 }
 
 type Mode = 'showcase' | 'play';
@@ -72,6 +75,7 @@ export class GameScene {
   private bursts: { pts: THREE.Points; vel: Float32Array; life: number }[] = [];
   private keyLight!: THREE.DirectionalLight;
   private rimLines: THREE.Mesh[] = [];
+  private halos: { m: number; mesh: THREE.Mesh }[] = [];
 
   private mode: Mode = 'showcase';
   private camT = 0;
@@ -92,6 +96,7 @@ export class GameScene {
     members: number[];
     rel: number[];
     range: [number, number];
+    solo: [number, number];
     d: number;
     bumped: boolean;
   } | null = null;
@@ -243,6 +248,7 @@ export class GameScene {
     this.session = session;
     this.fog = fog;
     this.drag = null;
+    this.clearHalos();
     this.clearBoard();
     const p = session.puzzle;
     const th = this.theme;
@@ -450,7 +456,7 @@ export class GameScene {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     this.boardGroup.add(mesh);
-    const view: BlockView = { i, mesh, mat, pos: 0, vel: 0, target: 0, exiting: -1, baseEmissive, pulse: 0 };
+    const view: BlockView = { i, mesh, mat, pos: 0, vel: 0, target: 0, exiting: -1, baseEmissive, pulse: 0, blocked: 0 };
 
     // Glyph on top: group symbol, or a diamond on gold.
     const showGlyph = blk.gold || (blk.group >= 0 && !this.fog) || blk.ice;
@@ -635,6 +641,31 @@ export class GameScene {
     });
   }
 
+  /** The driver could go further alone: its twin is what blocks it. Flash the twins red. */
+  private flashTwins(d: { b: number; members: number[] }) {
+    for (const m of d.members) if (m !== d.b) this.views[m].blocked = 0.7;
+    this.events.onTwinBlocked?.();
+  }
+
+  private clearHalos() {
+    for (const h of this.halos) {
+      h.mesh.geometry.dispose();
+      (h.mesh.material as THREE.Material).dispose();
+      this.boardGroup.remove(h.mesh);
+    }
+    this.halos = [];
+  }
+
+  /** Screen position of a block's center, optionally shifted by d cells along its axis. */
+  screenOfBlock(i: number, d = 0): { x: number; y: number } {
+    const v = this.views[i];
+    const saved = v.pos;
+    v.pos += d;
+    const p = this.project(this.blockCenter(v, new THREE.Vector3()));
+    v.pos = saved;
+    return { x: p.x, y: p.y };
+  }
+
   /** Screen-space center of a block and of the first exit (for tutorial overlays). */
   screenHints(): { gold: { x: number; y: number }; exit: { x: number; y: number } } | null {
     const s = this.session;
@@ -772,13 +803,28 @@ export class GameScene {
       rel,
       base: idx.map((m) => s.state[m]),
       range: s.range(b),
+      solo: s.puzzle.soloRange(s.state, b),
       d: 0,
       bumped: false,
     };
     this.canvas.setPointerCapture?.(e.pointerId);
     this.events.onDragStart(b);
-    // Reveal hidden twins in fog mode while dragging is intentionally NOT done: they reveal after a move.
-    for (const m of idx) this.views[m].pulse = 1;
+    // Twins light up with a halo while the drag lasts, so you see who moves with you.
+    // (Hidden twins in fog mode are revealed only after a move.)
+    for (const m of idx) {
+      this.views[m].pulse = 1;
+      const g = s.puzzle.blocks[m].group;
+      if (m === b || g < 0 || (this.fog && !s.revealed.has(g))) continue;
+      const len = s.puzzle.blocks[m].len;
+      const axis = s.puzzle.blocks[m].axis;
+      const halo = new THREE.Mesh(
+        new THREE.PlaneGeometry(axis === 'h' ? len + 0.9 : 1.9, axis === 'v' ? len + 0.9 : 1.9),
+        new THREE.MeshBasicMaterial({ map: softDot(), color: this.groupColor(g), transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }),
+      );
+      halo.rotation.x = -Math.PI / 2;
+      this.boardGroup.add(halo);
+      this.halos.push({ m, mesh: halo });
+    }
   };
 
   private onMoveEvt = (e: PointerEvent) => {
@@ -796,6 +842,7 @@ export class GameScene {
       if (over > 0.35 && !d.bumped) {
         d.bumped = true;
         this.events.onBump();
+        if (d.solo[1] > pos) this.flashTwins(d);
       }
     } else if (raw < -neg) {
       const over = -neg - raw;
@@ -803,6 +850,7 @@ export class GameScene {
       if (over > 0.35 && !d.bumped) {
         d.bumped = true;
         this.events.onBump();
+        if (d.solo[0] > neg) this.flashTwins(d);
       }
     } else d.bumped = false;
     d.d = raw;
@@ -817,6 +865,7 @@ export class GameScene {
     const d = this.drag;
     if (!d || e.pointerId !== d.pointerId) return;
     this.drag = null;
+    this.clearHalos();
     const s = this.session!;
     const [neg, pos] = d.range;
     let steps = Math.round(d.d);
@@ -931,7 +980,18 @@ export class GameScene {
         v.pulse = Math.max(0, v.pulse - dt * 1.8);
         const hint = v.i === this.hintBlock ? 0.35 + Math.sin(this.elapsed * 6) * 0.25 : 0;
         const goldPulse = this.session.puzzle.blocks[v.i].gold ? Math.sin(this.elapsed * 2.4) * 0.06 : 0;
-        v.mat.emissiveIntensity = v.baseEmissive + v.pulse * 0.6 + hint + goldPulse + (dragging ? 0.18 : 0);
+        v.mat.emissiveIntensity = v.baseEmissive + v.pulse * 0.6 + hint + goldPulse + (dragging ? 0.3 : 0);
+        if (v.blocked > 0) {
+          v.blocked = Math.max(0, v.blocked - dt);
+          v.mat.emissive.set('#ff2a3d');
+          v.mat.emissiveIntensity = 0.9 * (0.5 + 0.5 * Math.sin(this.elapsed * 30));
+          if (v.blocked === 0) v.mat.emissive.copy(v.mat.color);
+        }
+      }
+      for (const hl of this.halos) {
+        this.blockCenter(this.views[hl.m], hl.mesh.position);
+        hl.mesh.position.y = 0.04;
+        hl.mesh.scale.setScalar(1 + Math.sin(this.elapsed * 8) * 0.06);
       }
       if (moved || this.elapsed < 0.2) this.updateTethers();
       // Tether emphasis when its group is dragged.

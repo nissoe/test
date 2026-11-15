@@ -34,6 +34,7 @@ export class App {
   private worker: Worker | null = null;
   private hintReq = 0;
   private lastSecond = -1;
+  private lastTwinToast = 0;
 
   constructor(root: HTMLElement) {
     this.profile = this.store.load();
@@ -51,6 +52,13 @@ export class App {
       },
       onDragStart: () => sfx.pick(),
       onTick: (dt) => this.tick(dt),
+      onTwinBlocked: () => {
+        const now = Date.now();
+        if (now - this.lastTwinToast > 6000) {
+          this.lastTwinToast = now;
+          this.toast(t('twinBlocked'), 2200);
+        }
+      },
     });
     if (this.profile.settings.quality === 'low') this.scene.setQuality('low');
     this.scene.setSkin(this.profile.equippedSkin);
@@ -412,7 +420,7 @@ export class App {
     if (index === 0 && !this.profile.seenIntros.includes(pack)) {
       this.profile.seenIntros.push(pack);
       this.save();
-      this.intro(w.intro.icon, tr(w.intro.title), tr(w.intro.body), w.color, begin);
+      this.intro(w.intro.icon, tr(w.intro.title), tr(w.intro.body), w.color, begin, w.demo);
     } else begin();
   }
 
@@ -450,6 +458,9 @@ export class App {
     if (play.mode === 'campaign' && play.pack === 'w1' && play.index === 0) {
       this.toast(t('tutDrag'), 3500);
       setTimeout(() => this.tutorialHand(play), 1300);
+    } else if (play.mode === 'campaign' && play.index === 0 && ['w2', 'w3', 'w5'].includes(play.pack)) {
+      this.toast(t('tutTwin'), 4000);
+      setTimeout(() => this.twinHand(play), 1300);
     }
   }
 
@@ -796,9 +807,45 @@ export class App {
     return m;
   }
 
-  private intro(icon: string, title: string, body: string, color: string, done: () => void) {
+  /** Finger dragging a linked block one legal step, so the first twin move is shown, not described. */
+  private twinHand(play: Play) {
+    if (this.play !== play || play.session.moves > 0) return;
+    const s = play.session;
+    const p = s.puzzle;
+    let pick: { b: number; d: number } | null = null;
+    for (let b = 0; b < p.n && !pick; b++) {
+      if (p.blocks[b].group < 0 || p.blocks[b].gold) continue;
+      const [neg, pos] = s.range(b);
+      if (pos > 0) pick = { b, d: 1 };
+      else if (neg > 0) pick = { b, d: -1 };
+    }
+    if (!pick) return;
+    const a = this.scene.screenOfBlock(pick.b);
+    const z = this.scene.screenOfBlock(pick.b, pick.d * 1.2);
+    const hand = h('div.tut-hand', { style: `--x0:${a.x}px;--y0:${a.y}px;--x1:${z.x}px;--y1:${z.y}px` }, '👆');
+    this.screen?.append(hand);
+    const stop = setInterval(() => {
+      if (this.play !== play || play.session.moves > 0) {
+        hand.remove();
+        clearInterval(stop);
+      }
+    }, 200);
+  }
+
+  /** Small looping animation of a twin rule for intro cards. */
+  private demo(kind: NonNullable<(typeof WORLDS)[number]['demo']>, color: string) {
+    const blk = (cls: string, label?: string) => h(`div.d-blk.${cls}`, label ? h('span.d-lbl', label) : null);
+    const lanes = h(`div.demo.demo-${kind}`, { style: `--accent:${color}` });
+    lanes.append(blk('d-a', t('you')), blk('d-b', t('twin')));
+    if (kind === 'triple') lanes.append(blk('d-c', t('twin')));
+    if (kind === 'pad') lanes.append(h('div.d-pad'));
+    lanes.append(h('div.d-hand', '👆'), blk('d-grey'));
+    return lanes;
+  }
+
+  private intro(icon: string, title: string, body: string, color: string, done: () => void, demo?: (typeof WORLDS)[number]['demo']) {
     const m = this.modal(
-      h('div.intro-badge', { style: `--accent:${color}` }, icon),
+      demo ? this.demo(demo, color) : h('div.intro-badge', { style: `--accent:${color}` }, icon),
       h('div.intro-kicker', t('newMechanic')),
       h('div.win-title', title),
       h('p.intro-body', body),

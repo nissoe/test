@@ -66,6 +66,10 @@ const dict = {
   online: { he: 'אונליין', en: 'Online' },
   leaderboards: { he: 'טבלאות מובילים', en: 'Leaderboards' },
   gameName: { he: 'תאומים', en: 'TWINLOCK' },
+  tutTwin: { he: 'גרור את הבלוק הצבעוני — וצפה בתאום שלו זז איתו', en: 'Drag the colored block — and watch its twin move with it' },
+  twinBlocked: { he: 'התאום חסום — לכן גם הבלוק הזה נעצר', en: 'Its twin is blocked — so this block stops too' },
+  you: { he: 'אתה', en: 'You' },
+  twin: { he: 'תאום', en: 'Twin' },
   confirm: { he: 'אישור', en: 'OK' },
 } as const;
 

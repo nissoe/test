@@ -122,9 +122,9 @@ export class Puzzle {
   }
 
   /** Members that move when `driver` is dragged (alive only), with their relative direction factor. */
-  linked(s: State, driver: number): { idx: number[]; rel: number[] } {
+  linked(s: State, driver: number, solo = false): { idx: number[]; rel: number[] } {
     const b = this.blocks[driver];
-    if (b.group < 0) return { idx: [driver], rel: [1] };
+    if (b.group < 0 || solo) return { idx: [driver], rel: [1] };
     const inv = s[this.n] ? -1 : 1;
     const idx: number[] = [];
     const rel: number[] = [];
@@ -143,10 +143,10 @@ export class Puzzle {
   }
 
   /** How many unit steps the group can travel when `driver` moves in direction `dir` (+1/-1). */
-  reach(s: State, driver: number, dir: 1 | -1, occ?: Int16Array): number {
+  reach(s: State, driver: number, dir: 1 | -1, occ?: Int16Array, solo = false): number {
     if (s[driver] < 0) return 0;
     occ ??= this.occupancy(s);
-    const { idx, rel } = this.linked(s, driver);
+    const { idx, rel } = this.linked(s, driver, solo);
     const cur = idx.map((m) => s[m]);
     const limit = Math.max(this.w, this.h);
     let steps = 0;
@@ -217,6 +217,12 @@ export class Puzzle {
       }
     }
     return out;
+  }
+
+  /** Range the driver alone could travel if it had no twin (used to explain twin-blocked moves). */
+  soloRange(s: State, i: number): [number, number] {
+    const occ = this.occupancy(s);
+    return [this.reach(s, i, -1, occ, true), this.reach(s, i, 1, occ, true)];
   }
 
   /** Range of legal drags for UI: [-neg, +pos]. */

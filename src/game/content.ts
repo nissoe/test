@@ -11,6 +11,8 @@ export interface WorldMeta {
   /** Accent color for UI + board rim. */
   color: string;
   intro: { title: L; body: L; icon: string };
+  /** Animated mini-diagram shown in the intro card. */
+  demo?: 'mirror' | 'parallel' | 'cross' | 'pad' | 'triple';
 }
 
 export const WORLDS: WorldMeta[] = [
@@ -31,18 +33,23 @@ export const WORLDS: WorldMeta[] = [
       icon: '⇄',
       title: { he: 'תאומי מראה', en: 'Mirror twins' },
       body: {
-        he: 'בלוקים באותו צבע מחוברים. הזז אחד — התאום שלו זז אותו מרחק בכיוון ההפוך. אם אחד מהם נחסם, שניהם נעצרים.',
-        en: 'Blocks of the same color are linked. Move one and its twin moves the same distance the opposite way. If either is blocked, both stop.',
+        he: 'רק בלוקים צבעוניים מחוברים לתאום (אותו צבע ואותו סמל). הזז אחד — התאום שלו זז אותו מרחק בכיוון ההפוך. בלוקים אפורים זזים לבד. אם אחד התאומים חסום, שניהם נעצרים.',
+        en: 'Only colored blocks have a twin (same color, same symbol). Move one and its twin moves the same distance the opposite way. Gray blocks move alone. If either twin is blocked, both stop.',
       },
     },
+    demo: 'mirror',
   },
   {
     id: 'w3', name: { he: 'מקביל', en: 'Parallel' }, color: '#7cff6b',
     intro: {
       icon: '⇉',
       title: { he: 'תאומים מקבילים', en: 'Parallel twins' },
-      body: { he: 'חיבור עם הסמל ⇉ זז באותו כיוון. שים לב לסמל על הקשת שמחברת בין התאומים.', en: 'Links marked ⇉ move the same way. Watch the symbol on the arc between the twins.' },
+      body: {
+        he: 'תאומים מקבילים זזים יחד באותו כיוון ובאותו מרחק. על הקשת שמחברת ביניהם מופיע ⇉ (מקביל) או ⇄ (מראה) — בעולם הזה יש את שניהם.',
+        en: 'Parallel twins move together, the same way and the same distance. The arc between them shows ⇉ (parallel) or ⇄ (mirror) — this world has both.',
+      },
     },
+    demo: 'parallel',
   },
   {
     id: 'w4', name: { he: 'אבן', en: 'Stone' }, color: '#c9a27a',
@@ -59,6 +66,7 @@ export const WORLDS: WorldMeta[] = [
       title: { he: 'תאומים ניצבים', en: 'Cross twins' },
       body: { he: 'תאום אופקי יכול להיות מחובר לתאום אנכי: ימינה כאן — למטה (או למעלה) שם.', en: 'A horizontal twin can be linked to a vertical one: right here means down (or up) there.' },
     },
+    demo: 'cross',
   },
   {
     id: 'w6', name: { he: 'קרחון', en: 'Glacier' }, color: '#9fdcff',
@@ -83,6 +91,7 @@ export const WORLDS: WorldMeta[] = [
       title: { he: 'משטחי קוטביות', en: 'Polarity pads' },
       body: { he: 'כשבלוק עולה על משטח קוטביות — כל החיבורים מתהפכים: מראה הופך למקביל ולהפך.', en: 'When a block steps onto a polarity pad every link flips: mirror becomes parallel and back.' },
     },
+    demo: 'pad',
   },
   {
     id: 'w9', name: { he: 'שילוש', en: 'Trinity' }, color: '#ff5470',
@@ -91,6 +100,7 @@ export const WORLDS: WorldMeta[] = [
       title: { he: 'שלישיות', en: 'Triplets' },
       body: { he: 'שלושה בלוקים בשרשרת אחת. כל אחד מושך את שני האחרים.', en: 'Three blocks on one chain. Each one drags the other two.' },
     },
+    demo: 'triple',
   },
   {
     id: 'w10', name: { he: 'חד־סטרי', en: 'One Way' }, color: '#45ffb5',

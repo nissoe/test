@@ -184,3 +184,37 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* Hebrew logo: the word and its mirrored "twin" reflection */
 .logo-he { direction: rtl; letter-spacing: 0; font-size: clamp(56px, 18vw, 104px); -webkit-box-reflect: below -14px linear-gradient(transparent 45%, rgba(255,255,255,.28)); }
 .logo-twin { margin-top: 18px; font-size: 13px; font-weight: 700; letter-spacing: 6px; color: var(--muted); direction: ltr; }
+
+/* ---------- intro demo animations (twin rules) ---------- */
+.demo { --accent: #3ee8ff; position: relative; width: 260px; height: 156px; margin: 0 auto 14px; direction: ltr; border-radius: 18px;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 26px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 26px), rgba(10,8,26,.9);
+  border: 1px solid rgba(255,255,255,.12); overflow: hidden; }
+.d-blk { position: absolute; width: 78px; height: 26px; border-radius: 8px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff), var(--accent));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 60%, transparent), inset 0 1px 0 rgba(255,255,255,.6); display: grid; place-items: center; }
+.d-lbl { font-size: 11px; font-weight: 800; color: #0b0820; }
+.d-grey { left: 172px; top: 64px; width: 52px; background: linear-gradient(180deg, #8a90b0, #5d6385); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+.d-a { left: 40px; top: 20px; }
+.d-b { left: 140px; top: 110px; }
+.d-c { left: 40px; top: 64px; width: 52px; }
+.d-hand { position: absolute; left: 62px; top: 30px; font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+.demo .d-a, .demo .d-hand { animation: dA 3.2s ease-in-out infinite; }
+@keyframes dA { 0%, 18% { transform: translateX(0) } 45%, 70% { transform: translateX(60px) } 92%, 100% { transform: translateX(0) } }
+.demo-mirror .d-b { animation: dNeg 3.2s ease-in-out infinite; }
+.demo-parallel .d-b { left: 60px; animation: dA 3.2s ease-in-out infinite; }
+.demo-triple .d-b { animation: dNeg 3.2s ease-in-out infinite; }
+.demo-triple .d-c { animation: dA 3.2s ease-in-out infinite; }
+.demo-triple .d-grey { top: 110px; left: 20px; }
+@keyframes dNeg { 0%, 18% { transform: translateX(0) } 45%, 70% { transform: translateX(-60px) } 92%, 100% { transform: translateX(0) } }
+.demo-cross .d-b { left: 200px; top: 14px; width: 26px; height: 70px; animation: dDown 3.2s ease-in-out infinite; }
+.demo-cross .d-grey { left: 110px; top: 110px; }
+@keyframes dDown { 0%, 18% { transform: translateY(0) } 45%, 70% { transform: translateY(60px) } 92%, 100% { transform: translateY(0) } }
+/* Pad: first step mirrors, the block lands on the pad, the link flips, second step moves in parallel. */
+.d-pad { position: absolute; left: 104px; top: 16px; width: 34px; height: 34px; border-radius: 50%; border: 3px solid #c79bff; box-shadow: 0 0 14px #b46bff; animation: dPad 4.4s infinite; }
+.demo-pad .d-a, .demo-pad .d-hand { animation: dPadA 4.4s ease-in-out infinite; }
+.demo-pad .d-b { left: 120px; animation: dPadB 4.4s ease-in-out infinite; }
+@keyframes dPadA { 0%, 10% { transform: translateX(0) } 30%, 45% { transform: translateX(50px) } 65%, 80% { transform: translateX(100px) } 96%, 100% { transform: translateX(0) } }
+@keyframes dPadB { 0%, 10% { transform: translateX(0) } 30%, 45% { transform: translateX(-50px) } 65%, 80% { transform: translateX(0) } 96%, 100% { transform: translateX(0) } }
+@keyframes dPad { 0%, 28% { transform: scale(1); opacity: .6 } 34% { transform: scale(1.5); opacity: 1 } 45%, 100% { transform: scale(1); opacity: .6 } }
+@media (prefers-reduced-motion: reduce) { .demo * { animation-duration: 8s !important; } }
+.d-hand { left: 66px; top: 40px; }
+.demo-cross .d-b .d-lbl { writing-mode: vertical-rl; font-size: 10px; }
