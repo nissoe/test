@@ -18,7 +18,7 @@ export const WORLDS: WorldMeta[] = [
     id: 'w1', name: { he: 'אור ראשון', en: 'First Light' }, color: '#ffc845',
     intro: {
       icon: '◆',
-      title: { he: 'ברוך הבא ל־TWINLOCK', en: 'Welcome to TWINLOCK' },
+      title: { he: 'ברוכים הבאים לתאומים', en: 'Welcome to TWINLOCK' },
       body: {
         he: 'החלק את בלוק הזהב אל היציאה הזוהרת. בלוקים זזים רק לאורכם. לכל שלב יש מגבלת מהלכים — פתור במינימום כדי לקבל 3 כוכבים.',
         en: 'Slide the gold block out through the glowing exit. Blocks only move along their length. Every level has a move limit — solve at par for 3 stars.',

@@ -65,6 +65,8 @@ const dict = {
   tapToReveal: { he: 'התאומים מוסתרים — הזז כדי לגלות', en: 'Twins are hidden — move to reveal' },
   online: { he: 'אונליין', en: 'Online' },
   leaderboards: { he: 'טבלאות מובילים', en: 'Leaderboards' },
+  gameName: { he: 'תאומים', en: 'TWINLOCK' },
+  confirm: { he: 'אישור', en: 'OK' },
 } as const;
 
 export type Key = keyof typeof dict;

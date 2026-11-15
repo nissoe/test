@@ -27,6 +27,8 @@ export interface Profile {
   dailyLastDay: number;
   dailyStreak: number;
   settings: Settings;
+  /** True once the player picked a language in Settings; otherwise the game stays in Hebrew. */
+  langChosen?: boolean;
 }
 
 export interface SaveStore {
@@ -35,7 +37,8 @@ export interface SaveStore {
 }
 
 export function defaultProfile(): Profile {
-  const lang: Lang = (navigator.language || '').startsWith('he') ? 'he' : 'en';
+  // Hebrew-first game: Hebrew is the default; English stays available in Settings.
+  const lang: Lang = 'he';
   return {
     version: 1,
     stars: {},
@@ -58,7 +61,11 @@ export class LocalSaveStore implements SaveStore {
   load(): Profile {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) return { ...defaultProfile(), ...JSON.parse(raw) };
+      if (raw) {
+        const p: Profile = { ...defaultProfile(), ...JSON.parse(raw) };
+        if (!p.langChosen) p.settings.lang = 'he';
+        return p;
+      }
     } catch {
       /* storage unavailable (private mode) — play with an in-memory profile */
     }

@@ -181,3 +181,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   70% { transform: translate(calc(var(--x1) - 14px), calc(var(--y1) + 6px)) scale(1); opacity: 1; }
   100% { transform: translate(calc(var(--x1) - 14px), calc(var(--y1) + 6px)) scale(1); opacity: 0; }
 }
+/* Hebrew logo: the word and its mirrored "twin" reflection */
+.logo-he { direction: rtl; letter-spacing: 0; font-size: clamp(56px, 18vw, 104px); -webkit-box-reflect: below -14px linear-gradient(transparent 45%, rgba(255,255,255,.28)); }
+.logo-twin { margin-top: 18px; font-size: 13px; font-weight: 700; letter-spacing: 6px; color: var(--muted); direction: ltr; }

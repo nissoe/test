@@ -1,6 +1,8 @@
 {
-  "name": "TWINLOCK",
-  "short_name": "TWINLOCK",
+  "name": "תאומים · TWINLOCK",
+  "lang": "he",
+  "dir": "rtl",
+  "short_name": "תאומים",
   "start_url": "./",
   "display": "fullscreen",
   "orientation": "portrait",

@@ -3,7 +3,7 @@ import { Session } from '../game/session';
 import { CHALLENGES, RUSH_SECONDS, WORLDS, dailyLevel, dayIndex, packLevels, starsFor, type ChallengeId } from '../game/content';
 import { LocalSaveStore, defaultProfile, type Profile, type SaveStore } from '../services/save';
 import { SKINS, THEMES } from '../render/skins';
-import { setLang, t, tr } from '../i18n';
+import { getLang, setLang, t, tr } from '../i18n';
 import { configureFeedback, sfx } from '../audio';
 import { h, starsRow } from './dom';
 import type { LevelDef, Move } from '../engine/types';
@@ -157,7 +157,10 @@ export class App {
       ),
       h(
         'div.logo-wrap',
-        h('h1.logo', { 'data-text': 'TWINLOCK' }, 'TWIN', h('span.lock', 'LOCK')),
+        getLang() === 'he'
+          ? h('h1.logo.logo-he', 'תאו', h('span.lock', 'מים'))
+          : h('h1.logo', 'TWIN', h('span.lock', 'LOCK')),
+        h('div.logo-twin', getLang() === 'he' ? 'TWINLOCK' : 'תאומים'),
         h('p.tagline', t('tagline')),
       ),
       h(
@@ -327,7 +330,7 @@ export class App {
       { icon: '◉', name: { he: '500 מטבעות', en: '500 coins' }, price: '₪9.90' },
       { icon: '◉◉', name: { he: '1,500 מטבעות', en: '1,500 coins' }, price: '₪24.90' },
       { icon: '🚫', name: { he: 'הסרת פרסומות', en: 'Remove ads' }, price: '₪14.90' },
-      { icon: '👑', name: { he: 'TWINLOCK Pass', en: 'TWINLOCK Pass' }, price: '₪19.90' },
+      { icon: '👑', name: { he: 'כרטיס תאומים', en: 'TWINLOCK Pass' }, price: '₪19.90' },
     ].map((x) =>
       h(
         'button.shop-item.premium',
@@ -368,6 +371,7 @@ export class App {
           'div.scroll.settings',
           row(t('language'), s.lang === 'he' ? 'עברית' : 'English', () => {
             s.lang = s.lang === 'he' ? 'en' : 'he';
+            this.profile.langChosen = true;
             setLang(s.lang);
             apply();
           }),
@@ -393,7 +397,7 @@ export class App {
             },
             t('resetProgress'),
           ),
-          h('div.version', 'TWINLOCK v0.1'),
+          h('div.version', `${t('gameName')} v0.2`),
         ),
       ),
     );
@@ -808,7 +812,7 @@ export class App {
       h(
         'div.modal-actions',
         h('button.btn.ghost', { onclick: () => m.remove() }, t('back')),
-        h('button.btn.primary.danger', { onclick: () => (m.remove(), yes()) }, 'OK'),
+        h('button.btn.primary.danger', { onclick: () => (m.remove(), yes()) }, t('confirm')),
       ),
     );
   }

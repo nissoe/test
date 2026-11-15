@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.twinlock.game',
-  appName: 'TWINLOCK',
+  appName: 'תאומים',
   webDir: 'dist',
   backgroundColor: '#07060f',
 };

@@ -1,10 +1,10 @@
-# TWINLOCK
+# תאומים · TWINLOCK
 
 A 3D sliding-block puzzle for mobile and web. Every colored block has a **twin**:
 drag one and its twin moves the same distance — mirrored (⇄) or in parallel (⇉).
 Free the gold block through the exit, within each level's move limit.
 
-Hebrew + English, built with TypeScript + Three.js, packaged for iOS/Android with Capacitor.
+Hebrew-first (English available in Settings), built with TypeScript + Three.js, packaged for iOS/Android with Capacitor.
 
 ## Run
 
