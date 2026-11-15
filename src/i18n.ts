@@ -35,6 +35,7 @@ const dict = {
   premium: { he: 'פרימיום', en: 'Premium' },
   language: { he: 'שפה', en: 'Language' },
   sound: { he: 'צלילים', en: 'Sound' },
+  music: { he: 'מוזיקה', en: 'Music' },
   haptics: { he: 'רטט', en: 'Haptics' },
   quality: { he: 'גרפיקה', en: 'Graphics' },
   qHigh: { he: 'גבוהה', en: 'High' },

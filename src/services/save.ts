@@ -9,6 +9,8 @@ export interface Settings {
   lang: Lang;
   sound: boolean;
   haptics: boolean;
+  /** Ambient music; undefined in older saves means on. */
+  music?: boolean;
   quality: 'high' | 'low';
 }
 
@@ -51,7 +53,7 @@ export function defaultProfile(): Profile {
     rushBest: 0,
     dailyLastDay: -1,
     dailyStreak: 0,
-    settings: { lang, sound: true, haptics: true, quality: 'high' },
+    settings: { lang, sound: true, haptics: true, music: true, quality: 'high' },
   };
 }
 

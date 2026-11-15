@@ -48,6 +48,8 @@ export interface SceneEvents {
   onDragStart(b: number): void;
   onTick(dt: number): void;
   onTwinBlocked?(): void;
+  /** Dragged block crossed into another cell (cells from start). */
+  onCell?(n: number): void;
 }
 
 type Mode = 'showcase' | 'play';
@@ -97,6 +99,7 @@ export class GameScene {
     rel: number[];
     range: [number, number];
     solo: [number, number];
+    cell: number;
     d: number;
     bumped: boolean;
   } | null = null;
@@ -804,6 +807,7 @@ export class GameScene {
       base: idx.map((m) => s.state[m]),
       range: s.range(b),
       solo: s.puzzle.soloRange(s.state, b),
+      cell: 0,
       d: 0,
       bumped: false,
     };
@@ -854,6 +858,11 @@ export class GameScene {
       }
     } else d.bumped = false;
     d.d = raw;
+    const cell = Math.max(-neg, Math.min(pos, Math.round(raw)));
+    if (cell !== d.cell) {
+      d.cell = cell;
+      this.events.onCell?.(cell);
+    }
     d.members.forEach((m, j) => {
       const v = this.views[m];
       v.pos = v.target = d.base[j] + raw * d.rel[j];

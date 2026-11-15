@@ -4,7 +4,7 @@ import { CHALLENGES, LEVEL_INTROS, RUSH_SECONDS, WORLDS, dailyLevel, dayIndex, p
 import { LocalSaveStore, defaultProfile, type Profile, type SaveStore } from '../services/save';
 import { SKINS, THEMES } from '../render/skins';
 import { getLang, setLang, t, tr } from '../i18n';
-import { configureFeedback, sfx } from '../audio';
+import { configureFeedback, sfx, unlockAudioOnFirstGesture } from '../audio';
 import { h, starsRow } from './dom';
 import type { LevelDef, Move } from '../engine/types';
 
@@ -39,7 +39,8 @@ export class App {
   constructor(root: HTMLElement) {
     this.profile = this.store.load();
     setLang(this.profile.settings.lang);
-    configureFeedback(this.profile.settings.sound, this.profile.settings.haptics);
+    configureFeedback(this.profile.settings.sound, this.profile.settings.haptics, this.profile.settings.music !== false);
+    unlockAudioOnFirstGesture();
     const canvas = h('canvas') as HTMLCanvasElement;
     canvas.id = 'gl';
     this.ui = h('div.ui');
@@ -52,7 +53,9 @@ export class App {
       },
       onDragStart: () => sfx.pick(),
       onTick: (dt) => this.tick(dt),
+      onCell: (n) => sfx.cell(n),
       onTwinBlocked: () => {
+        sfx.twinBlocked();
         const now = Date.now();
         if (now - this.lastTwinToast > 6000) {
           this.lastTwinToast = now;
@@ -367,7 +370,7 @@ export class App {
     const row = (label: string, value: string, onclick: () => void) =>
       h('button.set-row', { onclick: () => (sfx.tap(), onclick()) }, h('span', label), h('span.set-val', value));
     const apply = () => {
-      configureFeedback(s.sound, s.haptics);
+      configureFeedback(s.sound, s.haptics, s.music !== false);
       this.save();
       this.settings();
     };
@@ -384,6 +387,7 @@ export class App {
             apply();
           }),
           row(t('sound'), s.sound ? t('on') : t('off'), () => ((s.sound = !s.sound), apply())),
+          row(t('music'), s.music !== false ? t('on') : t('off'), () => ((s.music = s.music === false), apply())),
           row(t('haptics'), s.haptics ? t('on') : t('off'), () => ((s.haptics = !s.haptics), apply())),
           row(t('quality'), s.quality === 'high' ? t('qHigh') : t('qLow'), () => {
             s.quality = s.quality === 'high' ? 'low' : 'high';
@@ -544,9 +548,10 @@ export class App {
   private onMove(mv: Move) {
     const p = this.play;
     if (!p || p.ended) return null;
+    const link = p.session.puzzle.linked(p.session.state, mv.b);
     const res = p.session.play(mv);
     if (!res) return null;
-    sfx.move();
+    sfx.move(link.idx.length > 1 ? (link.rel[1] as 1 | -1) : 0);
     if (res.flips) {
       sfx.flip();
       this.scene.padFlash();
@@ -574,7 +579,7 @@ export class App {
     const p = this.play;
     if (!p || p.ended) return;
     if (p.session.undo()) {
-      sfx.tap();
+      sfx.undo();
       this.scene.syncAnimated();
       this.updateHud();
     }
@@ -603,6 +608,7 @@ export class App {
       this.profile.coins -= HINT_COST;
       this.save();
       this.scene.showHint(path[0]);
+      sfx.hint();
       const pill = this.screen?.querySelector('.coins');
       if (pill) pill.replaceWith(this.coinPill());
     };
@@ -674,8 +680,9 @@ export class App {
     this.save();
     setTimeout(() => {
       this.scene.celebrate();
-      sfx.win();
+      sfx.win(stars);
       this.winModal(stars, coins);
+      if (coins > 0) setTimeout(() => sfx.coin(), 350 + stars * 260 + 200);
     }, 650);
   }
 
