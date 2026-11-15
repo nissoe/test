@@ -57,11 +57,14 @@ export function defaultProfile(): Profile {
   };
 }
 
-const KEY = 'twinlock.profile.v1';
+// v2: progress was wiped for a clean start after the world 1 redesign. Older keys are deleted on load.
+const KEY = 'twinlock.profile.v2';
+const OLD_KEYS = ['twinlock.profile.v1'];
 
 export class LocalSaveStore implements SaveStore {
   load(): Profile {
     try {
+      for (const k of OLD_KEYS) localStorage.removeItem(k);
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const p: Profile = { ...defaultProfile(), ...JSON.parse(raw) };
