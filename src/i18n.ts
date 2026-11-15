@@ -1,0 +1,81 @@
+export type Lang = 'he' | 'en';
+
+const dict = {
+  play: { he: 'שחק', en: 'Play' },
+  continue: { he: 'המשך', en: 'Continue' },
+  worlds: { he: 'עולמות', en: 'Worlds' },
+  challenges: { he: 'אתגרים', en: 'Challenges' },
+  daily: { he: 'פאזל יומי', en: 'Daily Puzzle' },
+  shop: { he: 'חנות', en: 'Shop' },
+  settings: { he: 'הגדרות', en: 'Settings' },
+  back: { he: 'חזרה', en: 'Back' },
+  level: { he: 'שלב', en: 'Level' },
+  moves: { he: 'מהלכים', en: 'Moves' },
+  best: { he: 'מינימום', en: 'Par' },
+  undo: { he: 'בטל', en: 'Undo' },
+  restart: { he: 'התחל מחדש', en: 'Restart' },
+  hint: { he: 'רמז', en: 'Hint' },
+  next: { he: 'הבא', en: 'Next' },
+  retry: { he: 'נסה שוב', en: 'Retry' },
+  menu: { he: 'תפריט', en: 'Menu' },
+  solved: { he: 'נפתר!', en: 'Unlocked!' },
+  perfect: { he: 'מושלם!', en: 'Perfect!' },
+  outOfMoves: { he: 'נגמרו המהלכים', en: 'Out of moves' },
+  outOfTime: { he: 'נגמר הזמן', en: "Time's up" },
+  extraMoves: { he: '+5 מהלכים', en: '+5 moves' },
+  locked: { he: 'נעול', en: 'Locked' },
+  comingSoon: { he: 'בקרוב', en: 'Coming soon' },
+  owned: { he: 'בבעלותך', en: 'Owned' },
+  equip: { he: 'בחר', en: 'Equip' },
+  equipped: { he: 'בשימוש', en: 'Equipped' },
+  buy: { he: 'קנה', en: 'Buy' },
+  notEnough: { he: 'אין מספיק מטבעות', en: 'Not enough coins' },
+  blockSkins: { he: 'סקינים לבלוקים', en: 'Block skins' },
+  boardThemes: { he: 'ערכות לוח', en: 'Board themes' },
+  premium: { he: 'פרימיום', en: 'Premium' },
+  language: { he: 'שפה', en: 'Language' },
+  sound: { he: 'צלילים', en: 'Sound' },
+  haptics: { he: 'רטט', en: 'Haptics' },
+  quality: { he: 'גרפיקה', en: 'Graphics' },
+  qHigh: { he: 'גבוהה', en: 'High' },
+  qLow: { he: 'חסכונית', en: 'Battery saver' },
+  on: { he: 'פועל', en: 'On' },
+  off: { he: 'כבוי', en: 'Off' },
+  resetProgress: { he: 'איפוס התקדמות', en: 'Reset progress' },
+  confirmReset: { he: 'למחוק את כל ההתקדמות?', en: 'Erase all progress?' },
+  gotIt: { he: 'הבנתי', en: 'Got it' },
+  newMechanic: { he: 'מכניקה חדשה', en: 'New mechanic' },
+  movesLeft: { he: 'נותרו', en: 'Left' },
+  time: { he: 'זמן', en: 'Time' },
+  score: { he: 'ניקוד', en: 'Score' },
+  bestScore: { he: 'שיא', en: 'Best' },
+  start: { he: 'התחל', en: 'Start' },
+  rushOver: { he: 'סוף הריצה', en: 'Run over' },
+  dailyDone: { he: 'הפאזל של היום נפתר. חזור מחר!', en: "Today's puzzle is solved. Come back tomorrow!" },
+  streak: { he: 'רצף ימים', en: 'Day streak' },
+  hintNoWay: { he: 'אי אפשר לסיים במהלכים שנותרו. נסה מההתחלה.', en: "Can't finish within the remaining moves. Try restarting." },
+  hintCost: { he: 'רמז עולה', en: 'Hint costs' },
+  tutDrag: { he: 'גרור את בלוק הזהב אל היציאה', en: 'Drag the gold block to the exit' },
+  unlockAfter: { he: 'נפתח אחרי', en: 'Unlocks after' },
+  stars: { he: 'כוכבים', en: 'Stars' },
+  tagline: { he: 'מזיז אחד. השני זז הפוך.', en: 'Move one. Its twin moves back.' },
+  coins: { he: 'מטבעות', en: 'Coins' },
+  reward: { he: 'פרס', en: 'Reward' },
+  levels: { he: 'שלבים', en: 'levels' },
+  tapToReveal: { he: 'התאומים מוסתרים — הזז כדי לגלות', en: 'Twins are hidden — move to reveal' },
+  online: { he: 'אונליין', en: 'Online' },
+  leaderboards: { he: 'טבלאות מובילים', en: 'Leaderboards' },
+} as const;
+
+export type Key = keyof typeof dict;
+
+let lang: Lang = 'he';
+export function setLang(l: Lang) {
+  lang = l;
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === 'he' ? 'rtl' : 'ltr';
+}
+export const getLang = () => lang;
+export const t = (k: Key) => dict[k][lang];
+/** Pick from an inline {he, en} pair. */
+export const tr = (v: { he: string; en: string }) => v[lang];
