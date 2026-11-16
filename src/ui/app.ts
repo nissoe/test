@@ -167,6 +167,7 @@ export class App {
         'div.home-top',
         h('div.pill', h('span.star.on', '★'), String(this.totalStars())),
         this.coinPill(),
+        h('button.icon-btn', { onclick: () => (sfx.tap(), void this.shareGame()), 'aria-label': t('share') }, '📤'),
         h('button.icon-btn', { onclick: () => (sfx.tap(), this.settings()), 'aria-label': t('settings') }, '⚙'),
       ),
       h(
@@ -837,6 +838,25 @@ export class App {
       ),
     );
     const close = () => m.remove();
+  }
+
+  /** Native share sheet on phones; copies the link elsewhere. */
+  private async shareGame() {
+    const url = location.origin + location.pathname;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: t('gameName'), text: t('shareText'), url });
+        return;
+      }
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return;
+    }
+    try {
+      await navigator.clipboard.writeText(`${t('shareText')}\n${url}`);
+      this.toast(t('linkCopied'));
+    } catch {
+      this.toast(url, 4000);
+    }
   }
 
   // ---------- kids zone ----------

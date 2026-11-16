@@ -85,6 +85,15 @@ tools/           generator, verifier, engine tests
 - Premium tab (coin packs, remove ads, TWINLOCK Pass) is in place and marked *coming soon* until the online
   service and store integration exist. Every level is solvable without buying anything.
 
+## Public website (GitHub Pages)
+
+The installable web app is built into `docs/` and served by GitHub Pages at https://nissoe.github.io/test/
+(Settings → Pages → Deploy from a branch → this branch, folder `/docs`).
+
+```bash
+npm run build:pages   # rebuild docs/, then commit and push
+```
+
 ## Mobile builds (Capacitor)
 
 ```bash
