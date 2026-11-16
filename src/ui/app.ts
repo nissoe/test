@@ -842,7 +842,8 @@ export class App {
 
   /** Native share sheet on phones; copies the link elsewhere. */
   private async shareGame() {
-    const url = location.origin + location.pathname;
+    // Always share the page itself (index.html), which works on any static host.
+    const url = location.origin + location.pathname.replace(/\/$/, '/index.html');
     try {
       if (navigator.share) {
         await navigator.share({ title: t('gameName'), text: t('shareText'), url });
