@@ -224,7 +224,7 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .found-row{position:absolute;left:50%;top:6px;transform:translateX(-50%);display:flex;gap:10px;background:#fff;border-radius:26px;padding:8px 20px;box-shadow:0 6px 0 var(--paper-d);align-items:center;direction:ltr;z-index:5}
 .found-row i{font-style:normal;width:40px;height:40px;border-radius:50%;border:4px dashed #c9c1e8;display:grid;place-items:center;font-size:24px;font-family:var(--emoji)}
 .found-row i.on{border:4px solid var(--mint);background:#e6fff5}
-.found-row .t{font-size:46px;font-family:var(--emoji);margin-left:6px}
+.found-row .t{display:block;margin-left:6px}
 
 /* reading */
 .pic-card{left:490px;top:20px;width:300px;height:300px;display:grid;place-items:center;font-size:190px;font-family:var(--emoji)}
@@ -488,17 +488,6 @@ const EN_WORDS = [
   ['COW','🐄'],['EGG','🥚'],['BOX','📦'],['CAR','🚗'],['OWL','🦉'],['ANT','🐜'],['KEY','🔑'],['HEN','🐔'],['MOON','🌙'],['FISH','🐟'],
   ['STAR','⭐'],['CAKE','🎂'],['BALL','⚽'],['TREE','🌳'],['FROG','🐸'],['DUCK','🦆'],['BEAR','🐻'],['LION','🦁'],['MILK','🥛'],['BOOK','📖'],
 ];
-const FIND_TARGETS = [
-  ['🐱','חתולים'],['🐶','כלבים'],['🦆','ברווזים'],['🐟','דגים'],['⭐','כוכבים'],['🍎','תפוחים'],['🚗','מכוניות'],['🐞','פרות משה רבנו'],
-  ['🎈','בלונים'],['🦋','פרפרים'],['🐸','צפרדעים'],['🍌','בננות'],['🐘','פילים'],['🦒','ג׳ירפות'],['🐢','צבים'],['🚀','חלליות'],
-];
-const MANY = ['🐱','🐶','🦆','🐟','⭐','🍎','🚗','🐞','🎈','🦋','🐸','🍌','🐘','🦒','🐢','🚀','🌷','🍄','🐝','🐌','🦔','🐿️','🍓','🍇','🥕','🌽','🐧','🦉','🐙','🦀','🐳','🐬','⚽','🧸','🪁','🚲','🚂','🚁','🌻','🍉','🍩','🧁','🐮','🐷','🐵','🦊','🐻','🐼','🦁','🐯','🐨','🐰','🦄','🦕','🍒','🥨','🧀','🎁'];
-const COUNT_ITEMS = ['🍎','🍓','⭐','🎈','🐟','🦆','🌸','🍪','🚗','🐞','🧁','🐣','⚽','🍊','🦋','🐝','🍄','🧸'];
-const SCENES = {
-  meadow:{bg:'linear-gradient(#bfe9ff 0 44%,#8fd46f 44% 100%)',items:['🌳','🌷','🐄','🐑','🏠','🐓','🌻','🍄','🐝','🦋','🐇','🚜','🌲','🐴','🐤','🍎','🐌','🌼']},
-  beach:{bg:'linear-gradient(#a6e6ff 0 36%,#3fb5f0 36% 58%,#ffe3a3 58% 100%)',items:['⛱️','🦀','🐚','⛵','🐠','🐙','🌴','🍉','🐬','🦩','🐢','🏐','🪣','🐳','🍦','🦭','🩴','🌞']},
-  space:{bg:'radial-gradient(circle at 30% 30%,#4338ca,#1e1b4b 70%)',items:['🚀','🪐','⭐','🌙','👽','🛸','☄️','🌍','🌟','🛰️','🌕','🔭','🌠','👾','🌎','💫']},
-};
 const STICKERS = ['🦁','🐯','🦊','🐼','🐨','🐸','🦄','🐙','🦖','🚒','🚀','🌈','🍦','🎈','⭐','🐝','🦋','🐢','🐬','🚂','🏎️','🍓','🌻','🎸','🐳','🦒','🐧','🦉','🍩','🎂','🚁','⚽','🦜','🐞','🍉','🌟','🦕','🚜','🧸','🎠'];
 const PRAISE = ['כל הכבוד!','מעולה!','יופי!','וואו, איזה אלוף!','נכון מאוד!','מדהים!','אלוף!'];
 const OOPS = ['אופס, ננסה שוב?','כמעט! עוד פעם','לא נורא, נסה שוב','הממ... אולי משהו אחר?'];
@@ -542,10 +531,9 @@ try{
 }catch(e){}
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify({S,P})); }catch(e){} }
 
-const NUM_LV=[5,10,15,20,30], MATH_LV=[5,10,20], FIND_LV=[22,30,38,46];
+const NUM_LV=[5,10,15,20,30], MATH_LV=[5,10,20], FIND_LV=[3,4,5,6];
 const numMaxNow = () => S.autoLevel ? Math.min(S.numMax, NUM_LV[P.lv.numbers]) : S.numMax;
 const mathMaxNow = () => S.autoLevel ? Math.min(S.mathMax, MATH_LV[P.lv.math]) : S.mathMax;
-const findNow = () => FIND_LV[S.autoLevel ? P.lv.find : 1];
 const LV_LEN = {numbers:NUM_LV.length, math:MATH_LV.length, reading:3, find:FIND_LV.length};
 
 /* =========================================================
@@ -1294,78 +1282,310 @@ GAMES.sort = {
   }
 };
 
+/* ---------- ILLUSTRATED SCENES (drawn, activity-book style) ---------- */
+const ILL = (()=>{
+  const O = '#3d2f5b';
+  const S3 = `stroke="${O}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  const S2 = `stroke="${O}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"`;
+  const BRIGHT = ['#ef5b5b','#4d96ff','#ffd93d','#6bcb77','#ff8fab','#9b5de5','#ff9f1c','#2ec4b6'];
+  const other = (cur, pal=BRIGHT) => pick(pal.filter(c=>c!==cur));
+  const puff = (cs, fill) => cs.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${S3}/>`).join('') + cs.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r-1.7}" fill="${fill}"/>`).join('');
+  const eye = (x,y,r=3.2) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${O}"/><circle cx="${x+r*.35}" cy="${y-r*.4}" r="${r*.38}" fill="#fff"/>`;
+  const cheek = (x,y,r=4) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.7}" fill="#ff8fa3" opacity=".65"/>`;
+  const smile = (x,y,w=5) => `<path d="M${x-w} ${y} q${w} ${w*.9} ${w*2} 0" fill="none" ${S2}/>`;
+  const starPath = (R,r,cy=0) => { let d=''; for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r:R; d+=(i?'L':'M')+(Math.cos(a)*rr).toFixed(1)+' '+(Math.sin(a)*rr+cy).toFixed(1); } return d+'Z'; };
+  const APPLES = [[-42,-112],[-14,-152],[22,-130],[46,-104],[4,-100],[-30,-138],[34,-152]];
+
+  const DRAW = {
+    sun: p => { let g=''; for(let i=0;i<12;i++){ const a=i*Math.PI/6, c=Math.cos(a), s=Math.sin(a); g+=`<line x1="${(c*52).toFixed(1)}" y1="${(s*52).toFixed(1)}" x2="${(c*68).toFixed(1)}" y2="${(s*68).toFixed(1)}" stroke="#ffb703" stroke-width="8" stroke-linecap="round"/>`; }
+      g += `<circle r="42" fill="#ffd93d" ${S3}/>` + cheek(-22,9,6) + cheek(22,9,6);
+      g += p.glasses ? `<rect x="-31" y="-17" width="25" height="17" rx="7" fill="${O}"/><rect x="6" y="-17" width="25" height="17" rx="7" fill="${O}"/><path d="M-6 -11 H6" ${S3}/><path d="M-25 -12 l6 -2" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`
+                     : `<path d="M-21 -6 q6 -8 12 0 M9 -6 q6 -8 12 0" fill="none" ${S3}/>`;
+      return g + `<path d="M-12 10 q12 13 24 0" fill="none" ${S3}/>`; },
+    cloud: p => puff([[-34,6,20],[-12,-8,26],[16,-6,24],[38,8,18],[2,10,22]], '#fff'),
+    house: p => { let g='';
+      if(p.chimney) g+=`<rect x="36" y="-162" width="24" height="48" rx="3" fill="#d9734e" ${S3}/><path d="M36 -150 H60" ${S2}/>`;
+      g+=`<rect x="-80" y="-104" width="160" height="104" rx="5" fill="${p.wall}" ${S3}/>`;
+      g+=`<path d="M-102 -98 L0 -174 L102 -98 Z" fill="${p.roof}" ${S3}/><path d="M-62 -128 H62 M-30 -152 H30" stroke="rgba(0,0,0,.13)" stroke-width="4" stroke-linecap="round"/>`;
+      g+=`<circle cx="0" cy="-122" r="12" fill="#bfe9ff" ${S3}/><path d="M0 -134 V-110 M-12 -122 H12" ${S2}/>`;
+      g+=`<path d="M-20 0 V-44 a20 20 0 0 1 40 0 V0 Z" fill="${p.door}" ${S3}/><circle cx="11" cy="-24" r="3.4" fill="${O}"/>`;
+      [[-66,0],[34,1]].forEach(([x,i])=>{ if(!p.win[i]) return;
+        g+=`<rect x="${x}" y="-88" width="32" height="32" rx="5" fill="#bfe9ff" ${S3}/><path d="M${x+16} -88 v32 M${x} -72 h32" fill="none" ${S2}/><rect x="${x-4}" y="-56" width="40" height="9" rx="4" fill="#a8693d" ${S2}/><circle cx="${x+6}" cy="-59" r="4.5" fill="#ff5d8f" ${S2}/><circle cx="${x+16}" cy="-60" r="4.5" fill="#ffd93d" ${S2}/><circle cx="${x+26}" cy="-59" r="4.5" fill="#ff5d8f" ${S2}/>`; });
+      return g; },
+    tree: p => { let g=`<path d="M-14 0 C-10 -30 -10 -62 -8 -86 L8 -86 C10 -62 10 -30 14 0 Z" fill="#a8693d" ${S3}/><path d="M-3 -30 q4 -6 2 -14" fill="none" ${S2}/>`;
+      g += puff([[-42,-108,34],[42,-108,34],[0,-152,42],[-30,-146,30],[30,-146,30],[0,-104,40],[-20,-124,34],[22,-124,34]], p.crown);
+      g += `<path d="M-30 -150 q10 -12 22 -10" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="5" stroke-linecap="round"/>`;
+      p.apples.forEach(i=>{ const [x,y]=APPLES[i]; g+=`<circle cx="${x}" cy="${y}" r="9.5" fill="${p.ac}" ${S2}/><path d="M${x} ${y-9} q2 -6 7 -7" fill="none" ${S2}/><circle cx="${x-3}" cy="${y-3}" r="2.4" fill="#fff" opacity=".7"/>`; });
+      return g; },
+    pine: p => `<rect x="-8" y="-26" width="16" height="26" rx="3" fill="#a8693d" ${S3}/><path d="M-48 -22 L0 -82 L48 -22 Z" fill="${p.c}" ${S3}/><path d="M-39 -56 L0 -114 L39 -56 Z" fill="${p.c}" ${S3}/><path d="M-29 -92 L0 -144 L29 -92 Z" fill="${p.c}" ${S3}/><path d="M-20 -40 l10 -10 M-14 -76 l8 -9" stroke="#fff" stroke-opacity=".4" stroke-width="4" stroke-linecap="round"/>`,
+    bush: p => puff([[-32,-18,22],[0,-30,28],[32,-18,22],[-16,-10,20],[16,-10,20]], p.c) + (p.berries ? [[-26,-24],[-6,-40],[18,-30],[34,-14],[2,-16]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#ef4444" ${S2}/>`).join('') : ''),
+    flower: p => `<path d="M0 0 Q-4 -22 0 -42" fill="none" stroke="#3f9b3b" stroke-width="4" stroke-linecap="round"/><path d="M0 -14 q12 -12 19 -3 q-9 9 -19 3Z" fill="#6cc24a" ${S2}/>` + [0,1,2,3,4].map(i=>{ const a=-Math.PI/2+i*Math.PI*2/5; return `<circle cx="${(Math.cos(a)*9).toFixed(1)}" cy="${(-48+Math.sin(a)*9).toFixed(1)}" r="8.5" fill="${p.c}" ${S2}/>`; }).join('') + `<circle cx="0" cy="-48" r="6" fill="${p.center}" ${S2}/>`,
+    mushroom: p => `<path d="M-10 0 Q-13 -16 -8 -26 L8 -26 Q13 -16 10 0 Z" fill="#fff4e0" ${S3}/><path d="M-32 -22 Q-32 -58 0 -60 Q32 -58 32 -22 Q0 -16 -32 -22 Z" fill="${p.c}" ${S3}/><circle cx="-14" cy="-40" r="5" fill="#fff"/><circle cx="8" cy="-48" r="4" fill="#fff"/><circle cx="18" cy="-32" r="4.5" fill="#fff"/>` + eye(-5,-12,2) + eye(5,-12,2),
+    fence: p => { const n=p.n, x0=-n*13; let g=`<rect x="${x0-2}" y="-46" width="${n*26+4}" height="9" rx="3" fill="${p.c}" ${S2}/><rect x="${x0-2}" y="-22" width="${n*26+4}" height="9" rx="3" fill="${p.c}" ${S2}/>`;
+      for(let i=0;i<n;i++){ const x=x0+i*26+2; g+=`<path d="M${x} 0 V-50 L${x+11} -62 L${x+22} -50 V0 Z" fill="${p.c}" ${S3}/>`; } return g; },
+    pond: p => `<ellipse cx="0" cy="-32" rx="96" ry="32" fill="#5cc8f5" ${S3}/><path d="M-56 -40 q16 -7 34 0 M14 -26 q14 -6 30 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/><path d="M50 -34 a14 8 0 1 1 1 0 l-10 -4Z" fill="#6cc24a" ${S2}/>` + (p.lily ? `<circle cx="54" cy="-40" r="6" fill="#ff8fab" ${S2}/>` : ''),
+    cat: p => `<path d="M18 -8 Q46 -10 40 -36 Q38 -46 30 -44" fill="none" stroke="${O}" stroke-width="11" stroke-linecap="round"/><path d="M18 -8 Q46 -10 40 -36 Q38 -46 30 -44" fill="none" stroke="${p.c}" stroke-width="5.5" stroke-linecap="round"/>
+      <ellipse cx="0" cy="-22" rx="24" ry="22" fill="${p.c}" ${S3}/><ellipse cx="0" cy="-17" rx="12" ry="12" fill="#fff6e8"/><ellipse cx="-10" cy="-2" rx="8" ry="5" fill="${p.c}" ${S2}/><ellipse cx="10" cy="-2" rx="8" ry="5" fill="${p.c}" ${S2}/>
+      <path d="M-22 -56 L-20 -82 L-4 -68 Z" fill="${p.c}" ${S3}/><path d="M22 -56 L20 -82 L4 -68 Z" fill="${p.c}" ${S3}/><path d="M-18 -64 L-17 -75 L-10 -68Z M18 -64 L17 -75 L10 -68Z" fill="#ff9fb2"/>
+      <circle cx="0" cy="-58" r="23" fill="${p.c}" ${S3}/>${p.stripes?`<path d="M-6 -80 v7 M0 -81 v8 M6 -80 v7" ${S2}/>`:''}${eye(-8,-60,3.6)}${eye(8,-60,3.6)}${cheek(-14,-50)}${cheek(14,-50)}
+      <path d="M-3.5 -53 h7 l-3.5 4 z" fill="#ff8fa3" ${S2}/><path d="M-6 -47 q3 3 6 0 q3 3 6 0" fill="none" ${S2}/><path d="M-26 -54 l10 2 M-26 -48 l10 -1 M26 -54 l-10 2 M26 -48 l-10 -1" ${S2}/>
+      ${p.bow?`<g transform="translate(15 -78)"><path d="M0 0 l-11 -8 v16z M0 0 l11 -8 v16z" fill="#ff5d8f" ${S2}/><circle r="3.5" fill="#ff5d8f" ${S2}/></g>`:''}`,
+    dog: p => `<path d="M22 -14 Q40 -18 42 -34" fill="none" stroke="${O}" stroke-width="11" stroke-linecap="round"/><path d="M22 -14 Q40 -18 42 -34" fill="none" stroke="${p.c}" stroke-width="5.5" stroke-linecap="round"/>
+      <ellipse cx="0" cy="-24" rx="26" ry="24" fill="${p.c}" ${S3}/><ellipse cx="-11" cy="-2" rx="9" ry="6" fill="${p.c}" ${S2}/><ellipse cx="11" cy="-2" rx="9" ry="6" fill="${p.c}" ${S2}/><circle cx="10" cy="-28" r="7" fill="${p.ear}" opacity=".8"/>
+      <path d="M-17 -44 q17 9 34 0" fill="none" stroke="${O}" stroke-width="9" stroke-linecap="round"/><path d="M-17 -44 q17 9 34 0" fill="none" stroke="${p.collar}" stroke-width="5" stroke-linecap="round"/><circle cx="0" cy="-38" r="4.5" fill="#ffd93d" ${S2}/>
+      <circle cx="0" cy="-64" r="24" fill="${p.c}" ${S3}/><ellipse cx="-25" cy="-62" rx="9" ry="18" fill="${p.ear}" ${S3} transform="rotate(18 -25 -62)"/><ellipse cx="25" cy="-62" rx="9" ry="18" fill="${p.ear}" ${S3} transform="rotate(-18 25 -62)"/>
+      ${eye(-9,-70,3.6)}${eye(9,-70,3.6)}<ellipse cx="0" cy="-54" rx="13" ry="10" fill="#fff6e8" ${S2}/><ellipse cx="0" cy="-58" rx="5.5" ry="4" fill="${O}"/><path d="M-5 -50 q5 4 10 0" fill="none" ${S2}/><path d="M-3 -48 q3 8 6 0" fill="#ff7b9c" ${S2}/>`,
+    duck: p => `<path d="M-24 -22 L-38 -32 L-30 -16 Z" fill="${p.c}" ${S3}/><ellipse cx="0" cy="-16" rx="28" ry="16" fill="${p.c}" ${S3}/><path d="M-12 -18 q10 10 22 0" fill="none" ${S2}/><circle cx="12" cy="-40" r="14" fill="${p.c}" ${S3}/><path d="M24 -42 q11 -1 13 4 q-6 5 -13 2 z" fill="#ff9f1c" ${S2}/>${eye(15,-44,2.8)}${cheek(10,-35,3.5)}`,
+    bird: p => `<path d="M-12 -16 l-11 -6 l2 10z" fill="${p.c}" ${S2}/><circle cx="0" cy="-15" r="15" fill="${p.c}" ${S3}/><ellipse cx="2" cy="-10" rx="8" ry="6" fill="#fff" opacity=".55"/><path d="M-9 -15 q6 9 14 0" fill="none" ${S2}/><path d="M14 -18 l9 2 l-9 4z" fill="#ff9f1c" ${S2}/>${eye(6,-20,2.6)}<path d="M-4 0 v-3 M4 0 v-3" ${S2}/>`,
+    butterfly: p => `<ellipse cx="-12" cy="-8" rx="12" ry="14" fill="${p.c1}" ${S2} transform="rotate(-25 -12 -8)"/><ellipse cx="12" cy="-8" rx="12" ry="14" fill="${p.c1}" ${S2} transform="rotate(25 12 -8)"/><ellipse cx="-9" cy="10" rx="8" ry="9" fill="${p.c2}" ${S2}/><ellipse cx="9" cy="10" rx="8" ry="9" fill="${p.c2}" ${S2}/><circle cx="-12" cy="-9" r="4" fill="#fff" opacity=".7"/><circle cx="12" cy="-9" r="4" fill="#fff" opacity=".7"/><rect x="-3" y="-18" width="6" height="32" rx="3" fill="${O}"/><path d="M-1 -18 q-4 -10 -10 -10 M1 -18 q4 -10 10 -10" fill="none" ${S2}/>`,
+    ladybug: p => `<path d="M-10 -2 l-6 4 M0 -1 v5 M10 -2 l6 4" ${S2}/><ellipse cx="-2" cy="-13" rx="17" ry="13" fill="${p.c}" ${S3}/><path d="M-2 -26 V0" ${S2}/><circle cx="-10" cy="-16" r="3.4" fill="${O}"/><circle cx="6" cy="-17" r="3.4" fill="${O}"/><circle cx="-8" cy="-6" r="2.8" fill="${O}"/><circle cx="5" cy="-6" r="2.8" fill="${O}"/><circle cx="17" cy="-12" r="8" fill="${O}"/><circle cx="19" cy="-14" r="1.8" fill="#fff"/><path d="M19 -19 q2 -6 6 -6 M15 -19 q-1 -6 2 -8" fill="none" ${S2}/>`,
+    snail: p => `<path d="M-28 0 H22 Q30 0 30 -10 V-26 Q30 -32 25 -32 Q20 -32 20 -26 V-12 H-26 Q-32 -6 -28 0Z" fill="#ffd8a8" ${S3}/><path d="M22 -32 l-3 -9 M28 -32 l3 -9" ${S2}/><circle cx="19" cy="-42" r="3" fill="${O}"/><circle cx="31" cy="-42" r="3" fill="${O}"/>${cheek(26,-20,3)}<circle cx="-5" cy="-22" r="17" fill="${p.shell}" ${S3}/><path d="M-5 -22 m0 -10 a10 10 0 1 1 -9 6 a6 6 0 1 1 7 -4" fill="none" ${S2}/>`,
+    mouse: p => `<path d="M14 -6 q20 2 18 -16 q-1 -8 -8 -6" fill="none" ${S3}/><ellipse cx="0" cy="-14" rx="17" ry="14" fill="${p.c}" ${S3}/><circle cx="-13" cy="-40" r="10" fill="${p.c}" ${S3}/><circle cx="13" cy="-40" r="10" fill="${p.c}" ${S3}/><circle cx="-13" cy="-40" r="5.5" fill="#ffb3c4"/><circle cx="13" cy="-40" r="5.5" fill="#ffb3c4"/><circle cx="0" cy="-30" r="13" fill="${p.c}" ${S3}/>${eye(-5,-32,2.6)}${eye(5,-32,2.6)}<circle cx="0" cy="-25" r="2.8" fill="#ff7b9c"/><path d="M-14 -27 l8 1 M14 -27 l-8 1" ${S2}/>${cheek(-8,-24,3)}${cheek(8,-24,3)}`,
+    star: p => `<path d="${starPath(21,10,-21)}" fill="${p.c}" ${S3}/>${eye(-5,-22,2.4)}${eye(5,-22,2.4)}${smile(0,-16,3.5)}`,
+    fish: p => `<path d="M-16 0 L-30 -11 L-30 11 Z" fill="${p.c}" ${S3}/><path d="M-20 0 Q0 -17 20 0 Q0 17 -20 0Z" fill="${p.c}" ${S3}/><path d="M-4 -9 q4 9 0 18" fill="none" ${S2}/>${eye(9,-3,2.8)}`,
+    bunny: p => `<ellipse cx="-8" cy="-88" rx="6.5" ry="19" fill="${p.c}" ${S3}/><ellipse cx="8" cy="-88" rx="6.5" ry="19" fill="${p.c}" ${S3}/><ellipse cx="-8" cy="-88" rx="3" ry="13" fill="#ffb3c4"/><ellipse cx="8" cy="-88" rx="3" ry="13" fill="#ffb3c4"/><circle cx="22" cy="-14" r="8" fill="#fff" ${S2}/><ellipse cx="0" cy="-24" rx="21" ry="23" fill="${p.c}" ${S3}/><ellipse cx="0" cy="-20" rx="11" ry="12" fill="#fff" opacity=".6"/><ellipse cx="-10" cy="-2" rx="8" ry="5" fill="${p.c}" ${S2}/><ellipse cx="10" cy="-2" rx="8" ry="5" fill="${p.c}" ${S2}/><circle cx="0" cy="-56" r="19" fill="${p.c}" ${S3}/>${eye(-7,-58,3.2)}${eye(7,-58,3.2)}<path d="M-3 -51 h6 l-3 3z" fill="#ff7b9c"/><path d="M-5 -46 q2.5 3 5 0 q2.5 3 5 0" fill="none" ${S2}/>${cheek(-12,-48)}${cheek(12,-48)}`,
+    balloon: p => `<path d="M0 0 Q-7 -20 0 -42" fill="none" ${S2}/><ellipse cx="0" cy="-66" rx="19" ry="23" fill="${p.c}" ${S3}/><path d="M-4 -43 h8 l-4 -5z" fill="${p.c}" ${S2}/><ellipse cx="-7" cy="-74" rx="4" ry="8" fill="#fff" opacity=".55" transform="rotate(20 -7 -74)"/>`,
+    kite: p => `<path d="M0 34 q-10 16 0 26 q10 10 -2 22" fill="none" ${S2}/><path d="M-6 52 l12 -4 l-2 8z M-6 72 l12 -4 l-2 8z" fill="${p.c2}" ${S2}/><path d="M0 -38 L26 0 L0 36 L-26 0Z" fill="${p.c1}" ${S3}/><path d="M0 -38 L0 36 L-26 0Z" fill="${p.c2}" ${S3}/><path d="M-26 0 H26" ${S2}/>`,
+    car: p => `<path d="M-52 -16 Q-52 -32 -36 -34 L-22 -56 Q-18 -62 -10 -62 H18 Q26 -62 30 -56 L42 -34 Q54 -32 54 -18 V-12 Q54 -6 48 -6 H-46 Q-52 -6 -52 -12Z" fill="${p.c}" ${S3}/><path d="M-16 -36 L-8 -54 H5 V-36Z" fill="#bfe9ff" ${S2}/><path d="M12 -36 V-54 H18 Q22 -54 24 -50 L31 -36Z" fill="#bfe9ff" ${S2}/><circle cx="48" cy="-24" r="4.5" fill="#ffe680" ${S2}/><circle cx="-30" cy="-6" r="12" fill="${O}"/><circle cx="-30" cy="-6" r="5" fill="#e8e3f5"/><circle cx="30" cy="-6" r="12" fill="${O}"/><circle cx="30" cy="-6" r="5" fill="#e8e3f5"/>`,
+    sailboat: p => `<path d="M0 -24 V-110" ${S3}/><path d="M5 -26 V-106 L52 -30Z" fill="${p.sail}" ${S3}/><path d="M-5 -30 V-92 L-42 -30Z" fill="#fff" ${S3}/>${p.flag?`<path d="M0 -110 l18 6 l-18 6Z" fill="#ef5b5b" ${S2}/>`:''}<path d="M-54 -22 H54 L38 0 H-38Z" fill="${p.hull}" ${S3}/><circle cx="-20" cy="-11" r="4" fill="#fff" ${S2}/><circle cx="0" cy="-11" r="4" fill="#fff" ${S2}/><circle cx="20" cy="-11" r="4" fill="#fff" ${S2}/>`,
+    umbrella: p => `<path d="M0 0 V-92" stroke="${O}" stroke-width="5" stroke-linecap="round"/><path d="M-62 -88 Q-60 -132 0 -134 Q60 -132 62 -88 Q46 -98 31 -88 Q15 -98 0 -88 Q-15 -98 -31 -88 Q-46 -98 -62 -88Z" fill="${p.c1}" ${S3}/><path d="M0 -134 Q-10 -110 -15 -93 Q-8 -97 0 -88 Q8 -97 15 -93 Q10 -110 0 -134Z" fill="${p.c2}" ${S2}/><path d="M-42 -127 Q-52 -108 -62 -88 Q-54 -95 -46 -95 Q-44 -112 -42 -127Z M42 -127 Q52 -108 62 -88 Q54 -95 46 -95 Q44 -112 42 -127Z" fill="${p.c2}" ${S2}/>`,
+    bucket: p => `<path d="M14 -30 L30 -62" stroke="#a8693d" stroke-width="5" stroke-linecap="round"/><path d="M-18 -36 H18 L14 0 H-14Z" fill="${p.c}" ${S3}/><rect x="-21" y="-41" width="42" height="8" rx="4" fill="${p.c}" ${S2}/><path d="M-18 -38 Q0 -60 18 -38" fill="none" ${S2}/><path d="M-6 -20 h12" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/>`,
+    crab: p => `<path d="M-14 -6 l-14 6 M-16 -12 l-16 2 M14 -6 l14 6 M16 -12 l16 2" ${S3}/><path d="M-16 -18 L-28 -28 M16 -18 L28 -28" ${S3}/><path d="M-36 -36 a9 9 0 1 1 9 9 l-3 -6Z" fill="${p.c}" ${S3}/><path d="M36 -36 a9 9 0 1 0 -9 9 l3 -6Z" fill="${p.c}" ${S3}/><ellipse cx="0" cy="-14" rx="23" ry="14" fill="${p.c}" ${S3}/><path d="M-6 -26 v-8 M6 -26 v-8" ${S2}/>${eye(-6,-36,3.2)}${eye(6,-36,3.2)}${smile(0,-12,5)}`,
+    ball: p => `<g transform="translate(0 -19)"><circle r="19" fill="#fff"/><path d="M0 0 L0 -19 A19 19 0 0 1 16.5 9.5Z" fill="${p.c1}"/><path d="M0 0 L16.5 9.5 A19 19 0 0 1 -16.5 9.5Z" fill="#fff"/><path d="M0 0 L-16.5 9.5 A19 19 0 0 1 0 -19Z" fill="${p.c2}"/><circle r="19" fill="none" ${S3}/><circle r="4" fill="#fff" ${S2}/></g>`,
+    palm: p => `<path d="M-8 0 Q-6 -70 14 -128" fill="none" stroke="${O}" stroke-width="21" stroke-linecap="round"/><path d="M-8 0 Q-6 -70 14 -128" fill="none" stroke="#c48a55" stroke-width="15" stroke-linecap="round"/><path d="M-14 -30 h12 M-12 -60 h12 M-6 -90 h12" ${S2}/>` +
+      [-150,-110,-60,-20,20].map(a=>`<path d="M0 0 Q30 -26 66 -4 Q34 -10 0 0Z" fill="#4caf50" ${S3} transform="translate(14 -128) rotate(${a})"/>`).join('') +
+      [[6,-124],[22,-122],[14,-114]].map(([x,y],i)=>p.coco[i]?`<circle cx="${x}" cy="${y}" r="7.5" fill="#8d5a2b" ${S2}/>`:'').join(''),
+    sandcastle: p => `${p.flag?`<path d="M0 -98 V-122" ${S2}/><path d="M0 -122 l18 6 l-18 6Z" fill="${p.fc}" ${S2}/>`:''}<path d="M-14 -38 V-98 H-8 V-92 H-3 V-98 H3 V-92 H8 V-98 H14 V-38Z" fill="#f4c977" ${S3}/><path d="M-48 -38 V-80 H-41 V-74 H-35 V-80 H-29 V-74 H-23 V-80 H-18 V-38Z M48 -38 V-80 H41 V-74 H35 V-80 H29 V-74 H23 V-80 H18 V-38Z" fill="#f4c977" ${S3}/><rect x="-52" y="-42" width="104" height="42" rx="5" fill="#f4c977" ${S3}/><path d="M-10 0 V-16 a10 10 0 0 1 20 0 V0Z" fill="#b07a3a" ${S2}/><circle cx="-34" cy="-24" r="2.5" fill="#d9a54d"/><circle cx="30" cy="-18" r="2.5" fill="#d9a54d"/><circle cx="-2" cy="-64" r="2.5" fill="#d9a54d"/>`,
+    grass: p => `<path d="M-32 0 Q-30 -18 -22 -30 Q-19 -14 -13 -6 Q-11 -26 -2 -40 Q1 -18 4 -6 Q9 -28 19 -35 Q15 -14 14 -4 Q21 -18 31 -22 Q25 -8 32 0Z" fill="#5fb84a" ${S3}/>`,
+  };
+  const SIZE = {sun:[140,140],cloud:[120,64],house:[210,180],tree:[170,200],pine:[100,146],bush:[110,62],flower:[38,64],mushroom:[66,62],fence:[0,66],pond:[196,66],cat:[84,88],dog:[90,92],duck:[76,58],bird:[48,36],butterfly:[52,48],ladybug:[50,30],snail:[64,48],mouse:[50,52],star:[44,44],fish:[58,30],bunny:[62,108],balloon:[40,90],kite:[60,90],car:[112,64],sailboat:[110,124],umbrella:[126,136],bucket:[48,62],crab:[78,48],ball:[40,40],palm:[150,170],sandcastle:[106,124],grass:[66,42]};
+  const CENTER = new Set(['sun','cloud','butterfly','fish','kite']);
+  const sizeOf = o => o.type==='fence' ? [o.p.n*26+6, 66] : SIZE[o.type];
+  const P = {
+    sun:()=>({glasses:false}), cloud:()=>({}),
+    house:()=>({wall:pick(['#fff1d6','#ffe0ec','#e6f4ff']), roof:pick(['#ef5b5b','#4d96ff','#9b5de5','#ff9f1c']), door:pick(['#4d96ff','#6bcb77','#ffd93d','#ef5b5b']), win:[true,true], chimney:true}),
+    tree:()=>({crown:pick(['#6cc24a','#5cb85c','#7bd162']), ac:'#ef4444', apples:shuffle([0,1,2,3,4,5,6]).slice(0,rnd(3,5))}),
+    pine:()=>({c:pick(['#3fa34d','#4caf50','#2e9e5b'])}), bush:()=>({c:pick(['#5cb85c','#6cc24a']), berries:Math.random()<.5}),
+    flower:()=>({c:pick(['#ff5d8f','#ffd93d','#9b5de5','#4d96ff','#ff9f1c','#fff']), center:'#ffb703'}),
+    mushroom:()=>({c:pick(['#ef5b5b','#ff9f1c','#9b5de5'])}), fence:()=>({c:pick(['#fff6e0','#e9c46a','#f4a261']), n:rnd(4,6)}),
+    pond:()=>({lily:true}), cat:()=>({c:pick(['#ffb35c','#c9c4d6','#fff']), bow:Math.random()<.4, stripes:true}),
+    dog:()=>({c:pick(['#f2d0a4','#e9c46a','#fff']), ear:pick(['#a8693d','#7a4b2a']), collar:pick(['#ef5b5b','#4d96ff','#6bcb77'])}),
+    duck:()=>({c:'#ffd93d'}), bird:()=>({c:pick(['#4d96ff','#ef5b5b','#ff9f1c','#9b5de5'])}), butterfly:()=>({c1:pick(BRIGHT), c2:pick(BRIGHT)}),
+    ladybug:()=>({c:'#ef4444'}), snail:()=>({shell:pick(['#ff9f1c','#9b5de5','#4d96ff'])}), mouse:()=>({c:'#c9c4d6'}), star:()=>({c:'#ffd93d'}),
+    fish:()=>({c:pick(['#ff9f1c','#ff5d8f','#2ec4b6'])}), bunny:()=>({c:pick(['#fff','#e8dccb','#d8d3e3'])}), balloon:()=>({c:pick(BRIGHT)}),
+    kite:()=>({c1:pick(BRIGHT), c2:pick(BRIGHT)}), car:()=>({c:pick(BRIGHT)}), sailboat:()=>({sail:pick(['#ef5b5b','#ffd93d','#ff8fab']), hull:pick(['#4d96ff','#9b5de5']), flag:true}),
+    umbrella:()=>({c1:pick(['#ef5b5b','#4d96ff','#ff9f1c']), c2:'#fff'}), bucket:()=>({c:pick(['#ef5b5b','#4d96ff','#6bcb77'])}), crab:()=>({c:'#ff6b4a'}),
+    ball:()=>({c1:'#ef5b5b', c2:'#4d96ff'}), palm:()=>({coco:[true,true,true]}), sandcastle:()=>({flag:true, fc:pick(['#ef5b5b','#4d96ff'])}), grass:()=>({}),
+  };
+  // what can change in "spot the difference" (each returns {apply, hit:[lx,ly], r})
+  const col = (key, hit, r=0, pal=BRIGHT) => o => { const v = other(o.p[key], pal); return {apply:q=>{q.p[key]=v;}, hit, r}; };
+  const rem = (hit=null) => o => ({apply:q=>{q.removed=true;}, hit: hit || (CENTER.has(o.type)?[0,0]:[0,-sizeOf(o)[1]/2])});
+  const MUT = {
+    sun:[o=>({apply:q=>{q.p.glasses=true;}, hit:[0,0]})],
+    cloud:[rem()],
+    house:[col('roof',[0,-140],60), col('door',[0,-24],34), o=>{ const i=rnd(0,1); return {apply:q=>{q.p.win=[...q.p.win]; q.p.win[i]=false;}, hit:[i?50:-50,-70], r:36}; }, o=>({apply:q=>{q.p.chimney=false;}, hit:[48,-140], r:36})],
+    tree:[o=>{ const i=pick(o.p.apples); const [x,y]=APPLES[i]; return {apply:q=>{q.p.apples=q.p.apples.filter(a=>a!==i);}, hit:[x,y], r:30}; }, col('ac',[0,-128],70,['#ffd93d','#ff9f1c','#9b5de5']), col('crown',[0,-128],70,['#ff9f1c','#f4a261','#9b5de5'])],
+    pine:[col('c',[0,-80],0,['#ff9f1c','#9b5de5','#4d96ff'])],
+    bush:[o=>({apply:q=>{q.p.berries=!q.p.berries;}, hit:[0,-28]}), rem()],
+    flower:[col('c',[0,-48],30), rem()], mushroom:[col('c',[0,-40]), rem()], fence:[col('c',[0,-30])],
+    pond:[o=>({ok:o.p.lily, apply:q=>{q.p.lily=false;}, hit:[54,-40], r:30})],
+    cat:[col('c',[0,-46],0,['#ffb35c','#c9c4d6','#4b4453','#ffd93d']), o=>({apply:q=>{q.p.bow=!q.p.bow;}, hit:[15,-76], r:30})],
+    dog:[col('collar',[0,-44],30), col('ear',[0,-62],0,['#4b4453','#ef5b5b','#ffd93d'])],
+    duck:[col('c',[4,-24],0,['#fff','#ff8fab','#4d96ff']), rem()], bird:[col('c'), rem()].map(f=>f), butterfly:[col('c1',[0,0]), rem()],
+    snail:[col('shell',[-5,-22])], bunny:[col('c',[0,-50],0,['#ffd93d','#ff8fab','#a0e7e5'])], balloon:[col('c',[0,-66]), rem()], kite:[col('c1',[0,0])],
+    car:[col('c',[0,-32])], sailboat:[col('sail',[26,-70]), o=>({ok:o.p.flag, apply:q=>{q.p.flag=false;}, hit:[8,-104], r:30})], umbrella:[col('c1',[0,-112])],
+    bucket:[col('c',[0,-22]), rem()], crab:[col('c',[0,-20],0,['#4d96ff','#9b5de5','#ffd93d'])], ball:[col('c1',[0,-19]), rem()],
+    palm:[o=>({ok:o.p.coco.some(Boolean), apply:q=>{q.p.coco=[false,false,false];}, hit:[14,-120], r:34})],
+    sandcastle:[o=>({ok:o.p.flag, apply:q=>{q.p.flag=false;}, hit:[8,-114], r:32}), col('fc',[8,-116],30)],
+    fish:[col('c',[0,0])], ladybug:[col('c',[0,-13],0,['#ffd93d','#4d96ff'])],
+  };
+  MUT.bird = [o=>{ const v=other(o.p.c); return {apply:q=>{q.p.c=v;}, hit:[0,-16]}; }, rem([0,-16])];
+  // where the hidden friends can hide: dx,dy in object units; z<0 = behind the object (peeking out)
+  const HIDE = {
+    house:[{dx:-50,dy:-58,z:1,sc:.55},{dx:50,dy:-58,z:1,sc:.55},{dx:-88,dy:-6,z:-1},{dx:88,dy:-6,z:-1},{dx:-40,dy:-130,z:1,sc:.55}],
+    tree:[{dx:0,dy:-4,z:-1},{dx:-40,dy:-104,z:1,sc:.6},{dx:30,dy:-132,z:1,sc:.6}],
+    pine:[{dx:0,dy:-8,z:-1}], bush:[{dx:-10,dy:-34,z:-1},{dx:22,dy:-30,z:-1}], fence:[{dx:0,dy:-34,z:-1}],
+    mushroom:[{dx:0,dy:0,z:-1,sc:.7}], car:[{dx:0,dy:-36,z:-1}], umbrella:[{dx:-30,dy:-4,z:1,sc:.7}],
+    sandcastle:[{dx:-30,dy:-40,z:-1},{dx:30,dy:-40,z:-1}], palm:[{dx:-4,dy:-6,z:-1}], bucket:[{dx:0,dy:-28,z:-1,sc:.7}], pond:[{dx:-70,dy:-6,z:1,sc:.7}],
+  };
+  const BASE = {house:.85,tree:.8,pine:.85,bush:.8,flower:.85,mushroom:.75,fence:.9,pond:.9,cat:.8,dog:.8,duck:.75,bird:.75,butterfly:.8,ladybug:.85,snail:.85,mouse:.85,bunny:.8,sun:.8,cloud:1,balloon:.9,kite:.85,car:.85,sailboat:.75,umbrella:.85,bucket:.85,crab:.8,ball:.9,palm:.95,sandcastle:.85,grass:1,star:.9,fish:.8};
+
+  /* backgrounds */
+  const BG = {
+    meadow:(W,H,u)=>`<defs><linearGradient id="sk${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd6ff"/><stop offset="1" stop-color="#dff5ff"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#sk${u})"/>
+      <path d="M-10 ${H*.5} Q${W*.18} ${H*.3} ${W*.42} ${H*.46} Q${W*.62} ${H*.32} ${W*.82} ${H*.44} Q${W*.92} ${H*.38} ${W+10} ${H*.42} V${H} H-10Z" fill="#b5e48c" ${S3}/>
+      <path d="M-10 ${H*.58} Q${W*.3} ${H*.5} ${W*.6} ${H*.57} Q${W*.82} ${H*.62} ${W+10} ${H*.54} V${H+10} H-10Z" fill="#8fd16a" ${S3}/>`,
+    forest:(W,H,u)=>{ let trees=''; for(let x=-20;x<W+40;x+=46){ const h=60+((x*37)%40); trees+=`<path d="M${x-30} ${H*.5} L${x} ${H*.5-h} L${x+30} ${H*.5}Z" fill="#7cc47f"/>`; }
+      return `<defs><linearGradient id="sk${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7e3ff"/><stop offset="1" stop-color="#e8f9ee"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#sk${u})"/>${trees}
+      <path d="M-10 ${H*.5} H${W+10} V${H+10} H-10Z" fill="#9bd27a" ${S3}/><path d="M-10 ${H*.6} Q${W*.4} ${H*.54} ${W+10} ${H*.62} V${H+10} H-10Z" fill="#86c66a" ${S3}/>
+      <path d="M${W*.45} ${H+10} Q${W*.5} ${H*.8} ${W*.62} ${H*.62} L${W*.68} ${H*.62} Q${W*.6} ${H*.8} ${W*.62} ${H+10}Z" fill="#e9c98f" ${S3}/>`; },
+    beach:(W,H,u)=>`<defs><linearGradient id="sk${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86d4ff"/><stop offset="1" stop-color="#e3f6ff"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#sk${u})"/>
+      <rect x="-10" y="${H*.4}" width="${W+20}" height="${H*.3}" fill="#45bdf0" ${S3}/>
+      ${Array.from({length:Math.ceil(W/90)},(_,i)=>`<path d="M${i*90+10} ${H*(.47+(i%3)*.04)} q12 -8 24 0 q12 8 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>`).join('')}
+      <path d="M-10 ${H*.62} Q${W*.25} ${H*.57} ${W*.5} ${H*.61} Q${W*.75} ${H*.65} ${W+10} ${H*.59} V${H+10} H-10Z" fill="#ffe3a3" ${S3}/>
+      ${Array.from({length:Math.ceil(W/60)},(_,i)=>`<circle cx="${(i*61+23)%W}" cy="${H*(.7+((i*7)%10)/40)}" r="2.5" fill="#e6c27a"/>`).join('')}`,
+  };
+  const SPEC = {
+    meadow:[['sun',1,'sun'],['cloud',[2,3],'sky'],['bird',[1,2],'sky'],['house',1,'ground',[.58,.66]],['tree',[1,2],'ground',[.6,.72]],['pond',1,'ground',[.86,.94]],['fence',1,'ground',[.62,.74]],['bush',[1,2],'ground'],['dog',1,'ground'],['cat',1,'ground'],['mushroom',[1,2],'ground'],['flower',[4,6],'ground'],['butterfly',[1,2],'air'],['ladybug',[0,1],'ground'],['snail',[0,1],'ground']],
+    forest:[['sun',1,'sun'],['cloud',[1,2],'sky'],['bird',[1,2],'sky'],['pine',[2,3],'ground',[.58,.72]],['tree',1,'ground',[.6,.7]],['bush',[2,3],'ground'],['bunny',1,'ground'],['mushroom',[2,3],'ground'],['flower',[3,5],'ground'],['butterfly',[1,2],'air'],['snail',[0,1],'ground'],['ladybug',[0,1],'ground'],['mouse',[0,1],'ground']],
+    beach:[['sun',1,'sun'],['cloud',[1,2],'sky'],['bird',[1,2],'sky'],['kite',1,'air'],['sailboat',1,'sea'],['fish',[1,2],'seaair'],['palm',1,'ground',[.66,.76]],['umbrella',1,'ground',[.7,.82]],['sandcastle',1,'ground'],['bucket',1,'ground'],['ball',1,'ground'],['crab',[1,2],'ground'],['star',[0,1],'ground']],
+  };
+  const FIND = {
+    meadow:[['mouse','עכברים'],['ladybug','פרות משה רבנו'],['bird','ציפורים'],['snail','שבלולים'],['star','כוכבים']],
+    forest:[['mouse','עכברים'],['ladybug','פרות משה רבנו'],['snail','שבלולים'],['bird','ציפורים'],['star','כוכבים']],
+    beach:[['star','כוכבים'],['crab','סרטנים'],['bird','ציפורים']],
+  };
+  let uidN = 0;
+
+  function build(kind, W, H, opt={}){
+    const k = H/500, dense = opt.dense || 1, exclude = opt.exclude || new Set();
+    const objs = [], boxes = [];
+    const bands = {sun:[.08,.16], sky:[.08,.28], air:[.3,.52], sea:[.52,.6], seaair:[.42,.5], ground:[.6,.97]};
+    const ov = (a,b) => !(a[0]+a[2]<b[0] || b[0]+b[2]<a[0] || a[1]+a[3]<b[1] || b[1]+b[3]<a[1]);
+    const boxOf = (o)=>{ const [w,h]=sizeOf(o); const sh=.16; const bw=w*o.s, bh=h*o.s; return CENTER.has(o.type) ? [o.x-bw/2+bw*sh/2, o.y-bh/2+bh*sh/2, bw*(1-sh), bh*(1-sh)] : [o.x-bw/2+bw*sh/2, o.y-bh+bh*sh/2, bw*(1-sh), bh*(1-sh)]; };
+    function place(type, band, yr){
+      const [b0,b1] = yr || bands[band];
+      for(let t=0;t<90;t++){
+        const p = P[type](); const y = H*(b0 + Math.random()*(b1-b0));
+        const depth = band==='ground' ? .72 + .45*((y/H)-.6)/.37 : 1;
+        const o = {type, p, x:0, y, s:BASE[type]*k*depth, flip:Math.random()<.5 && !['house','sun','sailboat','palm'].includes(type), band};
+        const [w] = sizeOf(o); const m = w*o.s/2 + 6; o.x = m + Math.random()*(W-2*m);
+        if(type==='sun') o.x = W*(.08+Math.random()*.1) + 40*k;
+        const bx = boxOf(o); if(bx[1] < 2 && !CENTER.has(type)) continue;
+        if(boxes.some(b=>ov(b,bx))) continue;
+        o.z = band==='sun' ? 1 : band==='sky' ? 10+y : band==='sea'||band==='seaair' ? 500+y : band==='air' ? 3000+y : 1000+y;
+        boxes.push(bx); objs.push(o); return o;
+      }
+      return null;
+    }
+    for(const [type, n, band, yr] of SPEC[kind]){
+      if(exclude.has(type)) continue;
+      let cnt = Array.isArray(n) ? rnd(n[0], n[1]) : n;
+      if(dense>1 && !['sun','house','pond','sailboat','palm','umbrella','sandcastle'].includes(type)) cnt = Math.round(cnt*dense + (cnt?0:.4));
+      for(let i=0;i<cnt;i++){
+        const o = place(type, band, yr);
+        if(o && type==='pond' && !exclude.has('duck')){ objs.push({type:'duck', p:P.duck(), x:o.x+rnd(-30,20)*o.s, y:o.y-16*o.s, s:o.s*.7, flip:Math.random()<.5, z:o.z+.5}); }
+      }
+    }
+    return {kind, W, H, k, objs, extra:[], uid:++uidN};
+  }
+  function drawObj(o){
+    const s = o.s, sx = o.flip ? -s : s;
+    return `<g transform="translate(${o.x.toFixed(1)} ${o.y.toFixed(1)}) scale(${sx.toFixed(3)} ${s.toFixed(3)})">${DRAW[o.type](o.p)}</g>`;
+  }
+  function render(sc){
+    const items = [...sc.objs.filter(o=>!o.removed), ...sc.extra].sort((a,b)=>a.z-b.z);
+    const u = sc.uid + '_' + (++uidN);
+    return `<svg viewBox="0 0 ${sc.W} ${sc.H}" width="${sc.W}" height="${sc.H}" style="display:block">${BG[sc.kind](sc.W,sc.H,u)}${items.map(drawObj).join('')}</svg>`;
+  }
+  const hitR = o => { const [w,h]=sizeOf(o); return Math.max(34, Math.min(80, Math.max(w,h)*o.s*.5)); };
+  function hitPt(o, l){ return {x:o.x + l[0]*o.s*(o.flip?-1:1), y:o.y + l[1]*o.s}; }
+
+  // spot-the-difference: returns the changed copy + list of differences
+  function makeDiffs(sc, D){
+    const B = JSON.parse(JSON.stringify(sc));
+    const cands = [];
+    sc.objs.forEach((o,i)=>{ (MUT[o.type]||[]).forEach(fn=>{ const m = fn(o); if(m.ok===false) return; const pt = hitPt(o, m.hit || [0,0]); cands.push({i, m, pt, r:m.r || hitR(o), type:o.type}); }); });
+    const out = [], usedObj = new Set();
+    for(const c of shuffle(cands)){
+      if(out.length>=D) break;
+      if(usedObj.has(c.i)) continue;
+      if(c.pt.x<26 || c.pt.x>sc.W-26 || c.pt.y<26 || c.pt.y>sc.H-26) continue;
+      if(out.some(d=>Math.hypot(d.x-c.pt.x, d.y-c.pt.y) < 95)) continue;
+      if(out.filter(d=>d.type===c.type).length>=1 && cands.length>D*3) continue;
+      c.m.apply(B.objs[c.i]); usedObj.add(c.i);
+      out.push({x:c.pt.x, y:c.pt.y, r:c.r, type:c.type, found:false});
+    }
+    return {B, diffs:out};
+  }
+  // hidden friends: adds T hidden items to the scene and returns their hit spots
+  function hideFriends(sc, type, T, lv){
+    const spots = [];
+    sc.objs.forEach(o=>{ if(o.band!=='ground' && o.type!=='house') return; (HIDE[o.type]||[]).forEach(hd=>{ const pt = hitPt(o,[hd.dx,hd.dy]); spots.push({x:pt.x, y:pt.y, z:o.z + (hd.z<0 ? -.4 : .4), s:o.s*(hd.sc||.8), kind:hd.z<0?'behind':'front'}); }); });
+    for(let i=0;i<10;i++){ const y = sc.H*(.66+Math.random()*.3), d = .72+.45*((y/sc.H)-.6)/.37; spots.push({x: 40+Math.random()*(sc.W-80), y, z:1000+y, s:sc.k*d*.8, kind:'grass'}); }
+    const pref = lv<=0 ? {front:0, grass:1, behind:2} : lv===1 ? {grass:0, behind:0, front:1} : {behind:0, grass:1, front:2};
+    const ordered = shuffle(spots).sort((a,b)=>pref[a.kind]-pref[b.kind] + (Math.random()-.5)*1.2);
+    const chosen = [], [w,h] = SIZE[type], shrink = 1 - Math.min(lv,3)*.07;
+    for(const sp of ordered){
+      if(chosen.length>=T) break;
+      const s = sp.s*shrink*.95;
+      const cy = sp.y - h*s/2;
+      if(sp.x - w*s/2 < 6 || sp.x + w*s/2 > sc.W-6 || sp.y - h*s < 6 || sp.y > sc.H-4) continue;
+      if(chosen.some(c=>Math.hypot(c.x-sp.x, c.cy-cy) < 85*sc.k)) continue;
+      const item = {type, p:P[type](), x:sp.x, y: CENTER.has(type) ? cy : sp.y, s, flip:Math.random()<.5, z:sp.z, hidden:true};
+      sc.extra.push(item);
+      if(sp.kind==='grass') sc.extra.push({type:'grass', p:{}, x:sp.x + rnd(-6,6), y:sp.y+3, s:Math.max(s*1.25, .7*sc.k), flip:Math.random()<.5, z:sp.z+.5});
+      chosen.push({x:sp.x, y:sp.y, cy, r: Math.max(w,h)*s/2 + 18, found:false});
+    }
+    return chosen;
+  }
+  function icon(type, px=46){
+    const [w,h] = SIZE[type]; const p = P[type]();
+    const vb = CENTER.has(type) ? `${-w/2-4} ${-h/2-4} ${w+8} ${h+8}` : `${-w/2-4} ${-h-4} ${w+8} ${h+8}`;
+    return `<svg viewBox="${vb}" width="${px}" height="${px}" style="display:block">${DRAW[type](p)}</svg>`;
+  }
+  return {build, render, makeDiffs, hideFriends, icon, FIND, KINDS:Object.keys(SPEC)};
+})();
+
 /* ---------- 8. SPOT THE DIFFERENCE ---------- */
 GAMES.diff = {
   name:'מצא את ההבדלים', icon:'🔍', rounds:3,
   question(ctx, tok){
-    const themeKey = pick(Object.keys(SCENES)), theme = SCENES[themeKey];
-    const PW = 580, PH = 520, nItems = 9, D = Math.min(S.diffCount, 5);
-    const pool = shuffle(theme.items), used = pool.slice(0, nItems), spare = pool.slice(nItems);
-    const items = used.map((e,i)=>{ const col=i%3, row=Math.floor(i/3); return {e, x: 100 + col*190 + rnd(-30,30), y: 95 + row*165 + rnd(-22,22), s: rnd(64,86)}; });
-    const diffIdx = shuffle(items.map((_,i)=>i)).slice(0, D);
-    const diffs = diffIdx.map(i=>{ const type = pick(['remove','swap','swap','tint']); return {i, type, found:false, swap: type==='swap' ? spare.pop() || '❓' : null}; });
+    const kind = ctx.data.lastKind = pick(ILL.KINDS.filter(k=>k!==ctx.data.lastKind));
+    const PW = 560, PH = 500, D = Math.min(S.diffCount, 5);
+    let A, res;
+    for(let t=0;t<6;t++){ A = ILL.build(kind, PW, PH); res = ILL.makeDiffs(A, D); if(res.diffs.length>=D) break; }
+    const diffs = res.diffs;
     const found = h(`<div class="found-row">${diffs.map(()=>'<i></i>').join('')}</div>`); area.appendChild(found);
-    const panels = [0,1].map(k=>{
-      const p = h(`<div class="scene" style="left:${k?655:45}px;top:70px;width:${PW}px;height:${PH}px;background:${theme.bg}"></div>`);
-      items.forEach((it, i)=>{
-        const d = k===1 ? diffs.find(x=>x.i===i) : null;
-        if(d && d.type==='remove') return;
-        const s = h(`<div class="sitem" style="left:${it.x}px;top:${it.y}px;font-size:${it.s}px">${d && d.type==='swap' ? d.swap : it.e}</div>`);
-        if(d && d.type==='tint') s.style.filter = 'hue-rotate(150deg) saturate(1.6)';
-        p.appendChild(s);
-      });
+    const panels = [A, res.B].map((sc,k)=>{
+      const p = h(`<div class="scene" style="left:${k?655:45}px;top:72px;width:${PW}px;height:${PH}px">${ILL.render(sc)}</div>`);
       area.appendChild(p); return p;
     });
     let cnt = 0;
     panels.forEach(p=>p.addEventListener('pointerdown', e=>{
       e.preventDefault(); if(!ctx.alive(tok)) return;
       const l = localPt(e, p); l.x -= 8; l.y -= 8;
-      const d = diffs.find(d=>!d.found && Math.hypot(items[d.i].x-l.x, items[d.i].y-l.y) < 72);
+      const d = diffs.filter(d=>!d.found).map(d=>({d, dist:Math.hypot(d.x-l.x, d.y-l.y)})).filter(x=>x.dist < x.d.r + 14).sort((a,b)=>a.dist-b.dist)[0]?.d;
       if(d){
         d.found = true; cnt++;
-        panels.forEach(pp=>pp.appendChild(h(`<div class="ring" style="left:${items[d.i].x}px;top:${items[d.i].y}px;width:${items[d.i].s+46}px;height:${items[d.i].s+46}px"></div>`)));
+        const size = Math.max(70, d.r*2);
+        panels.forEach(pp=>pp.appendChild(h(`<div class="ring" style="left:${d.x}px;top:${d.y}px;width:${size}px;height:${size}px"></div>`)));
         found.children[cnt-1].classList.add('on');
-        ctx.right(centerOf(found.children[cnt-1]), cnt===D ? `מצאת את כל ההבדלים!` : pick(['מצאת אחד!','יופי! עוד אחד?','נכון!']));
-        if(cnt===D) ctx.solved(1700);
-      } else { p.appendChild(h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`)); setTimeout(()=>p.querySelector('.ripple')?.remove(), 520); sfx.tap(); }
+        ctx.right(centerOf(found.children[cnt-1]), cnt===diffs.length ? 'מצאת את כל ההבדלים!' : pick(['מצאת אחד!','יופי! עוד אחד?','נכון!']));
+        if(cnt===diffs.length) ctx.solved(1700);
+      } else { const rp = h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`); p.appendChild(rp); setTimeout(()=>rp.remove(), 520); sfx.tap(); }
     }));
-    ctx.prompt([[`יש ${D} הבדלים בין התמונות. תמצא אותם?`,'he']]);
+    ctx.prompt([[`יש ${diffs.length} הבדלים בין שתי התמונות. תמצא אותם?`,'he']]);
   }
 };
 
-/* ---------- 9. FIND IT ---------- */
+/* ---------- 9. HIDDEN FRIENDS ---------- */
 GAMES.find = {
-  name:'איפה מסתתר?', icon:'🐱', rounds:3, skill:'find',
+  name:'איפה מסתתר?', icon:'🐭', rounds:3, skill:'find',
   question(ctx, tok){
-    const [te, tname] = pick(FIND_TARGETS); const T = rnd(3,5);
-    const bgKey = pick(['meadow','beach','meadow']);
-    const scene = h(`<div class="scene" style="left:40px;top:66px;width:1200px;height:530px;background:${SCENES[bgKey].bg}"></div>`); area.appendChild(scene);
-    const found = h(`<div class="found-row"><span class="t">${te}</span>${Array(T).fill('<i></i>').join('')}</div>`); area.appendChild(found);
-    const COLS = 12, ROWS = 5, cw = 1184/COLS, rh = 514/ROWS;
-    const nDis = Math.min(findNow(), COLS*ROWS - T);
-    const cells = shuffle(Array.from({length:COLS*ROWS},(_,i)=>i)).slice(0, nDis+T);
-    const dpool = MANY.filter(x=>x!==te);
+    const kind = ctx.data.lastKind = pick(ILL.KINDS.filter(k=>k!==ctx.data.lastKind));
+    const [type, tname] = pick(ILL.FIND[kind]);
+    const lv = S.autoLevel ? P.lv.find : 1;
+    const T = Math.min(6, 3 + lv);
+    const SW = 1184, SH = 514;
+    const sc = ILL.build(kind, SW, SH, {dense:1.7, exclude:new Set([type])});
+    const spots = ILL.hideFriends(sc, type, T, lv);
+    const scene = h(`<div class="scene" style="left:40px;top:66px;width:${SW}px;height:${SH}px">${ILL.render(sc)}</div>`); area.appendChild(scene);
+    const found = h(`<div class="found-row"><span class="t">${ILL.icon(type, 50)}</span>${spots.map(()=>'<i></i>').join('')}</div>`); area.appendChild(found);
     let cnt = 0;
-    cells.forEach((c, k)=>{
-      const isT = k < T, e = isT ? te : pick(dpool);
-      const x = (c%COLS)*cw + cw/2 + rnd(-cw*.18,cw*.18), y = Math.floor(c/COLS)*rh + rh/2 + rnd(-rh*.15, rh*.15);
-      const s = h(`<div class="sitem" style="left:${x}px;top:${y}px;font-size:${rnd(50,74)}px;transform:translate(-50%,-50%) rotate(${rnd(-22,22)}deg)">${e}</div>`);
-      if(isT){ s.dataset.t = 1; s._x = x; s._y = y; }
-      scene.appendChild(s);
-    });
     scene.addEventListener('pointerdown', e=>{
       e.preventDefault(); if(!ctx.alive(tok)) return;
       const l = localPt(e, scene); l.x -= 8; l.y -= 8;
-      const t = $$('.sitem[data-t="1"]', scene).filter(s=>!s.dataset.f).find(s=>Math.hypot(s._x-l.x, s._y-l.y) < 48);
+      const t = spots.filter(s=>!s.found).find(s=>Math.hypot(s.x-l.x, s.cy-l.y) < s.r);
       if(t){
-        t.dataset.f = 1; cnt++; t.animate([{scale:1},{scale:1.6},{scale:1.2}],{duration:450,fill:'forwards'});
-        scene.appendChild(h(`<div class="ring" style="left:${t._x}px;top:${t._y}px;width:96px;height:96px"></div>`));
+        t.found = true; cnt++;
+        scene.appendChild(h(`<div class="ring" style="left:${t.x}px;top:${t.cy}px;width:${t.r*2+10}px;height:${t.r*2+10}px"></div>`));
         found.children[cnt].classList.add('on');
-        ctx.right(centerOf(found.children[cnt]), cnt===T ? `מצאת את כל ה${tname}!` : String(cnt));
-        if(cnt===T) ctx.solved(1700);
-      } else { scene.appendChild(h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`)); setTimeout(()=>scene.querySelector('.ripple')?.remove(), 520); }
+        ctx.right(centerOf(found.children[cnt]), cnt===spots.length ? `מצאת את כל ה${tname}!` : String(cnt));
+        if(cnt===spots.length) ctx.solved(1700);
+      } else { const rp = h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`); scene.appendChild(rp); setTimeout(()=>rp.remove(), 520); }
     });
-    ctx.prompt([[`מצא ${T} ${tname}!`,'he']]);
+    ctx.prompt([[`${spots.length} ${tname} מסתתרים בתמונה. תמצא אותם?`,'he']]);
   }
 };
 
