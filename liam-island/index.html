@@ -59,13 +59,40 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .spark{position:absolute;font-size:34px;font-family:var(--emoji)}
 
 /* ---------- splash ---------- */
-#scr-splash{background:radial-gradient(circle at 50% 120%,#fff6c9 0,#ffe08a 30%,var(--sky) 62%,var(--sky-2) 100%)}
-.title-big{position:absolute;left:0;right:0;top:70px;text-align:center;font:900 110px/1 var(--font-display);color:#fff;-webkit-text-stroke:10px var(--grape);paint-order:stroke fill;text-shadow:0 10px 0 var(--grape-d),0 18px 30px rgba(43,35,80,.25);letter-spacing:1px}
-.title-big span{display:inline-block;animation:hop 1.8s ease-in-out infinite}
-@keyframes hop{0%,100%{transform:translateY(0)}20%{transform:translateY(-14px) rotate(-3deg)}40%{transform:translateY(0)}}
-#btnPlay{position:absolute;left:540px;top:330px;width:200px;height:200px;border-radius:50%;--c:var(--coral);--cd:var(--coral-d);font-size:96px;color:#fff;display:grid;place-items:center;animation:pulse 1.6s ease-in-out infinite}
+#scr-splash{background:radial-gradient(circle at 50% 28%,#9af3ff 0,#3cbcff 42%,#4f63ff 100%)}
+.sp-burst{position:absolute;left:-260px;top:-660px;width:1800px;height:1800px;border-radius:50%;background:repeating-conic-gradient(rgba(255,255,255,.17) 0 9deg,transparent 9deg 18deg);animation:spin 60s linear infinite;-webkit-mask:radial-gradient(circle,#000 18%,transparent 62%);mask:radial-gradient(circle,#000 18%,transparent 62%)}
+.sp-layer{position:absolute;inset:0;pointer-events:none}
+.sp-layer > svg{position:absolute;inset:0;width:1280px;height:720px}
+.tw{position:absolute;color:#fff;font:900 26px/1 var(--font-display);animation:twinkle 2.2s ease-in-out infinite;text-shadow:0 0 12px #fff}
+@keyframes twinkle{0%,100%{opacity:.15;scale:.5}50%{opacity:1;scale:1.15}}
+.spb{position:absolute;top:740px;width:96px;height:150px;border:none;background:none;padding:0;pointer-events:auto;animation:spRise linear infinite}
+.spb .in{position:absolute;inset:0;animation:spSway 3s ease-in-out infinite alternate}
+.spb svg{width:100%;height:100%;overflow:visible}
+.spb span{position:absolute;left:0;right:0;top:26px;text-align:center;font:900 46px/1 var(--font-display);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.2)}
+.spb.popped .in{visibility:hidden}
+@keyframes spRise{from{transform:translateY(0)}to{transform:translateY(-1000px)}}
+@keyframes spSway{from{transform:rotate(-7deg) translateX(-10px)}to{transform:rotate(7deg) translateX(10px)}}
+.peek{position:absolute;animation:peek 5s ease-in-out infinite}
+@keyframes peek{0%,15%,85%,100%{transform:translateY(80px)}30%,70%{transform:translateY(0)}45%{transform:translateY(-8px) rotate(-6deg)}55%{transform:translateY(-4px) rotate(5deg)}}
+.title-big{position:absolute;left:0;right:0;top:54px;text-align:center;font:900 128px/1 var(--font-display);-webkit-text-stroke:14px #fff;paint-order:stroke fill;filter:drop-shadow(0 9px 0 rgba(43,35,80,.35)) drop-shadow(0 20px 24px rgba(43,35,80,.25));letter-spacing:2px;z-index:5}
+.title-big span{display:inline-block;animation:hop 1.9s ease-in-out infinite}
+@keyframes hop{0%,100%{transform:translateY(0) rotate(0)}18%{transform:translateY(-22px) rotate(-5deg)}36%{transform:translateY(0) rotate(0)}}
+.sp-sub{position:absolute;left:0;right:0;top:206px;text-align:center;font:800 32px var(--font-display);color:#fff;text-shadow:0 3px 0 rgba(43,35,80,.35);z-index:5}
+.play-ring{position:absolute;left:520px;top:330px;width:240px;height:240px;border-radius:50%;background:conic-gradient(#ff5d8f,#ffb020,#ffe14d,#2fd39a,#3b9bff,#a06cff,#ff5d8f);animation:spin 3s linear infinite;box-shadow:0 0 50px rgba(255,255,255,.7);z-index:6}
+.play-glow{position:absolute;left:490px;top:300px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 68%);animation:pulse 1.4s ease-in-out infinite;z-index:5;pointer-events:none}
+#btnPlay{position:absolute;left:538px;top:348px;width:204px;height:204px;border-radius:50%;--c:#ff4f7b;--cd:#c92f58;font-size:100px;color:#fff;display:grid;place-items:center;padding:0;z-index:7;animation:pulse 1.4s ease-in-out infinite;text-shadow:0 5px 0 rgba(0,0,0,.18);overflow:hidden}
+#btnPlay::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);animation:shine 2.6s ease-in-out infinite}
+@keyframes shine{0%,40%{transform:translateX(-120%)}80%,100%{transform:translateX(120%)}}
 @keyframes pulse{50%{transform:scale(1.07)}}
-.splash-hint{position:absolute;left:0;right:0;top:575px;text-align:center;font:700 26px var(--font-display);color:var(--ink-soft)}
+.splash-dudu{left:950px;top:370px;width:270px;height:300px;z-index:6;pointer-events:auto!important;cursor:pointer}
+.splash-dudu .d-body{animation:dance .55s ease-in-out infinite alternate}
+.splash-dudu.jump{animation:djump .6s cubic-bezier(.3,1.5,.5,1)}
+@keyframes djump{40%{transform:translateY(-90px) rotate(-10deg)}}
+#spBubble{left:690px;top:320px;--tail-x:230px;z-index:8;max-width:300px}
+.wipe{position:absolute;width:40px;height:40px;border-radius:50%;margin:-20px 0 0 -20px;background:radial-gradient(circle,#ffe14d 0 30%,#ff5d8f 31% 55%,#a06cff 56%);z-index:99;pointer-events:none}
+.station.enter{animation:stIn .7s cubic-bezier(.3,1.6,.5,1) backwards}
+@keyframes stIn{from{scale:0;rotate:-20deg}}
+.map-sky{position:absolute;inset:0;background:linear-gradient(#36b0ff,#8fdcff 50%,#d4f4ff)}
 
 /* ---------- map ---------- */
 #world{position:absolute;inset:0;transition:filter 1.2s}
@@ -79,7 +106,8 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .sun .core{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff3b0,var(--sun) 60%,var(--sun-d));box-shadow:0 0 40px #ffe27a}
 .sun .face{position:absolute;inset:0;display:grid;place-items:center;font:900 40px var(--font-display);color:var(--sun-d)}
 @keyframes spin{to{transform:rotate(360deg)}}
-.map-title{position:absolute;left:0;right:0;top:18px;text-align:center;font:900 62px/1 var(--font-display);color:#fff;-webkit-text-stroke:7px var(--grape);paint-order:stroke fill;text-shadow:0 6px 0 var(--grape-d);pointer-events:none}
+.map-title{position:absolute;left:0;right:0;top:16px;text-align:center;font:900 66px/1 var(--font-display);color:#fff;-webkit-text-stroke:9px #fff;paint-order:stroke fill;filter:drop-shadow(0 6px 0 rgba(43,35,80,.3));pointer-events:none}
+.map-title span{display:inline-block}
 .station{position:absolute;width:196px;height:190px;border:none;background:none;padding:0;transform:translate(-50%,-50%)}
 .station .plate{position:absolute;left:18px;top:20px;width:160px;height:130px;border-radius:50%;background:radial-gradient(ellipse at 50% 35%,#fff 0,#fff8df 60%,#f1e3b8 100%);box-shadow:0 10px 0 #d6c48f,0 18px 26px rgba(43,35,80,.2);transition:transform .15s}
 .station .icon{position:absolute;left:0;right:0;top:4px;text-align:center;font-size:96px;font-family:var(--emoji);filter:drop-shadow(0 6px 0 rgba(0,0,0,.12));animation:idle 3s ease-in-out infinite}
@@ -128,7 +156,7 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 
 /* ---------- game chrome ---------- */
 #scr-game{background:var(--zbg,var(--sky-2))}
-#scr-game::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.55) 2.5px,transparent 3px);background-size:38px 38px;pointer-events:none}
+#scr-game::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.38) 3px,transparent 3.5px),radial-gradient(rgba(255,255,255,.22) 6px,transparent 6.5px);background-size:44px 44px,130px 130px;background-position:0 0,22px 60px;pointer-events:none}
 .topbar{position:absolute;left:0;top:0;width:1280px;height:100px;z-index:20}
 #btnHome{position:absolute;left:1180px;top:10px;--c:#fff}
 #btnRepeat{position:absolute;left:1080px;top:10px;--c:#fff;font-size:38px}
@@ -293,7 +321,7 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .kpi span{color:var(--ink-soft);font-size:15px}
 
 @media (prefers-reduced-motion: reduce){
-  .cloud,.sun .rays,.decor,.station .icon,.lb,.title-big span{animation:none!important}
+  .cloud,.sun .rays,.decor,.station .icon,.lb,.title-big span,.sp-burst,.spb,.spb .in,.peek,.tw,.play-ring,#btnPlay::after{animation:none!important}
 }
 </style>
 
@@ -301,15 +329,35 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 
   <!-- SPLASH -->
   <section class="screen" id="scr-splash">
+    <div class="sp-burst"></div>
+    <div class="sp-layer" id="spTwinkle"></div>
+    <div class="sp-layer" id="spFloat"></div>
+    <div class="sp-layer"><svg viewBox="0 0 1280 720" aria-hidden="true"><path d="M-10 570 Q200 470 430 545 Q640 610 860 520 Q1080 450 1290 520 V730 H-10Z" fill="#8be08f" stroke="#3d2f5b" stroke-width="4"/></svg></div>
+    <div class="sp-layer" id="spPeek" style="overflow:hidden"></div>
+    <div class="sp-layer"><svg viewBox="0 0 1280 720" aria-hidden="true">
+      <path d="M-10 620 Q260 548 540 610 Q820 668 1060 600 Q1180 570 1290 590 V730 H-10Z" fill="#4cc76e" stroke="#3d2f5b" stroke-width="4"/>
+      <path d="M-10 680 Q320 636 660 668 Q980 700 1290 660 V730 H-10Z" fill="#2fae5c" stroke="#3d2f5b" stroke-width="4"/>
+      <g stroke="#3d2f5b" stroke-width="2.5">
+        <circle cx="120" cy="620" r="9" fill="#ff5d8f"/><circle cx="120" cy="620" r="3.5" fill="#ffe14d"/>
+        <circle cx="330" cy="608" r="9" fill="#ffe14d"/><circle cx="330" cy="608" r="3.5" fill="#ff8c42"/>
+        <circle cx="470" cy="630" r="9" fill="#a06cff"/><circle cx="470" cy="630" r="3.5" fill="#fff"/>
+        <circle cx="760" cy="652" r="9" fill="#3b9bff"/><circle cx="760" cy="652" r="3.5" fill="#fff"/>
+        <circle cx="250" cy="680" r="9" fill="#ff8c42"/><circle cx="250" cy="680" r="3.5" fill="#fff"/>
+        <circle cx="880" cy="690" r="9" fill="#ff5d8f"/><circle cx="880" cy="690" r="3.5" fill="#ffe14d"/>
+      </g></svg></div>
     <div class="title-big" id="splashTitle"></div>
-    <div class="dudu" style="left:880px;top:300px;width:250px;height:280px" data-dudu="wave"></div>
+    <div class="sp-sub">בוא נשחק ונלמד יחד!</div>
+    <div class="play-glow"></div>
+    <div class="play-ring"></div>
     <button class="toy" id="btnPlay" aria-label="להתחיל לשחק">▶</button>
-    <div class="splash-hint">לוחצים על הכפתור ומתחילים</div>
+    <div class="dudu splash-dudu" id="splashDudu" data-dudu="wave"></div>
+    <div class="bubble" id="spBubble"></div>
   </section>
 
   <!-- MAP -->
   <section class="screen" id="scr-map" hidden>
     <div id="world">
+      <div class="map-sky"></div>
       <div class="sun"><div class="rays"></div><div class="core"></div><div class="face">◡</div></div>
       <div class="cloud" style="top:70px;width:170px;height:56px;animation-duration:70s;animation-delay:-20s"></div>
       <div class="cloud" style="top:150px;width:120px;height:42px;animation-duration:55s;animation-delay:-40s"></div>
@@ -488,6 +536,7 @@ const EN_WORDS = [
   ['COW','🐄'],['EGG','🥚'],['BOX','📦'],['CAR','🚗'],['OWL','🦉'],['ANT','🐜'],['KEY','🔑'],['HEN','🐔'],['MOON','🌙'],['FISH','🐟'],
   ['STAR','⭐'],['CAKE','🎂'],['BALL','⚽'],['TREE','🌳'],['FROG','🐸'],['DUCK','🦆'],['BEAR','🐻'],['LION','🦁'],['MILK','🥛'],['BOOK','📖'],
 ];
+const COUNT_ITEMS = ['🍎','🍓','⭐','🎈','🐟','🦆','🌸','🍪','🚗','🐞','🧁','🐣','⚽','🍊','🦋','🐝','🍄','🧸'];
 const STICKERS = ['🦁','🐯','🦊','🐼','🐨','🐸','🦄','🐙','🦖','🚒','🚀','🌈','🍦','🎈','⭐','🐝','🦋','🐢','🐬','🚂','🏎️','🍓','🌻','🎸','🐳','🦒','🐧','🦉','🍩','🎂','🚁','⚽','🦜','🐞','🍉','🌟','🦕','🚜','🧸','🎠'];
 const PRAISE = ['כל הכבוד!','מעולה!','יופי!','וואו, איזה אלוף!','נכון מאוד!','מדהים!','אלוף!'];
 const OOPS = ['אופס, ננסה שוב?','כמעט! עוד פעם','לא נורא, נסה שוב','הממ... אולי משהו אחר?'];
@@ -599,7 +648,7 @@ function loadVoices(){
 if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 let speakToken = 0, bubbleTimer = null;
 const stripNiqqud = t => t.replace(/[֑-ׇ]/g,'');
-function activeBubble(){ return !$('#scr-game').hidden ? $('#gameBubble') : (!$('#scr-map').hidden ? $('#mapBubble') : null); }
+function activeBubble(){ return !$('#scr-game').hidden ? $('#gameBubble') : !$('#scr-map').hidden ? $('#mapBubble') : !$('#scr-splash').hidden ? $('#spBubble') : null; }
 function showBubble(text){
   const b = activeBubble(); if(!b) return;
   b.textContent = stripNiqqud(text); b.classList.add('show');
@@ -678,8 +727,11 @@ function show(id){
 }
 function setTitles(){
   const t = `האי של ${S.childName}`;
-  $('#splashTitle').innerHTML = [...t].map((c,i)=>c===' '?' ':`<span style="animation-delay:${i*0.08}s">${c}</span>`).join('');
-  $('#mapTitle').textContent = t;
+  const TC = ['#ff4f7b','#ffb020','#2fd39a','#3b9bff','#a06cff','#ff7a3d'];
+  let ci = 0;
+  const html = anim => [...t].map((c,i)=>c===' '?' ':`<span style="color:${TC[(ci++)%TC.length]};${anim?`animation-delay:${i*0.09}s`:''}">${c}</span>`).join('');
+  $('#splashTitle').innerHTML = html(true); ci = 0;
+  $('#mapTitle').innerHTML = html(false);
 }
 setTitles();
 
@@ -715,6 +767,43 @@ function holdButton(btn, onDone, ms=1800){
 }
 
 /* ---------- splash ---------- */
+let greeted = false;
+function balloonSVG(c, d){ return `<svg viewBox="0 0 60 90"><path d="M30 2C12 2 3 17 3 31C3 49 18 61 30 65C42 61 57 49 57 31C57 17 48 2 30 2Z" fill="${c}" stroke="#3d2f5b" stroke-width="2"/><path d="M26 65L34 65L30 71Z" fill="${d}"/><path d="M30 71Q25 79 31 89" stroke="#fff" fill="none" stroke-width="1.6"/><ellipse cx="18" cy="20" rx="5" ry="10" fill="#fff" opacity=".5" transform="rotate(20 18 20)"/></svg>`; }
+function buildSplash(){
+  const tw = $('#spTwinkle');
+  for(let i=0;i<22;i++) tw.appendChild(h(`<div class="tw" style="left:${rnd(20,1250)}px;top:${rnd(10,470)}px;font-size:${rnd(16,34)}px;animation-delay:${(-Math.random()*2.2).toFixed(2)}s">✦</div>`));
+  const fl = $('#spFloat');
+  const chars = ['א','B','3','ש','7','M','ב','5','C','ל','2','ת','A','9'];
+  const cols = [['#ff4f7b','#c92f58'],['#ffb020','#c98400'],['#2fd39a','#18a674'],['#3b9bff','#1d6fd6'],['#a06cff','#7240e0'],['#ff7a3d','#d4551c']];
+  chars.forEach((c,i)=>{
+    const [col,d] = cols[i%cols.length], dur = 11 + Math.random()*6;
+    const left = 20 + (i*91) % 1200;
+    const b = h(`<button class="spb" style="left:${left}px;animation-duration:${dur.toFixed(1)}s;animation-delay:${(-Math.random()*dur).toFixed(1)}s" aria-label="בלון ${c}"><div class="in" style="animation-delay:${(-Math.random()*3).toFixed(1)}s">${balloonSVG(col,d)}<span>${c}</span></div></button>`);
+    b.addEventListener('pointerdown', e=>{
+      e.stopPropagation(); if(b.classList.contains('popped')) return;
+      ac(); sfx.pop();
+      const ty = new DOMMatrix(getComputedStyle(b).transform).m42;
+      burst(left + 48, 740 + ty + 50, ['✨','⭐','💥'], 10);
+      b.classList.add('popped');
+      const he = HE.find(l=>l.ch===c); if(he) say(he.name); else if(/[A-Z]/.test(c)) say(c,'en'); else say(c);
+    });
+    b.addEventListener('animationiteration', e=>{ if(e.target===b) b.classList.remove('popped'); });
+    fl.appendChild(b);
+  });
+  const pk = $('#spPeek');
+  [['bunny',80,470,0],['cat',330,500,1.6],['mouse',1150,450,3.1],['bunny',700,520,2.4]].forEach(([t,x,y,dl])=>{
+    pk.appendChild(h(`<div class="peek" style="left:${x}px;top:${y}px;animation-delay:${dl}s">${ILL.icon(t, 96)}</div>`));
+  });
+}
+function greet(){
+  if(greeted) return; greeted = true; ac();
+  sayList([[`שלום ${S.childName}! אני ${S.mascot}. בוא נשחק!`,'he']]);
+}
+$('#scr-splash').addEventListener('pointerdown', e=>{ if(e.target.closest('#btnPlay')) return; greet(); });
+$('#splashDudu').addEventListener('pointerdown', e=>{
+  e.stopPropagation(); ac(); const d = $('#splashDudu'); retrigger(d,'jump'); tone(520,.12,'triangle',.2,0,900); tone(900,.15,'triangle',.16,.12,1400);
+  greeted = true; sayList([[pick([`היי ${S.childName}!`,'הי הי! זה מדגדג!','בוא נשחק ביחד!','לחץ על הכפתור הגדול!']),'he']]);
+});
 $('#btnPlay').addEventListener('click', ()=>{
   ac(); sfx.win();
   try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){}
@@ -723,16 +812,21 @@ $('#btnPlay').addEventListener('click', ()=>{
     if(de.requestFullscreen) de.requestFullscreen().then(()=>{ try{ screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} setTimeout(fit,300); }).catch(()=>{});
   }catch(e){}
   sessionStart = Date.now();
-  goMap(true);
+  burst(640, 450, ['⭐','🌟','✨','🎉','🎈'], 26);
+  const w = h(`<div class="wipe" style="left:640px;top:450px"></div>`); stage.appendChild(w);
+  w.animate([{transform:'scale(0)'},{transform:'scale(75)'}], {duration:520, easing:'cubic-bezier(.6,0,.4,1)', fill:'forwards'}).onfinish = ()=>{
+    goMap(true);
+    w.animate([{opacity:1},{opacity:0}], {duration:420, fill:'forwards'}).onfinish = ()=>w.remove();
+  };
 });
 
 /* ---------- map ---------- */
 const ZONES = {
-  letters:{name:'בית האותיות', icon:'🏡', chip:'אB', c:'#ff6b6b', cd:'#d94848', x:290,y:296, bg:'linear-gradient(#ffe4e1,#fff5ec)', games:['trace','hunt']},
-  numbers:{name:'יער המספרים', icon:'🌳', chip:'123', c:'#2fbf71', cd:'#1e9456', x:640,y:292, bg:'linear-gradient(#dcfce7,#f4fff2)', games:['connect','count','math']},
-  colors:{name:'גבעת הצבעים', icon:'🎨', chip:'●', c:'#f59e0b', cd:'#c27803', x:990,y:322, bg:'linear-gradient(#e0f2ff,#fff9e6)', games:['balloons','sort']},
-  books:{name:'ספריית החוברות', icon:'🔍', chip:'?!', c:'#8b5cf6', cd:'#6a3fd6', x:500,y:512, bg:'linear-gradient(#efe7ff,#fff7fb)', games:['diff','find']},
-  reading:{name:'עץ הקריאה', icon:'📖', chip:'אבא', c:'#3b82f6', cd:'#1d5fd6', x:800,y:512, bg:'linear-gradient(#dbeafe,#fffbea)', games:['reading']},
+  letters:{name:'בית האותיות', icon:'🏡', chip:'אB', c:'#ff6b6b', cd:'#d94848', x:290,y:296, bg:'linear-gradient(160deg,#ff9fb0,#ffd59a)', games:['trace','hunt']},
+  numbers:{name:'יער המספרים', icon:'🌳', chip:'123', c:'#2fbf71', cd:'#1e9456', x:640,y:292, bg:'linear-gradient(160deg,#7fe0a0,#d9f99d)', games:['connect','count','math']},
+  colors:{name:'גבעת הצבעים', icon:'🎨', chip:'●', c:'#f59e0b', cd:'#c27803', x:990,y:322, bg:'linear-gradient(160deg,#7cc8ff,#ffe38a)', games:['balloons','sort']},
+  books:{name:'ספריית החוברות', icon:'🔍', chip:'?!', c:'#8b5cf6', cd:'#6a3fd6', x:500,y:512, bg:'linear-gradient(160deg,#b9a2ff,#ffb8dc)', games:['diff','find']},
+  reading:{name:'עץ הקריאה', icon:'📖', chip:'אבא', c:'#3b82f6', cd:'#1d5fd6', x:800,y:512, bg:'linear-gradient(160deg,#7fb2ff,#fff09a)', games:['reading']},
 };
 function buildStations(){
   const wrap = $('#stations'); wrap.innerHTML='';
@@ -760,7 +854,6 @@ function renderDecor(animateNew){
     layer.appendChild(el);
   }
   if(n < 4) $('#rainbow').classList.remove('on');
-  $('#world').style.filter = `saturate(${Math.min(1, .55 + n*.05)})`;
   $('#albumCount').textContent = n;
   return newest;
 }
@@ -768,6 +861,7 @@ function goMap(first=false){
   stopSpeech(); if(current){ current.token++; current=null; }
   $$('.overlay').forEach(o=>{ if(o.id!=='sleep') o.remove(); });
   show('scr-map');
+  $$('.station').forEach((b,i)=>{ b.style.animationDelay = (i*90)+'ms'; retrigger(b,'enter'); });
   if(timeUp()){ showSleep(); return; }
   const newest = renderDecor(true);
   if(newest){
@@ -1742,5 +1836,6 @@ function renderParent(){
 
 /* boot */
 renderDecor(false);
+buildSplash();
 show('scr-splash');
 </script>
