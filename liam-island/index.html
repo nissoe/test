@@ -622,6 +622,7 @@ function speakOne(t, lang){
   return new Promise(res=>{
     let done=false; const fin=()=>{ if(!done){ done=true; res(); } };
     try{
+      if(lang!=='en') t = t.replace(/דודו/g,'דוֹדוֹ');
       const u = new SpeechSynthesisUtterance(t);
       u.lang = lang==='en' ? 'en-US' : 'he-IL';
       const v = lang==='en' ? voices.en : voices.he; if(v) u.voice = v;
