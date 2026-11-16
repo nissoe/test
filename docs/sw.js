@@ -1,5 +1,5 @@
 // Offline cache: network-first for navigation, cache-first for built assets.
-const CACHE = 'twinlock-v2';
+const CACHE = 'twinlock-v3';
 self.addEventListener('install', (e) => self.skipWaiting());
 self.addEventListener('activate', (e) =>
   e.waitUntil(
