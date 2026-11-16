@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1428">
+<title>קרב הסמוראים — אבן, נייר ומספריים</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="קרב הסמוראים">
+<meta name="description" content="קרב הסמוראים — אבן, נייר ומספריים על לוח בתלת-ממד. 50 שלבים, 10 צבאות לפתיחה, לוחות מיוחדים, שני שחקנים ובליץ.">
+<style>
+:root{--me:#1f7bff;--ai:#ff2e3c;--gold:#ffc83a;--ink:#fbf4e8;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#1a1428;overscroll-behavior:none}
+body{font-family:'Fredoka','Rubik',system-ui,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none;touch-action:none}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.ui{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;z-index:5}
+.ui *{pointer-events:auto}
+.top{padding:calc(var(--st) + 10px) 12px 0;background:linear-gradient(rgba(15,10,25,.75),rgba(15,10,25,0));padding-bottom:26px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{margin:0;font-size:21px;font-weight:900;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+h1 small{display:block;font-size:11px;font-weight:500;opacity:.75;letter-spacing:1px;margin-top:3px}
+.ibtn{width:40px;height:40px;border-radius:13px;border:1px solid rgba(255,255,255,.2);background:rgba(20,14,32,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ink);font-size:18px;display:grid;place-items:center;font-family:inherit;font-weight:700}
+.ibtn:active{transform:scale(.92)}
+.pills{margin-top:10px}
+.pill{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:rgba(20,14,32,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);font-weight:700;font-size:13px;transition:box-shadow .3s}
+.pill i{width:11px;height:11px;border-radius:50%;display:block}
+.pill.me i{background:var(--me)} .pill.ai i{background:var(--ai)}
+.pill span{font-weight:500;opacity:.8}
+.pill.on{box-shadow:0 0 0 2px var(--gold),0 0 16px rgba(242,193,78,.45)}
+.msg{margin-top:10px;text-align:center;font-size:15px;font-weight:500;min-height:22px;text-shadow:0 2px 6px rgba(0,0,0,.8);pointer-events:none}
+.msg b{color:var(--gold)}
+.spacer{flex:1;pointer-events:none}
+.bottom{padding:24px 12px calc(var(--sb) + 14px);background:linear-gradient(rgba(15,10,25,0),rgba(15,10,25,.7));display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:inherit;font-weight:700;font-size:16px;padding:13px 20px;border-radius:15px;border:none;color:#1b1424;background:var(--gold);box-shadow:0 4px 0 #b4871f,0 8px 20px rgba(0,0,0,.35);min-height:48px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b4871f}
+.btn.ghost{background:rgba(20,14,32,.6);color:var(--ink);border:1px solid rgba(255,255,255,.2);box-shadow:0 4px 0 rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+/* duel banner */
+.banner{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);opacity:0;transition:.35s cubic-bezier(.3,1.5,.5,1);z-index:8;text-align:center;pointer-events:none;width:92%}
+.banner.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.banner h2,.banner p{background:none}
+.banner .bx{display:inline-block;padding:10px 22px 12px;border-radius:20px}
+.banner h2{margin:0;font-size:38px;font-weight:900;color:var(--gold);text-shadow:0 4px 0 #5a3a0a,0 0 24px rgba(242,193,78,.5)}
+.banner p{margin:6px 0 0;font-size:19px;font-weight:700;text-shadow:0 2px 8px #000}
+.pick{position:fixed;left:0;right:0;bottom:calc(var(--sb) + 22px);display:none;justify-content:center;gap:14px;z-index:9}
+.pick.show{display:flex;animation:up .35s cubic-bezier(.3,1.5,.5,1)}
+@keyframes up{from{transform:translateY(60px);opacity:0}}
+.pick button{width:88px;height:88px;border-radius:24px;border:4px solid var(--me);background:#fff;display:grid;place-items:center;box-shadow:0 6px 0 #1a3a8a,0 10px 24px rgba(0,0,0,.4)}
+.pick button:active{transform:translateY(4px);box-shadow:0 2px 0 #1a3a8a}
+.pick button img{width:64%;height:64%}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;z-index:9;font-size:44px;font-weight:900;color:#ff6a50;text-shadow:0 4px 0 #3a0a05,0 0 30px rgba(255,90,60,.6);transition:.3s cubic-bezier(.3,1.6,.5,1);pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.toast.gold{color:var(--gold);text-shadow:0 4px 0 #5a3a0a,0 0 26px rgba(242,193,78,.55)}
+/* cards */
+.ov{position:fixed;inset:0;z-index:20;display:none;align-items:center;padding:16px;justify-content:center;background:rgba(8,5,14,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.ov.show{display:flex}
+.card{width:100%;max-width:520px;background:linear-gradient(170deg,#2c2442,#18122a);border:1px solid rgba(255,255,255,.15);border-radius:26px;padding:20px;max-height:88vh;overflow:auto;animation:sheet .4s cubic-bezier(.2,1.4,.4,1);box-shadow:0 30px 70px rgba(0,0,0,.6)}
+@keyframes sheet{from{transform:scale(.8);opacity:0}}
+.card .grab{display:none}
+.card h2{margin:0 0 8px;color:var(--gold);font-weight:900;font-size:24px}
+.card p,.card li{line-height:1.6;font-size:15px;opacity:.92}
+.card ul{padding-inline-start:20px;margin:6px 0 12px}
+.legend{display:flex;gap:10px;justify-content:space-between;margin:12px 0}
+.legend div{display:flex;flex-direction:column;align-items:center;font-size:12px;gap:4px;flex:1}
+.legend span{width:48px;height:48px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.legend img{width:72%;height:72%}
+.big{font-size:56px;text-align:center;margin:0}
+.center{text-align:center}
+.card .bottom{background:none;padding:10px 0 0}
+#loading{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(ellipse at top,#3a2a52,#140f20);font-weight:700;transition:opacity .6s}
+#loading .sp{width:46px;height:46px;border-radius:50%;border:4px solid rgba(255,255,255,.15);border-top-color:var(--gold);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading.hide{opacity:0;pointer-events:none}
+
+.top{display:grid;grid-template-columns:1fr auto;grid-template-areas:"t b" "p p" "m m";align-items:center;column-gap:10px}
+.top .t{grid-area:t} .top .btns{grid-area:b;display:flex;gap:6px} .top .pills{grid-area:p;display:flex;justify-content:space-between;gap:8px;margin-top:10px} .top .msg{grid-area:m}
+#fsBtn{display:none}
+.fs-ok #fsBtn{display:grid}
+@media (orientation:landscape) and (max-height:540px){
+  .top{grid-template-columns:auto 1fr auto;grid-template-areas:"t p b" "m m m";padding:calc(var(--st) + 6px) calc(env(safe-area-inset-right,0px) + 12px) 10px calc(env(safe-area-inset-left,0px) + 12px)}
+  h1{font-size:17px} h1 small{font-size:10px;margin-top:2px}
+  .top .pills{margin-top:0;justify-content:center;gap:10px}
+  .pill{padding:5px 11px;font-size:12px}
+  .ibtn{width:36px;height:36px;font-size:16px;border-radius:11px}
+  .msg{margin-top:4px;font-size:13px;min-height:18px}
+  .bottom{justify-content:flex-start;padding:10px calc(env(safe-area-inset-right,0px) + 12px) calc(var(--sb) + 8px) calc(env(safe-area-inset-left,0px) + 12px);background:none}
+  .btn{font-size:14px;padding:9px 14px;min-height:40px;border-radius:12px}
+  .banner h2{font-size:30px} .banner p{font-size:16px}
+  .pick button{width:70px;height:70px;border-radius:20px}
+  .pick{bottom:calc(var(--sb) + 12px)}
+  .toast{font-size:34px}
+  .card{max-height:92vh;padding:14px 18px} .ov{padding:8px}
+  .card p,.card li{font-size:13.5px;line-height:1.45}
+  .legend span{width:40px;height:40px}
+}
+#rotate{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:30px;
+  background:radial-gradient(ellipse at top,#3a2a52,#120d1d)}
+#rotate .ph{width:70px;height:120px;border:5px solid var(--ink);border-radius:16px;position:relative;animation:rot 2.2s ease-in-out infinite}
+#rotate .ph::after{content:"";position:absolute;bottom:7px;left:50%;width:18px;height:4px;margin-left:-9px;border-radius:2px;background:var(--ink)}
+@keyframes rot{0%,20%{transform:rotate(0)}55%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+#rotate h2{margin:0;font-size:26px;font-weight:900;color:var(--gold)}
+#rotate p{margin:0;opacity:.85;font-size:16px;line-height:1.5}
+@media (orientation:portrait) and (pointer:coarse){ #rotate{display:flex} }
+
+body.duel .msg, body.duel .pills{opacity:0;transition:opacity .3s}
+body.duel .banner{top:19%}
+.msg,.pills{transition:opacity .3s}
+@media (orientation:landscape) and (max-height:540px){ body.duel .banner h2{font-size:28px} }
+
+/* ===== game skin ===== */
+h1,.banner h2,.toast,.card h2,#splash h1,#rotate h2,.big-title{font-family:'Suez One','Fredoka',serif;font-weight:400;letter-spacing:.5px}
+h1{font-size:23px;background:linear-gradient(#fff6c8,#ffc83a 55%,#f08a12);-webkit-background-clip:text;background-clip:text;color:transparent;
+   -webkit-text-stroke:1px rgba(80,30,0,.55);filter:drop-shadow(0 2px 0 #4a1d00) drop-shadow(0 3px 6px rgba(0,0,0,.5));text-shadow:none}
+h1 small{font-family:'Fredoka';font-weight:600;color:#ffe9b8;-webkit-text-fill-color:#ffe9b8;-webkit-text-stroke:0;letter-spacing:2px}
+.banner h2{font-size:46px;color:#ffd23f;-webkit-text-stroke:1px #5a2400;paint-order:stroke fill;text-shadow:0 4px 0 #4a1d00,0 6px 14px rgba(0,0,0,.55),0 0 26px rgba(255,170,0,.5)}
+.banner p{font-weight:600;font-size:20px;color:#fff;text-shadow:0 2px 0 #000,0 0 10px rgba(0,0,0,.7)}
+.banner .bx{background:none;border:none;padding:14px 34px 18px}
+.toast{font-size:52px;-webkit-text-stroke:2px #4a0500}
+.toast.gold{-webkit-text-stroke:2px #5a2400}
+.btn{font-family:'Fredoka';font-weight:700;letter-spacing:.3px;color:#3a1600;background:linear-gradient(#ffe680,#ffb820 55%,#f08c00);
+     border:2px solid #7a3a00;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(160,70,0,.5),0 4px 0 #7a3a00,0 8px 18px rgba(0,0,0,.4);text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.btn:active{box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 1px 0 #7a3a00}
+.btn.ghost{color:#fff;background:linear-gradient(#5b4ad6,#3a2a9e);border:2px solid #1e1460;text-shadow:0 1px 0 #000;
+     box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 4px 0 #1e1460,0 8px 18px rgba(0,0,0,.4)}
+.ibtn{background:linear-gradient(#5b4ad6,#3a2a9e);border:2px solid #1e1460;box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 3px 0 #1e1460}
+.pill{font-family:'Fredoka';font-weight:600;background:linear-gradient(rgba(40,24,90,.85),rgba(20,10,50,.85));border:2px solid rgba(255,255,255,.2)}
+.pill.me{border-color:#1f7bff} .pill.ai{border-color:#ff2e3c}
+.pill i{box-shadow:0 0 8px currentColor}
+.msg{font-weight:600}
+.card{background:linear-gradient(170deg,#3b2a9e,#1c1250);border:2px solid #ffc83a;box-shadow:0 0 0 4px rgba(30,20,80,.8),0 30px 70px rgba(0,0,0,.6)}
+.card h2{font-size:30px;color:#ffc83a;text-shadow:0 3px 0 #4a1d00}
+.pick button{border-width:4px;background:linear-gradient(#fff,#e9f0ff)}
+#rotate{z-index:40}
+#rotate h2{font-size:30px}
+/* splash */
+#splash{position:fixed;inset:0;z-index:45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
+  background:radial-gradient(ellipse at center,rgba(30,10,60,.15),rgba(15,5,35,.75));transition:opacity .5s;padding:20px}
+#splash.hide{opacity:0;pointer-events:none}
+body.pre .ui{opacity:0;pointer-events:none} .ui{transition:opacity .5s}
+#splash h1{font-size:clamp(46px,11vw,92px);line-height:1;margin:0;-webkit-text-stroke:2px #5a2400;filter:drop-shadow(0 6px 0 #4a1d00) drop-shadow(0 0 30px rgba(255,170,0,.5));animation:float 3s ease-in-out infinite}
+#splash .sub{font-family:'Fredoka';font-weight:700;font-size:clamp(16px,3.6vw,24px);color:#fff;letter-spacing:3px;text-shadow:0 2px 0 #000,0 0 12px #ff2e9a}
+#splash .go{margin-top:18px;font-size:24px;padding:16px 38px;border-radius:20px;animation:pulseBtn 1.4s ease-in-out infinite}
+#splash .note{font-size:13px;opacity:.75;margin-top:6px;font-weight:500}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes pulseBtn{50%{transform:scale(1.06)}}
+@media (orientation:landscape) and (max-height:540px){ #splash h1{font-size:64px} #splash .go{padding:12px 30px;font-size:21px;margin-top:10px} .banner h2{font-size:34px} .toast{font-size:40px} }
+
+/* ===== menus ===== */
+#menu{position:fixed;inset:0;z-index:44;display:none;align-items:center;justify-content:center;padding:calc(var(--st) + 10px) calc(env(safe-area-inset-right,0px) + 14px) calc(var(--sb) + 10px) calc(env(safe-area-inset-left,0px) + 14px);background:radial-gradient(ellipse at center,rgba(25,10,60,.35),rgba(10,4,30,.85))}
+#menu.show{display:flex}
+.mwrap{width:min(780px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;align-items:center;gap:10px;animation:sheet .35s cubic-bezier(.2,1.4,.4,1);padding:4px 2px 10px;scrollbar-width:none}
+.mwrap::-webkit-scrollbar{display:none}
+.mtitle{font-size:clamp(38px,8vw,64px)!important;margin:0 0 4px!important;-webkit-text-stroke:1.5px #5a2400!important}
+.msub{font-family:'Suez One',serif;font-weight:400;font-size:30px;margin:0;color:#ffd23f;text-shadow:0 3px 0 #4a1d00}
+.msub small{font-family:'Fredoka';font-size:16px;color:#fff;text-shadow:none}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;width:100%}
+.mbtn{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;text-align:right;font-family:'Fredoka';color:#fff;background:linear-gradient(#5b4ad6,#3a2a9e);border:2px solid #1e1460;box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 4px 0 #1e1460,0 8px 16px rgba(0,0,0,.35);font-size:19px;font-weight:700;width:100%}
+.mbtn:active{transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 1px 0 #1e1460}
+.mbtn.gold{color:#3a1600;background:linear-gradient(#ffe680,#ffb820 55%,#f08c00);border-color:#7a3a00;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 4px 0 #7a3a00,0 8px 16px rgba(0,0,0,.35)}
+.mbtn .ic{font-size:30px;line-height:1} .mbtn small{display:block;font-size:13px;font-weight:500;opacity:.85;margin-top:2px}
+.mbtn.sm{font-size:16px;padding:9px 12px}
+.link{background:none;border:none;color:#ffe9b8;font:600 15px 'Fredoka';text-decoration:underline;padding:6px}
+.sect{width:100%;background:rgba(30,20,80,.6);border:2px solid rgba(255,200,58,.35);border-radius:18px;padding:10px 14px}
+.sect h3{margin:0 0 8px;font:600 15px 'Fredoka';color:#ffd96a}
+.sect h3 small{color:#fff;opacity:.7}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);color:#fff;font:600 15px 'Fredoka'}
+.chip.on{background:linear-gradient(#ffe680,#ffb820);color:#3a1600;border-color:#7a3a00}
+.chip.lock{opacity:.5}
+.mrow{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}
+.btn.big{font-size:19px;padding:13px 26px}
+.btn.back{margin-top:2px}
+.btn.danger{background:linear-gradient(#a33,#711);border-color:#400}
+.mp{margin:2px 0;text-align:center;font-weight:500;line-height:1.5}
+.mp.dim{opacity:.7;font-size:14px} .mp.err{color:#ff8a7a;font-weight:700}
+.lvls{display:flex;flex-direction:column;gap:8px;width:100%}
+.lvl{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:16px;text-align:right;color:#fff;background:linear-gradient(90deg,rgba(91,74,214,.9),rgba(58,42,158,.9));border:2px solid #ffc83a;font-family:'Fredoka';box-shadow:0 4px 0 #1e1460}
+.lvl.lock{filter:grayscale(.8);opacity:.6;border-color:#555}
+.lvl .ln{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#ffc83a;color:#3a1600;font:400 20px 'Suez One';flex:none}
+.lvl .lt{flex:1} .lvl b{font-size:17px} .lvl small{display:block;opacity:.8;font-size:12.5px}
+.lvl .ls{font-size:15px;letter-spacing:1px;white-space:nowrap}
+.skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.skin{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:14px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);color:#fff;font:600 13px 'Fredoka'}
+.skin i{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.skin.on{border-color:#ffc83a;background:rgba(255,200,58,.2)} .skin.lock{opacity:.5} .skin small{opacity:.8;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;width:100%}
+.stat{background:rgba(30,20,80,.65);border:2px solid rgba(255,200,58,.35);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font:400 28px 'Suez One';color:#ffd23f} .stat span{font-size:13px;opacity:.85}
+.code{font:400 64px 'Suez One';letter-spacing:12px;color:#ffd23f;text-shadow:0 4px 0 #4a1d00;direction:ltr}
+.codein{font:700 24px 'Fredoka';letter-spacing:6px;text-align:center;width:120px;padding:8px;border-radius:14px;border:2px solid #ffc83a;background:#1c1250;color:#fff;direction:ltr}
+.joinbox{display:flex;gap:6px;align-items:center}
+.olist{display:flex;flex-direction:column;gap:6px}
+.spin{width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,.15);border-top-color:var(--gold);animation:spin 1s linear infinite}
+.stars{font-size:34px;margin:0} .unlock{color:#ffd23f;font-weight:700}
+/* pass screen */
+#pass{position:fixed;inset:0;z-index:43;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--tc,#1f7bff) 45%,#120a2a),#0a0618);padding:20px}
+#pass.show{display:flex;animation:fade .25s}
+@keyframes fade{from{opacity:0}}
+.pbox{text-align:center;max-width:520px}
+.pbox h2{font:400 34px 'Suez One';color:#fff;margin:10px 0 6px;text-shadow:0 3px 0 rgba(0,0,0,.5)}
+.pbox p{margin:0 0 16px;font-weight:500;opacity:.9}
+.pdot{width:64px;height:64px;border-radius:50%;margin:0 auto;background:var(--tc);box-shadow:0 0 30px var(--tc),inset 0 -6px 0 rgba(0,0,0,.25)}
+.pick.inl{position:static;display:flex;justify-content:center}
+/* blitz timer */
+.timer{position:fixed;left:50%;top:calc(var(--st) + 92px);transform:translateX(-50%) scale(.6);opacity:0;z-index:7;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;pointer-events:none;transition:opacity .2s,transform .25s;
+  background:conic-gradient(var(--gold) calc(var(--p,1)*360deg),rgba(255,255,255,.12) 0);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.timer::before{content:"";position:absolute;inset:5px;border-radius:50%;background:#1c1250}
+.timer b{position:relative;font:400 24px 'Suez One';color:#fff}
+.timer.show{opacity:1;transform:translateX(-50%) scale(1)}
+.timer.low{background:conic-gradient(#ff3b30 calc(var(--p,1)*360deg),rgba(255,255,255,.12) 0);animation:pulseBtn .5s infinite}
+@media (orientation:landscape) and (max-height:540px){
+  .timer{top:calc(var(--st) + 58px);width:46px;height:46px} .timer b{font-size:20px}
+  .mgrid{grid-template-columns:repeat(3,1fr);gap:8px} .mbtn{font-size:16px;padding:9px 12px;gap:8px} .mbtn .ic{font-size:24px} .mbtn small{font-size:11.5px}
+  .mtitle{font-size:44px!important} .msub{font-size:24px} .sect{padding:8px 12px} .chip{padding:6px 11px;font-size:14px}
+  .code{font-size:48px} .lvls{display:grid;grid-template-columns:1fr 1fr} .lvl{padding:8px 10px}
+  .stats{grid-template-columns:repeat(5,1fr)} .stat b{font-size:22px}
+  .pbox h2{font-size:28px}
+}
+
+#vig{position:fixed;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65) 100%);box-shadow:inset 0 0 0 0 rgba(0,0,0,0)}
+#vig.show{opacity:1}
+#vig.show::before,#vig.show::after{content:"";position:absolute;left:0;right:0;height:9%;background:#000;animation:bars .3s ease-out forwards}
+#vig.show::before{top:0} #vig.show::after{bottom:0}
+@keyframes bars{from{transform:scaleY(0)}}
+#slash{position:fixed;left:50%;top:50%;width:160vmax;height:7px;z-index:7;pointer-events:none;opacity:0;transform:translate(-50%,-50%) rotate(-24deg) scaleX(0);
+  background:linear-gradient(90deg,transparent,#fff 30%,#fff 70%,transparent);box-shadow:0 0 18px 6px rgba(255,255,255,.85),0 0 60px 18px rgba(255,80,60,.55)}
+#slash.go{animation:slash .42s cubic-bezier(.2,.9,.3,1)}
+@keyframes slash{0%{opacity:1;transform:translate(-50%,-50%) rotate(-24deg) scaleX(0)}35%{opacity:1;transform:translate(-50%,-50%) rotate(-24deg) scaleX(1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(-24deg) scaleX(1) scaleY(.2)}}
+#flashov{position:fixed;inset:0;background:#fff;z-index:7;pointer-events:none;opacity:0}
+#flashov.go{animation:fl .35s ease-out}
+@keyframes fl{0%{opacity:.75}100%{opacity:0}}
+body{-webkit-touch-callout:none}
+#rotate .alt{background:none;border:none;color:#ffe9b8;font:600 16px 'Fredoka';text-decoration:underline;padding:8px}
+#rotate small{opacity:.7;font-size:13px;display:block;margin-top:6px}
+body.portrait-ok #rotate{display:none!important}
+
+.worlds{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;width:100%}
+.world{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;text-align:right;color:#fff;font-family:'Fredoka';border:2px solid var(--wc);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--wc) 55%,#2a1a6e),#2a1a6e 70%);box-shadow:0 4px 0 #140c40,0 0 0 1px rgba(0,0,0,.3)}
+.world.lock{filter:grayscale(.85);opacity:.55}
+.world.done{box-shadow:0 4px 0 #140c40,0 0 14px color-mix(in srgb,var(--wc) 70%,transparent)}
+.world .we{font-size:32px;width:44px;text-align:center;flex:none} .world .wt{flex:1} .world b{font-size:16px} .world small{display:block;font-size:12px;opacity:.85}
+.world .wd{width:26px;height:26px;border-radius:50%;background:#2ecc71;display:grid;place-items:center;font-weight:700;flex:none}
+.lvl.boss{border-color:#ff5a3a;background:linear-gradient(90deg,rgba(160,30,40,.9),rgba(58,42,158,.9))}
+.chars{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;width:100%}
+.char{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px;border-radius:16px;color:#fff;font-family:'Fredoka';background:linear-gradient(#4b3ac6,#2a1a8e);border:2px solid rgba(255,255,255,.25);box-shadow:0 4px 0 #140c40}
+.char .ce{font-size:38px;line-height:1.1} .char b{font-size:16px} .char small{font-size:11.5px;opacity:.85;text-align:center}
+.char.on{border-color:#ffc83a;background:linear-gradient(#7a5af0,#4a2ab8);box-shadow:0 4px 0 #140c40,0 0 16px rgba(255,200,58,.5)}
+.char.lock .ce{filter:brightness(0) drop-shadow(0 0 2px rgba(255,255,255,.6))} .char.lock{opacity:.8}
+.unl{display:flex;align-items:center;gap:12px;justify-content:center;margin:8px auto;padding:10px 18px;border-radius:18px;background:linear-gradient(135deg,#ffd23f,#ff8a00);color:#3a1600;width:max-content;max-width:100%;animation:pulseBtn 1.2s ease-in-out infinite;box-shadow:0 0 24px rgba(255,180,0,.6)}
+.unl span{font-size:44px} .unl small{display:block;font-weight:600} .unl b{font:400 24px 'Suez One'}
+@media (orientation:landscape) and (max-height:540px){ .worlds{grid-template-columns:1fr 1fr} .world{padding:7px 10px} .world .we{font-size:26px} .chars{grid-template-columns:repeat(5,1fr)} .char .ce{font-size:30px} .char{padding:7px 4px} }
+
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.min.js"}}
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="ui">
+  <div class="top">
+    <h1 class="t">קרב הסמוראים<small>אבן · נייר · מספריים</small></h1>
+    <div class="btns">
+      <button class="ibtn" id="fsBtn" title="מסך מלא">⛶</button>
+      <button class="ibtn" id="musicBtn">🎵</button>
+      <button class="ibtn" id="soundBtn">🔊</button>
+      <button class="ibtn" id="helpBtn">?</button>
+      <button class="ibtn" id="pauseBtn">☰</button>
+    </div>
+    <div class="pills">
+      <div class="pill me" id="pMe"><i></i><b id="nMe">אתה</b> <span id="cMe"></span></div>
+      <div class="pill ai" id="pAi"><i></i><b id="nAi">המחשב</b> <span id="cAi"></span></div>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="bottom" id="controls"></div>
+</div>
+
+<div class="banner" id="banner"><div class="bx"><h2 id="bTitle"></h2><p id="bText"></p></div></div>
+<div class="pick" id="pick"><button data-t="R"></button><button data-t="P"></button><button data-t="S"></button></div>
+<div class="toast" id="toast"></div>
+<div class="timer" id="timer"><b>10</b></div>
+<div id="pass"></div>
+<div id="vig"></div><div id="slash"></div><div id="flashov"></div>
+<div id="menu"></div>
+<div class="ov" id="ov"><div class="card" id="card"></div></div>
+<div id="rotate"><div class="ph"></div><h2>סובב את הטלפון לרוחב</h2><p>שדה הקרב נראה הכי טוב במסך רחב ⚔️<small id="rotHint">אם המסך לא מסתובב — בדוק שנעילת הסיבוב כבויה במרכז הבקרה</small></p><button class="btn" id="rotBtn">מסך מלא לרוחב</button><button class="alt" id="rotSkip">שחק לאורך בכל זאת</button></div>
+<div id="splash" class="hide"><h1>קרב הסמוראים</h1><div class="sub">אבן · נייר · מספריים</div><button class="btn go" id="goBtn">⚔️ התחל לשחק</button><div class="note">המשחק ייפתח במסך מלא לרוחב</div></div>
+<div id="loading"><div class="sp"></div><div id="loadTxt">טוען את שדה הקרב…</div></div>
+
+<script>
+setTimeout(()=>{ if(!window.__started){ const t=document.getElementById('loadTxt'); if(t) t.textContent='הטעינה נתקעה — נסה לרענן'; } }, 15000);
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+window.__started = true;
+
+const ROWS=6, COLS=7;
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const isMobile = matchMedia('(pointer:coarse)').matches;
+
+/* ================= ICONS (SVG) ================= */
+const SVG = {
+  R:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M7 27 L11 15 L21 9 L32 13 L35 26 L27 33 L13 33 Z" fill="#8d939c"/><path d="M11 15 L21 9 L24 18 L14 22Z" fill="#c9ced5"/><path d="M24 18 L32 13 L35 26 L27 25Z" fill="#666c75"/><path d="M14 22 L24 18 L27 25 L27 33 L13 33 L7 27Z" fill="#7b818a"/></svg>`,
+  P:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M10 6 H25 L31 12 V34 H10 Z" fill="#fdfdfd" stroke="#7d8898" stroke-width="1.8" stroke-linejoin="round"/><path d="M25 6 V12 H31" fill="#e3e8ef" stroke="#7d8898" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 17 H27 M14 22 H27 M14 27 H23" stroke="#9aa5b4" stroke-width="2" stroke-linecap="round"/></svg>`,
+  S:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M15.5 24 L28 6" stroke="#8f99a7" stroke-width="4.2" stroke-linecap="round"/><path d="M24.5 24 L12 6" stroke="#b9c2ce" stroke-width="4.2" stroke-linecap="round"/><circle cx="13" cy="29.5" r="5" fill="none" stroke="#e0463d" stroke-width="3.4"/><circle cx="27" cy="29.5" r="5" fill="none" stroke="#e0463d" stroke-width="3.4"/><circle cx="20" cy="17.5" r="1.9" fill="#555"/></svg>`,
+  flag:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M13 5 V35" stroke="#6b4a2b" stroke-width="3" stroke-linecap="round"/><path d="M14.5 6 Q24 4 33 9 Q24 14 14.5 18 Z" fill="#f2c14e" stroke="#c99520" stroke-width="1.2"/><circle cx="21" cy="11" r="2.6" fill="#e0463d"/><path d="M8 35 H19" stroke="#6b4a2b" stroke-width="3" stroke-linecap="round"/></svg>`,
+  trap:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><ellipse cx="20" cy="29" rx="15" ry="5" fill="#3a2a1e"/><path d="M6 27 Q20 4 34 27" fill="none" stroke="#555d66" stroke-width="3"/><path d="M8.5 22 l3 -5 l2.5 4 l3 -6 l3 5 l3 -6 l3 5 l3 -5" fill="none" stroke="#9aa4b2" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="29" r="2.5" fill="#9aa4b2"/></svg>`,
+  q:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><text x="20" y="30" text-anchor="middle" font-size="28" font-weight="900" font-family="Arial,sans-serif" fill="#8a93a3">?</text></svg>`
+};
+const svgURL = s => 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+const IMG = {};
+function loadImages(){
+  return Promise.all(Object.entries(SVG).map(([k,s])=>new Promise(res=>{ const im=new Image(); im.onload=()=>{IMG[k]=im;res();}; im.onerror=res; im.src=svgURL(s); })));
+}
+const NAME={R:'אבן',P:'נייר',S:'מספריים',flag:'דגל',trap:'מלכודת'};
+const beats=(a,b)=>(a==='R'&&b==='S')||(a==='S'&&b==='P')||(a==='P'&&b==='R');
+const isFighter=t=>t==='R'||t==='P'||t==='S';
+
+/* ================= SOUND ================= */
+let actx=null, soundOn=true, musicOn=true, master, sfxBus, musicBus, verbSend;
+try{ soundOn = localStorage.getItem('rps3d-sound')!=='0'; musicOn = localStorage.getItem('rps3d-music')!=='0'; }catch(e){}
+function makeImpulse(a,sec=2.4){ const len=a.sampleRate*sec, b=a.createBuffer(2,len,a.sampleRate);
+  for(let c=0;c<2;c++){ const d=b.getChannelData(c); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3); } return b; }
+function ac(){
+  try{ if('audioSession' in navigator) navigator.audioSession.type='playback'; }catch(e){}
+  if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+    const comp=actx.createDynamicsCompressor(); comp.threshold.value=-14; comp.ratio.value=4; comp.connect(actx.destination);
+    master=actx.createGain(); master.gain.value=soundOn?1:0; master.connect(comp);
+    sfxBus=actx.createGain(); sfxBus.gain.value=.9; sfxBus.connect(master);
+    musicBus=actx.createGain(); musicBus.gain.value=musicOn?.5:0; musicBus.connect(master);
+    const verb=actx.createConvolver(); verb.buffer=makeImpulse(actx); verb.connect(master);
+    verbSend=actx.createGain(); verbSend.gain.value=.32; verbSend.connect(verb);
+    startMusic();
+  }
+  if(actx.state==='suspended') actx.resume(); return actx;
+}
+function out(node,wet=0){ node.connect(sfxBus); if(wet){ const g=actx.createGain(); g.gain.value=wet; node.connect(g); g.connect(verbSend); } }
+function tone(f,d=.12,type='sine',v=.15,delay=0,slide=0,wet=0,bus){ const a=ac(); if(!a||!soundOn) return;
+  const t=a.currentTime+delay,o=a.createOscillator(),g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t);
+  if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide),t+d);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+.005); g.gain.exponentialRampToValueAtTime(.0008,t+d);
+  o.connect(g); if(bus) g.connect(bus); else out(g,wet); o.start(t); o.stop(t+d+.05); }
+let noiseBuf=null;
+function nbuf(a){ if(!noiseBuf){ const len=a.sampleRate*2; noiseBuf=a.createBuffer(1,len,a.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<len;i++) d[i]=Math.random()*2-1; } return noiseBuf; }
+function noise(d=.18,v=.25,delay=0,freq=1200,type='highpass',q=.7,wet=0,sweepTo=0){ const a=ac(); if(!a||!soundOn) return;
+  const t=a.currentTime+delay, s=a.createBufferSource(), g=a.createGain(), f=a.createBiquadFilter();
+  s.buffer=nbuf(a); f.type=type; f.frequency.setValueAtTime(freq,t); f.Q.value=q; if(sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo,t+d);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+Math.min(.01,d/4)); g.gain.exponentialRampToValueAtTime(.0008,t+d);
+  s.connect(f).connect(g); out(g,wet); s.start(t,Math.random()); s.stop(t+d+.05); }
+// metallic sword clash: inharmonic partials + bright noise burst
+function metal(delay=0,base=1,vol=.32){
+  [1,1.47,2.09,2.56,3.17,3.93,4.6].forEach((m,i)=>tone(1180*base*m*(1+(Math.random()-.5)*.02), .35+Math.random()*.7, 'sine', vol/(i*.7+1.4), delay, 0, .5));
+  noise(.07,vol*1.6,delay,4800,'bandpass',1.2,.4); noise(.35,vol*.5,delay+.01,6500,'highpass',.7,.6);
+}
+function whoosh(delay=0,v=.22){ noise(.28,v,delay,350,'bandpass',1.6,.15,3200); }
+function taiko(delay=0,v=.5){ tone(95,.45,'sine',v,delay,-45,.25); noise(.09,v*.5,delay,180,'lowpass',.8,.2); }
+function grunt(delay=0,pitch=1){ const a=ac(); if(!a||!soundOn) return; const t=a.currentTime+delay;
+  const o=a.createOscillator(), f=a.createBiquadFilter(), g=a.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(190*pitch,t); o.frequency.exponentialRampToValueAtTime(120*pitch,t+.2);
+  f.type='bandpass'; f.frequency.value=800; f.Q.value=3; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.13,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+.22);
+  o.connect(f).connect(g); out(g,.2); o.start(t); o.stop(t+.25); noise(.12,.06,delay,1500,'bandpass',2); }
+const SCALE=[293.66,311.13,392,440,466.16]; // D Eb G A Bb (in scale)
+function koto(f,delay=0,v=.12,bus){ const a=ac(); if(!a||!soundOn) return; const t=a.currentTime+delay;
+  const o=a.createOscillator(), o2=a.createOscillator(), lp=a.createBiquadFilter(), g=a.createGain();
+  o.type='sawtooth'; o2.type='triangle'; o.frequency.setValueAtTime(f*1.01,t); o.frequency.exponentialRampToValueAtTime(f,t+.05); o2.frequency.value=f*2;
+  lp.type='lowpass'; lp.frequency.setValueAtTime(3800,t); lp.frequency.exponentialRampToValueAtTime(500,t+.6); lp.Q.value=2;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+.004); g.gain.exponentialRampToValueAtTime(.0006,t+1.6);
+  o.connect(lp); o2.connect(lp); lp.connect(g);
+  if(bus){ g.connect(bus); const w=a.createGain(); w.gain.value=.6; g.connect(w); w.connect(verbSend); } else out(g,.5);
+  o.start(t); o2.start(t); o.stop(t+1.7); o2.stop(t+1.7); }
+/* background music: koto improvisation over a soft drone */
+let musicTimer=null, nextNote=0, phraseLeft=0, lastIdx=2;
+function startMusic(){
+  const a=actx; if(musicTimer) return;
+  // drone
+  [[73.42,.05],[110,.035],[146.83,.02]].forEach(([f,v],i)=>{ const o=a.createOscillator(), g=a.createGain(), lfo=a.createOscillator(), lg=a.createGain(), lp=a.createBiquadFilter();
+    o.type='triangle'; o.frequency.value=f; lp.type='lowpass'; lp.frequency.value=400; g.gain.value=v; lfo.frequency.value=.07+i*.05; lg.gain.value=v*.6; lfo.connect(lg).connect(g.gain);
+    o.connect(lp).connect(g).connect(musicBus); o.start(); lfo.start(); });
+  nextNote=a.currentTime+.5;
+  musicTimer=setInterval(()=>{
+    if(!musicOn||!soundOn||document.hidden) { nextNote=Math.max(nextNote,actx.currentTime+.2); return; }
+    while(nextNote<actx.currentTime+.6){
+      if(phraseLeft<=0){ phraseLeft=3+Math.floor(Math.random()*5); nextNote+=1.2+Math.random()*2.2; }
+      lastIdx=Math.max(0,Math.min(9,lastIdx+[-2,-1,-1,1,1,2,0][Math.floor(Math.random()*7)]));
+      const f=SCALE[lastIdx%5]*(lastIdx>=5?2:1)*(Math.random()<.15?.5:1);
+      koto(f, nextNote-actx.currentTime, .09+Math.random()*.05, musicBus);
+      if(Math.random()<.18) koto(f*1.5, nextNote-actx.currentTime+.12, .05, musicBus);
+      nextNote+=[.32,.48,.48,.64,.96][Math.floor(Math.random()*5)]; phraseLeft--;
+    }
+  },150);
+}
+function setMusicLevel(v,t=.6){ if(!actx) return; musicBus.gain.setTargetAtTime(musicOn?v:0, actx.currentTime, t/3); }
+const sfx={
+  select(){ koto(SCALE[3]*2,0,.1); },
+  step(){ noise(.07,.1,0,260,'lowpass',.8); },
+  draw(){ noise(.45,.14,0,2200,'bandpass',4,.3,6000); tone(2600,.5,'sine',.02,0,1500,.3); },
+  whoosh(){ whoosh(0,.24); },
+  clash(){ metal(0,1,.34); metal(.05,1.33,.16); tone(130,.25,'sine',.25,0,-60); },
+  reveal(){ koto(SCALE[4]*2,0,.1); koto(SCALE[2]*4,.09,.08); },
+  win(){ [0,2,3,4].forEach((k,i)=>koto(SCALE[k]*2,i*.11,.14)); taiko(0,.35); },
+  lose(){ [4,3,1,0].forEach((k,i)=>koto(SCALE[k],i*.16,.13)); },
+  fall(){ grunt(0,.85); taiko(.12,.4); metal(.14,2.2,.05); noise(.3,.15,.12,500,'lowpass',.7); },
+  trap(){ metal(0,.6,.25); noise(.18,.35,0,900,'bandpass',1); grunt(.05,1.1); taiko(.1,.5); },
+  tie(){ metal(0,1.1,.12); koto(SCALE[1]*2,.15,.1); koto(SCALE[1]*2,.35,.1); },
+  gong(){ tone(98,2.6,'sine',.32,0,0,.6); tone(196.5,2,'sine',.1,0,0,.6); tone(296,1.6,'sine',.06,0,0,.6); tone(412,1.2,'sine',.035,0,0,.6); },
+  battleStart(){ taiko(0,.55); taiko(.32,.45); taiko(.5,.4); taiko(.82,.6); setTimeout(()=>sfx.gong(),900); },
+  duelIntro(){ taiko(0,.5); taiko(.22,.4); sfx.draw(); },
+  shout(){ grunt(0,1.25); },
+  tick(){ koto(SCALE[4]*4,0,.12); tone(1600,.05,'square',.04); },
+  portal(){ tone(300,.45,'sine',.12,0,900,.5); tone(600,.35,'triangle',.06,.1,1200,.5); },
+  slowmo(){ tone(220,1.2,'sine',.12,0,-140,.6); noise(1.1,.08,0,500,'bandpass',2,.5,180); tone(55,1.4,'sine',.25,0,0,.4); }
+};
+/* ================= THREE SETUP ================= */
+const canvas=$('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile?1.75:2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.18;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0xd77a8a, 22, 70);
+const camera=new THREE.PerspectiveCamera(45,1,.1,200);
+
+let skyMat, envPM, envSceneRef, sunDisc, lanternMul=1, petalSpeed=1;
+// sky dome
+{
+  const g=new THREE.SphereGeometry(100,32,16);
+  const m=skyMat=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,
+    uniforms:{top:{value:new THREE.Color(0x2b2fa8)},mid:{value:new THREE.Color(0xc35ab5)},bot:{value:new THREE.Color(0xffb054)}},
+    vertexShader:`varying vec3 vP; void main(){ vP=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader:`uniform vec3 top,mid,bot; varying vec3 vP; void main(){ float h=vP.y; vec3 c = h>0.12 ? mix(mid,top,smoothstep(.12,.6,h)) : mix(bot,mid,smoothstep(-.05,.12,h)); gl_FragColor=vec4(c,1.); }`});
+  const skyMesh=new THREE.Mesh(g,m); scene.add(skyMesh);
+  const envScene=new THREE.Scene(); envScene.add(skyMesh.clone());
+  const es=new THREE.Mesh(new THREE.SphereGeometry(8,16,8),new THREE.MeshBasicMaterial({color:0xfff0d0})); es.position.set(-30,40,-40); envScene.add(es);
+  const pm=envPM=new THREE.PMREMGenerator(renderer); envSceneRef=envScene; scene.environment=pm.fromScene(envScene,.03).texture; scene.environmentIntensity=.55;
+  // sun disc
+  const sun=sunDisc=new THREE.Mesh(new THREE.CircleGeometry(5,32),new THREE.MeshBasicMaterial({color:0xffd9a0,fog:false}));
+  sun.position.set(-14,6,-80); sun.lookAt(0,0,0); scene.add(sun);
+  const glow=new THREE.Mesh(new THREE.CircleGeometry(12,32),new THREE.MeshBasicMaterial({color:0xffb070,transparent:true,opacity:.25,fog:false,depthWrite:false}));
+  glow.position.set(-14,6,-79.9); glow.lookAt(0,0,0); scene.add(glow);
+}
+const hemi=new THREE.HemisphereLight(0xffe2d0, 0x3a3050, .7); scene.add(hemi);
+const sunLight=new THREE.DirectionalLight(0xffe2c0, 2.1);
+sunLight.position.set(-6,11,-4);
+sunLight.castShadow=true;
+sunLight.shadow.mapSize.set(isMobile?1024:2048, isMobile?1024:2048);
+Object.assign(sunLight.shadow.camera,{left:-7,right:7,top:7,bottom:-7,near:1,far:30});
+sunLight.shadow.bias=-.0008; sunLight.shadow.normalBias=.02;
+scene.add(sunLight);
+const fill=new THREE.DirectionalLight(0xc8d4ff,1.25); fill.position.set(4,7,12); scene.add(fill);
+
+const mat=(color,o={})=>new THREE.MeshStandardMaterial({color,roughness:o.r??.7,metalness:o.m??0,flatShading:!!o.flat,emissive:o.e??0x000000,emissiveIntensity:o.ei??1,side:o.side??THREE.FrontSide,transparent:!!o.tr,opacity:o.op??1});
+function mesh(geo,m,x=0,y=0,z=0,parent){ const me=new THREE.Mesh(geo,m); me.position.set(x,y,z); me.castShadow=true; me.receiveShadow=true; if(parent) parent.add(me); return me; }
+
+/* ---------- environment ---------- */
+const env=new THREE.Group(); scene.add(env);
+let groundMat, courtMat, mountMat;
+// ground
+{
+  const g=new THREE.Mesh(new THREE.CircleGeometry(80,48), groundMat=mat(0x4fa83a,{r:1}));
+  g.rotation.x=-Math.PI/2; g.position.y=-.62; g.receiveShadow=true; env.add(g);
+  // stone courtyard
+  const court=new THREE.Mesh(new THREE.CylinderGeometry(9,9.4,.3,48), courtMat=mat(0xd8c3a0,{r:.95}));
+  court.position.y=-.5; court.receiveShadow=true; env.add(court);
+  // stepping stones ring
+  for(let i=0;i<26;i++){ const a=i/26*Math.PI*2; const s=mesh(new THREE.CylinderGeometry(.45+Math.random()*.2,.5,.12,7), mat(0xa69a8a,{r:1,flat:true}), Math.cos(a)*10.4,-.5,Math.sin(a)*10.4, env); s.rotation.y=Math.random()*3; }
+}
+// board
+const boardGroup=new THREE.Group(); scene.add(boardGroup);
+const tiles=[];
+{
+  const wood=mat(0x9a4f1c,{r:.5});
+  const base=mesh(new THREE.BoxGeometry(7.7,.42,6.7),wood,0,-.27,0,boardGroup);
+  const rim=mat(0x3a200d,{r:.5});
+  mesh(new THREE.BoxGeometry(7.9,.12,6.9),rim,0,-.46,0,boardGroup);
+  // gold corner caps
+  const goldM=mat(0xd8a640,{r:.3,m:.85});
+  for(const sx of [-1,1]) for(const sz of [-1,1]) mesh(new THREE.BoxGeometry(.32,.46,.32),goldM,sx*3.78,-.25,sz*3.28,boardGroup);
+  const tgeo=new THREE.BoxGeometry(.95,.08,.95);
+  for(let r=0;r<ROWS;r++){ tiles.push([]); for(let c=0;c<COLS;c++){
+    const light=(r+c)%2===0;
+    let col=new THREE.Color(light?0xfbe9b8:0xf0c67a);
+    if(r>=4) col.lerp(new THREE.Color(0x9fb4e8),.13); if(r<=1) col.lerp(new THREE.Color(0xe8a49f),.13);
+    const t=mesh(tgeo,mat(col,{r:.85}),c-3,-.04,r-2.5,boardGroup);
+    t.castShadow=false; t.userData={cell:[r,c]}; t.userData.base=col.clone();
+    tiles[r].push(t);
+    // markers
+    const dot=new THREE.Mesh(new THREE.CircleGeometry(.19,28),new THREE.MeshBasicMaterial({color:0x5dff8a,transparent:true,opacity:.85,depthWrite:false}));
+    dot.rotation.x=-Math.PI/2; dot.position.set(c-3,.012,r-2.5); dot.visible=false; boardGroup.add(dot);
+    const ring=new THREE.Mesh(new THREE.RingGeometry(.34,.44,32),new THREE.MeshBasicMaterial({color:0xff3b30,transparent:true,opacity:.95,depthWrite:false}));
+    ring.rotation.x=-Math.PI/2; ring.position.set(c-3,.013,r-2.5); ring.visible=false; boardGroup.add(ring);
+    t.userData.dot=dot; t.userData.ring=ring;
+  }}
+}
+let boardAnim=null;
+const selRing=new THREE.Mesh(new THREE.RingGeometry(.36,.46,40),new THREE.MeshBasicMaterial({color:0xffd04a,transparent:true,opacity:.95,depthWrite:false}));
+selRing.rotation.x=-Math.PI/2; selRing.position.y=.014; selRing.visible=false; scene.add(selRing);
+
+// torii gate behind enemy side
+{
+  const red=mat(0xff3d1f,{r:.45}), black=mat(0x1f1a1a,{r:.6});
+  const g=new THREE.Group(); g.position.set(0,-.4,-7.4); env.add(g);
+  for(const s of [-1,1]){ mesh(new THREE.CylinderGeometry(.2,.24,4.4,16),red,s*2.3,2.2,0,g); mesh(new THREE.CylinderGeometry(.3,.3,.3,16),black,s*2.3,.15,0,g); }
+  mesh(new THREE.BoxGeometry(5.6,.3,.38),red,0,3.6,0,g);
+  const kasagi=mesh(new THREE.BoxGeometry(6.6,.32,.5),black,0,4.35,0,g);
+  const kasagi2=mesh(new THREE.BoxGeometry(6.2,.2,.55),red,0,4.12,0,g);
+  mesh(new THREE.BoxGeometry(.28,.75,.25),red,0,3.95,0,g);
+}
+// mountains
+{
+  const mm=mountMat=mat(0x6b4fb0,{r:1,flat:true});
+  [[-30,-55,14,12],[-12,-62,20,15],[10,-58,16,13],[30,-50,18,10],[45,-40,12,9],[-45,-38,12,8]].forEach(([x,z,h,r])=>{
+    const m=new THREE.Mesh(new THREE.ConeGeometry(r,h,7),mm); m.position.set(x,h/2-1,z); env.add(m);
+    const snow=new THREE.Mesh(new THREE.ConeGeometry(r*.28,h*.28,7),mat(0xf0e6f0,{r:1,flat:true})); snow.position.set(x,h-1-h*.14+.05,z); env.add(snow);
+  });
+}
+// sakura trees
+const blossomMat=mat(0xff7eb6,{r:.85,flat:true}), blossomMat2=mat(0xffb0d8,{r:.85,flat:true}), barkMat=mat(0x3b2418,{r:1,flat:true});
+function tree(x,z,s=1){
+  const g=new THREE.Group(); g.position.set(x,-.4,z); g.scale.setScalar(s); env.add(g);
+  const trunk=mesh(new THREE.CylinderGeometry(.14,.28,2.6,7),barkMat,0,1.3,0,g); trunk.rotation.z=.12;
+  const b1=mesh(new THREE.CylinderGeometry(.06,.12,1.4,6),barkMat,.45,2.6,0,g); b1.rotation.z=-.8;
+  const b2=mesh(new THREE.CylinderGeometry(.06,.12,1.3,6),barkMat,-.4,2.5,.1,g); b2.rotation.z=.9;
+  const spots=[[0,3.2,0,1.1],[.9,3,.2,.85],[-.9,2.9,-.1,.9],[.3,3.7,-.3,.8],[-.4,3.6,.4,.75],[.6,2.6,-.5,.7],[-.5,2.6,.6,.7],[0,2.8,.8,.7]];
+  spots.forEach(([a,b,c,r],i)=>{ const m=mesh(new THREE.IcosahedronGeometry(r,0),i%2?blossomMat:blossomMat2,a,b,c,g); m.rotation.set(Math.random()*3,Math.random()*3,0); });
+  return g;
+}
+tree(-6.2,-3.2,1.15); tree(6.4,-2.6,1.05); tree(-8.2,2.8,1.25); tree(8.4,3.4,1.2); tree(-3.5,-9.5,1.3); tree(4.5,-10,1.2);
+// stone lanterns
+const lanternLights=[];
+function lantern(x,z){
+  const g=new THREE.Group(); g.position.set(x,-.35,z); env.add(g);
+  const st=mat(0xc9bfae,{r:.95,flat:true});
+  mesh(new THREE.CylinderGeometry(.35,.42,.2,6),st,0,.1,0,g);
+  mesh(new THREE.CylinderGeometry(.11,.14,.8,6),st,0,.6,0,g);
+  mesh(new THREE.CylinderGeometry(.3,.25,.14,6),st,0,1.05,0,g);
+  const box=mesh(new THREE.BoxGeometry(.38,.34,.38),mat(0xffd27a,{e:0xffa040,ei:2.2}),0,1.29,0,g);
+  mesh(new THREE.ConeGeometry(.48,.36,6),st,0,1.64,0,g);
+  mesh(new THREE.SphereGeometry(.07,8,6),st,0,1.86,0,g);
+  const l=new THREE.PointLight(0xffa850,3.5,5,1.6); l.position.set(0,1.3,0); g.add(l); lanternLights.push(l);
+}
+lantern(-4.6,4.1); lantern(4.6,4.1); lantern(-4.6,-4.1); lantern(4.6,-4.1);
+
+// falling petals
+const PETALS=isMobile?110:200;
+const petalGeo=new THREE.PlaneGeometry(.09,.06);
+const petalMat=new THREE.MeshBasicMaterial({color:0xff9ccc,side:THREE.DoubleSide,transparent:true,opacity:.9});
+const petals=new THREE.InstancedMesh(petalGeo,petalMat,PETALS);
+const petalData=[]; const dummy=new THREE.Object3D();
+for(let i=0;i<PETALS;i++){ petalData.push({x:(Math.random()-.5)*22,y:Math.random()*9,z:(Math.random()-.5)*18-2,vy:.25+Math.random()*.35,ph:Math.random()*6,rs:1+Math.random()*2}); }
+scene.add(petals);
+
+/* ---------- particles (sparks, dust) ---------- */
+const sparks=[]; const sparkGeo=new THREE.SphereGeometry(.03,6,4);
+function burst(pos,color=0xffd36a,n=26,speed=3,size=1){
+  for(let i=0;i<n;i++){
+    const m=new THREE.Mesh(sparkGeo,new THREE.MeshBasicMaterial({color,transparent:true}));
+    m.position.copy(pos); m.scale.setScalar(size*(.6+Math.random()));
+    const v=new THREE.Vector3(Math.random()-.5,Math.random()*.9,Math.random()-.5).normalize().multiplyScalar(speed*(.4+Math.random()));
+    scene.add(m); sparks.push({m,v,life:.5+Math.random()*.4,t:0});
+  }
+}
+const flash=new THREE.PointLight(0xffe2a0,0,6,2); scene.add(flash);
+
+/* ================= SAMURAI MODEL ================= */
+const SKIN=0xf0c39a;
+function buildSamuraiModel(owner){
+  const T = teamColors(owner);
+  const M=mat(T.main,{r:.42,m:.25}), D=mat(T.dark,{r:.5,m:.2}), H=mat(T.hak,{r:.85}), G=mat(0xf0c050,{r:.28,m:.9}), K=mat(0x17161c,{r:.45,m:.35}), S=mat(SKIN,{r:.75}), W=mat(0xece4d2,{r:.8});
+  const root=new THREE.Group(), body=new THREE.Group(); root.add(body);
+  // hakama + feet
+  mesh(new THREE.CylinderGeometry(.16,.28,.34,16),H,0,.17,0,body);
+  for(const s of [-1,1]) mesh(new THREE.BoxGeometry(.075,.045,.13),K,s*.085,.022,.04,body);
+  mesh(new THREE.CylinderGeometry(.176,.176,.05,16),W,0,.345,0,body);
+  // torso (do)
+  mesh(new THREE.CylinderGeometry(.2,.166,.27,14),M,0,.49,0,body);
+  for(const [y,r] of [[.44,.179],[.53,.19]]){ const t=mesh(new THREE.TorusGeometry(r-.004,.006,6,28),G,0,y,0,body); t.rotation.x=Math.PI/2; }
+  const mon=mesh(new THREE.CylinderGeometry(.045,.045,.012,20),G,0,.5,.19,body); mon.rotation.x=Math.PI/2;
+  // kusazuri (skirt plates)
+  for(let i=0;i<6;i++){ const a=i/6*Math.PI*2+.26; const p=mesh(new THREE.BoxGeometry(.11,.11,.02),D,Math.sin(a)*.2,.33,Math.cos(a)*.2,body); p.rotation.y=a; p.rotation.x=.25*Math.cos(0); }
+  // shoulders
+  for(const s of [-1,1]){
+    const sode=new THREE.Group(); sode.position.set(s*.25,.56,0); sode.rotation.z=s*.42; body.add(sode);
+    mesh(new THREE.BoxGeometry(.13,.17,.21),M,0,-.04,0,sode);
+    mesh(new THREE.BoxGeometry(.133,.022,.213),G,0,-.105,0,sode);
+    mesh(new THREE.BoxGeometry(.133,.012,.213),D,0,-.02,0,sode);
+  }
+  // arms
+  const arms={};
+  for(const s of [-1,1]){
+    const a=new THREE.Group(); a.position.set(s*.225,.585,0); body.add(a);
+    mesh(new THREE.CapsuleGeometry(.047,.15,4,8),D,0,-.12,0,a);
+    mesh(new THREE.SphereGeometry(.05,10,8),S,0,-.235,0,a);
+    arms[s<0?'L':'R']=a;
+  }
+  // katana in right hand
+  const kat=new THREE.Group(); kat.position.set(0,-.235,.0); arms.R.add(kat);
+  mesh(new THREE.CylinderGeometry(.015,.015,.13,8),K,0,0,0,kat);
+  const tsuba=mesh(new THREE.CylinderGeometry(.036,.036,.01,14),G,0,.07,0,kat);
+  const blade=mesh(new THREE.BoxGeometry(.018,.5,.006),mat(0xf2f6fa,{r:.18,m:.85}),0,.32,0,kat);
+  mesh(new THREE.BoxGeometry(.02,.06,.007),mat(0xe0e6ee,{r:.2,m:.85}),0,.56,0,kat).rotation.z=.25;
+  kat.rotation.x=1.15;
+  // head
+  const head=new THREE.Group(); head.position.y=.725; body.add(head);
+  mesh(new THREE.SphereGeometry(.125,22,18),S,0,0,0,head);
+  for(const s of [-1,1]){
+    mesh(new THREE.SphereGeometry(.019,10,8),K,s*.046,.012,.111,head);
+    const hl=mesh(new THREE.SphereGeometry(.006,6,4),mat(0xffffff),s*.042,.018,.128,head); hl.castShadow=false;
+    const brow=mesh(new THREE.BoxGeometry(.055,.013,.014),K,s*.046,.048,.113,head); brow.rotation.z=s*.38;
+  }
+  const mask=mesh(new THREE.SphereGeometry(.133,20,10,Math.PI/2-.95,1.9,Math.PI*.56,Math.PI*.3),mat(0x2a1414,{r:.4,m:.5,side:THREE.DoubleSide}),0,0,0,head);
+  const must=mesh(new THREE.BoxGeometry(.07,.01,.01),mat(0xe8e0d0),0,-.035,.128,head);
+  // helmet
+  const helm=mesh(new THREE.SphereGeometry(.148,22,10,0,Math.PI*2,0,Math.PI/2),D,0,.025,0,head); helm.scale.y=.92;
+  const band=mesh(new THREE.TorusGeometry(.148,.013,6,28),G,0,.025,0,head); band.rotation.x=Math.PI/2;
+  mesh(new THREE.CylinderGeometry(.14,.25,.13,24,1,true,Math.PI*.3,Math.PI*1.4),mat(T.dark,{r:.5,m:.2,side:THREE.DoubleSide}),0,-.03,0,head);
+  for(let i=0;i<3;i++){ const lace=mesh(new THREE.CylinderGeometry(.15+i*.035,.15+i*.035,.008,24,1,true,Math.PI*.3,Math.PI*1.4),mat(0xf0c050,{r:.4,m:.6,side:THREE.DoubleSide}),0,-.0-i*.04,0,head); lace.castShadow=false; }
+  const visor=mesh(new THREE.BoxGeometry(.2,.018,.07),D,0,.04,.13,head); visor.rotation.x=-.35;
+  const crest=mesh(new THREE.TorusGeometry(.11,.014,6,20,Math.PI),G,0,.2,.145,head); crest.rotation.z=Math.PI;
+  const cd=mesh(new THREE.CylinderGeometry(.03,.03,.012,16),G,0,.095,.15,head); cd.rotation.x=Math.PI/2;
+  // sashimono banner
+  const pole=mesh(new THREE.CylinderGeometry(.009,.009,.78,6),K,0,.78,-.17,body);
+  const banner=new THREE.Group(); banner.position.set(0,1.0,-.17); body.add(banner);
+  mesh(new THREE.PlaneGeometry(.17,.27),mat(T.main,{r:.8,side:THREE.DoubleSide}),.09,0,0,banner);
+  const bm=mesh(new THREE.CircleGeometry(.045,20),mat(0xffffff,{r:.8,side:THREE.DoubleSide}),.09,.02,.002,banner);
+  const bm2=bm.clone(); bm2.position.z=-.002; banner.add(bm2);
+  root.scale.setScalar(1.08);
+  // icon sprite
+  const icon=new THREE.Sprite(new THREE.SpriteMaterial({transparent:true,depthTest:false,depthWrite:false}));
+  icon.raycast=()=>{}; icon.renderOrder=20; icon.position.y=1.3; icon.scale.setScalar(.5); icon.visible=false; root.add(icon);
+  const fear=new THREE.Sprite(new THREE.SpriteMaterial({map:fearTex(),transparent:true,depthTest:false,depthWrite:false}));
+  fear.raycast=()=>{}; fear.renderOrder=21; fear.position.set(.32,1.02,0); fear.scale.setScalar(.44); fear.visible=false; root.add(fear);
+  // material list for fading
+  const mats=new Set(); root.traverse(o=>{ if(o.material && o!==icon) mats.add(o.material); });
+  return {root,body,head,armL:arms.L,armR:arms.R,kat,banner,icon,fear,mats:[...mats].filter(m=>!m.isSpriteMaterial)};
+}
+
+/* ================= FACTIONS (original characters on a humanoid rig) ================= */
+function buildSamurai(owner){ const fid=FACTIONS[factionFor(owner)]?factionFor(owner):'samurai'; return buildFaction(owner,fid); }
+const DS=THREE.DoubleSide;
+const sph=(r,w=16,h=12)=>new THREE.SphereGeometry(r,w,h);
+const half=(r)=>new THREE.SphereGeometry(r,18,8,0,Math.PI*2,0,Math.PI/2);
+const cyl=(a,b,h,s=14,open=false)=>new THREE.CylinderGeometry(a,b,h,s,1,open);
+const box=(x,y,z)=>new THREE.BoxGeometry(x,y,z);
+const cap=(r,l)=>new THREE.CapsuleGeometry(r,l,4,10);
+
+/* humanoid skeleton: hips → legs(knees) · chest → arms(elbows→hands) · neck → head */
+function humanoid(o){
+  const L=o.leg||1, A=o.arm||1, W=o.wide||1;
+  const root=new THREE.Group(), body=new THREE.Group(); root.add(body);
+  const hipY=.4*L;
+  const hips=new THREE.Group(); hips.position.y=hipY; body.add(hips);
+  const U={root,body,hips};
+  // legs
+  for(const s of [-1,1]){
+    const leg=new THREE.Group(); leg.position.set(s*.075*W,0,0); hips.add(leg);
+    const knee=new THREE.Group(); knee.position.y=-.2*L; leg.add(knee);
+    if(o.thigh) mesh(cap(o.thighR||.047,.13*L),o.thigh,0,-.1*L,0,leg);
+    if(o.shin) mesh(cap(o.shinR||.041,.12*L),o.shin,0,-.09*L,0,knee);
+    if(o.foot) mesh(box(.075,.045,.14),o.foot,0,-.18*L,.03,knee);
+    U[s<0?'legL':'legR']=leg; U[s<0?'kneeL':'kneeR']=knee;
+  }
+  if(o.pelvis) { const pv=mesh(sph(.11*W,14,10),o.pelvis,0,.0,0,hips); pv.scale.set(1,.65,.8); }
+  // torso
+  const chest=new THREE.Group(); chest.position.y=0; hips.add(chest); U.chest=chest;
+  if(o.belly) mesh(cyl(.12*W,.115*W,.14,14),o.belly,0,.08,0,chest);
+  if(o.torso) { const t=mesh(cyl(.165*W,.125*W,.2,14),o.torso,0,.22,0,chest); }
+  const shY=.3;
+  // arms
+  for(const s of [-1,1]){
+    const arm=new THREE.Group(); arm.position.set(s*.2*W,shY,0); chest.add(arm);
+    const elbow=new THREE.Group(); elbow.position.y=-.17*A; arm.add(elbow);
+    const hand=new THREE.Group(); hand.position.y=-.16*A; elbow.add(hand);
+    if(o.upper) mesh(cap(o.upperR||.04,.1*A),o.upper,0,-.085*A,0,arm);
+    if(o.fore) mesh(cap(o.foreR||.035,.1*A),o.fore,0,-.075*A,0,elbow);
+    if(o.hand) mesh(sph(.043,10,8),o.hand,0,0,0,hand);
+    elbow.rotation.x=-.25;
+    U[s<0?'armL':'armR']=arm; U[s<0?'elbowL':'elbowR']=elbow; U[s<0?'handL':'handR']=hand;
+  }
+  if(o.neck) mesh(cyl(.04,.045,.08,10),o.neck,0,.35,0,chest);
+  const head=new THREE.Group(); head.position.y=.46; chest.add(head); U.head=head;
+  const kat=new THREE.Group(); kat.rotation.x=1.15; U.handR.add(kat); U.kat=kat;
+  const banner=new THREE.Group(); chest.add(banner); U.banner=banner;
+  return U;
+}
+function finishRig(U,scale=1.08){
+  U.root.scale.setScalar(scale);
+  const icon=new THREE.Sprite(new THREE.SpriteMaterial({transparent:true,depthTest:false,depthWrite:false}));
+  icon.raycast=()=>{}; icon.renderOrder=20; icon.position.y=1.3; icon.scale.setScalar(.5); icon.visible=false; U.root.add(icon);
+  const fear=new THREE.Sprite(new THREE.SpriteMaterial({map:fearTex(),transparent:true,depthTest:false,depthWrite:false}));
+  fear.raycast=()=>{}; fear.renderOrder=21; fear.position.set(.32,1.05,0); fear.scale.setScalar(.44); fear.visible=false; U.root.add(fear);
+  const mats=new Set(); U.root.traverse(o=>{ if(o.material&&!o.isSprite) mats.add(o.material); });
+  return Object.assign(U,{icon,fear,mats:[...mats]});
+}
+function buildFaction(owner,fid){ const U=FACTIONS[fid].build(teamColors(owner)); return finishRig(U); }
+function eyes(head,K,y=.012,z=.11,sp=.045,r=.018,brows=true){
+  for(const s of [-1,1]){ mesh(sph(r,10,8),K,s*sp,y,z,head); const hl=mesh(sph(r*.32,6,4),mat(0xffffff),s*sp-.004,y+.006,z+r*.85,head); hl.castShadow=false;
+    if(brows){ const b=mesh(box(.05,.012,.012),K,s*sp,y+.035,z+.004,head); b.rotation.z=s*.35; } }
+}
+
+const FACTIONS={
+  samurai:{name:'סמוראים',emoji:'⛩️',desc:'לוחמי הכבוד עם הקטאנה',build(T){
+    const M=mat(T.main,{r:.42,m:.25}), D=mat(T.dark,{r:.5,m:.2}), H=mat(T.hak,{r:.85}), G=mat(0xf0c050,{r:.3,m:.75}), K=mat(0x17161c,{r:.45,m:.35}), S=mat(SKIN,{r:.75}), W=mat(0xece4d2,{r:.8});
+    const U=humanoid({thigh:H,thighR:.06,shin:W,shinR:.038,foot:K,pelvis:H,belly:W,torso:M,upper:D,fore:W,hand:S,neck:S});
+    // hakama legs flare
+    for(const lg of [U.legL,U.legR]) { const hk=mesh(cyl(.06,.085,.2,12),H,0,-.12,0,lg); }
+    for(let i=0;i<6;i++){ const a=i/6*Math.PI*2+.26; const pl=mesh(box(.1,.12,.02),D,Math.sin(a)*.15,-.04,Math.cos(a)*.15,U.hips); pl.rotation.y=a; pl.rotation.x=.2*Math.cos(a)*0; }
+    mesh(cyl(.133,.133,.045,16),W,0,.13,0,U.chest);
+    for(const [y,r] of [[.18,.15],[.26,.162]]){ const t=mesh(new THREE.TorusGeometry(r,.007,6,26),G,0,y,0,U.chest); t.rotation.x=Math.PI/2; }
+    const mon=mesh(cyl(.04,.04,.012,18),G,0,.24,.16,U.chest); mon.rotation.x=Math.PI/2;
+    for(const [a,s] of [[U.armL,-1],[U.armR,1]]){ const sd=new THREE.Group(); sd.position.set(s*.03,-.02,0); sd.rotation.z=s*.35; a.add(sd);
+      mesh(box(.12,.15,.19),M,0,-.04,0,sd); mesh(box(.122,.02,.192),G,0,-.11,0,sd); }
+    const h=U.head;
+    mesh(sph(.12,22,18),S,0,0,0,h); eyes(h,K);
+    mesh(new THREE.SphereGeometry(.128,20,10,Math.PI/2-.95,1.9,Math.PI*.56,Math.PI*.3),mat(0x2a1414,{r:.4,m:.5,side:DS}),0,0,0,h);
+    mesh(box(.065,.01,.01),mat(0xe8e0d0),0,-.035,.123,h);
+    const hm=mesh(half(.143),D,0,.025,0,h); hm.scale.y=.92;
+    const band=mesh(new THREE.TorusGeometry(.143,.012,6,28),G,0,.025,0,h); band.rotation.x=Math.PI/2;
+    mesh(new THREE.CylinderGeometry(.135,.24,.12,24,1,true,Math.PI*.3,Math.PI*1.4),mat(T.dark,{r:.5,m:.2,side:DS}),0,-.03,0,h);
+    const vs=mesh(box(.19,.018,.07),D,0,.04,.125,h); vs.rotation.x=-.35;
+    const cr=mesh(new THREE.TorusGeometry(.105,.013,6,20,Math.PI),G,0,.19,.14,h); cr.rotation.z=Math.PI;
+    const cd=mesh(cyl(.028,.028,.012,16),G,0,.09,.145,h); cd.rotation.x=Math.PI/2;
+    mesh(cyl(.008,.008,.62,6),K,0,.38,-.15,U.chest);
+    U.banner.position.set(0,.6,-.15);
+    mesh(new THREE.PlaneGeometry(.16,.25),mat(T.main,{r:.8,side:DS}),.085,0,0,U.banner);
+    for(const z of [.002,-.002]) mesh(new THREE.CircleGeometry(.042,20),mat(0xffffff,{r:.8,side:DS}),.085,.02,z,U.banner);
+    mesh(cyl(.014,.014,.12,8),K,0,0,0,U.kat); mesh(cyl(.034,.034,.01,14),G,0,.07,0,U.kat);
+    mesh(box(.017,.48,.006),mat(0xf2f6fa,{r:.18,m:.85}),0,.31,0,U.kat);
+    return U;
+  }},
+  ninja:{name:'נינג׳ות',emoji:'🥷',desc:'שקטים, מהירים, בצללים',build(T){
+    const D=mat(0x1d1d2a,{r:.75}), M=mat(T.main,{r:.6}), S=mat(SKIN,{r:.75}), Mt=mat(0xd0d6de,{r:.22,m:.85}), K=mat(0x0c0c12,{r:.5});
+    const U=humanoid({thigh:D,shin:D,foot:K,pelvis:D,belly:D,torso:D,upper:D,fore:D,hand:D,neck:D,wide:.95});
+    for(const kn of [U.kneeL,U.kneeR]){ const w=mesh(cyl(.045,.045,.06,10),M,0,-.14,0,kn); }
+    mesh(cyl(.125,.125,.05,14),M,0,.1,0,U.chest);
+    const st=mesh(box(.035,.3,.015),M,0,.22,.14,U.chest); st.rotation.z=.7;
+    const sc=mesh(cyl(.018,.018,.5,8),K,0,.28,-.15,U.chest); sc.rotation.z=.85;
+    for(const el of [U.elbowL,U.elbowR]) mesh(cyl(.042,.042,.05,10),M,0,-.1,0,el);
+    const h=U.head; mesh(sph(.125,22,16),D,0,0,0,h);
+    mesh(box(.19,.05,.05),S,0,.012,.1,h); eyes(h,K,.012,.122,.042,.016,true);
+    const hb=mesh(new THREE.TorusGeometry(.128,.016,6,26),M,0,.06,0,h); hb.rotation.x=Math.PI/2;
+    mesh(box(.07,.04,.02),Mt,0,.06,.13,h);
+    U.banner.position.set(0,.52,-.12);
+    for(const s of [-1,1]){ const r=mesh(new THREE.PlaneGeometry(.045,.24),mat(T.main,{r:.6,side:DS}),s*.03,-.11,-.02,U.banner); r.rotation.x=.55; r.rotation.z=s*.12; }
+    mesh(cyl(.013,.013,.1,8),K,0,0,0,U.kat); mesh(box(.06,.012,.03),Mt,0,.055,0,U.kat); mesh(box(.016,.34,.006),Mt,0,.23,0,U.kat);
+    return U;
+  }},
+  knight:{name:'אבירים',emoji:'🛡️',desc:'שריון כבד, מגן וחרב ארוכה',build(T){
+    const Mt=mat(0xdfe5ee,{r:.3,m:.55}), M=mat(T.main,{r:.6}), G=mat(0xf0c050,{r:.3,m:.75}), K=mat(0x15151c,{r:.5}), D=mat(T.dark,{r:.6}), Br=mat(0x5a3a1a,{r:.7});
+    const U=humanoid({thigh:Mt,thighR:.05,shin:Mt,shinR:.045,foot:Mt,pelvis:Mt,belly:Mt,torso:Mt,upper:Mt,upperR:.045,fore:Mt,hand:Mt,neck:K,wide:1.05});
+    for(const kn of [U.kneeL,U.kneeR]) mesh(sph(.05,10,8),G,0,0,.02,kn);
+    mesh(box(.24,.3,.02),M,0,.15,.16,U.chest);
+    mesh(box(.035,.2,.006),G,0,.18,.172,U.chest); mesh(box(.13,.035,.006),G,0,.22,.172,U.chest);
+    const belt=mesh(new THREE.TorusGeometry(.125,.016,6,24),Br,0,.04,0,U.chest); belt.rotation.x=Math.PI/2;
+    for(const a of [U.armL,U.armR]) mesh(half(.075),Mt,0,.0,0,a);
+    const sh=new THREE.Group(); sh.position.set(-.05,-.06,.07); U.elbowL.add(sh);
+    const disc=mesh(cyl(.15,.15,.03,24),M,0,0,0,sh); disc.rotation.x=Math.PI/2;
+    mesh(new THREE.TorusGeometry(.15,.015,6,28),G,0,0,0,sh); mesh(sph(.032),G,0,0,.025,sh);
+    mesh(box(.035,.18,.01),G,0,0,.018,sh); mesh(box(.18,.035,.01),G,0,0,.018,sh);
+    const h=U.head; mesh(cyl(.125,.125,.22,20),Mt,0,.015,0,h); mesh(half(.125),Mt,0,.125,0,h);
+    mesh(box(.19,.026,.02),K,0,.035,.12,h); mesh(box(.02,.09,.02),K,0,-.03,.123,h);
+    U.banner.position.set(0,.64,0); const pl=mesh(sph(.07,14,10),M,0,.04,-.04,U.banner); pl.scale.set(.7,.7,2.2);
+    const cape=mesh(new THREE.PlaneGeometry(.32,.5),mat(T.dark,{r:.8,side:DS}),0,.08,-.15,U.chest); cape.rotation.x=.15;
+    mesh(cyl(.014,.014,.11,8),K,0,0,0,U.kat); mesh(box(.16,.02,.03),G,0,.065,0,U.kat); mesh(sph(.024),G,0,-.065,0,U.kat);
+    mesh(box(.022,.54,.008),mat(0xeef3f8,{r:.18,m:.85}),0,.35,0,U.kat);
+    return U;
+  }},
+  pirate:{name:'פיראטים',emoji:'🏴‍☠️',desc:'מעיל ארוך, חרב מעוקלת ותוכי',build(T){
+    const M=mat(T.main,{r:.6}), G=mat(0xf0c050,{r:.3,m:.75}), K=mat(0x17141a,{r:.55}), S=mat(SKIN,{r:.75}), W=mat(0xf2ece0,{r:.8}), Br=mat(0x4a2a14,{r:.8}), Mt=mat(0xdfe5ee,{r:.2,m:.85});
+    const U=humanoid({thigh:W,shin:K,shinR:.046,foot:K,pelvis:W,belly:W,torso:M,upper:M,fore:M,hand:S,neck:S});
+    const tails=mesh(cyl(.15,.2,.24,14,true),mat(T.main,{r:.6,side:DS}),0,-.06,0,U.hips);
+    for(let i=0;i<3;i++) mesh(sph(.015,8,6),G,0,.14+i*.06,.16,U.chest);
+    const belt=mesh(new THREE.TorusGeometry(.125,.018,6,24),Br,0,.06,0,U.chest); belt.rotation.x=Math.PI/2;
+    mesh(box(.05,.045,.02),G,0,.06,.13,U.chest);
+    for(const el of [U.elbowL,U.elbowR]){ const cf=mesh(cyl(.045,.04,.04,10),W,0,-.14,0,el); }
+    const h=U.head; mesh(sph(.12,20,16),S,0,0,0,h);
+    mesh(new THREE.SphereGeometry(.105,16,8,0,Math.PI*2,Math.PI/2,Math.PI/2),Br,0,-.02,.03,h);
+    mesh(sph(.017,8,6),K,-.043,.025,.108,h);
+    const ep=mesh(cyl(.03,.03,.01,14),K,.043,.025,.112,h); ep.rotation.x=Math.PI/2;
+    const strap=mesh(new THREE.TorusGeometry(.123,.006,4,24),K,0,.04,0,h); strap.rotation.set(Math.PI/2,0,.35);
+    mesh(sph(.02,8,6),S,0,-.005,.123,h);
+    const hat=mesh(cyl(.21,.21,.05,3),K,0,.1,0,h); hat.rotation.y=Math.PI;
+    mesh(cyl(.1,.125,.11,16),K,0,.155,0,h); mesh(sph(.024,10,8),W,0,.165,.115,h);
+    U.banner.position.set(-.2,.36,0);
+    const P=mat(0x2ecc40,{r:.5}), Y=mat(0xffd21a,{r:.4}), Rd=mat(0xff3a2a,{r:.5});
+    const pb=mesh(sph(.045,12,10),P,0,.04,0,U.banner); pb.scale.y=1.3;
+    mesh(sph(.032,12,10),P,0,.1,.01,U.banner);
+    const bk=mesh(new THREE.ConeGeometry(.014,.04,8),Y,0,.095,.045,U.banner); bk.rotation.x=Math.PI/2;
+    mesh(box(.028,.08,.01),Rd,0,-.03,-.03,U.banner).rotation.x=-.4;
+    mesh(cyl(.013,.013,.1,8),K,0,0,0,U.kat); mesh(new THREE.TorusGeometry(.038,.008,6,16),G,0,.05,0,U.kat);
+    const bl=mesh(box(.032,.4,.006),Mt,.01,.26,0,U.kat); bl.rotation.z=-.1;
+    return U;
+  }},
+  robot:{name:'רובוטים',emoji:'🤖',desc:'מתכת, לייזר ואור זוהר',build(T){
+    const Mt=mat(0xb4bdc9,{r:.32,m:.8}), Dk=mat(0x3a404a,{r:.5,m:.6}), M=mat(T.main,{r:.38,m:.45}), Gl=mat(T.main,{e:T.main,ei:2.2,r:.3}), Cy=mat(0x9ff8ff,{e:0x3ff0ff,ei:2,r:.3});
+    const U=humanoid({thigh:Dk,thighR:.045,shin:Mt,shinR:.045,foot:Mt,pelvis:Dk,upper:Mt,upperR:.038,fore:Dk,foreR:.038,neck:Dk});
+    for(const kn of [U.kneeL,U.kneeR]) mesh(sph(.05,10,8),M,0,0,0,kn);
+    mesh(box(.32,.3,.24),M,0,.18,0,U.chest);
+    mesh(box(.18,.11,.01),Dk,0,.2,.121,U.chest);
+    const core=mesh(cyl(.04,.04,.01,18),Cy,0,.2,.128,U.chest); core.rotation.x=Math.PI/2;
+    for(const a of [U.armL,U.armR]) mesh(sph(.065,12,10),Mt,0,0,0,a);
+    for(const hd of [U.handL,U.handR]) mesh(box(.06,.055,.06),Dk,0,0,0,hd);
+    const h=U.head; mesh(box(.23,.19,.21),Mt,0,.02,0,h);
+    mesh(box(.19,.048,.01),Cy,0,.035,.107,h);
+    for(let i=0;i<3;i++) mesh(box(.11,.008,.005),Dk,0,-.035-i*.017,.107,h);
+    for(const s of [-1,1]){ const e=mesh(cyl(.038,.038,.03,14),Dk,s*.125,.02,0,h); e.rotation.z=Math.PI/2; }
+    U.banner.position.set(0,.58,0); mesh(cyl(.008,.008,.15,6),Dk,0,.075,0,U.banner); mesh(sph(.027,10,8),Gl,0,.16,0,U.banner);
+    mesh(box(.05,.08,.05),Dk,0,0,0,U.kat); mesh(cyl(.025,.025,.28,12),Mt,0,.18,0,U.kat);
+    const tip=mesh(new THREE.TorusGeometry(.029,.009,6,16),Gl,0,.32,0,U.kat); tip.rotation.x=Math.PI/2;
+    return U;
+  }},
+  alien:{name:'חייזרים',emoji:'👽',desc:'עיניים ענקיות ואקדח קרניים',build(T){
+    const Sk=mat(0x7cf27a,{r:.45}), M=mat(T.main,{r:.4,m:.35}), Bl=mat(0x07070c,{r:.08,m:.5}), Gl=mat(T.main,{e:T.main,ei:1.8,r:.3}), Mt=mat(0xc8d0da,{r:.25,m:.8});
+    const U=humanoid({thigh:M,thighR:.04,shin:M,shinR:.034,foot:Mt,pelvis:M,belly:M,torso:M,upper:Sk,upperR:.03,fore:Sk,foreR:.027,hand:Sk,neck:Sk,wide:.9,leg:1.05});
+    const b=mesh(new THREE.TorusGeometry(.12,.013,6,22),Gl,0,.04,0,U.chest); b.rotation.x=Math.PI/2;
+    const col=mesh(new THREE.TorusGeometry(.12,.018,6,22),Mt,0,.32,0,U.chest); col.rotation.x=Math.PI/2;
+    mesh(sph(.03,10,8),Gl,0,.22,.14,U.chest);
+    const h=U.head; h.position.y=.5;
+    const hd=mesh(sph(.14,22,18),Sk,0,.05,0,h); hd.scale.set(1,1.25,1);
+    for(const s of [-1,1]){ const e=mesh(sph(.048,14,10),Bl,s*.058,.035,.11,h); e.scale.set(1.35,.8,.55); e.rotation.z=s*.45; }
+    U.banner.position.set(0,.73,0);
+    for(const s of [-1,1]){ const a=mesh(cyl(.007,.007,.14,6),Sk,s*.045,.06,0,U.banner); a.rotation.z=-s*.45; mesh(sph(.023,10,8),Gl,s*.075,.125,0,U.banner); }
+    mesh(box(.04,.08,.04),Mt,0,0,0,U.kat); const bd=mesh(sph(.048,14,10),Mt,0,.09,0,U.kat); bd.scale.y=1.4;
+    mesh(cyl(.014,.03,.15,10),Mt,0,.2,0,U.kat);
+    for(const y of [.21,.26]){ const r=mesh(new THREE.TorusGeometry(.027,.007,6,14),Gl,0,y,0,U.kat); r.rotation.x=Math.PI/2; }
+    return U;
+  }},
+  jelly:{name:'דרקוני ג׳לי',emoji:'🐉',desc:'יצורים רכים שיורקים אש קטנה',build(T){
+    const Bd=mat(T.main,{r:.22,m:.05,e:T.main,ei:.12}), Bel=mat(0xfff1d6,{r:.6}), W=mat(0xffffff,{r:.3}), Bl=mat(0x121216,{r:.2}), Hn=mat(0xffd34a,{r:.3,m:.6}), Fi=mat(0xffa030,{e:0xff6a00,ei:2.6});
+    const U=humanoid({thigh:Bd,thighR:.06,shin:Bd,shinR:.055,foot:Bd,upper:Bd,upperR:.045,fore:Bd,foreR:.042,hand:Bd,leg:.62,arm:.7,wide:1.15});
+    const bd=mesh(sph(.24,26,20),Bd,0,.12,0,U.chest); bd.scale.set(1,1.05,.95);
+    const bl=mesh(sph(.19,20,16),Bel,0,.1,.08,U.chest); bl.scale.set(1,1.05,.6);
+    for(const a of [U.armL,U.armR]) a.position.y=.2;
+    const tail=mesh(new THREE.ConeGeometry(.07,.3,12),Bd,0,-.02,-.25,U.hips); tail.rotation.x=-1.95;
+    mesh(new THREE.OctahedronGeometry(.045),Hn,0,-.1,-.39,U.hips);
+    const h=U.head; h.position.y=.42;
+    mesh(sph(.17,22,18),Bd,0,0,0,h);
+    for(const s of [-1,1]){ mesh(sph(.056,14,12),W,s*.066,.03,.122,h); mesh(sph(.031,12,10),Bl,s*.066,.03,.17,h); mesh(sph(.011,6,6),W,s*.058,.045,.195,h);
+      const hn=mesh(new THREE.ConeGeometry(.03,.11,10),Hn,s*.085,.16,-.01,h); hn.rotation.z=-s*.35; }
+    const sm=mesh(new THREE.TorusGeometry(.034,.008,6,14,Math.PI),Bl,0,-.05,.155,h); sm.rotation.z=Math.PI;
+    U.kat.rotation.x=0; mesh(sph(.055,12,10),Fi,0,.03,.03,U.kat);
+    U.banner.position.set(0,.22,-.16);
+    for(const s of [-1,1]){ const w=mesh(new THREE.ConeGeometry(.12,.22,3),mat(T.dark,{r:.4,side:DS}),s*.15,.08,0,U.banner); w.rotation.set(0,s*.4,-s*1.2); w.scale.z=.15; }
+    return U;
+  }},
+  skeleton:{name:'שלדים',emoji:'💀',desc:'עצמות, חרמש ועיניים זוהרות',build(T){
+    const Bn=mat(0xeee6d2,{r:.6}), Dk=mat(0x14111a,{r:.8}), Gl=mat(T.main,{e:T.main,ei:3,r:.3}), Rs=mat(0x5a4a3a,{r:.6,m:.55}), Wd=mat(0x3a2a1a,{r:.8}), Mt=mat(0xc8d0da,{r:.25,m:.8});
+    const U=humanoid({thigh:Bn,thighR:.02,shin:Bn,shinR:.018,foot:Bn,upper:Bn,upperR:.018,fore:Bn,foreR:.016,hand:Bn,neck:Bn});
+    for(const kn of [U.kneeL,U.kneeR]) mesh(sph(.03,8,6),Bn,0,0,0,kn);
+    for(const el of [U.elbowL,U.elbowR]) mesh(sph(.026,8,6),Bn,0,0,0,el);
+    const pv=mesh(new THREE.TorusGeometry(.08,.024,6,16),Bn,0,0,0,U.hips); pv.rotation.x=Math.PI/2;
+    mesh(cyl(.022,.022,.32,8),Bn,0,.16,-.03,U.chest);
+    for(let i=0;i<4;i++){ const rb=mesh(new THREE.TorusGeometry(.12-i*.01,.012,6,16,Math.PI*1.35),Bn,0,.1+i*.055,-.02,U.chest); rb.rotation.set(Math.PI/2,0,-Math.PI*.17); }
+    mesh(box(.38,.024,.024),Bn,0,.3,0,U.chest);
+    for(const a of [U.armL,U.armR]) mesh(sph(.035,10,8),Bn,0,0,0,a);
+    const cape=mesh(new THREE.PlaneGeometry(.3,.5,3,4),mat(T.dark,{r:.85,side:DS}),0,.05,-.13,U.chest); cape.rotation.x=.12;
+    const cp=cape.geometry.attributes.position; for(let i=0;i<cp.count;i++){ if(cp.getY(i)<-.2) cp.setY(i,cp.getY(i)+((i%2)?.06:0)); }
+    const h=U.head; const sk=mesh(sph(.125,20,16),Bn,0,0,0,h); sk.scale.z=1.05;
+    mesh(box(.12,.05,.1),Bn,0,-.1,.04,h);
+    for(const s of [-1,1]){ mesh(sph(.034,10,8),Dk,s*.044,.01,.1,h); mesh(sph(.016,8,6),Gl,s*.044,.01,.125,h); }
+    const ns=mesh(new THREE.ConeGeometry(.015,.033,3),Dk,0,-.033,.12,h); ns.rotation.x=Math.PI;
+    mesh(half(.135),Rs,0,.03,0,h);
+    for(const s of [-1,1]){ const hn=mesh(new THREE.ConeGeometry(.025,.12,8),Bn,s*.135,.09,0,h); hn.rotation.z=-s*1.0; }
+    mesh(cyl(.011,.011,.66,8),Wd,0,.16,0,U.kat);
+    const bl=mesh(box(.02,.28,.006),Mt,-.09,.46,0,U.kat); bl.rotation.z=1.25;
+    return U;
+  }},
+  penguin:{name:'פינגווינים',emoji:'🐧',desc:'כובע צמר, צעיף… ודג כנשק',build(T){
+    const Bk=mat(0x1d2230,{r:.45}), Wh=mat(0xf6f8fb,{r:.55}), Or=mat(0xff9a1a,{r:.45}), M=mat(T.main,{r:.75}), Fi=mat(0x9fb7cc,{r:.3,m:.6});
+    const U=humanoid({thigh:Or,thighR:.028,shin:Or,shinR:.026,foot:Or,upper:Bk,upperR:.04,fore:Bk,foreR:.036,leg:.55,arm:.85,wide:1.1});
+    const bd=mesh(sph(.23,24,20),Bk,0,.14,0,U.chest); bd.scale.set(1,1.3,.95);
+    const bl=mesh(sph(.18,20,16),Wh,0,.11,.09,U.chest); bl.scale.set(1,1.25,.6);
+    for(const a of [U.armL,U.armR]) { a.position.y=.3; const f=mesh(sph(.05,10,8),Bk,0,-.2,0,a); f.scale.set(.5,1.4,.9); }
+    const h=U.head; h.position.y=.48;
+    mesh(sph(.145,22,18),Bk,0,0,0,h);
+    for(const s of [-1,1]){ mesh(sph(.058,12,10),Wh,s*.05,.01,.095,h); mesh(sph(.019,8,6),Bk,s*.05,.02,.147,h); }
+    const bk=mesh(new THREE.ConeGeometry(.033,.1,10),Or,0,-.025,.165,h); bk.rotation.x=Math.PI/2;
+    mesh(half(.152),M,0,.035,0,h);
+    const rim=mesh(new THREE.TorusGeometry(.148,.025,8,26),Wh,0,.035,0,h); rim.rotation.x=Math.PI/2;
+    mesh(sph(.044,12,10),Wh,0,.195,0,h);
+    const sc=mesh(new THREE.TorusGeometry(.14,.033,8,24),M,0,.36,0,U.chest); sc.rotation.x=Math.PI/2;
+    U.banner.position.set(.09,.35,-.12); mesh(box(.06,.19,.017),M,0,-.09,0,U.banner).rotation.x=.3;
+    const fs=mesh(sph(.048,12,10),Fi,0,.1,0,U.kat); fs.scale.set(.6,1.9,.45);
+    const ft=mesh(new THREE.ConeGeometry(.048,.07,3),Fi,0,.2,0,U.kat); ft.rotation.x=Math.PI;
+    return U;
+  }},
+  fire:{name:'רוחות אש',emoji:'🔥',desc:'לוחמי להבה מלב הר הגעש',build(T){
+    const F1=mat(0xff4a10,{e:0xff3000,ei:1.1,r:.6}), F2=mat(0xffa020,{e:0xff7a00,ei:1.3,r:.6}), M=mat(T.main,{e:T.main,ei:.7,r:.3,m:.4}), W=mat(0xffffff,{e:0xffffff,ei:1.2}), Wd=mat(0x2a1a14,{r:.8}), Rk=mat(0x2a1c1a,{r:.9,flat:true});
+    const U=humanoid({thigh:Rk,thighR:.05,shin:F1,shinR:.045,foot:Rk,pelvis:Rk,belly:F1,torso:Rk,upper:Rk,upperR:.045,fore:F1,hand:F2,neck:F1});
+    for(const [y,s] of [[.16,1],[.24,-1]]){ const c=mesh(new THREE.OctahedronGeometry(.05),F2,s*.07,y,.13,U.chest); }
+    mesh(new THREE.OctahedronGeometry(.06),M,0,.2,.15,U.chest);
+    for(const a of [U.armL,U.armR]) mesh(new THREE.OctahedronGeometry(.06),M,0,0,0,a);
+    const h=U.head; mesh(sph(.13,18,14),F2,0,0,0,h);
+    for(const s of [-1,1]){ const e=mesh(sph(.022,10,8),W,s*.048,.02,.118,h); e.scale.set(1,1.5,.5); }
+    U.banner.position.set(0,.6,0);
+    mesh(new THREE.ConeGeometry(.1,.32,10),F2,0,.15,0,U.banner);
+    for(const s of [-1,1]){ const c=mesh(new THREE.ConeGeometry(.06,.2,8),F1,s*.07,.06,0,U.banner); c.rotation.z=-s*.5; }
+    mesh(cyl(.011,.011,.6,8),Wd,0,.14,0,U.kat); mesh(sph(.052,12,10),mat(T.main,{e:T.main,ei:2.4}),0,.46,0,U.kat);
+    return U;
+  }}
+};
+const FACTION_ORDER=['samurai','ninja','knight','pirate','robot','alien','jelly','skeleton','penguin','fire'];
+let gameFactions={me:'samurai',ai:'samurai'};
+function factionFor(owner){ return gameFactions[owner]||'samurai'; }
+
+let _fearTex=null;
+function fearTex(){ if(_fearTex) return _fearTex; const cv=document.createElement('canvas'); cv.width=cv.height=96; const x=cv.getContext('2d');
+  x.beginPath(); x.arc(48,50,40,0,7); x.fillStyle='#ffe14a'; x.fill(); x.lineWidth=6; x.strokeStyle='#7a3a00'; x.stroke();
+  x.fillStyle='#3a1600'; x.font='900 58px Arial'; x.textAlign='center'; x.textBaseline='middle'; x.fillText('!',48,53);
+  x.beginPath(); x.moveTo(80,18); x.quadraticCurveTo(90,34,80,40); x.quadraticCurveTo(70,34,80,18); x.fillStyle='#6ad0ff'; x.fill();
+  _fearTex=new THREE.CanvasTexture(cv); _fearTex.colorSpace=THREE.SRGBColorSpace; return _fearTex; }
+/* icon textures */
+const texCache=new Map();
+function iconTex(type,owner,mark){
+  const key=type+owner+(mark?1:0)+teamCss(owner); if(texCache.has(key)) return texCache.get(key);
+  const cv=document.createElement('canvas'); cv.width=cv.height=160; const x=cv.getContext('2d');
+  x.beginPath(); x.arc(80,84,64,0,7); x.fillStyle='rgba(0,0,0,.35)'; x.fill();
+  x.beginPath(); x.arc(80,78,64,0,7); x.fillStyle='#fff'; x.fill();
+  x.lineWidth=11; x.strokeStyle= teamCss(owner); x.stroke();
+  const im=IMG[type]; if(im) x.drawImage(im,30,28,100,100);
+  if(mark){ x.beginPath(); x.arc(128,28,24,0,7); x.fillStyle='#f2c14e'; x.fill(); x.lineWidth=4; x.strokeStyle='#5a3a0a'; x.stroke();
+    x.beginPath(); x.moveTo(112,28); x.quadraticCurveTo(128,14,144,28); x.quadraticCurveTo(128,42,112,28); x.fillStyle='#fff'; x.fill(); x.beginPath(); x.arc(128,28,6,0,7); x.fillStyle='#1b1424'; x.fill(); }
+  const t=new THREE.CanvasTexture(cv); t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=4; texCache.set(key,t); return t;
+}
+
+/* ================= TWEENS & LOOP ================= */
+const tweens=[];
+const ease={lin:k=>k, io:k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2, out:k=>1-Math.pow(1-k,3), back:k=>{const c=1.7;return 1+(c+1)*Math.pow(k-1,3)+c*Math.pow(k-1,2);}, inn:k=>k*k*k};
+function tween(dur,fn,e=ease.io){ return new Promise(res=>tweens.push({t:0,dur,fn,e,res})); }
+let shake=0, clock=new THREE.Clock(), time=0;
+const cam={pos:new THREE.Vector3(),tgt:new THREE.Vector3(),defPos:new THREE.Vector3(),defTgt:new THREE.Vector3(),orbit:false};
+
+function safeRect(){
+  const h=innerHeight; let top=0,bot=h;
+  const m=$('msg').getBoundingClientRect(); top=m.bottom+4;
+  const bs=[...$('controls').children]; if(bs.length){ bot=Math.min(...bs.map(b=>b.getBoundingClientRect().top))-6; }
+  if(innerWidth>innerHeight && innerHeight<=540) bot=h-6; // landscape phone: controls sit in a corner
+  return {top:Math.min(top,h*.45), bot:Math.max(bot,h*.55)};
+}
+const fitPts=[]; for(const x of [-3.95,3.95]) for(const y of [-.45,1.25]) for(const z of [-3.45,3.45]) fitPts.push(new THREE.Vector3(x,y,z));
+function boundsAt(pos,tgt){
+  camera.position.copy(pos); camera.lookAt(tgt); camera.updateMatrixWorld();
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9; const v=new THREE.Vector3();
+  for(const p of fitPts){ v.copy(p).project(camera); x0=Math.min(x0,v.x);x1=Math.max(x1,v.x);y0=Math.min(y0,v.y);y1=Math.max(y1,v.y); }
+  return {x0,x1,y0,y1};
+}
+function fitCamera(){
+  const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h;
+  const portrait=w<h; camera.fov= portrait?54:36; camera.updateProjectionMatrix();
+  const dir=new THREE.Vector3(0, portrait?.86:1.02, (typeof viewer!=='undefined'&&viewer==='ai')?-1:1).normalize();
+  const sr=safeRect(); const yt=1-2*sr.top/h, yb=1-2*sr.bot/h, xm=.97;
+  camera.clearViewOffset();
+  const tgt=new THREE.Vector3(0,.3,0); let lo=3,hi=80;
+  for(let k=0;k<26;k++){ const mid=(lo+hi)/2; const bb=boundsAt(tgt.clone().addScaledVector(dir,mid),tgt);
+    const ok=bb.x0>=-xm&&bb.x1<=xm&&(bb.y1-bb.y0)<=(yt-yb); if(ok) hi=mid; else lo=mid; }
+  const d=hi; const bb=boundsAt(tgt.clone().addScaledVector(dir,d),tgt);
+  const delta=(yt+yb)/2-(bb.y0+bb.y1)/2;
+  camera.setViewOffset(w,h,0,delta*h/2,w,h);
+  cam.defTgt.copy(tgt); cam.defPos.copy(tgt).addScaledVector(dir,d);
+  if(!busyCam){ cam.pos.copy(cam.defPos); cam.tgt.copy(cam.defTgt); }
+}
+let busyCam=false;
+async function camTo(pos,tgt,dur=.7){
+  busyCam=true; const p0=cam.pos.clone(), t0=cam.tgt.clone();
+  await tween(dur,k=>{ cam.pos.lerpVectors(p0,pos,k); cam.tgt.lerpVectors(t0,tgt,k); });
+}
+async function camHome(dur=.7){ await camTo(cam.defPos.clone(),cam.defTgt.clone(),dur); busyCam=false; }
+addEventListener('resize',()=>setTimeout(fitCamera,60)); addEventListener('orientationchange',()=>setTimeout(fitCamera,300));
+
+function loop(){
+  const SP=window.__speed||1; const rdt=Math.min(clock.getDelta(),.05)*SP, dt=rdt*timeScale; time+=dt;
+  for(let i=tweens.length-1;i>=0;i--){ const tw=tweens[i]; tw.t+=dt; const k=Math.min(1,tw.t/tw.dur); tw.fn(tw.e(k)); if(k>=1){ tweens.splice(i,1); tw.res(); } }
+  // idle anims
+  for(const p of pieces){ if(!p.alive||!p.o) continue; const o=p.o;
+    o.banner.rotation.y=Math.sin(time*2.6+p.id)*.3;
+    if(!p.anim){ o.body.position.y=Math.sin(time*2.2+p.id*1.3)*.008; o.head.rotation.y=Math.sin(time*.7+p.id)*.12; o.body.position.x=p.scared?Math.sin(time*47+p.id)*.035:0; o.fear.visible=!!p.scared; if(p.scared){ o.fear.position.y=1.02+Math.abs(Math.sin(time*4+p.id))*.08; }
+      o.root.position.y = (selected===p||swapSel===p) ? Math.abs(Math.sin(time*5.5))*.13 : 0; } }
+  if(selRing.visible){ const s=1+Math.sin(time*6)*.06; selRing.scale.set(s,s,s); }
+  for(const row of tiles) for(const t of row){ if(t.userData.ring.visible){ t.userData.ring.material.opacity=.6+Math.sin(time*7)*.35; } if(t.userData.dot.visible){ const s=1+Math.sin(time*5)*.15; t.userData.dot.scale.set(s,s,s);} }
+  // petals
+  for(let i=0;i<PETALS;i++){ const d=petalData[i]; d.y-=d.vy*rdt*petalSpeed; d.x+=Math.sin(time*.8+d.ph)*rdt*.5+rdt*.25*petalSpeed; if(d.y<-.3){ d.y=8+Math.random()*2; d.x=(Math.random()-.5)*22; }
+    dummy.position.set(d.x,d.y,d.z); dummy.rotation.set(time*d.rs+d.ph,time*d.rs*.7,d.ph); dummy.updateMatrix(); petals.setMatrixAt(i,dummy.matrix); }
+  petals.instanceMatrix.needsUpdate=true;
+  // sparks
+  for(let i=sparks.length-1;i>=0;i--){ const s=sparks[i]; s.t+=dt; s.v.y-=6*dt; s.m.position.addScaledVector(s.v,dt); s.m.material.opacity=1-s.t/s.life; if(s.t>=s.life){ scene.remove(s.m); s.m.material.dispose(); sparks.splice(i,1);} }
+  if(boardAnim) boardAnim(time);
+  flash.intensity*=Math.pow(.02,rdt);
+  lanternLights.forEach((l,i)=>l.intensity=(3.2+Math.sin(time*9+i*2)*.25+Math.sin(time*23+i)*.15)*lanternMul);
+  for(let i=inks.length-1;i>=0;i--){ const k=inks[i]; k.t+=rdt; if(k.t>7){ const a=Math.max(0,1-(k.t-7)/2); k.g.children.forEach(m=>m.material.opacity=.85*a); if(a<=0){ scene.remove(k.g); inks.splice(i,1); } } }
+  // camera
+  if(cam.orbit){ const a=time*.25, r=Math.hypot(cam.defPos.x,cam.defPos.z-cam.defTgt.z); cam.pos.set(Math.sin(a)*r, cam.defPos.y, cam.defTgt.z+Math.cos(a)*r); }
+  camera.position.copy(cam.pos);
+  if(shake>0){ camera.position.x+=(Math.random()-.5)*shake; camera.position.y+=(Math.random()-.5)*shake; shake*=Math.pow(.004,rdt); if(shake<.002) shake=0; }
+  camera.lookAt(cam.tgt);
+  renderer.render(scene,camera);
+}
+
+/* ================= SAVE / PROGRESS ================= */
+const SAVE_KEY='rps3d-save';
+let save={stars:{},stats:{games:0,wins:0,losses:0,streak:0,best:0,fastest:0,online:0,onlineWins:0,hotseat:0},skin:'blue',diff:'med',arena:'sunset',blitz:false,faction:'samurai',qEnemy:'random',qBoard:'classic'};
+try{ const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null'); if(s){ const st=Object.assign({},save.stats,s.stats||{}); save=Object.assign(save,s); save.stats=st; } }catch(e){}
+function persist(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(save)); }catch(e){} }
+const totalStars=()=>Object.values(save.stars).reduce((a,b)=>a+(b||0),0);
+
+const SKINS=[
+  {id:'blue',  name:'כחול סמוראי', need:0,  main:0x1f7bff,dark:0x0d3fb8,hak:0x23307a,css:'#1f7bff'},
+  {id:'purple',name:'סגול אמטיסט', need:8,  main:0x9b4dff,dark:0x5a1fb8,hak:0x2e1a5e,css:'#9b4dff'},
+  {id:'jade',  name:'ירקן',        need:20, main:0x16c47a,dark:0x0a7a4a,hak:0x1a3a2e,css:'#16c47a'},
+  {id:'black', name:'שחור וזהב',   need:40, main:0x2c2c36,dark:0x111116,hak:0x18181e,css:'#5a5a6e'},
+  {id:'white', name:'לבן קיסרי',   need:70, main:0xf0f0f8,dark:0xaab0c0,hak:0x7a8298,css:'#c8cede'},
+  {id:'gold',  name:'זהב השוגון',  need:110, main:0xffc83a,dark:0xc08a10,hak:0x6a4a10,css:'#ffb820'}
+];
+const RED={main:0xff2e3c,dark:0xa3101b,hak:0x5a1620,css:'#ff2e3c'};
+function skinOf(){ return SKINS.find(s=>s.id===save.skin&&totalStars()>=s.need)||SKINS[0]; }
+function teamColors(owner){ return owner==='me'?skinOf():RED; }
+function teamCss(owner){ return teamColors(owner).css; }
+
+const THEMES={
+  sunset:{name:'שקיעה',  sky:[0x2b2fa8,0xc35ab5,0xffb054],fog:0xd77a8a,sun:[0xffe2c0,2.1],hemi:.7,exp:1.18,ground:0x4fa83a,court:0xd8c3a0,mount:0x6b4fb0,bl:[0xff7eb6,0xffb0d8],pt:0xff9ccc,lant:1,disc:0xffd9a0,fall:1},
+  day:   {name:'יום',    sky:[0x2f7dff,0x8fd0ff,0xfff0c8],fog:0xbfe3ff,sun:[0xfff4e0,2.6],hemi:.95,exp:1.08,ground:0x5cc040,court:0xe6d6b4,mount:0x5a7ad0,bl:[0xff8fc4,0xffc2e0],pt:0xffa8d4,lant:.35,disc:0xfffbe8,fall:1},
+  autumn:{name:'סתיו',   sky:[0x3b2a7a,0xd2603a,0xffc070],fog:0xe0905a,sun:[0xffd0a0,2.2],hemi:.75,exp:1.15,ground:0x8a8a2a,court:0xd8b890,mount:0x7a3f60,bl:[0xff5a14,0xffa020],pt:0xff7a20,lant:.8,disc:0xffc080,fall:.8},
+  snow:  {name:'שלג',    sky:[0x5f86c8,0xc8d8f0,0xfff2f2],fog:0xdde6f5,sun:[0xffffff,1.9],hemi:1,exp:1.05,ground:0xf2f6ff,court:0xdfe6ee,mount:0x8090b8,bl:[0xf4f8ff,0xdfe8f5],pt:0xffffff,lant:.7,disc:0xffffff,fall:.55},
+  night: {name:'לילה',   sky:[0x05061a,0x1a1650,0x4a2a6a],fog:0x1a1640,sun:[0xa8baff,.95],hemi:.4,exp:1.3,ground:0x23401f,court:0x8a8496,mount:0x2a2050,bl:[0xc070ff,0xe0a0ff],pt:0xffd27a,lant:2.2,disc:0xeef3ff,fall:.35,stars:true},
+  castle:{name:'טירה',   sky:[0x3a6fd8,0xa8c8f0,0xffe8c8],fog:0xc0d4f0,sun:[0xfff0d8,2.3],hemi:.85,exp:1.1,ground:0x6a9a3a,court:0xb0aca4,mount:0x5a6a90,bl:[0x6abf5a,0x8ad06a],pt:0xfff6c0,lant:.5,disc:0xfff8e0,fall:.7},
+  bay:   {name:'מפרץ',   sky:[0x1f8fe0,0x7fe0f0,0xfff4c0],fog:0xa8e8f0,sun:[0xfff6e0,2.6],hemi:1,exp:1.08,ground:0x2fb8c8,court:0xf2dca0,mount:0x2a8a6a,bl:[0x3ac05a,0x7ad84a],pt:0xffffff,lant:.3,disc:0xfffbe0,fall:.6},
+  factory:{name:'מפעל',  sky:[0x2a3040,0x5a6478,0xb08a60],fog:0x50586a,sun:[0xffe0c0,1.8],hemi:.6,exp:1.2,ground:0x3a3f48,court:0x7a808a,mount:0x30343c,bl:[0x8a9098,0x6a7078],pt:0xffb040,lant:1.6,disc:0xffc080,fall:.9},
+  space: {name:'חלל',    sky:[0x02020a,0x120a30,0x3a1a6a],fog:0x0a0620,sun:[0xc0b0ff,1.2],hemi:.5,exp:1.3,ground:0x1a1430,court:0x3a3458,mount:0x221a40,bl:[0x40e0ff,0xa060ff],pt:0x9ff0ff,lant:2,disc:0xd0c0ff,fall:.3,stars:true},
+  grave: {name:'בית קברות',sky:[0x060a10,0x1a3030,0x3a5a40],fog:0x203028,sun:[0xa0ffc0,.9],hemi:.45,exp:1.3,ground:0x1f2a1a,court:0x55584e,mount:0x1a2420,bl:[0x3a4a30,0x2a3a28],pt:0x80ffb0,lant:2.2,disc:0xd0ffe0,fall:.25,stars:true},
+  ice:   {name:'קרחון',  sky:[0x4fa0e8,0xc8ecff,0xffffff],fog:0xe0f4ff,sun:[0xffffff,2.2],hemi:1.05,exp:1.02,ground:0xe8f6ff,court:0xbfe4f6,mount:0x9ac8e8,bl:[0xdff4ff,0xbfe8ff],pt:0xffffff,lant:.6,disc:0xffffff,fall:.5},
+  ember: {name:'שדה האפר',sky:[0x120814,0x5a1020,0xb03018],fog:0x40101a,sun:[0xff7050,1.5],hemi:.45,exp:1.25,ground:0x2a1a14,court:0x5a4a48,mount:0x2a0a10,bl:[0x8a1030,0x5a0a20],pt:0xff6a30,lant:2,disc:0xff5030,fall:.6}
+};
+let themeId='sunset';
+const starField=(()=>{ const n=700, g=new THREE.BufferGeometry(), a=new Float32Array(n*3);
+  for(let i=0;i<n;i++){ const th=Math.random()*Math.PI*2, ph=Math.random()*Math.PI*.45, r=88; a[i*3]=Math.cos(th)*Math.sin(ph+.05)*r; a[i*3+1]=Math.cos(ph)*r*.9+4; a[i*3+2]=Math.sin(th)*Math.sin(ph+.05)*r; }
+  g.setAttribute('position',new THREE.BufferAttribute(a,3));
+  const pts=new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.8,sizeAttenuation:false,fog:false,transparent:true,opacity:.9})); pts.visible=false; scene.add(pts); return pts; })();
+function applyTheme(id){
+  const T=THEMES[id]||THEMES.sunset; themeId=id;
+  skyMat.uniforms.top.value.setHex(T.sky[0]); skyMat.uniforms.mid.value.setHex(T.sky[1]); skyMat.uniforms.bot.value.setHex(T.sky[2]);
+  scene.fog.color.setHex(T.fog); sunLight.color.setHex(T.sun[0]); sunLight.intensity=T.sun[1]; hemi.intensity=T.hemi;
+  renderer.toneMappingExposure=T.exp; groundMat.color.setHex(T.ground); courtMat.color.setHex(T.court); mountMat.color.setHex(T.mount);
+  blossomMat.color.setHex(T.bl[0]); blossomMat2.color.setHex(T.bl[1]); petalMat.color.setHex(T.pt); sunDisc.material.color.setHex(T.disc);
+  lanternMul=T.lant; petalSpeed=T.fall; starField.visible=!!T.stars;
+  try{ const old=scene.environment; scene.environment=envPM.fromScene(envSceneRef,.03).texture; if(old) old.dispose(); }catch(e){}
+}
+
+/* ---------- boards ---------- */
+const BOARDS={
+  classic:{name:'קלאסי',block:[],style:'rock'},
+  pillars:{name:'עמודים',block:[[2,1],[3,1],[2,5],[3,5]],style:'pillar'},
+  moat:{name:'חפיר',block:[[2,0],[3,0],[2,2],[3,2],[2,4],[3,4],[2,6],[3,6]],style:'water'},
+  islands:{name:'איים',block:[[2,0],[3,0],[2,3],[3,3],[2,6],[3,6]],style:'water'},
+  portals:{name:'פורטלים',block:[],portals:[[[2,0],[3,6]],[[3,0],[2,6]]]},
+  blackhole:{name:'חור שחור',block:[[2,3],[3,3]],style:'void',portals:[[[2,1],[3,5]],[[3,1],[2,5]]]},
+  diamond:{name:'יהלום',block:[[2,0],[3,0],[2,6],[3,6],[2,3]],style:'crystal'},
+  graveyard:{name:'קברים',block:[[2,1],[3,4],[2,5],[3,2]],style:'tomb'},
+  glacier:{name:'קרחונים',block:[[2,2],[3,2],[2,4],[3,4]],style:'ice'},
+  lava:{name:'נהר לבה',block:[[2,1],[2,2],[3,1],[3,2],[2,4],[2,5],[3,4],[3,5]],style:'lava'}
+};
+let curBoard='classic', blockedSet=new Set(), portalMap=new Map();
+const obstacleGroup=new THREE.Group(); boardGroup.add(obstacleGroup);
+const isBlocked=(r,c)=>blockedSet.has(r*COLS+c);
+function buildObstacles(id){
+  curBoard=BOARDS[id]?id:'classic'; const B=BOARDS[curBoard];
+  obstacleGroup.clear(); blockedSet=new Set(); portalMap=new Map(); boardAnim=null;
+  for(const row of tiles) for(const t of row) t.visible=true;
+  const anims=[];
+  for(const [r,c] of B.block){ blockedSet.add(r*COLS+c); const x=c-3, z=r-2.5, t=tiles[r][c];
+    if(['water','lava','void'].includes(B.style)){
+      t.visible=false; const lava=B.style==='lava', vd=B.style==='void';
+      const m=mat(lava?0xff6a10:vd?0x05030a:0x2a9ef0,{r:lava?.6:.08,m:vd?0:.2,e:lava?0xff3a00:(vd?0x000000:0x0a4ab0),ei:lava?1.6:.35});
+      const pl=mesh(box(.98,.06,.98),m,x,-.045,z,obstacleGroup); pl.castShadow=false;
+      if(lava) anims.push(k=>{ m.emissiveIntensity=1.3+Math.sin(k*3+r+c)*.45; });
+      else if(!vd) anims.push(k=>{ pl.position.y=-.045+Math.sin(k*2+c)*.01; });
+      if(vd){ const ring=mesh(new THREE.TorusGeometry(.36,.03,8,30),mat(0xa060ff,{e:0x8040ff,ei:2}),x,-.03,z,obstacleGroup); ring.rotation.x=Math.PI/2; anims.push(k=>ring.rotation.z=k); }
+    } else if(B.style==='pillar'){ mesh(cyl(.3,.36,1.0,8),mat(0xc8c0b4,{r:.9,flat:true}),x,.5,z,obstacleGroup); mesh(box(.78,.12,.78),mat(0xb8b0a4,{r:.9,flat:true}),x,1.04,z,obstacleGroup); }
+    else if(B.style==='crystal'){ const cm=mat(0x7ff0ff,{r:.15,m:.3,e:0x20b0ff,ei:.9,flat:true}); const o=mesh(new THREE.OctahedronGeometry(.34),cm,x,.45,z,obstacleGroup); o.scale.y=1.5; anims.push(k=>o.rotation.y=k*.6+c); }
+    else if(B.style==='tomb'){ const tm=mat(0x8a8c90,{r:.9,flat:true}); mesh(box(.42,.5,.14),tm,x,.25,z,obstacleGroup); const tp=mesh(cyl(.21,.21,.14,14),tm,x,.5,z,obstacleGroup); tp.rotation.x=Math.PI/2; const dm=mat(0x3a3c40); mesh(box(.06,.22,.02),dm,x,.33,z+.08,obstacleGroup); mesh(box(.16,.05,.02),dm,x,.38,z+.08,obstacleGroup); }
+    else if(B.style==='ice'){ mesh(box(.8,.45,.8),mat(0x8fd4ff,{r:.12,m:.15,flat:true}),x,.22,z,obstacleGroup); }
+    else { mesh(new THREE.DodecahedronGeometry(.36),mat(0x8a847a,{r:.95,flat:true}),x,.25,z,obstacleGroup); }
+  }
+  (B.portals||[]).forEach(([a,b],i)=>{ const col=i?0x40e0ff:0xc060ff; portalMap.set(a[0]*COLS+a[1],b); portalMap.set(b[0]*COLS+b[1],a);
+    for(const [r,c] of [a,b]){ const x=c-3,z=r-2.5; const rg=mesh(new THREE.TorusGeometry(.36,.035,8,32),mat(col,{e:col,ei:2.2}),x,.03,z,obstacleGroup); rg.rotation.x=Math.PI/2; rg.castShadow=false;
+      const dk=new THREE.Mesh(new THREE.CircleGeometry(.33,32),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.35,depthWrite:false})); dk.rotation.x=-Math.PI/2; dk.position.set(x,.012,z); obstacleGroup.add(dk);
+      anims.push(k=>{ rg.rotation.z=k*1.5; dk.material.opacity=.25+Math.sin(k*3+i)*.12; }); } });
+  boardAnim=anims.length?(k=>anims.forEach(f=>f(k))):null;
+}
+
+/* ---------- 50-level campaign ---------- */
+const WORLDS=[
+  {name:'מקדש הדובדבן',   theme:'day',    faction:'samurai', board:'classic',  foes:['השומר הצעיר','נער המקדש','קשת הגן','שומרת השער','אדון המקדש']},
+  {name:'יער הצללים',     theme:'autumn', faction:'ninja',   board:'pillars',  foes:['צל ירוק','הקופץ','להב שקט','הנינג׳ה הנעלם','מאסטר הצל']},
+  {name:'טירת האבירים',   theme:'castle', faction:'knight',  board:'moat',     foes:['נושא הכלים','אביר הסוס','שומר החומה','האבירה הלבנה','המלך בשריון']},
+  {name:'מפרץ הפיראטים',  theme:'bay',    faction:'pirate',  board:'islands',  foes:['מלח צעיר','עין אחת','רגל עץ','קפטנית הסערה','זקן הים']},
+  {name:'מפעל הרובוטים',  theme:'factory',faction:'robot',   board:'portals',  foes:['בורג-7','מכונת-X','טיטניום','המוח המרכזי','מגה-רובוט']},
+  {name:'ספינת החייזרים', theme:'space',  faction:'alien',   board:'blackhole',foes:['זורג','קוסמיקו','עין-שלוש','המלכה הסגולה','אדמירל הגלקסיה']},
+  {name:'הר הג׳לי',       theme:'sunset', faction:'jelly',   board:'diamond',  foes:['בועי','ג׳לי-בון','סוכריה','דרקונית הקשת','הדרקון הענק']},
+  {name:'עמק השלדים',     theme:'grave',  faction:'skeleton',board:'graveyard',foes:['עצמי','גולגולת','הקוצר','מכשפת העצמות','מלך המתים']},
+  {name:'קרחון הפינגווינים',theme:'ice',  faction:'penguin', board:'glacier',  foes:['פינגו','סנפירי','הגולש','קיסרית הקרח','הפינגווין הגדול']},
+  {name:'הר הגעש',        theme:'ember',  faction:'fire',    board:'lava',     foes:['ניצוץ','גחלת','להבה','מלכת המגמה','השוגון הנצחי']}
+];
+const WORLD_COLORS=['#ff8fc4','#ff7a20','#7aa8ff','#2fd0e0','#a8b4c8','#a060ff','#ff6ab0','#6aff9a','#bfe8ff','#ff5030'];
+const LEVELS=[];
+WORLDS.forEach((W,wi)=>W.foes.forEach((nm,si)=>{ const n=wi*5+si+1, boss=si===4;
+  const diff= n<=5?'easy':n<=12?'easy2':n<=28?'med':'hard';
+  const blitz= n%6===0, traps= boss?(n>=40?3:2):1;
+  const tags=[boss?'👑 בוס':'', blitz?'⏱ בליץ':'', traps>1?`🪤×${traps}`:''].filter(Boolean);
+  LEVELS.push({n,world:wi+1,stage:si+1,name:nm,boss,theme:W.theme,faction:W.faction,board:W.board,diff,blitz,traps,desc:tags.join(' · ')||'קרב'});
+}));
+const unlockedLevel=()=>{ let n=1; for(let i=1;i<=LEVELS.length;i++){ if(save.stars[i]>0) n=i+1; else break; } return Math.min(n,LEVELS.length); };
+const worldDone=w=>(save.stars[w*5]||0)>0;
+const worldReached=w=>unlockedLevel()>(w-1)*5;
+function factionUnlocked(f){ return f==='samurai'||WORLDS.some((W,i)=>W.faction===f&&worldDone(i+1)); }
+function boardUnlocked(b){ return b==='classic'||WORLDS.some((W,i)=>W.board===b&&worldReached(i+1)); }
+function themeUnlocked(id){ if(['sunset','day','snow','night'].includes(id)) return true; return WORLDS.some((W,i)=>W.theme===id&&worldReached(i+1)); }
+
+/* ================= GAME STATE ================= */
+let ghosted=[], fearTold=false;
+let board,pieces=[],phase='menu',turn='me',selected=null,busy=false,swapSel=null,uid=0,lastCells=[];
+let mode='ai', viewer='me', diff='med', level=null, blitz=false, moveCount=0, myMoves=0, duelNo=0, timeScale=1, gameToken=0;
+const cellPos=(r,c)=>new THREE.Vector3(c-3,0,r-2.5);
+const other=o=>o==='me'?'ai':'me';
+const defRot=p=>p.owner==='me'?Math.PI:0;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const bag=n=>shuffle(Array.from({length:n},(_,i)=>['R','P','S'][i%3]));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+function ctrl(o){ if(mode==='hotseat') return 'local'; if(mode==='online') return o===viewer?'local':'remote'; return o==='me'?'local':'ai'; }
+function nameOf(o){ if(mode==='hotseat') return o==='me'?'הכחול':'האדום'; if(mode==='online') return o===viewer?'אתה':(net.oppName||'היריב'); return o==='me'?'אתה':(level?LEVELS[level-1].name:'המחשב'); }
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let hapLabel=null;
+function iosTap(){ try{ if(!hapLabel){ hapLabel=document.createElement('label'); const i=document.createElement('input'); i.type='checkbox'; i.setAttribute('switch',''); hapLabel.appendChild(i); hapLabel.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none'; document.body.appendChild(hapLabel); } hapLabel.click(); }catch(e){} }
+const haptic=p=>{ if(navigator.vibrate){ try{ navigator.vibrate(p); }catch(e){} return; } if(!isIOS) return;
+  const n=Array.isArray(p)?Math.ceil(p.length/2):(p>=60?2:1); for(let i=0;i<n;i++) setTimeout(iosTap,i*95); };
+
+function spawn(owner,type,r,c){
+  const p={id:++uid,owner,type,r,c,revealed:false,alive:true,anim:false,moved:false};
+  p.o=buildSamurai(owner); p.o.root.position.copy(cellPos(r,c)); p.o.root.rotation.y=defRot(p);
+  p.o.root.traverse(o=>o.userData.pid=p.id);
+  scene.add(p.o.root); pieces.push(p); board[r][c]=p; return p;
+}
+function clearPieces(){ pieces.forEach(p=>{ scene.remove(p.o.root); p.o.root.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); p.o.mats.forEach(m=>m.dispose()); p.o.icon.material.dispose(); }); pieces=[]; }
+
+function updateIcon(p,pop){
+  const o=p.o, showAll=phase==='over';
+  const vis = p.alive && (p.owner===viewer || p.revealed || showAll);
+  if(!vis){ o.icon.visible=false; o.icon.userData.key=''; return; }
+  const type = (p.type==='?'||!p.type) ? 'q' : p.type;
+  const mark = p.owner===viewer&&p.revealed&&!showAll;
+  const key = type+(mark?'m':'')+teamCss(p.owner);
+  if(o.icon.userData.key!==key){
+    o.icon.material.map=iconTex(type,p.owner,mark); o.icon.material.needsUpdate=true;
+    const changed=!!o.icon.userData.key || pop; o.icon.userData.key=key; o.icon.visible=true;
+    if(changed){ const s0=o.icon.userData.size||.5; tween(.45,k=>o.icon.scale.setScalar(s0*k),ease.back); }
+  }
+}
+function updateAll(){ pieces.forEach(p=>updateIcon(p)); updateMarkers(); updateHUD(); }
+function updateMarkers(){
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){ const t=tiles[r][c]; t.userData.dot.visible=false; t.userData.ring.visible=false; t.material.color.copy(t.userData.base); }
+  lastCells.forEach(([r,c])=>tiles[r][c].material.color.lerp(new THREE.Color(0xffc640),.45));
+  selRing.visible=false;
+  const s=selected||swapSel;
+  if(s){ selRing.visible=true; selRing.position.x=s.c-3; selRing.position.z=s.r-2.5; }
+  if(selected){ for(const [r,c] of legal(selected)){ const t=tiles[r][c]; (board[r][c]?t.userData.ring:t.userData.dot).visible=true; } }
+  // pieces that sense a known stronger enemy next to them tremble
+  for(const p of pieces){ p.scared=false; if(!p.alive||p.owner!==viewer||!isFighter(p.type)||phase!=='play') continue;
+    for(const [a,b] of nb(p.r,p.c)){ const n=board[a][b]; if(n&&n.owner!==p.owner&&n.revealed&&isFighter(n.type)&&beats(n.type,p.type)) p.scared=true; } }
+}
+function updateHUD(){
+  const n=o=>pieces.filter(p=>p.alive&&p.owner===o&&(isFighter(p.type)||(p.type==='?'&&!p.revealed))).length;
+  const setup=!['play','over'].includes(phase);
+  $('nMe').textContent=nameOf('me'); $('nAi').textContent=nameOf('ai');
+  $('cMe').textContent=setup?'':`· ${n('me')}`; $('cAi').textContent=setup?'':`· ${n('ai')}`;
+  $('pMe').classList.toggle('on',phase==='play'&&turn==='me'); $('pAi').classList.toggle('on',phase==='play'&&turn==='ai');
+  document.documentElement.style.setProperty('--me',teamCss('me'));
+}
+const setMsg=h=>$('msg').innerHTML=h;
+function setControls(list){ const el=$('controls'); el.innerHTML=''; list.forEach(b=>{ const x=document.createElement('button'); x.className='btn'+(b.ghost?' ghost':''); x.textContent=b.t; x.onclick=()=>{ac(); b.f();}; el.appendChild(x); }); requestAnimationFrame(()=>{ if(!busyCam&&!cam.orbit) fitCamera(); }); }
+let toastT=0; async function shareGame(){
+  const url=location.origin+location.pathname.replace(/\/$/,'/index.html');
+  const text='בוא לשחק איתי בקרב הסמוראים — אבן, נייר ומספריים בתלת-ממד ⚔️';
+  try{ if(navigator.share){ await navigator.share({title:'קרב הסמוראים',text,url}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+  try{ await navigator.clipboard.writeText(text+'\n'+url); toast('הקישור הועתק 📋',1600,true); }catch{ toast(url,4000); }
+}
+function toast(t,ms=1100,gold){ const e=$('toast'); e.textContent=t; e.classList.toggle('gold',!!gold); e.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>e.classList.remove('show'),ms); }
+function bannerShow(title,text=''){ $('bTitle').textContent=title; $('bText').innerHTML=text; $('banner').classList.add('show'); }
+const bannerHide=()=>$('banner').classList.remove('show');
+
+function slashFX(){ const s=$('slash'), f=$('flashov'); s.classList.remove('go'); f.classList.remove('go'); void s.offsetWidth; s.style.setProperty('--r',(Math.random()*40-20)+'deg'); s.classList.add('go'); f.classList.add('go'); }
+/* ---------- ink splashes (sumi-e) ---------- */
+const inks=[]; const inkGeo=new THREE.CircleGeometry(1,14);
+function inkSplat(pos){
+  const g=new THREE.Group(); g.position.set(pos.x,.016,pos.z);
+  const n=7+Math.floor(Math.random()*5);
+  for(let i=0;i<n;i++){ const m=new THREE.Mesh(inkGeo,new THREE.MeshBasicMaterial({color:i%3?0x1a0508:0x7a0a14,transparent:true,opacity:.85,depthWrite:false}));
+    const a=Math.random()*6.28, d=i?Math.random()*.32:0, s=i?.03+Math.random()*.08:.2+Math.random()*.06;
+    m.rotation.x=-Math.PI/2; m.position.set(Math.cos(a)*d,i*.0005,Math.sin(a)*d); m.scale.set(s,s*(.6+Math.random()*.6),1); g.add(m); }
+  g.scale.setScalar(.01); scene.add(g); inks.push({g,t:0});
+  tween(.18,k=>g.scale.setScalar(.01+k),ease.out);
+}
+function clearInk(){ inks.forEach(i=>scene.remove(i.g)); inks.length=0; }
+
+/* ---------- setup ---------- */
+function newBoard(){
+  gameToken++; cam.orbit=false; clearPieces(); clearInk(); stopTimer();
+  board=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  selected=null; swapSel=null; busy=false; lastCells=[]; moveCount=0; myMoves=0; duelNo=0; timeScale=1;
+  for(let r=0;r<2;r++) for(let c=0;c<COLS;c++) spawn('ai','?',r,c);
+  for(let r=4;r<6;r++) for(let c=0;c<COLS;c++) spawn('me','?',r,c);
+  pieces.forEach((p,i)=>{ const y0=3+Math.random()*2; p.anim=true; p.o.root.position.y=y0; p.o.root.visible=false;
+    setTimeout(()=>{ p.o.root.visible=true; tween(.5,k=>p.o.root.position.y=y0*(1-k),ease.inn).then(()=>{ p.anim=false; if(i%4===0) sfx.step(); }); }, 120+i*28); });
+}
+function randomSetupFor(owner,traps=1){
+  const mine=pieces.filter(p=>p.owner===owner); mine.forEach(p=>p.type='?');
+  const backR=owner==='me'?5:0, frontR=owner==='me'?4:1;
+  const back=mine.filter(p=>p.r===backR); const f=rnd(back); f.type='flag';
+  for(let k=0;k<traps;k++){
+    const near=mine.filter(p=>p.type==='?'&&Math.abs(p.r-f.r)+Math.abs(p.c-f.c)===1);
+    const any=mine.filter(p=>p.type==='?');
+    (Math.random()<.7&&near.length?rnd(near):rnd(any)).type='trap';
+  }
+  const b=bag(mine.filter(p=>p.type==='?').length); mine.forEach(p=>{ if(p.type==='?') p.type=b.pop(); });
+}
+function assignWeapons(owner){ const ps=pieces.filter(p=>p.owner===owner&&p.type!=='flag'&&p.type!=='trap'); const b=bag(ps.length); ps.forEach(p=>p.type=b.pop()); }
+
+async function startGame(o){
+  mode=o.mode; diff=o.diff||'med'; level=o.level||null; blitz=!!o.blitz; viewer=o.viewer||'me';
+  gameFactions = mode==='online' ? {[viewer]:save.faction||'samurai',[other(viewer)]:'samurai'} : {me:save.faction||'samurai', ai:o.enemy||'samurai'};
+  applyTheme(o.theme||'sunset');
+  hideMenu(); closeCard(); bannerHide(); document.body.classList.remove('pre');
+  newBoard(); buildObstacles(mode==='online'?'classic':(o.board||'classic')); updateAll(); fitCamera(); cam.pos.copy(cam.defPos); cam.tgt.copy(cam.defTgt);
+  if(mode==='ai'||mode==='campaign') randomSetupFor('ai', level?(LEVELS[level-1].traps||1):1);
+  beginSetup(viewer);
+  if(mode==='campaign'){ const L=LEVELS[level-1]; bannerShow(`${L.boss?'👑 ':''}${L.name}`, `עולם ${L.world} · שלב ${L.n} · ${L.desc}`); setTimeout(bannerHide,2400); }
+}
+function beginSetup(owner){
+  viewer=owner; phase='setup-flag'; swapSel=null; fitCamera(); cam.pos.copy(cam.defPos); cam.tgt.copy(cam.defTgt);
+  pieces.forEach(p=>p.o.icon.userData.key=''); updateAll();
+  setMsg((mode==='hotseat'?`<b>${nameOf(owner)}</b> — `:'')+'הכנה: <b>הקש על לוחם שיחזיק את הדגל</b>');
+  setControls([{t:'🎲 הצבה אקראית',ghost:true,f:()=>{ if(busy) return; randomSetupFor(viewer); toArrange(); }}]);
+}
+function toArrange(){
+  phase='setup-arrange'; swapSel=null;
+  pieces.forEach(p=>{ if(p.owner===viewer) p.o.icon.userData.key=''; }); updateAll(); sfx.reveal();
+  setMsg('הקש על <b>שני לוחמים</b> כדי להחליף ביניהם');
+  setControls([{t:'⚔️ לקרב!',f:finishSetup},{t:'🔀 ערבב',ghost:true,f:()=>{ assignWeapons(viewer); pieces.forEach(p=>p.o.icon.userData.key=''); updateAll(); sfx.reveal(); }},{t:'🎲',ghost:true,f:()=>{ randomSetupFor(viewer); toArrange(); }}]);
+}
+async function finishSetup(){
+  if(busy) return; swapSel=null; updateMarkers();
+  if(mode==='hotseat'){
+    if(viewer==='me'){ await passScreen('ai','הכנה'); beginSetup('ai'); return; }
+    await passScreen('me','הקרב מתחיל'); return startBattle('me');
+  }
+  if(mode==='online'){ phase='waiting'; setControls([]); setMsg('ממתין שהיריב יסיים להתכונן…'); net.set({ready:true}); net.pump(); return; }
+  startBattle('me');
+}
+function startBattle(first){
+  phase='play'; turn=first; swapSel=null; selected=null; sfx.battleStart();
+  setControls([]);
+  bannerShow('הקרב מתחיל!', blitz?'⏱ מצב בליץ — 10 שניות לתור':''); setTimeout(bannerHide,1300);
+  setTimeout(()=>beginTurn(),900);
+}
+async function beginTurn(){
+  const tok=gameToken; if(phase!=='play') return;
+  updateAll();
+  const c=ctrl(turn);
+  if(c==='ai'){ setMsg(`${nameOf('ai')} חושב…`); busy=true; await sleep(diff==='hard'?750:550+Math.random()*450); busy=false; if(tok!==gameToken||phase!=='play') return; aiTurn(); return; }
+  if(c==='local'){
+    if(mode==='hotseat'&&viewer!==turn){ await passScreen(turn); if(tok!==gameToken) return; }
+    if(!hasMoves(turn)){ if(mode==='online') net.set({stuck:net.gameNo}); return endGame(other(turn)); }
+    setMsg(mode==='hotseat'?`<b>תור ${nameOf(turn)}!</b> בחר לוחם והזז אותו`:'<b>תורך!</b> בחר לוחם והזז אותו');
+    toast(mode==='hotseat'?`תור ${nameOf(turn)}!`:'תורך!',800,true); startTimer(false); return;
+  }
+  setMsg(`ממתין למהלך של ${nameOf(turn)}…`); startTimer(true); net.pump();
+}
+
+/* ---------- pass-and-play screens ---------- */
+function passScreen(owner,what){
+  return new Promise(res=>{
+    const el=$('pass'); el.style.setProperty('--tc',teamCss(owner));
+    el.innerHTML=`<div class="pbox"><div class="pdot"></div><h2>${what?what+' — ':''}תור ${nameOf(owner)}</h2><p>העבר את המכשיר ל${nameOf(owner)}. השחקן השני — אל תציץ! 🙈</p><button class="btn" id="passGo">אני מוכן ⚔️</button></div>`;
+    el.classList.add('show'); stopTimer();
+    $('passGo').onclick=()=>{ ac(); sfx.select(); viewer=owner; fitCamera(); cam.pos.copy(cam.defPos); cam.tgt.copy(cam.defTgt); pieces.forEach(p=>p.o.icon.userData.key=''); updateAll(); el.classList.remove('show'); res(); };
+  });
+}
+function secretPick(owner){
+  return new Promise(res=>{
+    const el=$('pass'); el.style.setProperty('--tc',teamCss(owner));
+    el.innerHTML=`<div class="pbox"><div class="pdot"></div><h2>${nameOf(owner)} — בחר נשק בסתר</h2><p>השחקן השני — הסתכל הצידה 🙈</p><div class="pick show inl">${['R','P','S'].map(t=>`<button data-t="${t}"><img src="${svgURL(SVG[t])}"></button>`).join('')}</div></div>`;
+    el.classList.add('show');
+    el.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>{ sfx.select(); el.classList.remove('show'); res(b.dataset.t); });
+  });
+}
+
+/* ---------- rules ---------- */
+const DIRS=[[1,0],[-1,0],[0,1],[0,-1]];
+const nb=(r,c)=>DIRS.map(([a,b])=>[r+a,c+b]).filter(([a,b])=>a>=0&&a<ROWS&&b>=0&&b<COLS);
+function legal(p){ if(!p.alive||!isFighter(p.type)) return []; const out=[];
+  for(const [dr,dc] of DIRS){ const r=p.r+dr,c=p.c+dc; if(r<0||r>=ROWS||c<0||c>=COLS||isBlocked(r,c)) continue; const t=board[r][c]; if(t&&t.owner===p.owner) continue; out.push([r,c]); } return out; }
+const hasMoves=o=>pieces.some(p=>p.alive&&p.owner===o&&legal(p).length);
+
+/* ---------- blitz timer ---------- */
+let timerT=null, timeLeft=0, lastTick=0;
+function startTimer(remote){
+  stopTimer(); if(!blitz||phase!=='play') return;
+  timeLeft=10; lastTick=11; showTimer();
+  timerT=setInterval(()=>{ if(busy) return; timeLeft-=.1; showTimer();
+    const s=Math.ceil(timeLeft); if(s<=3&&s<lastTick&&s>0){ lastTick=s; sfx.tick(); }
+    if(timeLeft<=0){ stopTimer(); if(!remote) autoMove(); } },100);
+}
+function stopTimer(){ clearInterval(timerT); timerT=null; $('timer').classList.remove('show'); }
+function showTimer(){ const el=$('timer'); el.classList.add('show'); const s=Math.max(0,Math.ceil(timeLeft)); el.querySelector('b').textContent=s; el.classList.toggle('low',s<=3); el.style.setProperty('--p',Math.max(0,timeLeft/10)); }
+function autoMove(){
+  if(phase!=='play'||busy||ctrl(turn)!=='local') return;
+  const ms=[]; pieces.forEach(p=>{ if(p.alive&&p.owner===turn) legal(p).forEach(([r,c])=>ms.push({p,r,c})); });
+  if(!ms.length) return; toast('⏱ נגמר הזמן!',900); const m=rnd(ms); doMove(m.p,m.r,m.c);
+}
+
+/* ---------- picking ---------- */
+const ray=new THREE.Raycaster(), ndc=new THREE.Vector2();
+let downAt=null;
+canvas.addEventListener('pointerdown',e=>{ downAt={x:e.clientX,y:e.clientY}; ac(); });
+canvas.addEventListener('pointerup',e=>{ if(!downAt) return; const d=Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y); downAt=null; if(d>28) return; pick(e.clientX,e.clientY); });
+const groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0), _gv=new THREE.Vector3();
+function toScreen(v){ const p=v.clone().project(camera); return {x:(p.x+1)/2*innerWidth, y:(1-p.y)/2*innerHeight}; }
+function cellPx(){ const a=toScreen(cellPos(2,3)), b=toScreen(cellPos(2,4)); return Math.max(30,Math.hypot(a.x-b.x,a.y-b.y)); }
+function groundCell(){ if(!ray.ray.intersectPlane(groundPlane,_gv)) return null; const r=Math.round(_gv.z+2.5), c=Math.round(_gv.x+3); return (r>=0&&r<ROWS&&c>=0&&c<COLS)?[r,c]:null; }
+function pick(x,y){
+  ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera);
+  let cands=[];
+  if(phase==='play'){
+    if(turn!==viewer||ctrl(turn)!=='local') return;
+    pieces.forEach(p=>{ if(p.alive&&p.owner===viewer) cands.push([p.r,p.c]); });
+    if(selected) legal(selected).forEach(t=>cands.push(t));
+  } else if(phase.startsWith('setup')){
+    pieces.forEach(p=>{ if(p.alive&&p.owner===viewer) cands.push([p.r,p.c]); });
+  } else return;
+  const cp=cellPx(), g=groundCell();
+  let hitCell=null;
+  const objs=[]; pieces.forEach(p=>{ if(p.alive) objs.push(p.o.root); });
+  for(const h of ray.intersectObjects(objs,true)){ const pid=h.object.userData.pid; if(pid){ const p=pieces.find(q=>q.id===pid); if(p&&p.alive){ hitCell=[p.r,p.c]; break; } } }
+  let best=null, bs=1e9;
+  for(const [r,c] of cands){
+    const occ=board[r][c]; const pt=cellPos(r,c); pt.y= occ? .42 : .02;
+    const sc=toScreen(pt); let d=Math.hypot(sc.x-x,sc.y-y);
+    if(g&&g[0]===r&&g[1]===c) d-=cp*.45;
+    if(hitCell&&hitCell[0]===r&&hitCell[1]===c) d-=cp*.3;
+    if(selected&&!(occ&&occ.owner===viewer)) d-=cp*.15;
+    if(d<bs){ bs=d; best=[r,c]; }
+  }
+  if(best && bs<cp*1.0) onCell(...best);
+}
+
+/* ---------- animations ---------- */
+async function turnTo(p,ang,dur=.18){ const o=p.o.root; let a0=o.rotation.y; let d=((ang-a0+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)-Math.PI; if(Math.abs(d)<.01) return; await tween(dur,k=>o.rotation.y=a0+d*k); }
+async function walk(p,r,c,frac=1,dur=.5){
+  const o=p.o; const from=o.root.position.clone(); from.y=0; const to=cellPos(r,c); const tgt=from.clone().lerp(to,frac);
+  p.anim=true; await turnTo(p,Math.atan2(tgt.x-from.x,tgt.z-from.z));
+  let stepped=0;
+  await tween(dur,k=>{ o.root.position.lerpVectors(from,tgt,k); o.root.position.y=Math.abs(Math.sin(k*Math.PI*2))*.09;
+    o.armL.rotation.x=Math.sin(k*Math.PI*4)*.55; o.armR.rotation.x=-Math.sin(k*Math.PI*4)*.4; o.body.rotation.x=.12*Math.sin(k*Math.PI);
+    if(o.legL){ const sw=Math.sin(k*Math.PI*4); o.legL.rotation.x=-sw*.6; o.legR.rotation.x=sw*.6; o.kneeL.rotation.x=Math.max(0,sw)*.8; o.kneeR.rotation.x=Math.max(0,-sw)*.8; }
+    const st=Math.floor(k*2); if(st>stepped){ stepped=st; sfx.step(); } },ease.lin);
+  o.armL.rotation.x=0; o.armR.rotation.x=0; o.body.rotation.x=0; o.root.position.y=0; if(o.legL){ o.legL.rotation.x=o.legR.rotation.x=o.kneeL.rotation.x=o.kneeR.rotation.x=0; } p.anim=false;
+}
+async function faceHome(p){ p.anim=true; await turnTo(p,defRot(p),.22); p.anim=false; }
+async function die(p,dir=1){
+  const o=p.o; p.anim=true; o.icon.visible=false; sfx.fall(); haptic([60,40,90]);
+  o.mats.forEach(m=>{ m.transparent=true; });
+  await tween(.55,k=>{ o.body.rotation.x=-dir*k*1.45; o.body.position.z=-dir*k*.15; },ease.inn);
+  shake=Math.max(shake,.05); burst(o.root.position.clone().add(new THREE.Vector3(0,.1,0)),0xc9b48a,14,1.4,1.2); inkSplat(o.root.position);
+  await sleep(250);
+  await tween(.5,k=>{ o.mats.forEach(m=>m.opacity=1-k); o.root.position.y=-.3*k; });
+  o.root.visible=false; p.anim=false;
+}
+async function swing(p,big=1){
+  const a=p.o.armR, k0=p.o.kat;
+  const el=p.o.elbowR;
+  await tween(.22,k=>{ a.rotation.x=-2.5*k*big; k0.rotation.x=1.15-0.6*k; if(el) el.rotation.x=-.25-.6*k; },ease.out);
+  if(!p._quiet) sfx.whoosh();
+  await tween(.13,k=>{ a.rotation.x=-2.5*big+2.9*k*big; if(el) el.rotation.x=-.85+.75*k; },ease.inn);
+  if(el) setTimeout(()=>tween(.3,k=>el.rotation.x=-.1-.15*k),120);
+  setTimeout(()=>tween(.3,k=>{ a.rotation.x=.4*big*(1-k); k0.rotation.x=.55+.6*k; }),120);
+}
+function pickWeapon(){ return new Promise(res=>{ const pk=$('pick'); pk.classList.add('show'); [...pk.children].forEach(b=>b.onclick=()=>{ pk.classList.remove('show'); sfx.select(); res(b.dataset.t); }); }); }
+
+/* ---------- moves ---------- */
+async function maybePortal(p){
+  const dest=portalMap.get(p.r*COLS+p.c); if(!dest||!p.alive) return;
+  const [r,c]=dest; if(board[r][c]) return;
+  sfx.portal(); const o=p.o.root, s0=o.scale.x; p.anim=true;
+  await tween(.28,k=>{ o.scale.setScalar(s0*Math.max(.001,1-k)); o.rotation.y+=.35; },ease.inn);
+  board[p.r][p.c]=null; p.r=r; p.c=c; board[r][c]=p; o.position.copy(cellPos(r,c));
+  burst(o.position.clone().setY(.4),0xc080ff,18,1.8);
+  await tween(.32,k=>o.scale.setScalar(s0*Math.max(.001,k)),ease.back); o.scale.setScalar(s0); p.anim=false;
+  lastCells.push([r,c]); updateMarkers();
+}
+async function revealRound(att,def,d,k){
+  if(mode!=='online') return;
+  const key=`${d}.${k}`;
+  for(const p of [att,def]) if(ctrl(p.owner)==='local') net.reveal(key,p.type);
+  for(const p of [att,def]) if(ctrl(p.owner)==='remote'){ bannerShow('⏳','ממתין ליריב…'); p.type=await net.awaitReveal(key); }
+}
+async function rechoose(att,def,d,k){
+  if(mode==='hotseat'){ for(const p of [att,def]) p.type=await secretPick(p.owner); return; }
+  for(const p of [att,def]) if(ctrl(p.owner)==='ai') p.type=rnd(['R','P','S']);
+  const mine=[att,def].find(p=>ctrl(p.owner)==='local');
+  if(mine){ mine.type=await pickWeapon(); if(mode==='online') net.reveal(`${d}.${k}`,mine.type); }
+  const rem=[att,def].find(p=>ctrl(p.owner)==='remote');
+  if(rem){ bannerShow('⏳','ממתין שהיריב יבחר…'); rem.type=await net.awaitReveal(`${d}.${k}`); }
+}
+async function doMove(p,r,c){
+  const tok=gameToken;
+  stopTimer(); busy=true; selected=null;
+  if(mode==='online'&&p.owner===viewer) net.sendMove(moveCount,[p.r,p.c],[r,c]);
+  moveCount++; if(p.owner===viewer||mode==='hotseat') myMoves++;
+  const fr=p.r, fc=p.c, t=board[r][c]; p.moved=true;
+  lastCells=[[fr,fc],[r,c]]; updateMarkers();
+  let winnerSide=null;
+  if(!t){
+    board[fr][fc]=null; p.r=r; p.c=c; board[r][c]=p; await walk(p,r,c); await maybePortal(p); await faceHome(p);
+  } else {
+    const d=duelNo++;
+    await revealRound(p,t,d,0); if(tok!==gameToken) return; bannerHide();
+    if(t.type==='flag'){
+      await walk(p,r,c,.45,.35);
+      t.revealed=true; updateIcon(t,true); bannerShow('הדגל נכבש!'); await sleep(300);
+      timeScale=.35; await swing(p); flash.position.copy(t.o.root.position).setY(.8); flash.intensity=8; burst(t.o.root.position.clone().setY(.7),0xffd36a,30,3); haptic(120);
+      t.alive=false; await die(t,p.owner==='me'?1:-1); timeScale=1;
+      board[fr][fc]=null; p.r=r; p.c=c; board[r][c]=p; await walk(p,r,c,1,.3);
+      winnerSide=p.owner;
+    } else if(t.type==='trap'){
+      await walk(p,r,c,.7,.4);
+      sfx.trap(); haptic([80,40,80]); toast('💥 מלכודת!'); shake=.18; t.revealed=true; updateIcon(t,true);
+      const spikes=new THREE.Group(); const sm=mat(0x9aa4b2,{r:.3,m:.9});
+      for(let i=0;i<7;i++) mesh(new THREE.ConeGeometry(.05,.35,6),sm,(Math.random()-.5)*.6,0,(Math.random()-.5)*.6,spikes);
+      spikes.position.copy(p.o.root.position); spikes.position.y=-.3; scene.add(spikes);
+      tween(.15,k=>spikes.position.y=-.3+.42*k,ease.out);
+      burst(p.o.root.position.clone().setY(.3),0xff6a40,24,2.5);
+      board[fr][fc]=null; p.alive=false; await die(p,1);
+      await tween(.3,k=>spikes.position.y=.12-.5*k); scene.remove(spikes);
+      bannerHide();
+    } else {
+      const w=await duel(p,t,d); if(tok!==gameToken) return;
+      const loser=w===p?t:p;
+      loser.alive=false; board[loser.r][loser.c]=null; w.revealed=true;
+      if(w===p){ board[fr][fc]=null; p.r=r; p.c=c; board[r][c]=p; await walk(p,r,c,1,.3); await maybePortal(p); }
+      else { await walk(w,w.r,w.c,1,.25); }
+      document.body.classList.remove('duel');
+      await Promise.all([faceHome(w), camHome(.6)]); fitCamera();
+      bannerHide(); updateIcon(w);
+    }
+  }
+  if(tok!==gameToken) return;
+  updateAll();
+  if(winnerSide){ busy=false; return endGame(winnerSide); }
+  if(!pieces.some(q=>q.alive&&q.owner===other(p.owner)&&(isFighter(q.type)||q.type==='?'))){ busy=false; return endGame(p.owner); }
+  turn=other(turn); busy=false; beginTurn();
+}
+
+async function duel(att,def,d){
+  const mine=att.owner===viewer?att:(def.owner===viewer?def:att), his=mine===att?def:att;
+  const A=att.o.root.position.clone(), B=def.o.root.position.clone(), mid=A.clone().lerp(B,.5);
+  const side=viewer==='me'?1:-1;
+  const dv=new THREE.Vector3().subVectors(B,A).normalize(); let perp=new THREE.Vector3(-dv.z,0,dv.x); if(perp.z*side<0||(Math.abs(perp.z)<.01&&perp.x*side<0)) perp.negate();
+  const portrait=innerWidth<innerHeight;
+  const cpos=mid.clone().addScaledVector(perp,3.5).add(new THREE.Vector3(0,portrait?2.1:2.3,0)).addScaledVector(new THREE.Vector3(0,0,side),.4);
+  ghosted=[]; const seg=new THREE.Line3(new THREE.Vector3(cpos.x,0,cpos.z),new THREE.Vector3(mid.x,0,mid.z)), cp=new THREE.Vector3();
+  pieces.forEach(q=>{ if(!q.alive||q===att||q===def) return; const pp=q.o.root.position.clone().setY(0); seg.closestPointToPoint(pp,true,cp); if(cp.distanceTo(pp)<1.35 || pp.distanceTo(new THREE.Vector3(cpos.x,0,cpos.z))<2.6){ ghosted.push(q); q.o.icon.visible=false; q.o.root.traverse(o=>{ if(o.isMesh) o.castShadow=false; }); q.o.mats.forEach(m=>{m.transparent=true; m.opacity=.1; m.depthWrite=false; m.needsUpdate=true;}); } });
+  pieces.forEach(q=>{ if(q!==att&&q!==def) q.o.icon.visible=false; });
+  document.body.classList.add('duel'); camera.setViewOffset(innerWidth,innerHeight,0,-innerHeight*.17,innerWidth,innerHeight);
+  bannerShow(`${nameOf(att.owner)} ${att.owner===viewer&&mode!=='hotseat'?'תוקף!':'תוקף!'}`);
+  sfx.duelIntro(); setMusicLevel(.12);
+  const ang=Math.atan2(B.x-A.x,B.z-A.z);
+  await Promise.all([ camTo(cpos,mid.clone().setY(portrait?.8:1.0),.7), walk(att,def.r,def.c,.32,.4), (async()=>{ def.anim=true; await turnTo(def,ang+Math.PI,.3); def.anim=false; })() ]);
+  [att,def].forEach(p=>{ p.o.icon.userData.size=.5; });
+  let winner=null, round=0;
+  while(!winner){
+    att.anim=def.anim=true;
+    for(let ex=0;ex<3;ex++){
+      def._quiet=true; if(ex===0) sfx.shout();
+      await Promise.all([swing(att,ex===2?1.1:.8),swing(def,ex===2?1.1:.8)]); def._quiet=false;
+      sfx.clash(); haptic(ex===2?40:18); shake=ex===2?.14:.06; flash.position.copy(mid).setY(.75); flash.intensity=ex===2?10:5; burst(mid.clone().setY(.75),0xffe08a,ex===2?34:14,ex===2?3.2:2);
+      await sleep(ex===2?200:90);
+    }
+    showDuelIcon(att); showDuelIcon(def); sfx.reveal();
+    await sleep(750);
+    if(att.type===def.type){
+      sfx.tie(); bannerShow('תיקו!', `שניהם ${NAME[att.type]} — <b style="color:#f2c14e">${mode==='hotseat'?'כל שחקן בוחר נשק חדש':'בחר נשק חדש'}</b>`);
+      round++; await rechoose(att,def,d,round);
+      [att,def].forEach(p=>p.o.icon.visible=false); bannerShow('שוב!'); await sleep(350);
+      continue;
+    }
+    const attWins=beats(att.type,def.type); winner=attWins?att:def; const loser=attWins?def:att;
+    const verb={R:'מרסקת את',P:'עוטף את',S:'גוזרים את'};
+    let title;
+    if(mode==='hotseat') title=`${nameOf(winner.owner)} ניצח!`;
+    else title= winner.owner===viewer?'ניצחת!':'הפסדת';
+    bannerShow(title, `${NAME[winner.type]} ${verb[winner.type]} ה${NAME[loser.type]}`);
+    (mode==='hotseat'||winner.owner===viewer)?sfx.win():sfx.lose();
+    const c0=cam.pos.clone(), push=cam.pos.clone().lerp(mid.clone().setY(.85),.42);
+    $('vig').classList.add('show'); setMusicLevel(.03,.2); sfx.slowmo();
+    timeScale=.16; tween(.45,k=>cam.pos.lerpVectors(c0,push,k),ease.out);
+    await swing(winner,1.2);
+    timeScale=0; slashFX(); sfx.clash(); haptic([70,40,90]); shake=.2;
+    burst(mid.clone().setY(.7),0xff2a2a,26,2.8,1.2); burst(mid.clone().setY(.75),0xffffff,14,3.4,.8);
+    await sleep(170); timeScale=.3;
+    await die(loser,1); timeScale=1; $('vig').classList.remove('show');
+    tween(.5,k=>cam.pos.lerpVectors(push,c0,k));
+    winner.anim=true; await tween(.25,k=>winner.o.armR.rotation.x=-2.7*k,ease.out); await sleep(300); await tween(.25,k=>winner.o.armR.rotation.x=-2.7*(1-k));
+  }
+  att.anim=def.anim=false; setMusicLevel(.5,1.5);
+  [att,def].forEach(p=>p.o.icon.scale.setScalar(.5)); pieces.forEach(q=>q.o.icon.userData.key='');
+  ghosted.forEach(q=>{ q.o.root.traverse(o=>{ if(o.isMesh) o.castShadow=true; }); q.o.mats.forEach(m=>{m.opacity=1; m.transparent=false; m.depthWrite=true; m.needsUpdate=true;}); }); ghosted=[];
+  return winner;
+}
+function showDuelIcon(p){
+  const type=p.type; p.o.icon.material.map=iconTex(type,p.owner,false); p.o.icon.material.needsUpdate=true; p.o.icon.visible=true; p.o.icon.userData.key='duel';
+  const s=p.o.icon.userData.size||.6; tween(.45,k=>p.o.icon.scale.setScalar(s*k),ease.back);
+}
+
+/* ---------- input handler ---------- */
+async function onCell(r,c){
+  if(busy) return; const p=board[r][c];
+  if(phase==='setup-flag'){ if(p&&p.owner===viewer){ p.type='flag'; updateIcon(p,true); sfx.reveal(); phase='setup-trap'; setMsg('עכשיו <b>בחר לוחם שיהיה המלכודת</b> 🪤'); } return; }
+  if(phase==='setup-trap'){ if(p&&p.owner===viewer&&p.type!=='flag'){ p.type='trap'; assignWeapons(viewer); toArrange(); } return; }
+  if(phase==='setup-arrange'){
+    if(!p||p.owner!==viewer) return;
+    if(!swapSel){ swapSel=p; sfx.select(); updateMarkers(); return; }
+    if(swapSel===p){ swapSel=null; updateMarkers(); return; }
+    const a=swapSel,b=p; swapSel=null; updateMarkers(); busy=true;
+    const ar=a.r,acn=a.c; a.r=b.r;a.c=b.c;b.r=ar;b.c=acn; board[a.r][a.c]=a; board[b.r][b.c]=b;
+    await Promise.all([walk(a,a.r,a.c,1,.4),walk(b,b.r,b.c,1,.4)]); await Promise.all([faceHome(a),faceHome(b)]); busy=false; return;
+  }
+  if(phase!=='play'||turn!==viewer||ctrl(turn)!=='local') return;
+  if(p&&p.owner===viewer){
+    if(!isFighter(p.type)){ toast(p.type==='flag'?'🚩 הדגל לא זז':'🪤 המלכודת לא זזה',900); return; }
+    selected=selected===p?null:p; sfx.select(); haptic(10); updateMarkers();
+    if(selected&&selected.scared&&!fearTold){ fearTold=true; toast('😨 הלוחם רועד — אויב חזק ממנו לידו!',1800,true); }
+    return;
+  }
+  if(selected && legal(selected).some(([a,b])=>a===r&&b===c)){ const s=selected; doMove(s,r,c); }
+}
+
+/* ---------- AI (three levels) ---------- */
+const known=n=>n&&n.owner==='me'&&n.alive&&n.revealed&&isFighter(n.type);
+const threat=(r,c,p)=>nb(r,c).some(([a,b])=>{const n=board[a][b];return known(n)&&beats(n.type,p.type);});
+const prey=(r,c,p)=>nb(r,c).some(([a,b])=>{const n=board[a][b];return known(n)&&beats(p.type,n.type);});
+const dist=(a,b,c,d)=>Math.abs(a-c)+Math.abs(b-d);
+function aiTurn(){
+  const D=diff; const flag=pieces.find(p=>p.owner==='ai'&&p.type==='flag');
+  const intruders=flag?pieces.filter(q=>q.alive&&q.owner==='me'&&isFighter(q.type)&&dist(q.r,q.c,flag.r,flag.c)<=2):[];
+  const hunt=pieces.filter(q=>q.alive&&q.owner==='me'&&!q.moved&&!q.revealed&&q.r===5);
+  let best=null,bs=-1e9;
+  for(const p of pieces){ if(p.owner!=='ai'||!p.alive) continue; const th=isFighter(p.type)&&threat(p.r,p.c,p);
+    for(const [r,c] of legal(p)){ const t=board[r][c];
+      let s;
+      if(D==='easy'||D==='easy2'){
+        s=Math.random()*(D==='easy'?40:24)+(r-p.r)*4;
+        if(t){ if(t.revealed){ if(t.type==='trap') s-=80; else if(beats(p.type,t.type)) s+=30; else if(beats(t.type,p.type)) s-=(D==='easy'?10:30); } else s+=8; }
+      } else {
+        s=Math.random()*(D==='hard'?4:9);
+        if(t){ if(t.revealed){ if(t.type==='trap') s-=500; else if(beats(p.type,t.type)) s+=130; else if(beats(t.type,p.type)) s-=95; else s+=12; }
+               else { s+=34+r*7; if(p.revealed) s-=6;
+                 if(D==='hard'){ if(!t.moved&&t.r===5) s+=26; if(!t.moved) s+=6; if(flag&&dist(t.r,t.c,flag.r,flag.c)<=2) s+=55; } } }
+        else { s+=(r-p.r)*11; if(threat(r,c,p)) s-=65; if(prey(r,c,p)) s+=22; if(th&&!threat(r,c,p)) s+=45;
+               if(flag&&dist(p.r,p.c,flag.r,flag.c)===1&&!th) s-=10;
+               if(D==='hard'){
+                 if(p.revealed){ const cnt=nb(r,c).filter(([a,b])=>{const n=board[a][b];return n&&n.owner==='me'&&n.alive&&!n.revealed;}).length; s-=14*cnt; }
+                 for(const q of intruders){ if(dist(r,c,q.r,q.c)<dist(p.r,p.c,q.r,q.c)) s+= (beats(p.type,q.type)?26:10); }
+                 if(hunt.length){ const dNow=Math.min(...hunt.map(q=>dist(p.r,p.c,q.r,q.c))), dNew=Math.min(...hunt.map(q=>dist(r,c,q.r,q.c))); if(dNew<dNow) s+=6; }
+               } }
+      }
+      if(s>bs){bs=s;best={p,r,c};} } }
+  if(!best) return endGame('me');
+  doMove(best.p,best.r,best.c);
+}
+
+/* ---------- end ---------- */
+function endGame(w){
+  if(phase==='over') return;
+  phase='over'; selected=null; stopTimer();
+  if(mode!=='online') pieces.forEach(p=>p.revealed=true);
+  else net.fin();
+  pieces.forEach(p=>p.o.icon.userData.key=''); updateAll();
+  const localWin = mode==='hotseat'? true : (w===viewer);
+  localWin?sfx.win():sfx.lose(); if(localWin) setTimeout(sfx.gong,500);
+  const title = mode==='hotseat' ? `🏆 ${nameOf(w)} ניצח!` : (localWin?'🏆 ניצחון!':'הפסד…');
+  bannerShow(title, localWin?'הדגל נכבש':''); setMsg(mode==='hotseat'?`<b>${nameOf(w)} ניצח!</b>`:(localWin?'<b>ניצחון!</b>':'הפסדת הפעם'));
+  cam.orbit=true;
+  if(localWin) for(let i=0;i<6;i++) setTimeout(()=>burst(new THREE.Vector3((Math.random()-.5)*6,1.5+Math.random(),(Math.random()-.5)*4),[0xffd36a,0xff8ab0,0x8ab8ff][i%3],30,3.5,1.4),i*220);
+  // stats & stars
+  const st=save.stats; const prevStars=totalStars(); let starsWon=0;
+  const prevF=FACTION_ORDER.filter(factionUnlocked), prevB=Object.keys(BOARDS).filter(boardUnlocked), prevT=Object.keys(THEMES).filter(themeUnlocked);
+  if(mode==='hotseat') st.hotseat++;
+  else { st.games++; if(localWin){ st.wins++; st.streak++; st.best=Math.max(st.best,st.streak); if(!st.fastest||myMoves<st.fastest) st.fastest=myMoves; } else { st.losses++; st.streak=0; } }
+  if(mode==='online'){ st.online++; if(localWin) st.onlineWins++; }
+  if(mode==='campaign'&&localWin){ const left=pieces.filter(p=>p.alive&&p.owner==='me'&&isFighter(p.type)).length; starsWon=left>=8?3:left>=4?2:1; save.stars[level]=Math.max(save.stars[level]||0,starsWon); }
+  persist();
+  const newSkins=SKINS.filter(s=>s.need>prevStars&&s.need<=totalStars());
+  const newF=FACTION_ORDER.filter(f=>factionUnlocked(f)&&!prevF.includes(f)), newB=Object.keys(BOARDS).filter(b=>boardUnlocked(b)&&!prevB.includes(b)), newT=Object.keys(THEMES).filter(t=>themeUnlocked(t)&&!prevT.includes(t));
+  setControls([{t:'תפריט',ghost:true,f:()=>{ bannerHide(); toMenu(); }}]);
+  setTimeout(()=>{ bannerHide();
+    const stars = mode==='campaign'&&localWin ? `<p class="center stars">${'⭐'.repeat(starsWon)}${'☆'.repeat(3-starsWon)}</p>` : '';
+    let unlock = newSkins.length ? `<p class="center unlock">🎨 סקין חדש: <b>${newSkins.map(s=>s.name).join(', ')}</b></p>` : '';
+    if(newF.length) unlock = `<div class="unl"><span>${FACTIONS[newF[0]].emoji}</span><div><small>צבא חדש נפתח!</small><b>${FACTIONS[newF[0]].name}</b></div></div>` + unlock;
+    if(newB.length||newT.length) unlock += `<p class="center unlock">🗺️ ${[...newB.map(b=>'לוח: '+BOARDS[b].name),...newT.map(t=>'זירה: '+THEMES[t].name)].join(' · ')}</p>`;
+    if(newF.length) setTimeout(()=>{ sfx.gong(); for(let i=0;i<8;i++) setTimeout(()=>burst(new THREE.Vector3((Math.random()-.5)*6,1.6+Math.random(),(Math.random()-.5)*4),[0xffd36a,0xff8ab0,0x8ab8ff,0x8affc0][i%4],34,4,1.5),i*160); },200);
+    const btns=[];
+    if(mode==='campaign'&&localWin&&level<LEVELS.length) btns.push(`<button class="btn" id="eNext">לשלב הבא ➜</button>`);
+    if(mode==='online') btns.push(`<button class="btn" id="eRe">משחק חוזר</button>`);
+    else btns.push(`<button class="btn ${mode==='campaign'&&localWin&&level<LEVELS.length?'ghost':''}" id="eAgain">שחק שוב</button>`);
+    if(newF.length) btns.unshift(`<button class="btn" id="eTry">${FACTIONS[newF[0]].emoji} שחק איתם!</button>`);
+    btns.push(`<button class="btn ghost" id="eLook">הצץ בלוח</button>`,`<button class="btn ghost" id="eMenu">תפריט</button>`);
+    showCard(`<p class="big">${localWin?'🏆':'🏯'}</p><h2 class="center">${mode==='hotseat'?nameOf(w)+' ניצח!':(localWin?'ניצחת!':'הפסדת…')}</h2>${stars}
+      <p class="center">${mode==='campaign'&&localWin?`ניצחת את ${LEVELS[level-1].name}!`:(localWin?'הסמוראים שלך כבשו את הדגל.':'נסה אסטרטגיה אחרת — אפשר לנצח!')}</p>${unlock}
+      <div class="bottom">${btns.join('')}</div>`,()=>{
+        const b=id=>$(id);
+        if(b('eNext')) b('eNext').onclick=()=>{ closeCard(); playLevel(level+1); };
+        if(b('eTry')) b('eTry').onclick=()=>{ save.faction=newF[0]; persist(); closeCard(); if(level<LEVELS.length) playLevel(level+1); else replay(); };
+        if(b('eAgain')) b('eAgain').onclick=()=>{ closeCard(); replay(); };
+        if(b('eRe')) b('eRe').onclick=()=>{ closeCard(); net.rematch(); };
+        b('eLook').onclick=closeCard; b('eMenu').onclick=()=>{ closeCard(); toMenu(); };
+      });
+  },2300);
+}
+let lastStart=null;
+function replay(){ if(lastStart) startGame(lastStart); }
+function play(o){ lastStart=o; startGame(o); }
+function playLevel(n){ const L=LEVELS[n-1]; play({mode:'campaign',level:n,diff:L.diff,theme:L.theme,blitz:!!L.blitz,board:L.board,enemy:L.faction}); }
+
+/* ---------- cards ---------- */
+function showCard(h,after){ $('card').innerHTML=h; $('ov').classList.add('show'); after&&after(); }
+function closeCard(){ $('ov').classList.remove('show'); }
+$('ov').addEventListener('click',e=>{ if(e.target.id==='ov') closeCard(); });
+function helpHTML(){
+  const ic=k=>`<img src="${svgURL(SVG[k])}">`;
+  return `<h2>איך משחקים</h2>
+  <div class="legend"><div><span>${ic('R')}</span>אבן</div><div><span>${ic('P')}</span>נייר</div><div><span>${ic('S')}</span>מספריים</div><div><span>${ic('flag')}</span>דגל</div><div><span>${ic('trap')}</span>מלכודת</div></div>
+  <ul>
+   <li>לכל צד 14 סמוראים. את הנשקים של היריב <b>לא רואים</b>.</li>
+   <li>בהכנה בוחרים מי מחזיק את <b>הדגל</b> ומי <b>המלכודת</b> — שניהם לא זזים.</li>
+   <li>בכל תור מזיזים לוחם משבצת אחת לכל כיוון.</li>
+   <li>נכנסים ללוחם יריב = <b>דו־קרב</b>: אבן מרסקת מספריים, מספריים גוזרים נייר, נייר עוטף אבן. בתיקו בוחרים נשק חדש.</li>
+   <li>המנצח בדו־קרב <b>נחשף</b> ליריב (עין צהובה). לוחם שרואה לידו אויב חזק ממנו — רועד.</li>
+   <li>מי שתוקף מלכודת — נופל בה. מנצחים כשכובשים את <b>הדגל</b>.</li>
+   <li><b>בליץ:</b> 10 שניות לתור — אחרת המשחק זז בשבילך.</li>
+   <li><b>לוחות מיוחדים:</b> מכשולים חוסמים את הדרך, ופורטל מעביר לוחם לפורטל התאום.</li>
+  </ul>`;
+}
+function help(){ showCard(helpHTML()+`<div class="bottom"><button class="btn" id="ok">יאללה, לקרב ⚔️</button></div>`,()=>{ $('ok').onclick=closeCard; }); }
+$('helpBtn').onclick=()=>{ac();help();};
+$('pauseBtn').onclick=()=>{ ac();
+  const canRestart=mode!=='online';
+  showCard(`<h2 class="center">⏸ הפסקה</h2><div class="bottom"><button class="btn" id="pCont">המשך</button>${canRestart?'<button class="btn ghost" id="pRe">התחל מחדש</button>':''}<button class="btn ghost" id="pMenu">${mode==='online'?'עזוב משחק':'לתפריט'}</button></div>`,()=>{
+    $('pCont').onclick=closeCard; if($('pRe')) $('pRe').onclick=()=>{ closeCard(); replay(); }; $('pMenu').onclick=()=>{ closeCard(); toMenu(); };
+  }); };
+const syncSound=()=>{ $('soundBtn').textContent=soundOn?'🔊':'🔇'; $('musicBtn').style.opacity=musicOn&&soundOn?1:.4; };
+function toggleSound(){ soundOn=!soundOn; try{localStorage.setItem('rps3d-sound',soundOn?'1':'0');}catch(e){} syncSound(); ac(); if(master) master.gain.setTargetAtTime(soundOn?1:0,actx.currentTime,.05); if(soundOn) sfx.select(); }
+function toggleMusic(){ musicOn=!musicOn; try{localStorage.setItem('rps3d-music',musicOn?'1':'0');}catch(e){} syncSound(); ac(); setMusicLevel(.5,.3); }
+$('soundBtn').onclick=toggleSound; $('musicBtn').onclick=toggleMusic;
+syncSound();
+
+/* ================= MENUS ================= */
+function showMenu(html,after){ const m=$('menu'); m.innerHTML=`<div class="mwrap">${html}</div>`; m.classList.add('show'); document.body.classList.add('pre'); after&&after(m); m.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ ac(); sfx.select(); },{capture:true})); }
+function hideMenu(){ $('menu').classList.remove('show'); }
+function toMenu(){
+  gameToken++; stopTimer(); bannerHide(); closeCard(); $('pass').classList.remove('show'); $('pick').classList.remove('show');
+  if(mode==='online') net.leave();
+  phase='menu'; busy=false; selected=null; document.body.classList.remove('duel'); camera.clearViewOffset(); busyCam=false;
+  cam.orbit=true; setControls([]); mainMenu();
+}
+const chip=(id,label,on,lock)=>`<button class="chip${on?' on':''}${lock?' lock':''}" data-v="${id}">${lock?'🔒 ':''}${label}</button>`;
+function mainMenu(){
+  const st=save.stats;
+  showMenu(`<h1 class="mtitle">קרב הסמוראים</h1>
+  <div class="mgrid">
+    <button class="mbtn gold" id="mQuick"><span class="ic">⚔️</span><span>משחק מהיר<small>נגד המחשב · 3 רמות קושי</small></span></button>
+    <button class="mbtn" id="mCamp"><span class="ic">🏯</span><span>מסע השוגון<small>50 שלבים · ${totalStars()}/150 ⭐</small></span></button>
+    <button class="mbtn" id="mChar"><span class="ic">🎭</span><span>דמויות<small>${FACTION_ORDER.filter(factionUnlocked).length}/10 צבאות · ${FACTIONS[save.faction]?FACTIONS[save.faction].emoji:''}</small></span></button>
+    <button class="mbtn" id="mHot"><span class="ic">👥</span><span>שני שחקנים<small>על אותו מכשיר</small></span></button>
+    <button class="mbtn" id="mSet"><span class="ic">⚙️</span><span>הגדרות וסקינים<small>${skinOf().name}</small></span></button>
+    <button class="mbtn" id="mStats"><span class="ic">📊</span><span>סטטיסטיקה<small>${st.wins} ניצחונות · רצף ${st.streak}</small></span></button>
+  </div>
+  <button class="link" id="mHelp">❔ איך משחקים</button> <a class="link" href="privacy.html" style="text-decoration:none">🔒 פרטיות</a> <button class="link" id="mShare">📤 שתף</button>`,()=>{
+    $('mShare').onclick=()=>shareGame();
+    $('mQuick').onclick=()=>quickMenu(); $('mCamp').onclick=()=>campMenu(); $('mChar').onclick=()=>charMenu(); $('mHot').onclick=hotMenu; 
+    $('mSet').onclick=()=>settingsMenu(); $('mStats').onclick=()=>statsMenu(); $('mHelp').onclick=()=>showMenu(helpHTML()+`<button class="btn ghost back" id="bk">חזרה</button>`,()=>{ $('bk').onclick=mainMenu; });
+  });
+}
+function boardChips(){ return Object.entries(BOARDS).map(([id,B])=>chip(id,B.name,save.qBoard===id,!boardUnlocked(id))).join(''); }
+function arenaChips(){ return Object.entries(THEMES).map(([id,T])=>chip(id,T.name,save.arena===id,!themeUnlocked(id))).join(''); }
+function bindChips(root,sel,onPick){ root.querySelectorAll(sel+' .chip').forEach(b=>b.onclick=()=>{ if(b.classList.contains('lock')){ toast('🔒 נפתח במסע השוגון',1000); return; } onPick(b.dataset.v); }); }
+function previewArena(){ applyTheme(save.arena); }
+function quickMenu(){
+  showMenu(`<h2 class="msub">⚔️ משחק מהיר</h2>
+   <div class="sect"><h3>רמת קושי</h3><div class="chips" id="cDiff">${chip('easy','קל 🌱',save.diff==='easy')}${chip('med','בינוני ⚔️',save.diff==='med')}${chip('hard','קשה 👹',save.diff==='hard')}</div></div>
+   <div class="sect"><h3>יריב</h3><div class="chips" id="cEnemy">${chip('random','🎲 אקראי',save.qEnemy==='random')}${FACTION_ORDER.map(f=>chip(f,FACTIONS[f].emoji+' '+FACTIONS[f].name,save.qEnemy===f,!factionUnlocked(f))).join('')}</div></div>
+   <div class="sect"><h3>לוח</h3><div class="chips" id="cBoard">${boardChips()}</div></div>
+   <div class="sect"><h3>זירה</h3><div class="chips" id="cArena">${arenaChips()}</div></div>
+   <div class="sect"><h3>מצב</h3><div class="chips" id="cBlitz">${chip('0','קלאסי',!save.blitz)}${chip('1','⏱ בליץ — 10 שניות לתור',save.blitz)}</div></div>
+   <div class="mrow"><button class="btn big" id="go">התחל קרב ⚔️</button><button class="btn ghost" id="bk">חזרה</button></div>`,(m)=>{
+    bindChips(m,'#cDiff',v=>{ save.diff=v; persist(); quickMenu(); });
+    bindChips(m,'#cEnemy',v=>{ save.qEnemy=v; persist(); quickMenu(); });
+    bindChips(m,'#cBoard',v=>{ save.qBoard=v; persist(); buildObstacles(v); quickMenu(); });
+    bindChips(m,'#cArena',v=>{ save.arena=v; persist(); previewArena(); quickMenu(); });
+    bindChips(m,'#cBlitz',v=>{ save.blitz=v==='1'; persist(); quickMenu(); });
+    $('go').onclick=()=>play({mode:'ai',diff:save.diff,theme:save.arena,blitz:save.blitz,board:boardUnlocked(save.qBoard)?save.qBoard:'classic',enemy:(save.qEnemy==='random'||!factionUnlocked(save.qEnemy))?rnd(FACTION_ORDER.filter(factionUnlocked)):save.qEnemy}); $('bk').onclick=()=>{ buildObstacles('classic'); mainMenu(); };
+  });
+}
+function campMenu(){
+  const un=unlockedLevel();
+  showMenu(`<h2 class="msub">🏯 מסע השוגון <small>${totalStars()}/150 ⭐</small></h2>
+   <div class="worlds">${WORLDS.map((W,i)=>{ const w=i+1, lock=!worldReached(w), done=worldDone(w); const st=[1,2,3,4,5].reduce((a,k)=>a+(save.stars[i*5+k]||0),0); const F=FACTIONS[W.faction];
+     return `<button class="world${lock?' lock':''}${done?' done':''}" data-w="${w}" style="--wc:${WORLD_COLORS[i]}"><span class="we">${lock?'🔒':F.emoji}</span><span class="wt"><b>${w}. ${W.name}</b><small>${F.name} · לוח ${BOARDS[W.board].name} · ${st}/15 ⭐</small></span>${done?'<span class="wd">✔</span>':''}</button>`; }).join('')}</div>
+   <button class="btn ghost back" id="bk">חזרה</button>`,(m)=>{
+    m.querySelectorAll('.world').forEach(b=>b.onclick=()=>{ if(b.classList.contains('lock')){ toast('🔒 נצח את הבוס של העולם הקודם',1200); return; } worldMenu(+b.dataset.w); });
+    $('bk').onclick=()=>{ applyTheme(save.arena&&themeUnlocked(save.arena)?save.arena:'sunset'); mainMenu(); };
+    const cur=m.querySelector(`.world[data-w="${Math.ceil(un/5)}"]`); if(cur) cur.scrollIntoView({block:'center'});
+  });
+}
+function worldMenu(w){
+  const W=WORLDS[w-1], un=unlockedLevel(), F=FACTIONS[W.faction]; applyTheme(W.theme); buildObstacles(W.board);
+  const reward = worldDone(w) ? '✔ העולם הושלם' : (W.faction==='samurai' ? '🎁 נצח את הבוס כדי לפתוח את העולם הבא' : `🎁 נצח את הבוס כדי לפתוח את ${F.emoji} <b>${F.name}</b>`);
+  showMenu(`<h2 class="msub">${F.emoji} ${W.name}</h2><p class="mp dim">יריבים: ${F.name} · לוח: ${BOARDS[W.board].name}</p>
+   <div class="lvls">${[1,2,3,4,5].map(k=>{ const L=LEVELS[(w-1)*5+k-1], lock=L.n>un, st=save.stars[L.n]||0;
+     return `<button class="lvl${lock?' lock':''}${L.boss?' boss':''}" data-n="${L.n}"><span class="ln">${lock?'🔒':(L.boss?'👑':L.n)}</span><span class="lt"><b>${L.name}</b><small>שלב ${L.n} · ${L.desc}</small></span><span class="ls">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</span></button>`; }).join('')}</div>
+   <p class="mp">${reward}</p>
+   <button class="btn ghost back" id="bk">חזרה למפה</button>`,(m)=>{
+    m.querySelectorAll('.lvl').forEach(b=>b.onclick=()=>{ if(b.classList.contains('lock')){ toast('🔒 נצח בשלב הקודם',1000); return; } playLevel(+b.dataset.n); });
+    $('bk').onclick=()=>{ buildObstacles('classic'); campMenu(); };
+  });
+}
+let teaseT=0;
+function previewFaction(f){ if(gameFactions.me===f) return; gameFactions.me=f; refreshSkins(); }
+function charMenu(){
+  showMenu(`<h2 class="msub">🎭 דמויות</h2><p class="mp dim">כל עולם שמנצחים במסע השוגון פותח צבא חדש. הקש על דמות כדי לראות אותה על הלוח</p>
+   <div class="chars">${FACTION_ORDER.map(f=>{ const F=FACTIONS[f], un=factionUnlocked(f), wi=WORLDS.findIndex(W=>W.faction===f);
+     return `<button class="char${un?'':' lock'}${save.faction===f?' on':''}" data-f="${f}"><span class="ce">${F.emoji}</span><b>${F.name}</b><small>${un?(save.faction===f?'✔ נבחר':F.desc):`🔒 עולם ${wi+1}`}</small></button>`; }).join('')}</div>
+   <button class="btn ghost back" id="bk">חזרה</button>`,(m)=>{
+    m.querySelectorAll('.char').forEach(b=>b.onclick=()=>{ const f=b.dataset.f; clearTimeout(teaseT);
+      if(b.classList.contains('lock')){ previewFaction(f); toast(`🔒 נפתח כשמנצחים את עולם ${WORLDS.findIndex(W=>W.faction===f)+1}`,1600); teaseT=setTimeout(()=>previewFaction(save.faction),2600); return; }
+      save.faction=f; persist(); previewFaction(f); charMenu(); });
+    $('bk').onclick=()=>{ clearTimeout(teaseT); previewFaction(save.faction); mainMenu(); };
+  });
+}
+function hotMenu(){
+  showMenu(`<h2 class="msub">👥 שני שחקנים</h2><p class="mp">מעבירים את המכשיר בין התורות — מסך ביניים מסתיר את הנשקים.</p>
+   <div class="sect"><h3>לוח</h3><div class="chips" id="cBoard">${boardChips()}</div></div>
+   <div class="sect"><h3>זירה</h3><div class="chips" id="cArena">${arenaChips()}</div></div>
+   <div class="sect"><h3>מצב</h3><div class="chips" id="cBlitz">${chip('0','קלאסי',!save.blitz)}${chip('1','⏱ בליץ',save.blitz)}</div></div>
+   <div class="mrow"><button class="btn big" id="go">התחל ⚔️</button><button class="btn ghost" id="bk">חזרה</button></div>`,(m)=>{
+    bindChips(m,'#cArena',v=>{ save.arena=v; persist(); previewArena(); hotMenu(); });
+    bindChips(m,'#cBoard',v=>{ save.qBoard=v; persist(); buildObstacles(v); hotMenu(); });
+    bindChips(m,'#cBlitz',v=>{ save.blitz=v==='1'; persist(); hotMenu(); });
+    $('go').onclick=()=>play({mode:'hotseat',theme:save.arena,blitz:save.blitz,board:boardUnlocked(save.qBoard)?save.qBoard:'classic'}); $('bk').onclick=()=>{ buildObstacles('classic'); mainMenu(); };
+  });
+}
+function settingsMenu(){
+  const ts=totalStars();
+  showMenu(`<h2 class="msub">⚙️ הגדרות</h2>
+   <div class="sect"><h3>סאונד</h3><div class="chips"><button class="chip${soundOn?' on':''}" id="sS">🔊 אפקטים</button><button class="chip${musicOn?' on':''}" id="sM">🎵 מוזיקה</button></div></div>
+   <div class="sect"><h3>סקין לסמוראים שלך <small>(${ts} ⭐)</small></h3><div class="skins">${SKINS.map(s=>{ const lock=ts<s.need;
+     return `<button class="skin${save.skin===s.id?' on':''}${lock?' lock':''}" data-v="${s.id}"><i style="background:${s.css}"></i><span>${s.name}</span><small>${lock?`🔒 ${s.need} ⭐`:(save.skin===s.id?'נבחר':'')}</small></button>`; }).join('')}</div></div>
+   <div class="mrow"><button class="btn ghost" id="bk">חזרה</button><button class="btn ghost danger" id="rst">איפוס התקדמות</button></div>`,(m)=>{
+    $('sS').onclick=()=>{ toggleSound(); settingsMenu(); }; $('sM').onclick=()=>{ toggleMusic(); settingsMenu(); };
+    m.querySelectorAll('.skin').forEach(b=>b.onclick=()=>{ if(b.classList.contains('lock')){ toast('🔒 צבור עוד כוכבים במסע',1000); return; } save.skin=b.dataset.v; persist(); refreshSkins(); settingsMenu(); });
+    $('bk').onclick=mainMenu;
+    $('rst').onclick=()=>{ const b=$('rst'); if(b.dataset.c){ save.stars={}; save.stats={games:0,wins:0,losses:0,streak:0,best:0,fastest:0,online:0,onlineWins:0,hotseat:0}; save.skin='blue'; persist(); refreshSkins(); settingsMenu(); toast('אופס',800); } else { b.dataset.c=1; b.textContent='בטוח? הקש שוב'; } };
+  });
+}
+function refreshSkins(){ texCache.clear(); pieces.forEach(p=>{ if(p.owner!=='me') return; const T=teamColors('me'); const pos=p.o.root.position.clone(), rot=p.o.root.rotation.y; scene.remove(p.o.root); p.o=buildSamurai('me'); p.o.root.position.copy(pos); p.o.root.rotation.y=rot; p.o.root.traverse(o=>o.userData.pid=p.id); scene.add(p.o.root); }); updateAll(); }
+function statsMenu(){
+  const s=save.stats, rate=s.games?Math.round(s.wins/s.games*100):0;
+  const cell=(v,l)=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`;
+  showMenu(`<h2 class="msub">📊 סטטיסטיקה</h2>
+   <div class="stats">${cell(s.games,'משחקים')}${cell(s.wins,'ניצחונות')}${cell(rate+'%','אחוז הצלחה')}${cell(s.streak,'רצף נוכחי')}${cell(s.best,'רצף שיא')}${cell(s.fastest||'—','ניצחון מהיר (מהלכים)')}${cell(totalStars()+'/150','כוכבים')}${cell(FACTION_ORDER.filter(factionUnlocked).length+'/10','צבאות')}${cell(s.onlineWins+'/'+s.online,'אונליין')}${cell(s.hotseat,'משחקי 2 שחקנים')}</div>
+   <button class="btn ghost back" id="bk">חזרה</button>`,()=>{ $('bk').onclick=mainMenu; });
+}
+
+/* ================= ONLINE ================= */
+const net={ inited:false, lobby:null, user:null, room:null, role:null, code:null, gameNo:0, first:'me', state:{}, opp:null, oppName:null, waiters:[], offLobby:null, offRoom:null, lostT:null, myName:null,
+  async init(){
+    if(this.inited) return this.lobby; this.inited=true;
+    const use=n=>{ try{ return (window.claude&&window.claude.use)?Promise.race([window.claude.use(n),sleep(11000).then(()=>null)]):Promise.resolve(null); }catch(e){ return Promise.resolve(null); } };
+    [this.lobby,this.user]=await Promise.all([use('room'),use('user')]);
+    return this.lobby;
+  },
+  async names(ids){ const out={}; try{ if(this.user&&this.user.profiles&&ids.length){ const ps=await this.user.profiles(ids); for(const id of ids) out[id]=(ps&&ps[id]&&ps[id].name)||''; } }catch(e){} return out; },
+  set(patch){ Object.assign(this.state,patch); if(this.room) this.room.presence(patch).catch(()=>{}); },
+  async open(code,role){
+    this.role=role; this.code=code; this.gameNo=0; this.opp=null; this.oppName=null; this.waiters=[];
+    this.room=await this.lobby.join('g-'+code);
+    this.state={}; this.set({role, g:0, ready:false, moves:[], rv:{}, fin:null, stuck:null, rematch:null, at:Date.now(), first: role==='host'?(Math.random()<.5?'me':'ai'):null, blitz: role==='host'?!!save.blitz:null});
+    this.offRoom=this.room.onPeers(()=>this.onPeers());
+  },
+  onPeers(){
+    if(!this.room) return;
+    const ps=this.room.peers().filter(p=>!p.isMe&&p.kind==='viewer'&&p.presence&&p.presence.role);
+    const want=this.role==='host'?'guest':'host';
+    const cands=ps.filter(p=>p.presence.role===want).sort((a,b)=>(a.presence.at||0)-(b.presence.at||0));
+    if(this.role==='guest'){ const rivals=ps.filter(p=>p.presence.role==='guest'&&(p.presence.at||0)<this.state.at); if(rivals.length&&!this.opp){ this.leave(); onlineMenu('החדר הזה כבר מלא — נסה קוד אחר'); return; } }
+    const o=cands[0]||null;
+    if(o&&this.opp&&o.peer!==this.opp.peer&&phase!=='menu'&&this.started){ /* a different opponent appeared mid-game: ignore */ return; }
+    const had=!!this.opp; this.opp=o;
+    if(o&&o.by&&!this.oppName){ this.names([o.by]).then(n=>{ this.oppName=n[o.by]||null; updateHUD(); }); }
+    if(o){ clearTimeout(this.lostT); this.lostT=null; if(this.lostShown){ this.lostShown=false; bannerHide(); } }
+    if(!o&&had&&this.started&&phase!=='over'&&!this.lostT){ bannerShow('📡','היריב התנתק… ממתין שיחזור'); this.lostShown=true; this.lostT=setTimeout(()=>{ if(!this.opp) showCard(`<h2 class="center">היריב עזב</h2><p class="center">החיבור ליריב אבד.</p><div class="bottom"><button class="btn" id="lm">לתפריט</button></div>`,()=>{ $('lm').onclick=()=>{ closeCard(); toMenu(); }; }); },40000); }
+    if(o&&!this.started){ this.begin(); }
+    this.pump();
+  },
+  begin(){
+    const host=this.role==='host'?this.state:this.opp.presence;
+    if(this.role==='guest'&&host.g!==this.gameNo) return;
+    this.started=true; this.first=host.first||'me';
+    try{ this.lobby.presence({open:null}).catch(()=>{}); }catch(e){}
+    startGame({mode:'online',viewer:this.role==='host'?'me':'ai',blitz:!!host.blitz,theme:'sunset'});
+    sfx.gong();
+  },
+  pump(){
+    const o=this.opp&&this.opp.presence; if(!o||mode!=='online') return;
+    // rematch
+    if(phase==='over'&&this.state.rematch===this.gameNo+1&&o.rematch===this.gameNo+1){ this.newRound(); return; }
+    if(o.g!==this.gameNo) return;
+    for(let i=this.waiters.length-1;i>=0;i--){ const w=this.waiters[i]; const v=o.rv&&o.rv[w.key]; if(v){ this.waiters.splice(i,1); w.res(v); } }
+    if(phase==='waiting'&&this.state.ready&&o.ready){ const host=this.role==='host'?this.state:o; startBattle(host.first||'me'); return; }
+    if(phase==='play'&&o.stuck===this.gameNo){ endGame(viewer); return; }
+    if(phase==='play'&&!busy&&ctrl(turn)==='remote'){ const m=(o.moves||[]).find(m=>m.n===moveCount); if(m){ const p=board[m.f[0]]&&board[m.f[0]][m.f[1]]; if(p&&p.owner===turn) doMove(p,m.t[0],m.t[1]); } }
+    if(phase==='over'&&o.fin&&o.fin.g===this.gameNo&&!this.finApplied){ this.finApplied=true; for(const [r,c,t] of o.fin.t){ const p=board[r][c]; if(p&&p.owner!==viewer){ p.type=t; p.revealed=true; } } pieces.forEach(p=>p.o.icon.userData.key=''); updateAll(); }
+  },
+  sendMove(n,f,t){ const moves=(this.state.moves||[]).filter(m=>m.n>n-30).concat([{n,f,t}]); this.set({moves}); },
+  reveal(key,type){ const rv=Object.assign({},this.state.rv); rv[key]=type; const ks=Object.keys(rv); if(ks.length>30) delete rv[ks[0]]; this.set({rv}); },
+  awaitReveal(key){ return new Promise(res=>{ this.waiters.push({key,res}); this.pump(); }); },
+  fin(){ this.finApplied=false; const t=pieces.filter(p=>p.alive&&p.owner===viewer).map(p=>[p.r,p.c,p.type]); this.set({fin:{g:this.gameNo,t}}); setTimeout(()=>this.pump(),50); },
+  rematch(){ this.set({rematch:this.gameNo+1}); setMsg('ממתין שהיריב יסכים למשחק חוזר…'); toast('ממתין ליריב…',1200,true); this.pump(); },
+  newRound(){
+    this.gameNo++; this.finApplied=false;
+    const prevFirst=this.role==='host'?this.state.first:(this.opp.presence.first||'me');
+    this.set({g:this.gameNo, ready:false, moves:[], rv:{}, fin:null, stuck:null, first: this.role==='host'?other(prevFirst):null});
+    this.started=false; setTimeout(()=>{ if(this.role==='host'||(this.opp&&this.opp.presence.g===this.gameNo)) this.begin(); else this.waitHost(); },120);
+  },
+  waitHost(){ const t=setInterval(()=>{ if(!this.room){ clearInterval(t); return; } if(this.opp&&this.opp.presence.g===this.gameNo){ clearInterval(t); this.begin(); } },200); },
+  leave(){ try{ this.offRoom&&this.offRoom(); }catch(e){} try{ this.room&&this.room.leave(); }catch(e){} try{ this.lobby&&this.lobby.presence({open:null}); }catch(e){}
+    clearTimeout(this.lostT); this.room=null; this.opp=null; this.started=false; this.waiters=[]; this.lostShown=false; }
+};
+setInterval(()=>{ if(mode==='online'&&net.room) net.pump(); },400);
+
+async function onlineMenu(err){
+  showMenu(`<h2 class="msub">🌐 אונליין</h2><p class="mp" id="oStat">מתחבר…</p>`);
+  const lobby=await net.init();
+  if(!lobby){
+    showMenu(`<h2 class="msub">🌐 אונליין</h2>
+      <div class="sect"><p class="mp">⚔️ משחק אונליין מול שחקנים מכל העולם — <b>בקרוב!</b></p>
+      <p class="mp dim">בינתיים: נסה את מסע השוגון, או שחק מול חבר על אותו מכשיר במצב "שני שחקנים".</p></div>
+      <button class="btn ghost back" id="bk">חזרה</button>`,()=>{ $('bk').onclick=mainMenu; });
+    return;
+  }
+  const render=async()=>{
+    if(!$('menu').classList.contains('show')||!$('oList')) return;
+    const ps=lobby.peers().filter(p=>!p.isMe&&p.presence&&p.presence.open);
+    const names=await net.names(ps.map(p=>p.by).filter(Boolean));
+    const el=$('oList'); if(!el) return;
+    el.innerHTML = ps.length ? ps.map(p=>`<button class="mbtn sm" data-c="${String(p.presence.open).replace(/[^0-9]/g,'')}"><span class="ic">⚔️</span><span>${(names[p.by]||'שחקן').replace(/[<>&]/g,'')} מחכה ליריב<small>קוד ${String(p.presence.open).replace(/[^0-9]/g,'')}${p.presence.blitz?' · ⏱ בליץ':''}</small></span></button>`).join('') : '<p class="mp dim">אין כרגע משחקים פתוחים. צור משחק ושלח לחבר את הקוד!</p>';
+    el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>joinCode(b.dataset.c));
+  };
+  showMenu(`<h2 class="msub">🌐 אונליין</h2>${err?`<p class="mp err">${err}</p>`:''}
+    <div class="mrow"><button class="btn big" id="oNew">צור משחק חדש</button>
+      <span class="joinbox"><input class="codein" id="oCode" inputmode="numeric" maxlength="4" placeholder="קוד"><button class="btn ghost" id="oJoin">הצטרף</button></span></div>
+    <div class="sect"><h3>משחק חדש</h3><div class="chips" id="cBlitz">${chip('0','קלאסי',!save.blitz)}${chip('1','⏱ בליץ',save.blitz)}</div></div>
+    <div class="sect"><h3>משחקים פתוחים</h3><div id="oList" class="olist"></div></div>
+    <p class="mp dim">החבר צריך שתשתף איתו את המשחק ב-Claude, ושניכם תהיו בו באותו זמן.</p>
+    <button class="btn ghost back" id="bk">חזרה</button>`,(m)=>{
+      bindChips(m,'#cBlitz',v=>{ save.blitz=v==='1'; persist(); m.querySelectorAll('#cBlitz .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===v)); });
+      $('oNew').onclick=()=>createOnline(); $('oJoin').onclick=()=>{ const c=($('oCode').value||'').replace(/[^0-9]/g,''); if(c.length!==4){ toast('הקלד קוד בן 4 ספרות',1000); return; } joinCode(c); };
+      $('bk').onclick=()=>{ if(net.offLobby){ net.offLobby(); net.offLobby=null; } mainMenu(); };
+      if(net.offLobby) net.offLobby(); net.offLobby=lobby.onPeers(render); render();
+    });
+}
+async function createOnline(){
+  const code=String(Math.floor(1000+Math.random()*9000));
+  try{ await net.open(code,'host'); }catch(e){ onlineMenu('לא הצלחתי לפתוח חדר — נסה שוב'); return; }
+  net.lobby.presence({open:code,blitz:!!save.blitz}).catch(()=>{});
+  showMenu(`<h2 class="msub">🌐 ממתין ליריב…</h2><p class="mp">שלח לחבר את הקוד:</p><div class="code">${code}</div><div class="spin"></div>
+    <p class="mp dim">${save.blitz?'⏱ בליץ · ':''}המשחק יתחיל אוטומטית כשהחבר יצטרף</p><button class="btn ghost back" id="bk">ביטול</button>`,()=>{ $('bk').onclick=()=>{ net.leave(); onlineMenu(); }; });
+}
+async function joinCode(code){
+  showMenu(`<h2 class="msub">🌐 מצטרף למשחק ${code}…</h2><div class="spin"></div><button class="btn ghost back" id="bk">ביטול</button>`,()=>{ $('bk').onclick=()=>{ net.leave(); onlineMenu(); }; });
+  try{ await net.open(code,'guest'); }catch(e){ onlineMenu('לא הצלחתי להצטרף — בדוק את הקוד'); return; }
+  setTimeout(()=>{ if(net.room&&!net.opp&&!net.started){ net.leave(); onlineMenu(`לא נמצא משחק עם הקוד ${code}`); } },9000);
+}
+
+/* ---------- fullscreen ---------- */
+const fsEl=document.documentElement;
+const canFS=!!(fsEl.requestFullscreen||fsEl.webkitRequestFullscreen) && document.fullscreenEnabled!==false;
+if(canFS && isMobile) document.body.classList.add('fs-ok');
+async function goLandscape(){
+  ac();
+  try{ if(!document.fullscreenElement){ await (fsEl.requestFullscreen?fsEl.requestFullscreen({navigationUI:'hide'}):fsEl.webkitRequestFullscreen()); } }catch(e){}
+  try{ if(screen.orientation&&screen.orientation.lock) await screen.orientation.lock('landscape'); }catch(e){}
+  setTimeout(fitCamera,400); setTimeout(fitCamera,900);
+}
+$('rotBtn').onclick=goLandscape; $('fsBtn').onclick=goLandscape;
+try{ if(localStorage.getItem('rps3d-portrait')==='1') document.body.classList.add('portrait-ok'); }catch(e){}
+$('rotSkip').onclick=()=>{ document.body.classList.add('portrait-ok'); try{ localStorage.setItem('rps3d-portrait','1'); }catch(e){} setTimeout(fitCamera,60); };
+addEventListener('resize',()=>{ if(innerWidth>innerHeight){ document.body.classList.remove('portrait-ok'); try{ localStorage.removeItem('rps3d-portrait'); }catch(e){} } });
+if(!canFS){ const n=document.querySelector('#splash .note'); if(n) n.textContent='לחוויה הכי טובה — סובב את הטלפון לרוחב'; }
+document.addEventListener('gesturestart',e=>e.preventDefault());
+if(!canFS) $('rotBtn').style.display='none';
+
+/* ---------- boot ---------- */
+if('serviceWorker' in navigator && location.protocol!=='file:'){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+await loadImages();
+try{ await Promise.race([Promise.all([document.fonts.load('60px "Gveret Levin"','אבן נייר מספריים דגל מלכודת'),document.fonts.load('60px "Suez One"','אבן')]),sleep(3500)]); }catch(e){}
+texCache.clear();
+[...$('pick').children].forEach(b=>b.innerHTML=`<img src="${svgURL(SVG[b.dataset.t])}">`);
+board=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+applyTheme(save.arena&&themeUnlocked(save.arena)?save.arena:'sunset');
+gameFactions={me:save.faction||'samurai',ai:'samurai'};
+newBoard(); randomSetupFor('ai'); randomSetupFor('me'); phase='menu';
+fitCamera(); renderer.setAnimationLoop(loop);
+setTimeout(()=>$('loading').classList.add('hide'),300);
+$('splash').classList.remove('hide'); cam.orbit=true; document.body.classList.add('pre');
+$('goBtn').onclick=async()=>{
+  ac(); sfx.battleStart();
+  $('splash').classList.add('hide');
+  goLandscape();
+  mainMenu();
+};
+window.__game=window.__test&&{preview:(f,e)=>{ gameFactions.me=f; if(e) gameFactions.ai=e; refreshSkins(); }, cam, board3:(id)=>buildObstacles(id), theme:(t)=>applyTheme(t), refreshAll:()=>{ pieces.forEach(p=>{ const pos=p.o.root.position.clone(), rot=p.o.root.rotation.y; scene.remove(p.o.root); p.o=buildSamurai(p.owner); p.o.root.position.copy(pos); p.o.root.rotation.y=rot; p.o.root.traverse(o=>o.userData.pid=p.id); scene.add(p.o.root); }); }, dbg:()=>({tw:tweens.length,ts:timeScale,time,cam:busyCam}), screen:(r,c,y)=>{ const v=cellPos(r,c); v.y=y; const s=toScreen(v); return [s.x,s.y]; }, sel:()=>!!selected, get board(){return board}, get phase(){return phase}, get turn(){return turn}, get busy(){return busy}, get viewer(){return viewer}, get mode(){return mode}, onCell, pieces:()=>pieces, play, playLevel, net, save};
+</script>
+</body>
+</html>
