@@ -245,6 +245,11 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 /* differences + find */
 .scene{position:absolute;border-radius:30px;overflow:hidden;box-shadow:0 10px 0 rgba(43,35,80,.18),0 18px 30px rgba(43,35,80,.15);border:8px solid #fff}
 .sitem{position:absolute;font-family:var(--emoji);line-height:1;transform:translate(-50%,-50%);pointer-events:none}
+.wig{transform-box:fill-box;transform-origin:50% 100%;animation:wig 3.6s ease-in-out infinite}
+@keyframes wig{0%,74%,100%{transform:rotate(0) translateY(0)}80%{transform:rotate(-13deg) translateY(-4px)}86%{transform:rotate(11deg) translateY(-2px)}92%{transform:rotate(-6deg)}}
+.wig.hint{animation:hintwig .8s ease-in-out infinite;filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px #ffe14d)}
+@keyframes hintwig{50%{transform:scale(1.4) rotate(-8deg) translateY(-6px)}}
+.wig.got{animation:none;transform:scale(1.2);filter:drop-shadow(0 0 6px #fff)}
 .ring{position:absolute;border:7px solid var(--coral);border-radius:50%;transform:translate(-50%,-50%) scale(0);animation:ringin .45s cubic-bezier(.3,1.6,.5,1) forwards;pointer-events:none;box-shadow:0 0 0 4px #fff}
 @keyframes ringin{to{transform:translate(-50%,-50%) scale(1)}}
 .ripple{position:absolute;width:60px;height:60px;border-radius:50%;border:4px solid rgba(255,255,255,.9);transform:translate(-50%,-50%);animation:ripple .5s forwards;pointer-events:none}
@@ -1496,11 +1501,14 @@ const ILL = (()=>{
   MUT.bird = [o=>{ const v=other(o.p.c); return {apply:q=>{q.p.c=v;}, hit:[0,-16]}; }, rem([0,-16])];
   // where the hidden friends can hide: dx,dy in object units; z<0 = behind the object (peeking out)
   const HIDE = {
-    house:[{dx:-50,dy:-58,z:1,sc:.55},{dx:50,dy:-58,z:1,sc:.55},{dx:-88,dy:-6,z:-1},{dx:88,dy:-6,z:-1},{dx:-40,dy:-130,z:1,sc:.55}],
-    tree:[{dx:0,dy:-4,z:-1},{dx:-40,dy:-104,z:1,sc:.6},{dx:30,dy:-132,z:1,sc:.6}],
-    pine:[{dx:0,dy:-8,z:-1}], bush:[{dx:-10,dy:-34,z:-1},{dx:22,dy:-30,z:-1}], fence:[{dx:0,dy:-34,z:-1}],
-    mushroom:[{dx:0,dy:0,z:-1,sc:.7}], car:[{dx:0,dy:-36,z:-1}], umbrella:[{dx:-30,dy:-4,z:1,sc:.7}],
-    sandcastle:[{dx:-30,dy:-40,z:-1},{dx:30,dy:-40,z:-1}], palm:[{dx:-4,dy:-6,z:-1}], bucket:[{dx:0,dy:-28,z:-1,sc:.7}], pond:[{dx:-70,dy:-6,z:1,sc:.7}],
+    house:[{dx:-50,dy:-58,z:1,sc:.62},{dx:50,dy:-58,z:1,sc:.62},{dx:-82,dy:-4,z:-1},{dx:82,dy:-4,z:-1},{dx:-44,dy:-128,z:1,sc:.6}],
+    tree:[{dx:0,dy:-2,z:-1},{dx:-40,dy:-104,z:1,sc:.62},{dx:30,dy:-132,z:1,sc:.62}],
+    pine:[{dx:-46,dy:-2,z:-1},{dx:46,dy:-2,z:-1}],
+    bush:[{dx:-12,dy:-42,z:-1},{dx:20,dy:-40,z:-1},{dx:-48,dy:-2,z:-1},{dx:48,dy:-2,z:-1}],
+    fence:[{dx:0,dy:-50,z:-1}],
+    mushroom:[{dx:-30,dy:0,z:-1,sc:.75},{dx:30,dy:0,z:-1,sc:.75}],
+    car:[{dx:-58,dy:0,z:-1},{dx:58,dy:0,z:-1}], umbrella:[{dx:-30,dy:-4,z:1,sc:.75}],
+    sandcastle:[{dx:-54,dy:0,z:-1},{dx:54,dy:0,z:-1}], palm:[{dx:-4,dy:-2,z:-1}], bucket:[{dx:0,dy:-32,z:-1,sc:.75}], pond:[{dx:-70,dy:-6,z:1,sc:.75}],
   };
   const BASE = {house:.85,tree:.8,pine:.85,bush:.8,flower:.85,mushroom:.75,fence:.9,pond:.9,cat:.8,dog:.8,duck:.75,bird:.75,butterfly:.8,ladybug:.85,snail:.85,mouse:.85,bunny:.8,sun:.8,cloud:1,balloon:.9,kite:.85,car:.85,sailboat:.75,umbrella:.85,bucket:.85,crab:.8,ball:.9,palm:.95,sandcastle:.85,grass:1,star:.9,fish:.8};
 
@@ -1565,8 +1573,11 @@ const ILL = (()=>{
   }
   function drawObj(o){
     const s = o.s, sx = o.flip ? -s : s;
-    return `<g transform="translate(${o.x.toFixed(1)} ${o.y.toFixed(1)}) scale(${sx.toFixed(3)} ${s.toFixed(3)})">${DRAW[o.type](o.p)}</g>`;
+    const inner = o.hidden ? `<g class="wig" data-h="${o.hid}" style="animation-delay:${o.wd}s">${DRAW[o.type](o.p)}</g>` : DRAW[o.type](o.p);
+    return `<g transform="translate(${o.x.toFixed(1)} ${o.y.toFixed(1)}) scale(${sx.toFixed(3)} ${s.toFixed(3)})">${inner}</g>`;
   }
+  function fullBox(o){ const [w,h]=sizeOf(o); const bw=w*o.s, bh=h*o.s; return CENTER.has(o.type) ? [o.x-bw/2, o.y-bh/2, bw, bh] : [o.x-bw/2, o.y-bh, bw, bh]; }
+  function overlapArea(a,b){ const x=Math.max(0, Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])), y=Math.max(0, Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])); return x*y; }
   function render(sc){
     const items = [...sc.objs.filter(o=>!o.removed), ...sc.extra].sort((a,b)=>a.z-b.z);
     const u = sc.uid + '_' + (++uidN);
@@ -1595,21 +1606,25 @@ const ILL = (()=>{
   // hidden friends: adds T hidden items to the scene and returns their hit spots
   function hideFriends(sc, type, T, lv){
     const spots = [];
-    sc.objs.forEach(o=>{ if(o.band!=='ground' && o.type!=='house') return; (HIDE[o.type]||[]).forEach(hd=>{ const pt = hitPt(o,[hd.dx,hd.dy]); spots.push({x:pt.x, y:pt.y, z:o.z + (hd.z<0 ? -.4 : .4), s:o.s*(hd.sc||.8), kind:hd.z<0?'behind':'front'}); }); });
-    for(let i=0;i<10;i++){ const y = sc.H*(.66+Math.random()*.3), d = .72+.45*((y/sc.H)-.6)/.37; spots.push({x: 40+Math.random()*(sc.W-80), y, z:1000+y, s:sc.k*d*.8, kind:'grass'}); }
-    const pref = lv<=0 ? {front:0, grass:1, behind:2} : lv===1 ? {grass:0, behind:0, front:1} : {behind:0, grass:1, front:2};
-    const ordered = shuffle(spots).sort((a,b)=>pref[a.kind]-pref[b.kind] + (Math.random()-.5)*1.2);
-    const chosen = [], [w,h] = SIZE[type], shrink = 1 - Math.min(lv,3)*.07;
+    sc.objs.forEach(o=>{ if(o.band!=='ground' && o.type!=='house') return; (HIDE[o.type]||[]).forEach(hd=>{ const pt = hitPt(o,[hd.dx,hd.dy]); spots.push({x:pt.x, y:pt.y, z:o.z + (hd.z<0 ? -.4 : .4), s:o.s*(hd.sc||.85), kind:hd.z<0?'behind':'front', host:o}); }); });
+    for(let i=0;i<10;i++){ const y = sc.H*(.68+Math.random()*.28), d = .72+.45*((y/sc.H)-.6)/.37; spots.push({x: 40+Math.random()*(sc.W-80), y, z:1000+y, s:sc.k*d*.85, kind:'grass'}); }
+    const pref = lv<=0 ? {front:0, grass:1, behind:1} : lv===1 ? {grass:0, behind:0, front:1} : {behind:0, grass:0, front:1};
+    const ordered = shuffle(spots).sort((a,b)=>pref[a.kind]-pref[b.kind] + (Math.random()-.5)*1.4);
+    const chosen = [], [w,h] = SIZE[type];
     for(const sp of ordered){
       if(chosen.length>=T) break;
-      const s = sp.s*shrink*.95;
+      const s = Math.max(sp.s, .58*sc.k);
       const cy = sp.y - h*s/2;
       if(sp.x - w*s/2 < 6 || sp.x + w*s/2 > sc.W-6 || sp.y - h*s < 6 || sp.y > sc.H-4) continue;
-      if(chosen.some(c=>Math.hypot(c.x-sp.x, c.cy-cy) < 85*sc.k)) continue;
-      const item = {type, p:P[type](), x:sp.x, y: CENTER.has(type) ? cy : sp.y, s, flip:Math.random()<.5, z:sp.z, hidden:true};
+      if(chosen.some(c=>Math.hypot(c.x-sp.x, c.cy-cy) < 90*sc.k)) continue;
+      const item = {type, p:P[type](), x:sp.x, y: CENTER.has(type) ? cy : sp.y, s, flip:Math.random()<.5, z:sp.z, hidden:true, hid:chosen.length, wd:(-Math.random()*3.6).toFixed(2)};
       sc.extra.push(item);
-      if(sp.kind==='grass') sc.extra.push({type:'grass', p:{}, x:sp.x + rnd(-6,6), y:sp.y+3, s:Math.max(s*1.25, .7*sc.k), flip:Math.random()<.5, z:sp.z+.5});
-      chosen.push({x:sp.x, y:sp.y, cy, r: Math.max(w,h)*s/2 + 18, found:false});
+      // nothing except the hiding place itself may cover the friend
+      const ib = fullBox(item), ia = ib[2]*ib[3];
+      sc.objs.forEach(o=>{ if(o===sp.host || o.removed || o.z <= item.z) return; if(overlapArea(fullBox(o), ib) > ia*.12) o.removed = true; });
+      // grass only hides the feet (about a third of the body)
+      if(sp.kind==='grass') sc.extra.push({type:'grass', p:{}, x:sp.x + rnd(-5,5), y:sp.y+3, s:Math.max(h*s*.36/40, .35*sc.k)*1.15, flip:Math.random()<.5, z:sp.z+.5});
+      chosen.push({x:sp.x, y:sp.y, cy, r: Math.max(w,h)*s/2 + 20, found:false, id:chosen.length});
     }
     return chosen;
   }
@@ -1666,13 +1681,18 @@ GAMES.find = {
     const spots = ILL.hideFriends(sc, type, T, lv);
     const scene = h(`<div class="scene" style="left:40px;top:66px;width:${SW}px;height:${SH}px">${ILL.render(sc)}</div>`); area.appendChild(scene);
     const found = h(`<div class="found-row"><span class="t">${ILL.icon(type, 50)}</span>${spots.map(()=>'<i></i>').join('')}</div>`); area.appendChild(found);
-    let cnt = 0;
+    let cnt = 0, misses = 0, lastFind = performance.now();
+    const wigOf = sp => scene.querySelector(`.wig[data-h="${sp.id}"]`);
+    const giveHint = () => { const sp = spots.find(s=>!s.found); if(!sp) return; const w = wigOf(sp); if(w && !w.classList.contains('hint')){ w.classList.add('hint'); sfx.tick(.8); say(pick(['תסתכל כאן... משהו זז!','הנה, רמז!','מי מציץ שם?'])); } };
+    (function idle(){ if(!ctx.alive(tok)) return; if(performance.now()-lastFind > 12000){ giveHint(); lastFind = performance.now(); } setTimeout(idle, 1000); })();
     scene.addEventListener('pointerdown', e=>{
       e.preventDefault(); if(!ctx.alive(tok)) return;
       const l = localPt(e, scene); l.x -= 8; l.y -= 8;
       const t = spots.filter(s=>!s.found).find(s=>Math.hypot(s.x-l.x, s.cy-l.y) < s.r);
+      if(!t){ misses++; if(misses>=3){ misses = 0; giveHint(); } }
       if(t){
-        t.found = true; cnt++;
+        t.found = true; cnt++; misses = 0; lastFind = performance.now();
+        const w = wigOf(t); if(w){ w.classList.remove('hint'); w.classList.add('got'); }
         scene.appendChild(h(`<div class="ring" style="left:${t.x}px;top:${t.cy}px;width:${t.r*2+10}px;height:${t.r*2+10}px"></div>`));
         found.children[cnt].classList.add('on');
         ctx.right(centerOf(found.children[cnt]), cnt===spots.length ? `מצאת את כל ה${tname}!` : String(cnt));
