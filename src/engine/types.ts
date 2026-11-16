@@ -18,6 +18,8 @@ export interface BlockDef {
   sign?: 1 | -1;
   /** Ice blocks always slide as far as they can. */
   ice?: boolean;
+  /** Echo link: the twin repeats this block's move one turn later (instead of immediately). */
+  echo?: boolean;
 }
 
 export interface LevelDef {

@@ -4,7 +4,7 @@
  *   npm run gen               (build all packs)
  *   npm run gen -- --merge    (combine tools/out/*.json into src/data/levels.json)
  */
-import { writeFileSync, existsSync, readFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, existsSync, readFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { evolve, harvest, mulberry, type GenCfg, type LinkKind } from './gen-core';
 import type { LevelDef } from '../src/engine/types';
 
@@ -110,6 +110,16 @@ const worlds: PackSpec[] = [
     },
     max: slack(0.25, 1),
   },
+  {
+    // Expert: echo twins repeat your move one turn later; mixed with instant twins from world 3 on.
+    id: 'w13', count: 20, target: ramp(9, 18),
+    cfg: (i) => ({
+      w: 6, h: 6, blocks: [6, 10], lens: [1, 2, 2, 3],
+      groups: i < 8 ? [{ size: 2, kind: 'echo' }] : [{ size: 2, kind: 'echo' }, pair('free')],
+      walls: [0, 2], require: 'echo', maxStates: 40_000,
+    }),
+    max: slack(0.2, 1),
+  },
 ];
 
 type MixKind = 'basic' | 'mirror' | 'parallel' | 'walls' | 'cross' | 'ice' | 'gate' | 'pad';
@@ -149,6 +159,9 @@ const challenges: PackSpec[] = [
   { id: 'daily', count: 90, target: (i) => 8 + (i % 7), cfg: (i) => mixCfg(i, 11000, EARLY), max: slack(0.3, 2) },
 ];
 
+/** Optional slice of a pack (`--part k/N`): build only indices j with j % N === k, to run one pack on several cores. */
+let PART: { k: number; n: number } | null = null;
+
 function buildPack(spec: PackSpec, seed: number): LevelDef[] {
   const t0 = Date.now();
   const out: (LevelDef | null)[] = Array(spec.count).fill(null);
@@ -171,7 +184,7 @@ function buildPack(spec: PackSpec, seed: number): LevelDef[] {
   };
   // Pass 1: cheap random seeds, harvested for every pending slot sharing the config.
   for (let round = 0; round < 40; round++) {
-    const pending = out.map((x, i) => (x ? -1 : i)).filter((i) => i >= 0);
+    const pending = out.map((x, i) => (x ? -1 : i)).filter((i) => i >= 0 && (!PART || i % PART.n === PART.k));
     if (!pending.length) break;
     const bySig = new Map<string, number[]>();
     for (const j of pending) {
@@ -189,6 +202,8 @@ function buildPack(spec: PackSpec, seed: number): LevelDef[] {
   }
   // Pass 2: hill-climb for the remaining (hard) slots.
   for (let j = 0; j < spec.count; j++) {
+    if (PART && j % PART.n !== PART.k) continue;
+    if (PART) console.log(`${spec.id}: level ${j + 1} (target ${spec.target(j)})`);
     for (let attempt = 0; !out[j]; attempt++) {
       if (attempt > 60) throw new Error(`pack ${spec.id}: cannot build level ${j + 1} (target ${spec.target(j)})`);
       const target = spec.target(j);
@@ -197,6 +212,7 @@ function buildPack(spec: PackSpec, seed: number): LevelDef[] {
       accept(j, evolve(r, spec.cfg(j), target, floor));
     }
   }
+  if (PART) return out as LevelDef[];
   // Smooth the curve: within each config band, order levels by optimal length.
   const bands = new Map<string, number[]>();
   for (let j = 0; j < spec.count; j++) {
@@ -232,9 +248,44 @@ if (args[0] === '--merge') {
   writeFileSync(file, JSON.stringify(packs));
   console.log(`wrote ${file}: ${Object.values(packs).reduce((a, p) => a + p.length, 0)} levels`);
 } else {
-  const only = new Set(args);
-  all.forEach((spec, k) => {
-    if (only.size && !only.has(spec.id)) return;
-    writeFileSync(`tools/out/${spec.id}.json`, JSON.stringify(buildPack(spec, 4242 + k * 101)));
-  });
+  const pi = args.indexOf('--part');
+  if (pi >= 0) {
+    const [k, n] = args[pi + 1].split('/').map(Number);
+    PART = { k, n };
+    args.splice(pi, 2);
+  }
+  if (args[0] === '--join') {
+    // Combine part files of one pack, then sort by difficulty within config bands.
+    const spec = all.find((x) => x.id === args[1])!;
+    const out: (LevelDef | null)[] = Array(spec.count).fill(null);
+    for (const f of readdirSync('tools/out').filter((f) => f.startsWith(`${spec.id}.part`))) {
+      (JSON.parse(readFileSync(`tools/out/${f}`, 'utf8')) as (LevelDef | null)[]).forEach((lv, j) => lv && (out[j] = lv));
+    }
+    if (out.some((x) => !x)) throw new Error(`${spec.id}: missing levels after join`);
+    const bands = new Map<string, number[]>();
+    for (let j = 0; j < spec.count; j++) {
+      const sig = JSON.stringify(spec.cfg(j));
+      if (!bands.has(sig)) bands.set(sig, []);
+      bands.get(sig)!.push(j);
+    }
+    const final = [...out] as LevelDef[];
+    for (const idx of bands.values()) {
+      const sorted = idx.map((j) => out[j]!).sort((x, y) => x.opt - y.opt);
+      idx.forEach((j, q) => {
+        const lv = { ...sorted[q], id: `${spec.id}-${String(j + 1).padStart(3, '0')}` };
+        lv.max = spec.max(lv.opt, j);
+        if (spec.time) lv.time = spec.time(lv.opt, j);
+        final[j] = lv;
+      });
+    }
+    writeFileSync(`tools/out/${spec.id}.json`, JSON.stringify(final));
+    console.log(`${spec.id}: joined, opt ${final.map((l) => l.opt).join(',')}`);
+  } else {
+    const only = new Set(args);
+    all.forEach((spec, k) => {
+      if (only.size && !only.has(spec.id)) return;
+      const levels = buildPack(spec, 4242 + k * 101 + (PART ? PART.k * 7919 : 0));
+      writeFileSync(PART ? `tools/out/${spec.id}.part${PART.k}.json` : `tools/out/${spec.id}.json`, JSON.stringify(levels));
+    });
+  }
 }

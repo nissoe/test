@@ -21,7 +21,7 @@ Dev shortcuts: `?lv=w5:12` opens world 5 level 12, `?ch=fog:3` / `?ch=rush` / `?
 
 | Pack | Levels | What it adds |
 |---|---|---|
-| World 1 · First Light | 20 | sliding basics, gold block, exits |
+| World 1 · First Light | 20 | dragging (1–3), mirror twins (4–9), parallel twins (10–14), both (15–20) |
 | World 2 · Mirror | 20 | mirror twins ⇄ |
 | World 3 · Parallel | 20 | parallel twins ⇉ |
 | World 4 · Stone | 20 | stone pillars, 1- and 3-long blocks |
@@ -33,6 +33,7 @@ Dev shortcuts: `?lv=w5:12` opens world 5 level 12, `?ch=fog:3` / `?ch=rush` / `?
 | World 10 · One Way | 20 | one-way arrow tiles |
 | World 11 · Double | 20 | two gold blocks, two exits, linked gold |
 | World 12 · Master | 20 | 7×7 board, everything combined |
+| World 13 · Expert · Echo | 20 | echo twins: the twin repeats your move one turn later |
 | Beat the Clock | 60 | time limit per level |
 | Perfect Path | 60 | move limit equals the optimum |
 | Fog | 40 | link identities hidden until moved |
@@ -68,6 +69,14 @@ src/services/    SaveStore (local now, cloud later), Backend interface (leaderbo
 src/hint.worker  solver in a Web Worker for paid hints
 tools/           generator, verifier, engine tests
 ```
+
+## Look and feel
+
+- Twins and gold blocks are characters: eyes that look at their twin (gold looks at the exit), blink,
+  squint when blocked, widen while dragged, and hop when the level is solved. Gray blocks have no face.
+- Each world has its own board palette ("By world" theme, default); shop themes override it.
+- Procedural sound: per-cell drag ticks, twin harmonies (fifth = mirror, octave = parallel), delayed echo
+  sound, reverb, and an optional ambient music bed.
 
 ## Economy (prepared for release)
 

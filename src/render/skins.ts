@@ -63,7 +63,31 @@ export const SKINS: BlockSkin[] = [
   },
 ];
 
+/** Default look for each world (used while the "By world" theme is equipped). */
+const wt = (id: string, bgTop: string, bgBottom: string, slab: string, tile: string, rim: string, particles: string, light = '#ffffff'): BoardTheme => ({
+  id, name: { he: id, en: id }, price: 0, bgTop, bgBottom, slab, tile, rim, fog: bgBottom, particles, light,
+});
+export const WORLD_THEMES: Record<string, BoardTheme> = {
+  w1: wt('w1', '#3a2a6e', '#0d0a1f', '#17132e', '#221d44', '#ffc845', '#ffe39a', '#fff2d6'),
+  w2: wt('w2', '#0f3a5c', '#03101c', '#0b1a2a', '#12293e', '#3ee8ff', '#9ff4ff', '#e6fbff'),
+  w3: wt('w3', '#0f3d2e', '#020f0b', '#0a1d16', '#123026', '#7cff6b', '#c4ffb8', '#effff0'),
+  w4: wt('w4', '#4a3a2c', '#120d09', '#2a2119', '#3a2e24', '#c9a27a', '#e8cfae', '#fff1e0'),
+  w5: wt('w5', '#4a1350', '#12041a', '#1f0c25', '#2e1336', '#ff6bd6', '#ffb3ec', '#ffe9f8'),
+  w6: wt('w6', '#1d4a66', '#06121c', '#0e2433', '#173a50', '#9fdcff', '#ffffff', '#eaf7ff'),
+  w7: wt('w7', '#6b2a14', '#170806', '#2a120b', '#3d1c12', '#ff9a3c', '#ffcb8f', '#ffe8d2'),
+  w8: wt('w8', '#2d1060', '#09031a', '#170c30', '#231446', '#b46bff', '#dcbcff', '#f3e9ff'),
+  w9: wt('w9', '#5a0f22', '#14030a', '#260a13', '#38101d', '#ff5470', '#ffb0bd', '#ffe8ec'),
+  w10: wt('w10', '#073f36', '#010e0c', '#08201c', '#0d3029', '#45ffb5', '#a8ffe0', '#e9fff8'),
+  w11: wt('w11', '#3d2f08', '#0e0a02', '#211a07', '#30260c', '#ffe066', '#fff0b0', '#fff8e1'),
+  w12: wt('w12', '#2a2a35', '#08080c', '#15151c', '#20202a', '#ffffff', '#d8d8e8', '#ffffff'),
+  w13: wt('w13', '#0b0a33', '#000004', '#0a0a1e', '#12122e', '#8fb8ff', '#b9ccff', '#e6edff'),
+};
+
 export const THEMES: BoardTheme[] = [
+  {
+    id: 'world', name: { he: 'לפי עולם', en: 'By world' }, price: 0,
+    bgTop: '#3a2a6e', bgBottom: '#0f3a5c', slab: '#14122a', tile: '#1f1c3d', rim: '#ffc845', fog: '#0b0820', particles: '#9f8cff', light: '#ffffff',
+  },
   {
     id: 'nebula', name: { he: 'ערפילית', en: 'Nebula' }, price: 0,
     bgTop: '#1a1040', bgBottom: '#05040d', slab: '#14122a', tile: '#1f1c3d', rim: '#6a5cff', fog: '#0b0820', particles: '#9f8cff', light: '#ffffff',
@@ -84,3 +108,5 @@ export const THEMES: BoardTheme[] = [
 
 export const skinById = (id: string) => SKINS.find((s) => s.id === id) ?? SKINS[0];
 export const themeById = (id: string) => THEMES.find((s) => s.id === id) ?? THEMES[0];
+/** Theme to show for a pack: the world's own look, unless the player equipped a specific theme. */
+export const themeFor = (equipped: string, pack: string) => (equipped === 'world' ? WORLD_THEMES[pack] ?? themeById('nebula') : themeById(equipped));

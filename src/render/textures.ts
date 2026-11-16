@@ -50,6 +50,27 @@ export function relationTexture(rel: 1 | -1, color: string) {
   });
 }
 
+/** Badge for echo links: dashed ring = "later". */
+export function echoTexture(rel: 1 | -1, color: string) {
+  return canvasTex(`echo${rel}${color}`, 128, (g, s) => {
+    g.clearRect(0, 0, s, s);
+    g.beginPath();
+    g.arc(s / 2, s / 2, s * 0.44, 0, Math.PI * 2);
+    g.fillStyle = 'rgba(8,6,20,0.85)';
+    g.fill();
+    g.setLineDash([s * 0.09, s * 0.06]);
+    g.lineWidth = s * 0.07;
+    g.strokeStyle = color;
+    g.stroke();
+    g.setLineDash([]);
+    g.fillStyle = '#fff';
+    g.font = `bold ${s * 0.44}px system-ui, sans-serif`;
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillText(rel === 1 ? '⇉' : '⇄', s / 2, s / 2 + s * 0.03);
+  });
+}
+
 export function arrowTexture() {
   return canvasTex('arrow', 128, (g, s) => {
     g.clearRect(0, 0, s, s);

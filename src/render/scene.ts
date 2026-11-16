@@ -9,7 +9,7 @@ import type { Session } from '../game/session';
 import type { Move } from '../engine/types';
 import type { MoveResult } from '../engine/puzzle';
 import { skinById, themeById, type BlockSkin, type BoardTheme } from './skins';
-import { arrowTexture, frostTexture, glyphTexture, gradientTexture, padTexture, relationTexture, softDot } from './textures';
+import { arrowTexture, echoTexture, frostTexture, glyphTexture, gradientTexture, padTexture, relationTexture, softDot } from './textures';
 
 const BLOCK_H = 0.62;
 const TILE_Y = 0;
@@ -30,6 +30,19 @@ interface BlockView {
   blocked: number;
   baseEmissive: number;
   pulse: number;
+  /** Delayed target (echo moves start a beat after the main move). */
+  delay: number;
+  delayTarget: number;
+  eyes?: Eyes;
+}
+
+/** Character face on top of twin and gold blocks. */
+interface Eyes {
+  face: THREE.Group;
+  pupils: THREE.Object3D[];
+  look: THREE.Vector2;
+  blink: number;
+  nextBlink: number;
 }
 
 interface Tether {
@@ -77,6 +90,9 @@ export class GameScene {
   private bursts: { pts: THREE.Points; vel: Float32Array; life: number }[] = [];
   private keyLight!: THREE.DirectionalLight;
   private rimLines: THREE.Mesh[] = [];
+  private party = 0;
+  private echoGhost: THREE.Mesh | null = null;
+  private echoPreview: THREE.Mesh | null = null;
   private halos: { m: number; mesh: THREE.Mesh }[] = [];
 
   private mode: Mode = 'showcase';
@@ -97,6 +113,7 @@ export class GameScene {
     base: number[];
     members: number[];
     rel: number[];
+    echo: { m: number; rel: number; base: number } | null;
     range: [number, number];
     solo: [number, number];
     cell: number;
@@ -186,10 +203,12 @@ export class GameScene {
     if (this.session) this.load(this.session, this.fog);
   }
 
-  setTheme(id: string) {
-    this.theme = themeById(id);
+  setTheme(theme: string | BoardTheme, reload = true) {
+    const th = typeof theme === 'string' ? themeById(theme) : theme;
+    if (th === this.theme) return;
+    this.theme = th;
     this.applyTheme();
-    if (this.session) this.load(this.session, this.fog);
+    if (reload && this.session) this.load(this.session, this.fog);
   }
 
   private applyTheme() {
@@ -245,6 +264,8 @@ export class GameScene {
     this.rimLines = [];
     this.hintGhosts = [];
     this.hintBlock = -1;
+    this.echoGhost = null;
+    this.echoPreview = null;
   }
 
   load(session: Session, fog = false) {
@@ -252,6 +273,11 @@ export class GameScene {
     this.fog = fog;
     this.drag = null;
     this.clearHalos();
+    if (this.echoPreview) {
+      (this.echoPreview.material as THREE.Material).dispose();
+      this.boardGroup.remove(this.echoPreview);
+      this.echoPreview = null;
+    }
     this.clearBoard();
     const p = session.puzzle;
     const th = this.theme;
@@ -399,6 +425,40 @@ export class GameScene {
     this.syncInstant();
   }
 
+  /** Twins and gold blocks are characters; gray blocks stay plain stones. */
+  private hasFace(i: number) {
+    const b = this.session!.puzzle.blocks[i];
+    return b.gold || (b.group >= 0 && (!this.fog || this.session!.revealed.has(b.group)));
+  }
+
+  private makeEyes(mesh: THREE.Mesh): Eyes {
+    const face = new THREE.Group();
+    face.position.set(0, BLOCK_H / 2 + 0.008, 0.12);
+    const inner = new THREE.Group();
+    inner.rotation.x = -Math.PI / 2; // local x/y lie on the block top, local z points up
+    face.add(inner);
+    const outline = new THREE.MeshBasicMaterial({ color: '#130d26', toneMapped: false });
+    const white = new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false });
+    const dark = new THREE.MeshBasicMaterial({ color: '#130d26', toneMapped: false });
+    const pupils: THREE.Object3D[] = [];
+    for (const x of [-0.17, 0.17]) {
+      const ring = new THREE.Mesh(new THREE.CircleGeometry(0.135, 24), outline);
+      ring.position.set(x, 0, 0);
+      const sclera = new THREE.Mesh(new THREE.CircleGeometry(0.115, 24), white);
+      sclera.position.set(x, 0, 0.002);
+      const pupil = new THREE.Group();
+      pupil.position.set(x, 0, 0.004);
+      const p = new THREE.Mesh(new THREE.CircleGeometry(0.062, 18), dark);
+      const shine = new THREE.Mesh(new THREE.CircleGeometry(0.017, 10), white);
+      shine.position.set(0.018, 0.02, 0.002);
+      pupil.add(p, shine);
+      inner.add(ring, sclera, pupil);
+      pupils.push(pupil);
+    }
+    mesh.add(face);
+    return { face, pupils, look: new THREE.Vector2(), blink: 0, nextBlink: 1 + Math.random() * 4 };
+  }
+
   private groupColor(g: number) {
     return this.skin.palette[g % this.skin.palette.length];
   }
@@ -459,21 +519,23 @@ export class GameScene {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     this.boardGroup.add(mesh);
-    const view: BlockView = { i, mesh, mat, pos: 0, vel: 0, target: 0, exiting: -1, baseEmissive, pulse: 0, blocked: 0 };
+    const view: BlockView = { i, mesh, mat, pos: 0, vel: 0, target: 0, exiting: -1, baseEmissive, pulse: 0, blocked: 0, delay: 0, delayTarget: 0 };
 
     // Glyph on top: group symbol, or a diamond on gold.
     const showGlyph = blk.gold || (blk.group >= 0 && !this.fog) || blk.ice;
     if (showGlyph) {
       const tex = blk.gold ? glyphTexture(3) : blk.group >= 0 && !this.fog ? glyphTexture(blk.group) : glyphTexture(5);
+      const face = this.hasFace(i);
       const gm = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.5, 0.5),
+        new THREE.PlaneGeometry(face ? 0.3 : 0.5, face ? 0.3 : 0.5),
         new THREE.MeshBasicMaterial({ map: tex, transparent: true, color: blk.gold ? '#fff4c9' : '#ffffff', opacity: blk.ice ? 0.5 : 0.9, depthWrite: false, toneMapped: false }),
       );
       gm.rotation.x = -Math.PI / 2;
-      gm.position.y = BLOCK_H / 2 + 0.005;
+      gm.position.set(0, BLOCK_H / 2 + 0.005, face ? -0.25 : 0);
       mesh.add(gm);
       view.glyph = gm;
     }
+    if (this.hasFace(i)) view.eyes = this.makeEyes(mesh);
     if (sk.edges && !blk.gold) {
       const eg = new THREE.EdgesGeometry(new THREE.BoxGeometry(lx - 0.02, BLOCK_H - 0.02, lz - 0.02));
       const el = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({ color: color.clone().multiplyScalar(2), toneMapped: false }));
@@ -539,7 +601,8 @@ export class GameScene {
       t.badge.position.copy(apex).add(new THREE.Vector3(0, 0.12, 0));
       const inv = s.state[p.n] ? -1 : 1;
       const rel = (p.blocks[t.a].sign * p.blocks[t.b].sign * inv) as 1 | -1;
-      (t.badge.material as THREE.SpriteMaterial).map = relationTexture(rel, '#' + t.color.getHexString());
+      const hex = '#' + t.color.getHexString();
+      (t.badge.material as THREE.SpriteMaterial).map = p.blocks[t.a].echo ? echoTexture(rel, hex) : relationTexture(rel, hex);
       (t.badge.material as THREE.SpriteMaterial).needsUpdate = true;
     }
   }
@@ -559,15 +622,88 @@ export class GameScene {
       v.mesh.scale.setScalar(1);
       if (pos >= 0) v.pos = v.target = pos;
       v.vel = 0;
+      v.delay = 0;
       this.placeBlock(v);
     }
     this.refreshColors();
     this.updateTethers();
     this.clearHint();
+    this.updateEchoGhost();
   }
 
-  /** Animate visuals toward the session state (after move/undo). */
-  syncAnimated(exited: number[] = []) {
+  /** Ghost at the spot a pending echo will try to reach after the next move. */
+  private updateEchoGhost() {
+    if (this.echoGhost) {
+      (this.echoGhost.material as THREE.Material).dispose();
+      this.boardGroup.remove(this.echoGhost);
+      this.echoGhost = null;
+    }
+    const s = this.session!;
+    const p = s.puzzle;
+    const pb = s.state[p.n + 1] - 1;
+    if (pb < 0 || s.state[pb] < 0) return;
+    const blk = p.blocks[pb];
+    const max = (blk.axis === 'h' ? p.w : p.h) - blk.len;
+    const v = this.views[pb];
+    const ghost = new THREE.Mesh(
+      v.mesh.geometry,
+      new THREE.MeshBasicMaterial({ color: this.groupColor(blk.group), transparent: true, opacity: 0.25, depthWrite: false, toneMapped: false }),
+    );
+    const saved = v.pos;
+    v.pos = Math.max(0, Math.min(max, s.state[pb] + s.state[p.n + 2]));
+    this.blockCenter(v, ghost.position);
+    v.pos = saved;
+    this.boardGroup.add(ghost);
+    this.echoGhost = ghost;
+  }
+
+  private updateEyes(v: BlockView, dt: number, dragging: boolean) {
+    const e = v.eyes!;
+    const s = this.session!;
+    const p = s.puzzle;
+    const b = p.blocks[v.i];
+    const me = this.blockCenter(v, this.tmpA);
+    const goal = this.tmpB.set(0, 0, 0);
+    const d = this.drag;
+    const pending = s.state[p.n + 1] - 1;
+    if (d && d.b === v.i) {
+      // Look where you're dragging.
+      if (b.axis === 'h') goal.set(Math.sign(d.d), 0, 0);
+      else goal.set(0, 0, Math.sign(d.d));
+    } else if (d && dragging) {
+      goal.copy(this.blockCenter(this.views[d.b], new THREE.Vector3())).sub(me);
+    } else if (pending === v.i) {
+      // Echo twin stares toward where it's about to go.
+      const dd = Math.sign(s.state[p.n + 2]);
+      if (b.axis === 'h') goal.set(dd, 0, 0);
+      else goal.set(0, 0, dd);
+    } else if (b.gold) {
+      const ex = p.def.exits.find((x) => (b.axis === 'h' ? x.side === 'r' || x.side === 'l' : x.side === 't' || x.side === 'b')) ?? p.def.exits[0];
+      goal.set(this.cellX(ex.x), 0, this.cellZ(ex.y)).sub(me);
+    } else if (b.group >= 0) {
+      const partner = p.groups[b.group].find((m) => m !== v.i && s.state[m] >= 0);
+      if (partner !== undefined) goal.copy(this.blockCenter(this.views[partner], new THREE.Vector3())).sub(me);
+    }
+    goal.y = 0;
+    if (goal.lengthSq() > 1e-6) goal.normalize().multiplyScalar(0.045);
+    e.look.lerp(new THREE.Vector2(goal.x, -goal.z), Math.min(1, dt * 10));
+    for (const pu of e.pupils) pu.position.set(pu.position.x > 0 ? 0.17 + e.look.x : -0.17 + e.look.x, e.look.y, 0.004);
+    // Blink now and then; squint while blocked; wide eyes while dragged; happy squash at the party.
+    e.nextBlink -= dt;
+    if (e.nextBlink <= 0) {
+      e.blink = 0.13;
+      e.nextBlink = 2 + Math.random() * 4;
+    }
+    e.blink = Math.max(0, e.blink - dt);
+    let sy = e.blink > 0 ? 0.12 : 1;
+    if (v.blocked > 0) sy = 0.35;
+    if (this.party > 0) sy = 0.45;
+    const sc = dragging ? 1.15 : 1;
+    e.face.scale.lerp(new THREE.Vector3(sc, 1, sy * sc), Math.min(1, dt * 18));
+  }
+
+  /** Animate visuals toward the session state (after move/undo). An echoed block starts a beat later. */
+  syncAnimated(exited: number[] = [], echoed: Move | null = null) {
     const s = this.session!;
     const p = s.puzzle;
     for (const v of this.views) {
@@ -591,8 +727,16 @@ export class GameScene {
         v.mesh.visible = false;
       }
     }
+    if (echoed) {
+      const v = this.views[echoed.b];
+      v.delayTarget = v.target;
+      v.target = v.pos;
+      v.delay = 0.28;
+      v.pulse = 1;
+    }
     this.refreshColors();
     this.clearHint();
+    this.updateEchoGhost();
   }
 
   refreshColors() {
@@ -609,10 +753,12 @@ export class GameScene {
           new THREE.MeshBasicMaterial({ map: glyphTexture(b.group), transparent: true, depthWrite: false, toneMapped: false }),
         );
         gm.rotation.x = -Math.PI / 2;
-        gm.position.y = BLOCK_H / 2 + 0.005;
+        gm.position.set(0, BLOCK_H / 2 + 0.005, -0.25);
+        gm.scale.setScalar(0.6);
         v.mesh.add(gm);
         v.glyph = gm;
         v.pulse = 1;
+        if (!v.eyes) v.eyes = this.makeEyes(v.mesh);
       }
     }
   }
@@ -642,6 +788,24 @@ export class GameScene {
       this.boardGroup.add(ghost);
       this.hintGhosts.push(ghost);
     });
+  }
+
+  /** While dragging an echo twin: a ghost shows where its partner will follow next turn. */
+  private makeEchoPreview(b: number): { m: number; rel: number; base: number } | null {
+    const s = this.session!;
+    const p = s.puzzle;
+    const blk = p.blocks[b];
+    if (!blk.echo || blk.group < 0) return null;
+    const m = p.groups[blk.group].find((x) => x !== b && s.state[x] >= 0);
+    if (m === undefined) return null;
+    const rel = blk.sign * p.blocks[m].sign * (s.state[p.n] ? -1 : 1);
+    this.echoPreview = new THREE.Mesh(
+      this.views[m].mesh.geometry,
+      new THREE.MeshBasicMaterial({ color: this.groupColor(blk.group), transparent: true, opacity: 0.3, depthWrite: false, toneMapped: false }),
+    );
+    this.echoPreview.visible = false;
+    this.boardGroup.add(this.echoPreview);
+    return { m, rel, base: s.state[m] };
   }
 
   /** The driver could go further alone: its twin is what blocks it. Flash the twins red. */
@@ -729,6 +893,7 @@ export class GameScene {
   }
 
   celebrate() {
+    this.party = 2.2;
     const p = this.session!.puzzle;
     const palette = [GOLD, ...this.skin.palette];
     for (let k = 0; k < 6; k++) {
@@ -805,6 +970,7 @@ export class GameScene {
       members: idx,
       rel,
       base: idx.map((m) => s.state[m]),
+      echo: this.makeEchoPreview(b),
       range: s.range(b),
       solo: s.puzzle.soloRange(s.state, b),
       cell: 0,
@@ -858,6 +1024,16 @@ export class GameScene {
       }
     } else d.bumped = false;
     d.d = raw;
+    if (d.echo && this.echoPreview) {
+      const v = this.views[d.echo.m];
+      const blk = this.session!.puzzle.blocks[d.echo.m];
+      const max = (blk.axis === 'h' ? this.session!.puzzle.w : this.session!.puzzle.h) - blk.len;
+      const saved = v.pos;
+      v.pos = Math.max(0, Math.min(max, d.echo.base + Math.round(raw) * d.echo.rel));
+      this.blockCenter(v, this.echoPreview.position);
+      v.pos = saved;
+      this.echoPreview.visible = Math.round(raw) !== 0;
+    }
     const cell = Math.max(-neg, Math.min(pos, Math.round(raw)));
     if (cell !== d.cell) {
       d.cell = cell;
@@ -966,6 +1142,10 @@ export class GameScene {
       for (const v of this.views) {
         if (!v.mesh.visible) continue;
         const dragging = this.drag?.members.includes(v.i);
+        if (v.delay > 0) {
+          v.delay -= dt;
+          if (v.delay <= 0) v.target = v.delayTarget;
+        }
         if (!dragging) {
           const acc = -k * (v.pos - v.target) - c * v.vel;
           v.vel += acc * dt;
@@ -977,9 +1157,11 @@ export class GameScene {
         }
         if (Math.abs(v.vel) > 0.0001 || dragging) moved = true;
         this.placeBlock(v);
-        // Lift while dragged.
+        // Lift while dragged; characters hop when the level is solved.
         const lift = dragging ? 0.08 : 0;
         v.mesh.position.y += lift;
+        if (this.party > 0 && v.eyes) v.mesh.position.y += Math.abs(Math.sin(this.elapsed * 9 + v.i * 1.3)) * 0.22 * Math.min(1, this.party);
+        if (v.eyes) this.updateEyes(v, dt, !!dragging);
         if (v.exiting >= 0) {
           v.exiting += dt;
           const sc = Math.max(0.01, 1 - Math.max(0, v.exiting - 0.25) * 2.2);
@@ -1002,6 +1184,8 @@ export class GameScene {
         hl.mesh.position.y = 0.04;
         hl.mesh.scale.setScalar(1 + Math.sin(this.elapsed * 8) * 0.06);
       }
+      this.party = Math.max(0, this.party - dt);
+      if (this.echoGhost) (this.echoGhost.material as THREE.MeshBasicMaterial).opacity = 0.18 + Math.sin(this.elapsed * 5) * 0.1;
       if (moved || this.elapsed < 0.2) this.updateTethers();
       // Tether emphasis when its group is dragged.
       for (const t of this.tethers) {

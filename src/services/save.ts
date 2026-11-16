@@ -46,9 +46,9 @@ export function defaultProfile(): Profile {
     stars: {},
     bestMoves: {},
     coins: 150,
-    owned: ['skin:prism', 'theme:nebula'],
+    owned: ['skin:prism', 'theme:world', 'theme:nebula'],
     equippedSkin: 'prism',
-    equippedTheme: 'nebula',
+    equippedTheme: 'world',
     seenIntros: [],
     rushBest: 0,
     dailyLastDay: -1,
@@ -69,6 +69,11 @@ export class LocalSaveStore implements SaveStore {
       if (raw) {
         const p: Profile = { ...defaultProfile(), ...JSON.parse(raw) };
         if (!p.langChosen) p.settings.lang = 'he';
+        // Per-world themes arrived later: give them to existing players who still had the old default.
+        if (!p.owned.includes('theme:world')) {
+          p.owned.push('theme:world');
+          if (p.equippedTheme === 'nebula') p.equippedTheme = 'world';
+        }
         return p;
       }
     } catch {

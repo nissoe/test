@@ -27,7 +27,7 @@ const pick = <T>(r: Rng, a: T[]) => a[Math.floor(r() * a.length)];
  * mirror / parallel / any: members share an axis (any = random signs).
  * cross: members on different axes.  free: any axis, random signs.
  */
-export type LinkKind = 'mirror' | 'parallel' | 'cross' | 'any' | 'free';
+export type LinkKind = 'mirror' | 'parallel' | 'cross' | 'any' | 'free' | 'echo';
 export interface GenCfg {
   w: number;
   h: number;
@@ -42,7 +42,7 @@ export interface GenCfg {
   golds?: 1 | 2;
   goldLinkChance?: number;
   /** Mechanic that must appear on the optimal path. */
-  require?: 'link' | 'ice' | 'gate' | 'pad' | 'arrow' | 'cross' | null;
+  require?: 'link' | 'ice' | 'gate' | 'pad' | 'arrow' | 'cross' | 'echo' | null;
   maxStates?: number;
 }
 
@@ -125,7 +125,7 @@ function buildSeed(r: Rng, cfg: GenCfg): Seed | null {
     if (g === 0 && cfg.goldLinkChance && r() < cfg.goldLinkChance) members.push(0);
     while (members.length < grp.size && available.length) {
       let cand: number;
-      if (!members.length || grp.kind === 'free') cand = available.splice(Math.floor(r() * available.length), 1)[0];
+      if (!members.length || grp.kind === 'free' || grp.kind === 'echo') cand = available.splice(Math.floor(r() * available.length), 1)[0];
       else {
         const want = (i: number) => (grp.kind === 'cross' ? members.length === 1 ? blocks[i].axis !== blocks[members[0]].axis : true : blocks[i].axis === blocks[members[0]].axis);
         const opts = available.filter(want);
@@ -144,6 +144,7 @@ function buildSeed(r: Rng, cfg: GenCfg): Seed | null {
       else sign = r() < 0.5 ? 1 : -1;
       if (grp.kind === 'cross' && r() < 0.5) sign = 1;
       blocks[m].sign = sign;
+      if (grp.kind === 'echo') blocks[m].echo = true;
     });
     g++;
   }
@@ -255,7 +256,8 @@ function analyze(def: Def, maxStates: number): Analysis | null {
 /** Find a start state at exactly distance d that passes quality filters. */
 function pickAt(a: Analysis, def: Def, d: number, cfg: GenCfg, r: Rng): Candidate | null {
   const list: number[] = [];
-  for (let i = 0; i < a.states.length; i++) if (a.dist[i] === d) list.push(i);
+  // A level can't start with an echo already pending.
+  for (let i = 0; i < a.states.length; i++) if (a.dist[i] === d && a.states[i][a.p.n + 1] === 0) list.push(i);
   for (let t = 0; t < 8 && list.length; t++) {
     const sid = list.splice(Math.floor(r() * list.length), 1)[0];
     if (!usesMechanic(a.p, a.states, a.fwd, a.dist, sid, cfg)) continue;
@@ -458,6 +460,10 @@ function usesMechanic(p: Puzzle, states: State[], fwd: number[][], dist: Int32Ar
       if (req === 'ice' && blk.ice) return true;
     }
     if (req === 'pad' && a[p.n] !== b[p.n]) return true;
+    if (req === 'echo' && a[p.n + 1] > 0) {
+      const eb = a[p.n + 1] - 1;
+      if (a[eb] !== b[eb] && p.blocks[eb].echo) return true;
+    }
     if (req === 'gate' || req === 'arrow') {
       const occ = p.occupancy(b);
       const prev = p.occupancy(a);

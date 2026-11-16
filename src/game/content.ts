@@ -12,7 +12,7 @@ export interface WorldMeta {
   color: string;
   intro: { title: L; body: L; icon: string };
   /** Animated mini-diagram shown in the intro card. */
-  demo?: 'mirror' | 'parallel' | 'cross' | 'pad' | 'triple';
+  demo?: 'mirror' | 'parallel' | 'cross' | 'pad' | 'triple' | 'echo';
 }
 
 export const WORLDS: WorldMeta[] = [
@@ -125,6 +125,18 @@ export const WORLDS: WorldMeta[] = [
       title: { he: 'המאסטר', en: 'The Master' },
       body: { he: 'לוח 7×7 וכל המכניקות ביחד. בהצלחה.', en: 'A 7×7 board and every mechanic at once. Good luck.' },
     },
+  },
+  {
+    id: 'w13', name: { he: 'מומחה · הד', en: 'Expert · Echo' }, color: '#8fb8ff',
+    intro: {
+      icon: '⧖',
+      title: { he: 'תאומי הד', en: 'Echo twins' },
+      body: {
+        he: 'תאום הד לא זז מיד — הוא חוזר על המהלך שלך בתור הבא, אחרי המהלך שאתה עושה. רוח רפאים מראה לאן הוא ינסה להגיע. אם משהו חוסם אותו, הוא נעצר כמה שהוא יכול. ואם תזיז אותו בעצמך לפני — ההד מתבטל. חיבור הד מסומן בעיגול מקווקו.',
+        en: 'An echo twin doesn’t move right away — it repeats your move on the next turn, after the move you make then. A ghost shows where it will try to go. If something blocks it, it goes as far as it can. Move it yourself first and the echo is cancelled. Echo links have a dashed ring.',
+      },
+    },
+    demo: 'echo',
   },
 ];
 

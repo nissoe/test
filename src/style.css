@@ -218,3 +218,18 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 @media (prefers-reduced-motion: reduce) { .demo * { animation-duration: 8s !important; } }
 .d-hand { left: 66px; top: 40px; }
 .demo-cross .d-b .d-lbl { writing-mode: vertical-rl; font-size: 10px; }
+
+/* Echo: you move (turn 1) — nothing; you move something else (turn 2) — the twin repeats turn 1. */
+.demo-echo .d-a, .demo-echo .d-hand { animation: eA 5s ease-in-out infinite; }
+.demo-echo .d-b { animation: eB 5s ease-in-out infinite; border: 2px dashed rgba(255,255,255,.7); }
+.demo-echo .d-grey { display: none; }
+.d-grey2 { position: absolute; left: 196px; top: 40px; width: 26px; height: 40px; border-radius: 8px; background: linear-gradient(180deg, #8a90b0, #5d6385); animation: eG 5s ease-in-out infinite; }
+.d-turn { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; }
+.d-turn span { width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; font-size: 11px; font-weight: 800; background: rgba(255,255,255,.1); color: #fff; }
+.d-turn .t1 { animation: eT1 5s infinite; }
+.d-turn .t2 { animation: eT2 5s infinite; }
+@keyframes eA { 0%, 10% { transform: translateX(0) } 28%, 88% { transform: translateX(60px) } 98%, 100% { transform: translateX(0) } }
+@keyframes eG { 0%, 45% { transform: translateY(0) } 58%, 88% { transform: translateY(26px) } 98%, 100% { transform: translateY(0) } }
+@keyframes eB { 0%, 62% { transform: translateX(0) } 76%, 88% { transform: translateX(-60px) } 98%, 100% { transform: translateX(0) } }
+@keyframes eT1 { 0%, 8% { background: rgba(255,255,255,.1) } 12%, 40% { background: var(--accent); color: #0b0820 } 44%, 100% { background: rgba(255,255,255,.1) } }
+@keyframes eT2 { 0%, 44% { background: rgba(255,255,255,.1) } 48%, 88% { background: var(--accent); color: #0b0820 } 92%, 100% { background: rgba(255,255,255,.1) } }

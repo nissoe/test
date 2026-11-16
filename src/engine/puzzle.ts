@@ -1,9 +1,11 @@
 import type { Axis, Dir, LevelDef, Move, Side } from './types';
 
 /**
- * State layout: one Int8Array of length n+1.
- *   s[i]  = position of block i along its axis (x for 'h', y for 'v'), or -1 once a gold block has exited.
- *   s[n]  = global polarity (0 = links as authored, 1 = every link inverted).
+ * State layout: one Int8Array of length n+3.
+ *   s[i]   = position of block i along its axis (x for 'h', y for 'v'), or -1 once a gold block has exited.
+ *   s[n]   = global polarity (0 = links as authored, 1 = every link inverted).
+ *   s[n+1] = pending echo: index+1 of the block that will repeat a move next turn (0 = none).
+ *   s[n+2] = pending echo distance (signed cells).
  */
 export type State = Int8Array;
 
@@ -18,6 +20,7 @@ export interface StaticBlock {
   group: number; // -1 if unlinked
   sign: number;
   ice: boolean;
+  echo: boolean;
 }
 
 export interface MoveResult {
@@ -26,6 +29,8 @@ export interface MoveResult {
   exited: number[];
   /** Number of polarity flips triggered. */
   flips: number;
+  /** The delayed echo that played out during this move, if any. */
+  echoed: Move | null;
 }
 
 export class Puzzle {
@@ -59,6 +64,7 @@ export class Puzzle {
       group: b.group ?? -1,
       sign: b.sign ?? 1,
       ice: !!b.ice,
+      echo: !!b.echo,
     }));
     const gmap = new Map<number, number[]>();
     this.blocks.forEach((b, i) => {
@@ -87,7 +93,7 @@ export class Puzzle {
   }
 
   initial(): State {
-    const s = new Int8Array(this.n + 1);
+    const s = new Int8Array(this.n + 3);
     this.def.blocks.forEach((b, i) => (s[i] = b.axis === 'h' ? b.x : b.y));
     s[this.n] = this.def.pol ?? 0;
     return s;
@@ -124,7 +130,7 @@ export class Puzzle {
   /** Members that move when `driver` is dragged (alive only), with their relative direction factor. */
   linked(s: State, driver: number, solo = false): { idx: number[]; rel: number[] } {
     const b = this.blocks[driver];
-    if (b.group < 0 || solo) return { idx: [driver], rel: [1] };
+    if (b.group < 0 || solo || b.echo) return { idx: [driver], rel: [1] };
     const inv = s[this.n] ? -1 : 1;
     const idx: number[] = [];
     const rel: number[] = [];
@@ -238,6 +244,31 @@ export class Puzzle {
     const t = new Int8Array(s);
     const { idx, rel } = this.linked(s, mv.b);
     for (let j = 0; j < idx.length; j++) t[idx[j]] = s[idx[j]] + mv.d * rel[j];
+    // Echo: last turn's scheduled repeat plays now, sliding as far as it can (up to its distance).
+    // Moving the echoing block yourself cancels its echo.
+    let echoed: Move | null = null;
+    const pb = s[n + 1] - 1;
+    const pd = s[n + 2];
+    t[n + 1] = 0;
+    t[n + 2] = 0;
+    if (pb >= 0 && pb !== mv.b && t[pb] >= 0 && pd !== 0) {
+      const dir = pd > 0 ? 1 : -1;
+      const k = Math.min(Math.abs(pd), this.reach(t, pb, dir, undefined, true));
+      if (k) {
+        t[pb] += dir * k;
+        echoed = { b: pb, d: dir * k };
+      }
+    }
+    // Schedule this move's echo on the driver's echo twin.
+    const drv = this.blocks[mv.b];
+    if (drv.echo && drv.group >= 0) {
+      const partner = this.groups[drv.group].find((m) => m !== mv.b && t[m] >= 0);
+      if (partner !== undefined) {
+        const inv = s[n] ? -1 : 1;
+        t[n + 1] = partner + 1;
+        t[n + 2] = mv.d * drv.sign * this.blocks[partner].sign * inv;
+      }
+    }
     let flips = 0;
     if (before) {
       const after = this.occupancy(t);
@@ -259,7 +290,7 @@ export class Puzzle {
         }
       }
     }
-    return { state: t, exited, flips };
+    return { state: t, exited, flips, echoed };
   }
 
   isLegal(s: State, mv: Move): boolean {

@@ -133,6 +133,30 @@ const base = (o: Partial<LevelDef>): LevelDef => ({
   check('two golds: needs 2 moves', res.path?.length === 2);
 }
 
+// 10. Echo twins: the twin repeats the move one turn later, as far as it can.
+{
+  const p = new Puzzle(base({
+    blocks: [
+      { x: 0, y: 2, len: 2, axis: 'h', gold: true },
+      { x: 0, y: 0, len: 2, axis: 'h', group: 0, sign: 1, echo: true },
+      { x: 0, y: 4, len: 2, axis: 'h', group: 0, sign: 1, echo: true },
+      { x: 0, y: 5, len: 1, axis: 'h' },
+    ],
+    walls: [[3, 4]],
+  }));
+  const s0 = p.initial();
+  check('echo: no instant twin movement', p.range(s0, 1)[1] === 4);
+  const r1 = p.apply(s0, { b: 1, d: 2 });
+  check('echo: twin waits', r1.state[2] === 0 && r1.state[p.n + 1] === 3 && r1.state[p.n + 2] === 2);
+  const r2 = p.apply(r1.state, { b: 3, d: 1 });
+  check('echo: twin repeats next turn, stopped by wall', r2.state[2] === 1 && r2.echoed?.d === 1);
+  check('echo: nothing pending after unlinked move', r2.state[p.n + 1] === 0);
+  const r3 = p.apply(r1.state, { b: 2, d: 1 });
+  check('echo: moving the echoing block cancels its echo and schedules the partner', r3.state[2] === 1 && r3.state[1] === 2 && r3.state[p.n + 1] === 2);
+  const res = solve(p, s0);
+  check('echo: solvable', !!res.path);
+}
+
 if (failed) {
   console.error(`${failed} engine test(s) failed`);
   process.exit(1);

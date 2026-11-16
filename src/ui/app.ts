@@ -2,7 +2,7 @@ import { GameScene } from '../render/scene';
 import { Session } from '../game/session';
 import { CHALLENGES, LEVEL_INTROS, RUSH_SECONDS, WORLDS, dailyLevel, dayIndex, packLevels, starsFor, type ChallengeId } from '../game/content';
 import { LocalSaveStore, defaultProfile, type Profile, type SaveStore } from '../services/save';
-import { SKINS, THEMES } from '../render/skins';
+import { SKINS, THEMES, themeFor } from '../render/skins';
 import { getLang, setLang, t, tr } from '../i18n';
 import { configureFeedback, sfx, unlockAudioOnFirstGesture } from '../audio';
 import { h, starsRow } from './dom';
@@ -65,7 +65,6 @@ export class App {
     });
     if (this.profile.settings.quality === 'low') this.scene.setQuality('low');
     this.scene.setSkin(this.profile.equippedSkin);
-    this.scene.setTheme(this.profile.equippedTheme);
     this.showcase();
     this.home();
     if (import.meta.env.DEV) {
@@ -75,7 +74,7 @@ export class App {
       const ch = q.get('ch');
       if (lv) {
         const [pack, n] = lv.split(':');
-        this.profile.seenIntros.push(pack);
+        if (q.get('intro') !== '1') this.profile.seenIntros.push(pack);
         this.startCampaign(pack, Number(n) - 1);
       } else if (ch) {
         const [id, n] = ch.split(':');
@@ -148,6 +147,7 @@ export class App {
     const lv = packLevels(nx.pack)[nx.index];
     this.scene.setMode('showcase');
     this.scene.insets = { top: 0, bottom: 0 };
+    this.scene.setTheme(themeFor(this.profile.equippedTheme, nx.pack), false);
     this.scene.load(new Session(lv));
   }
 
@@ -326,7 +326,7 @@ export class App {
               this.scene.setSkin(id);
             } else {
               p.equippedTheme = id;
-              this.scene.setTheme(id);
+              this.scene.setTheme(themeFor(id, this.nextCampaign().pack));
             }
             this.save();
             this.shop();
@@ -358,7 +358,7 @@ export class App {
         h(
           'div.scroll',
           sec(t('blockSkins'), SKINS.map((s) => item('skin', s.id, tr(s.name), s.price, s.palette.slice(0, 4)))),
-          sec(t('boardThemes'), THEMES.map((th) => item('theme', th.id, tr(th.name), th.price, [th.bgTop, th.bgBottom, th.rim, th.tile]))),
+          sec(t('boardThemes'), THEMES.map((th) => item('theme', th.id, tr(th.name), th.price, th.id === 'world' ? ['#ffc845', '#3ee8ff', '#7cff6b', '#ff6bd6'] : [th.bgTop, th.bgBottom, th.rim, th.tile]))),
           sec(t('premium'), premium),
         ),
       ),
@@ -403,7 +403,7 @@ export class App {
                   this.profile.settings = s;
                   this.save();
                   this.scene.setSkin(this.profile.equippedSkin);
-                  this.scene.setTheme(this.profile.equippedTheme);
+                  this.scene.setTheme(themeFor(this.profile.equippedTheme, 'w1'));
                   this.home();
                 }),
             },
@@ -462,6 +462,7 @@ export class App {
     this.play = play;
     this.scene.setMode('play');
     this.scene.insets = { top: 150, bottom: 130 };
+    this.scene.setTheme(themeFor(this.profile.equippedTheme, play.pack), false);
     this.scene.load(play.session, play.mode === 'fog');
     this.gameHud();
     if (play.mode === 'campaign' && play.pack === 'w1' && play.index === 0) {
@@ -557,7 +558,8 @@ export class App {
       this.scene.padFlash();
     }
     if (res.exited.length) sfx.exit();
-    this.scene.syncAnimated(res.exited);
+    this.scene.syncAnimated(res.exited, res.echoed);
+    if (res.echoed) sfx.echo();
     this.updateHud();
     if (p.session.status === 'won') this.won();
     else if (p.session.status === 'failed') {
@@ -851,6 +853,7 @@ export class App {
     lanes.append(blk('d-a', t('you')), blk('d-b', t('twin')));
     if (kind === 'triple') lanes.append(blk('d-c', t('twin')));
     if (kind === 'pad') lanes.append(h('div.d-pad'));
+    if (kind === 'echo') lanes.append(h('div.d-grey2'), h('div.d-turn', h('span.t1', '1'), h('span.t2', '2')));
     lanes.append(h('div.d-hand', '👆'), blk('d-grey'));
     return lanes;
   }

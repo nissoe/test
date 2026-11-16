@@ -177,6 +177,12 @@ export const sfx = {
     }
     vibrate(twin ? [14, 30, 14] : 14);
   },
+  /** A delayed echo plays out: the move sound, softer and washed in reverb. */
+  echo() {
+    noise(0.06, 1100, { vol: 0.16, q: 0.8, sweep: -500, delay: 0.28, verb: 0.8 });
+    tone(392, 0.4, { type: 'sine', vol: 0.08, delay: 0.28, verb: 1 });
+    tone(587.33, 0.5, { type: 'sine', vol: 0.06, delay: 0.36, verb: 1 });
+  },
   bump() {
     noise(0.12, 260, { vol: 0.35, type: 'lowpass' });
     tone(90, 0.16, { vol: 0.25, slide: -30 });
