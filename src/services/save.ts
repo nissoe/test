@@ -18,6 +18,8 @@ export interface Profile {
   version: 1;
   /** levelId -> best stars (1..3) */
   stars: Record<string, number>;
+  /** Kids zone levels finished (ids). */
+  kidsDone?: string[];
   /** levelId -> fewest moves */
   bestMoves: Record<string, number>;
   coins: number;

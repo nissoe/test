@@ -2,13 +2,13 @@ import { GameScene } from '../render/scene';
 import { Session } from '../game/session';
 import { CHALLENGES, LEVEL_INTROS, RUSH_SECONDS, WORLDS, dailyLevel, dayIndex, packLevels, starsFor, type ChallengeId } from '../game/content';
 import { LocalSaveStore, defaultProfile, type Profile, type SaveStore } from '../services/save';
-import { SKINS, THEMES, themeFor } from '../render/skins';
+import { KIDS_PALETTE, KIDS_THEME, SKINS, THEMES, themeFor } from '../render/skins';
 import { getLang, setLang, t, tr } from '../i18n';
-import { configureFeedback, sfx, unlockAudioOnFirstGesture } from '../audio';
+import { configureFeedback, sfx, speak, unlockAudioOnFirstGesture } from '../audio';
 import { h, starsRow } from './dom';
 import type { LevelDef, Move } from '../engine/types';
 
-type Mode = 'campaign' | ChallengeId;
+type Mode = 'campaign' | ChallengeId | 'kids';
 
 interface Play {
   mode: Mode;
@@ -35,6 +35,9 @@ export class App {
   private hintReq = 0;
   private lastSecond = -1;
   private lastTwinToast = 0;
+  /** Kids zone: seconds since the last move, for the automatic helping hand. */
+  private kidsLastMove = 0;
+  private kidsHelped = false;
 
   constructor(root: HTMLElement) {
     this.profile = this.store.load();
@@ -182,6 +185,7 @@ export class App {
           h('span.btn-main', this.totalStars() ? t('continue') : t('play')),
           h('span.btn-sub', `${tr(WORLDS[wi].name)} · ${t('level')} ${nx.index + 1}`),
         ),
+        h('button.btn.kids-btn', { onclick: () => (sfx.tap(), this.kidsHome()) }, h('span.kids-ico', '🧸'), h('span', t('kidsZone')), h('span.kids-ico', '🎈')),
         h(
           'div.grid2',
           h('button.btn.tile', { onclick: () => (sfx.tap(), this.worlds()) }, h('span.ico', '🌐'), t('worlds')),
@@ -462,8 +466,17 @@ export class App {
     this.play = play;
     this.scene.setMode('play');
     this.scene.insets = { top: 150, bottom: 130 };
-    this.scene.setTheme(themeFor(this.profile.equippedTheme, play.pack), false);
-    this.scene.load(play.session, play.mode === 'fog');
+    const kids = play.mode === 'kids';
+    this.scene.setTheme(kids ? KIDS_THEME : themeFor(this.profile.equippedTheme, play.pack), false);
+    if (kids) this.scene.insets = { top: 110, bottom: 150 };
+    this.scene.load(play.session, play.mode === 'fog', kids);
+    this.kidsLastMove = performance.now();
+    this.kidsHelped = false;
+    if (kids) {
+      this.kidsHud();
+      if (play.index === 0) setTimeout(() => this.tutorialHand(play), 1300);
+      return;
+    }
     this.gameHud();
     if (play.mode === 'campaign' && play.pack === 'w1' && play.index === 0) {
       this.toast(t('tutDrag'), 3500);
@@ -485,6 +498,7 @@ export class App {
     const p = this.play;
     this.play = null;
     if (!p) return this.home();
+    if (p.mode === 'kids') return this.kidsHome();
     if (p.mode === 'campaign') this.levels(p.pack);
     else if (p.mode === 'daily') this.home();
     else if (p.mode === 'rush') this.challenges();
@@ -549,6 +563,8 @@ export class App {
   private onMove(mv: Move) {
     const p = this.play;
     if (!p || p.ended) return null;
+    this.kidsLastMove = performance.now();
+    this.kidsHelped = false;
     const link = p.session.puzzle.linked(p.session.state, mv.b);
     const res = p.session.play(mv);
     if (!res) return null;
@@ -599,7 +615,8 @@ export class App {
   private hint() {
     const p = this.play;
     if (!p || p.ended || p.session.status !== 'playing') return;
-    if (this.profile.coins < HINT_COST) return this.toast(t('notEnough'));
+    const free = p.mode === 'kids';
+    if (!free && this.profile.coins < HINT_COST) return this.toast(t('notEnough'));
     this.worker ??= new Worker(new URL('../hint.worker.ts', import.meta.url), { type: 'module' });
     const id = ++this.hintReq;
     const session = p.session;
@@ -607,9 +624,12 @@ export class App {
       if (e.data.id !== this.hintReq || this.play?.session !== session) return;
       const path = e.data.path;
       if (!path || path.length > session.movesLeft) return this.toast(t('hintNoWay'), 3000);
-      this.profile.coins -= HINT_COST;
-      this.save();
+      if (!free) {
+        this.profile.coins -= HINT_COST;
+        this.save();
+      }
       this.scene.showHint(path[0]);
+      if (free) this.pointAt(p, path[0]);
       sfx.hint();
       const pill = this.screen?.querySelector('.coins');
       if (pill) pill.replaceWith(this.coinPill());
@@ -620,6 +640,14 @@ export class App {
   private tick(dt: number) {
     const p = this.play;
     if (!p || p.ended) return;
+    if (p.mode === 'kids' && p.session.status === 'playing') {
+      // Stuck for 12 seconds? A friendly hand shows the next move.
+      if (!this.kidsHelped && performance.now() - this.kidsLastMove > 12000) {
+        this.kidsHelped = true;
+        this.hint();
+      }
+      return;
+    }
     if (p.rush) {
       p.rush.timeLeft = Math.max(0, p.rush.timeLeft - dt);
       if (p.rush.timeLeft === 0) {
@@ -648,6 +676,19 @@ export class App {
 
   private won() {
     const p = this.play!;
+    if (p.mode === 'kids') {
+      p.ended = true;
+      const done = (this.profile.kidsDone ??= []);
+      if (!done.includes(p.level.id)) done.push(p.level.id);
+      this.save();
+      setTimeout(() => {
+        this.scene.celebrate();
+        sfx.win(3);
+        speak(t('kidsBravoSpeech'));
+        this.kidsWinModal(p);
+      }, 650);
+      return;
+    }
     if (p.rush) {
       p.rush.score++;
       this.updateHud();
@@ -711,6 +752,7 @@ export class App {
     if (p.mode === 'campaign') this.startCampaign(p.pack, p.index);
     else if (p.mode === 'daily') this.startDaily();
     else if (p.mode === 'rush') this.startRush();
+    else if (p.mode === 'kids') this.startKids(p.index);
     else this.startChallenge(p.mode, p.index);
   }
 
@@ -795,6 +837,136 @@ export class App {
       ),
     );
     const close = () => m.remove();
+  }
+
+  // ---------- kids zone ----------
+
+  /** Separate, colorful area for small children: every level open, no limits, no twins, no shop. */
+  kidsHome() {
+    this.play = null;
+    const pool = packLevels('kids');
+    const done = new Set(this.profile.kidsDone ?? []);
+    const next = Math.max(0, pool.findIndex((l) => !done.has(l.id)));
+    this.scene.setMode('showcase');
+    this.scene.insets = { top: 0, bottom: 0 };
+    this.scene.setTheme(KIDS_THEME, false);
+    this.scene.load(new Session(pool[next]), false, true);
+    const sections = [
+      { icon: '🐣', from: 0, to: 20 },
+      { icon: '🐥', from: 20, to: 40 },
+      { icon: '🦁', from: 40, to: 60 },
+    ];
+    const body = h('div.scroll.kids-scroll');
+    for (const sec of sections) {
+      const grid = h('div.kids-grid');
+      for (let i = sec.from; i < sec.to && i < pool.length; i++) {
+        const lv = pool[i];
+        const color = KIDS_PALETTE[i % KIDS_PALETTE.length];
+        grid.append(
+          h(
+            `button.kids-bubble${done.has(lv.id) ? '.done' : ''}${i === next ? '.next' : ''}`,
+            { style: `--c:${color}`, onclick: () => (sfx.tap(), this.startKids(i)), 'aria-label': `${t('level')} ${i + 1}` },
+            h('span.kb-num', String(i + 1)),
+            done.has(lv.id) ? h('span.kb-star', '⭐') : null,
+          ),
+        );
+      }
+      body.append(h('div.kids-sec', h('div.kids-sec-ico', sec.icon), grid));
+    }
+    this.mount(
+      h(
+        'div.kids',
+        h('div.kids-top', this.holdExit(() => this.home()), h('div.kids-title', '🧸 ', t('kidsTitle'))),
+        h('button.kids-play', { onclick: () => (sfx.tap(), this.startKids(next)), 'aria-label': t('play') }, '▶'),
+        body,
+      ),
+      'kids-screen',
+    );
+  }
+
+  startKids(index: number) {
+    const lv = packLevels('kids')[index];
+    this.begin({ mode: 'kids', pack: 'kids', index, level: lv, session: new Session(lv), ended: false });
+  }
+
+  /** Big, picture-only controls. Back returns to the kids map (still inside the zone). */
+  private kidsHud() {
+    const p = this.play!;
+    const el = h(
+      'div.game.kids-game',
+      h(
+        'div.kids-top',
+        h('button.kids-round.small', { onclick: () => (sfx.tap(), this.exitGame()), 'aria-label': t('back') }, '🗺️'),
+        h('div.kids-level', { style: `--c:${KIDS_PALETTE[p.index % KIDS_PALETTE.length]}` }, String(p.index + 1)),
+      ),
+      h(
+        'div.kids-controls',
+        h('button.kids-round', { onclick: () => this.undo(), 'aria-label': t('undo') }, '↶'),
+        h('button.kids-round', { onclick: () => this.restart(), 'aria-label': t('restart') }, '⟲'),
+        h('button.kids-round', { onclick: () => this.hint(), 'aria-label': t('hint') }, '💡'),
+      ),
+    );
+    this.mount(el, 'game-screen');
+  }
+
+  private kidsWinModal(p: Play) {
+    const pool = packLevels('kids');
+    const hasNext = p.index + 1 < pool.length;
+    const m = this.modal(
+      h('div.kids-party', '🎉'),
+      h('div.win-title.kids-bravo', t('bravo')),
+      h('div.big-stars.kids-stars', ...[0, 1, 2].map(() => h('span.bstar.on', '⭐'))),
+      h(
+        'div.modal-actions.kids-actions',
+        h('button.kids-round', { onclick: () => (sfx.tap(), m.remove(), this.startKids(p.index)), 'aria-label': t('retry') }, '🔁'),
+        hasNext
+          ? h('button.kids-round.go', { onclick: () => (sfx.tap(), m.remove(), this.startKids(p.index + 1)), 'aria-label': t('next') }, '▶')
+          : h('button.kids-round.go', { onclick: () => (sfx.tap(), m.remove(), this.kidsHome()), 'aria-label': t('menu') }, '🗺️'),
+      ),
+    );
+    m.classList.add('kids-modal');
+  }
+
+  /** Leaving the kids zone needs a long press, so little fingers don't wander into the shop. */
+  private holdExit(go: () => void) {
+    let timer: number | null = null;
+    const btn = h('button.kids-hold', { 'aria-label': t('holdToExit') }, h('span.kh-ring'), h('span.kh-ico', '🏠'));
+    const cancel = () => {
+      if (timer !== null) clearTimeout(timer);
+      timer = null;
+      btn.classList.remove('holding');
+    };
+    btn.addEventListener('pointerdown', () => {
+      btn.classList.add('holding');
+      timer = window.setTimeout(() => {
+        cancel();
+        sfx.tap();
+        go();
+      }, 1500);
+    });
+    btn.addEventListener('pointerup', cancel);
+    btn.addEventListener('pointerleave', cancel);
+    btn.addEventListener('pointercancel', cancel);
+    btn.addEventListener('click', () => {
+      if (timer === null) this.toast(t('holdToExit'), 1500);
+    });
+    return btn;
+  }
+
+  /** Animated finger showing a specific move (kids helper). */
+  private pointAt(play: Play, mv: Move) {
+    if (this.play !== play) return;
+    const a = this.scene.screenOfBlock(mv.b);
+    const z = this.scene.screenOfBlock(mv.b, mv.d);
+    const hand = h('div.tut-hand', { style: `--x0:${a.x}px;--y0:${a.y}px;--x1:${z.x}px;--y1:${z.y}px` }, '👆');
+    this.screen?.append(hand);
+    const moves = play.session.moves;
+    const stop = setInterval(() => {
+      if (this.play !== play || play.session.moves !== moves) {
+        hand.remove();
+        clearInterval(stop);
+      }
+    }, 200);
   }
 
   // ---------- overlays ----------

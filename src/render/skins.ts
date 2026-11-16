@@ -33,6 +33,8 @@ export interface BoardTheme {
   fog: string;
   particles: string;
   light: string;
+  /** Light background: no fog and almost no bloom, so colors stay crisp. */
+  bright?: boolean;
 }
 
 export const SKINS: BlockSkin[] = [
@@ -82,6 +84,11 @@ export const WORLD_THEMES: Record<string, BoardTheme> = {
   w12: wt('w12', '#2a2a35', '#08080c', '#15151c', '#20202a', '#ffffff', '#d8d8e8', '#ffffff'),
   w13: wt('w13', '#0b0a33', '#000004', '#0a0a1e', '#12122e', '#8fb8ff', '#b9ccff', '#e6edff'),
 };
+
+/** Kids zone: bright sky-to-sunshine world with a white board. */
+export const KIDS_THEME: BoardTheme = { ...wt('kids', '#7fd0ff', '#fff2a8', '#b9a6ff', '#ffffff', '#ff6fb5', '#ffffff', '#ffffff'), bright: true };
+/** Candy colors for every block in the kids zone (no twins there, so color is free to be fun). */
+export const KIDS_PALETTE = ['#ff5e7e', '#36b9ff', '#5fd14a', '#ff9f1a', '#a66bff', '#ff6fd0', '#18d1b4'];
 
 export const THEMES: BoardTheme[] = [
   {

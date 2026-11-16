@@ -139,6 +139,25 @@ function noise(dur: number, freq: number, o: { q?: number; vol?: number; delay?:
   src.stop(t0 + dur + 0.02);
 }
 
+/** Spoken praise for the kids zone, when the device has a matching voice. */
+export function speak(text: string) {
+  if (!enabledSound || !('speechSynthesis' in window)) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    const lang = document.documentElement.lang === 'he' ? 'he-IL' : 'en-US';
+    u.lang = lang;
+    const voice = speechSynthesis.getVoices().find((v) => v.lang.replace('_', '-').startsWith(lang.slice(0, 2)));
+    if (!voice) return; // no voice for this language: skip rather than read Hebrew with an English voice
+    u.voice = voice;
+    u.rate = 0.95;
+    u.pitch = 1.25;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch {
+    /* speech not available */
+  }
+}
+
 function vibrate(p: number | number[]) {
   if (enabledHaptics && navigator.vibrate) navigator.vibrate(p);
 }

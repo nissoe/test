@@ -8,7 +8,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import type { Session } from '../game/session';
 import type { Move } from '../engine/types';
 import type { MoveResult } from '../engine/puzzle';
-import { skinById, themeById, type BlockSkin, type BoardTheme } from './skins';
+import { KIDS_PALETTE, skinById, themeById, type BlockSkin, type BoardTheme } from './skins';
 import { arrowTexture, echoTexture, frostTexture, glyphTexture, gradientTexture, padTexture, relationTexture, softDot } from './textures';
 
 const BLOCK_H = 0.62;
@@ -102,6 +102,8 @@ export class GameScene {
   private elapsed = 0;
   private shake = 0;
   private fog = false;
+  /** Kids zone: every block is a colorful character. */
+  private kids = false;
   insets = { top: 120, bottom: 140 };
 
   private drag: {
@@ -187,6 +189,7 @@ export class GameScene {
       this.composer = new EffectComposer(this.renderer);
       this.composer.addPass(new RenderPass(this.scene, this.camera));
       this.bloom = new UnrealBloomPass(new THREE.Vector2(size.x, size.y), 0.42, 0.45, 0.9);
+      this.bloom.strength = this.theme.bright ? 0.08 : 0.42;
       this.composer.addPass(this.bloom);
       this.composer.addPass(new OutputPass());
     } else {
@@ -195,12 +198,12 @@ export class GameScene {
       this.bloom = null;
     }
     this.resize();
-    if (this.session) this.load(this.session, this.fog);
+    if (this.session) this.load(this.session, this.fog, this.kids);
   }
 
   setSkin(id: string) {
     this.skin = skinById(id);
-    if (this.session) this.load(this.session, this.fog);
+    if (this.session) this.load(this.session, this.fog, this.kids);
   }
 
   setTheme(theme: string | BoardTheme, reload = true) {
@@ -208,13 +211,15 @@ export class GameScene {
     if (th === this.theme) return;
     this.theme = th;
     this.applyTheme();
-    if (reload && this.session) this.load(this.session, this.fog);
+    if (reload && this.session) this.load(this.session, this.fog, this.kids);
   }
 
   private applyTheme() {
     const th = this.theme;
     this.scene.background = gradientTexture(th.bgTop, th.bgBottom);
-    this.scene.fog = new THREE.Fog(th.fog, 18, 40);
+    this.scene.fog = th.bright ? null : new THREE.Fog(th.fog, 18, 40);
+    if (this.bloom) this.bloom.strength = th.bright ? 0.08 : 0.42;
+    this.renderer.toneMappingExposure = th.bright ? 0.9 : 0.95;
     (this.particles.material as THREE.PointsMaterial).color.set(th.particles);
     this.keyLight.color.set(th.light);
   }
@@ -268,9 +273,10 @@ export class GameScene {
     this.echoPreview = null;
   }
 
-  load(session: Session, fog = false) {
+  load(session: Session, fog = false, kids = false) {
     this.session = session;
     this.fog = fog;
+    this.kids = kids;
     this.drag = null;
     this.clearHalos();
     if (this.echoPreview) {
@@ -337,7 +343,8 @@ export class GameScene {
       const horiz = e.side === 'r' || e.side === 'l';
       const sgn = e.side === 'r' || e.side === 'b' ? 1 : -1;
       const g = new THREE.Group();
-      const postMat = new THREE.MeshStandardMaterial({ color: GOLD, emissive: GOLD, emissiveIntensity: 1.6, toneMapped: false });
+      const exitCol = th.bright ? '#ff7a00' : GOLD;
+      const postMat = new THREE.MeshStandardMaterial({ color: exitCol, emissive: exitCol, emissiveIntensity: 1.6, toneMapped: false });
       const postGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.9, 12);
       for (const o of [-0.5, 0.5]) {
         const post = new THREE.Mesh(postGeo, postMat);
@@ -349,7 +356,9 @@ export class GameScene {
       g.add(bar);
       const carpet = new THREE.Mesh(
         new THREE.PlaneGeometry(horiz ? 1.6 : 0.86, horiz ? 0.86 : 1.6),
-        new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }),
+        th.bright
+          ? new THREE.MeshBasicMaterial({ color: '#ffb000', transparent: true, opacity: 0.6, depthWrite: false })
+          : new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }),
       );
       carpet.rotation.x = -Math.PI / 2;
       carpet.position.set(horiz ? sgn * 0.5 : 0, 0.03, horiz ? 0 : sgn * 0.5);
@@ -428,7 +437,7 @@ export class GameScene {
   /** Twins and gold blocks are characters; gray blocks stay plain stones. */
   private hasFace(i: number) {
     const b = this.session!.puzzle.blocks[i];
-    return b.gold || (b.group >= 0 && (!this.fog || this.session!.revealed.has(b.group)));
+    return this.kids || b.gold || (b.group >= 0 && (!this.fog || this.session!.revealed.has(b.group)));
   }
 
   private makeEyes(mesh: THREE.Mesh): Eyes {
@@ -466,6 +475,7 @@ export class GameScene {
   private blockColor(i: number): string {
     const b = this.session!.puzzle.blocks[i];
     if (b.gold) return GOLD;
+    if (this.kids) return KIDS_PALETTE[i % KIDS_PALETTE.length];
     if (b.group >= 0 && (!this.fog || this.session!.revealed.has(b.group))) return this.groupColor(b.group);
     return this.skin.neutral;
   }
@@ -514,6 +524,11 @@ export class GameScene {
       mat.clearcoatMap = null;
       mat.roughnessMap = frostTexture();
       mat.emissiveIntensity = baseEmissive = 0.22;
+    }
+    if (this.kids && !blk.gold) {
+      // Candy look: a little more glow so colors pop on the bright board.
+      mat.emissiveIntensity = baseEmissive = 0.2;
+      mat.roughness = 0.3;
     }
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
@@ -680,6 +695,10 @@ export class GameScene {
     } else if (b.gold) {
       const ex = p.def.exits.find((x) => (b.axis === 'h' ? x.side === 'r' || x.side === 'l' : x.side === 't' || x.side === 'b')) ?? p.def.exits[0];
       goal.set(this.cellX(ex.x), 0, this.cellZ(ex.y)).sub(me);
+    } else if (this.kids) {
+      // Everyone watches the hero.
+      const g = p.goldIdx.find((x) => s.state[x] >= 0);
+      if (g !== undefined) goal.copy(this.blockCenter(this.views[g], new THREE.Vector3())).sub(me);
     } else if (b.group >= 0) {
       const partner = p.groups[b.group].find((m) => m !== v.i && s.state[m] >= 0);
       if (partner !== undefined) goal.copy(this.blockCenter(this.views[partner], new THREE.Vector3())).sub(me);

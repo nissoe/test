@@ -157,6 +157,14 @@ const challenges: PackSpec[] = [
   },
   { id: 'rush', count: 120, target: (i) => 3 + (i % 5), cfg: (i) => mixCfg(i, 9000, EARLY), max: slack(0.6, 3) },
   { id: 'daily', count: 90, target: (i) => 8 + (i % 7), cfg: (i) => mixCfg(i, 11000, EARLY), max: slack(0.3, 2) },
+  {
+    // Kids zone: plain sliding only (no twins, no specials), small boards, no move limit.
+    // 1-20 on 4x4 (1-3 moves), 21-40 on 5x5 (2-5), 41-60 on 6x6 (3-7).
+    id: 'kids', count: 60,
+    target: (i) => (i < 20 ? [1, 1, 1, 2, 2, 2, 2, 2, 3, 2, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3][i] : i < 40 ? 2 + Math.floor(((i - 20) / 20) * 4) : 3 + Math.floor(((i - 40) / 20) * 5)),
+    cfg: (i) => (i < 20 ? { w: 4, h: 4, blocks: [1, 3] } : i < 40 ? { w: 5, h: 5, blocks: [2, 5] } : { w: 6, h: 6, blocks: [3, 7] }),
+    max: () => 999,
+  },
 ];
 
 /** Optional slice of a pack (`--part k/N`): build only indices j with j % N === k, to run one pack on several cores. */

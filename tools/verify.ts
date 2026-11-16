@@ -54,6 +54,14 @@ for (const [name, levels] of Object.entries(packs)) {
         }
     }
   }
+  if (name === 'kids') {
+    // Kids zone: plain sliding only.
+    for (const lv of levels)
+      if (lv.blocks.some((b) => b.group !== undefined || b.ice || b.echo) || lv.walls || lv.gates || lv.pads || lv.arrows || lv.exits.length > 1) {
+        bad++;
+        console.error(`${lv.id}: kids level has twins or special pieces`);
+      }
+  }
   if (name === 'w1') {
     // Levels 1-3 have no twins, 4-9 only mirror pairs, 10-14 only parallel pairs.
     levels.forEach((lv, i) => {
