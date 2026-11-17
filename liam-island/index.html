@@ -1684,7 +1684,6 @@ GAMES.find = {
     let cnt = 0, misses = 0, lastFind = performance.now();
     const wigOf = sp => scene.querySelector(`.wig[data-h="${sp.id}"]`);
     const giveHint = () => { const sp = spots.find(s=>!s.found); if(!sp) return; const w = wigOf(sp); if(w && !w.classList.contains('hint')){ w.classList.add('hint'); sfx.tick(.8); say(pick(['תסתכל כאן... משהו זז!','הנה, רמז!','מי מציץ שם?'])); } };
-    (function idle(){ if(!ctx.alive(tok)) return; if(performance.now()-lastFind > 12000){ giveHint(); lastFind = performance.now(); } setTimeout(idle, 1000); })();
     scene.addEventListener('pointerdown', e=>{
       e.preventDefault(); if(!ctx.alive(tok)) return;
       const l = localPt(e, scene); l.x -= 8; l.y -= 8;
