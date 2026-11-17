@@ -3,7 +3,7 @@
   "short_name": "האי של ליאם",
   "lang": "he",
   "dir": "rtl",
-  "start_url": "./",
+  "start_url": "index.html",
   "scope": "./",
   "display": "fullscreen",
   "display_override": [
