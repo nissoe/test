@@ -213,6 +213,23 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .word-card.with-model{gap:6px}
 .word-card .model{font:900 130px/1 var(--font-display);color:var(--grape)}
 .word-card.with-model .pic{font-size:90px}
+.syl-slots{gap:6px;transition:gap .5s}
+.syl-slots.joined{gap:0}
+.syl-slot{width:150px;height:118px;font:900 70px/1 Rubik,var(--font-display);transition:border-radius .4s,width .5s}
+.syl-slots.joined .syl-slot{border-radius:0;border-left-width:0;border-right-width:0;width:auto;min-width:0;padding:0 4px}
+.syl-slots.joined .syl-slot:first-child{border-radius:0 26px 26px 0;border-right-width:5px}
+.syl-slots.joined .syl-slot:last-child{border-radius:26px 0 0 26px;border-left-width:5px}
+.syl-tile{width:150px;height:110px;font:900 64px/1 Rubik,var(--font-display)}
+.rp-grid{position:absolute;left:110px;right:110px;top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.rp-card{background:#fff;border:none;border-radius:28px;box-shadow:0 8px 0 var(--paper-d),0 14px 24px rgba(43,35,80,.12);height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:10px;transition:transform .15s}
+.rp-card:active{transform:scale(.97)}
+.rp-word{font:900 74px/1.1 Rubik,var(--font-display);color:var(--ink)}
+.rp-pic{position:relative;width:120px;height:120px;border-radius:24px;background:#efeaff;display:grid;place-items:center}
+.rp-pic .q{font:900 64px var(--font-display);color:#b9acec}
+.rp-pic .e{position:absolute;inset:0;display:grid;place-items:center;font-size:92px;font-family:var(--emoji);opacity:0;transform:scale(.4) rotate(-20deg);transition:all .35s cubic-bezier(.3,1.5,.5,1)}
+.rp-card.open .rp-pic .e{opacity:1;transform:none}
+.rp-card.open .rp-pic .q{opacity:0}
+.rp-card.right{box-shadow:0 8px 0 var(--mint-d),0 0 0 6px var(--mint)}
 .dots-board svg{touch-action:none}
 .dot circle{fill:#fff;stroke:#3d2f5b;stroke-width:1}
 .dot text{font:900 5.4px Rubik,sans-serif;fill:#3d2f5b}
@@ -660,7 +677,7 @@ const DEFAULTS = {
   childName:'ליאם', mascot:'דודו',
   numMax:20, mathMax:10, mathSub:false,
   traceSets:{he:true,en:true,num:true}, traceTol:'medium', writeMode:'auto',
-  huntLang:'both', readLang:'he', readMode:'auto',
+  huntLang:'both', readLang:'he', readMode:'auto', niqqud:true,
   diffCount:3, colorsEn:true, autoLevel:true,
   voice:true, rate:0.9, sounds:true, screenTime:0, rotMode:'auto',
 };
@@ -816,7 +833,7 @@ const REC = (()=>{
   const log = [];
   const trace = m => { log.push(new Date().toLocaleTimeString('he-IL') + '  ' + m); if(log.length > 8) log.shift(); };
   const map = new Map(), bufs = new Map(), urls = new Map();
-  const norm = (t, lang) => (lang||'he') + ':' + stripNiqqud(String(t)).replace(/[!?.,:;'"׳״…]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
+  const norm = (t, lang) => (lang||'he') + ':' + (lang==='hes' ? String(t).normalize('NFC') : stripNiqqud(String(t))).replace(/[!?.,:;'"׳״…]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
   const open = () => new Promise(res=>{ try{ const r = indexedDB.open('liam-voice', 1); r.onupgradeneeded = ()=>r.result.createObjectStore('rec'); r.onsuccess = ()=>{ db = r.result; res(true); }; r.onerror = ()=>res(false); }catch(e){ res(false); } });
   const ready = open();
   async function load(){
@@ -981,7 +998,7 @@ $$('[data-dudu]').forEach(d=>{ d.innerHTML = duduSVG(); if(d.dataset.dudu==='min
 /* =========================================================
    "NEW" BADGES: shown on anything added recently, until its first tap
    ========================================================= */
-const NEW_FEATURES = ['game:trace', 'tab:notebook', 'game:dots', 'game:maze', 'game:color', 'album:art'];
+const NEW_FEATURES = ['game:trace', 'tab:notebook', 'game:dots', 'game:maze', 'game:color', 'album:art', 'game:syllables', 'game:readpage'];
 function trackItem(key, ok){ P.items = P.items || {}; const it = P.items[key] = P.items[key] || {n:0, ok:0, bad:0, t:0}; it.n++; if(ok) it.ok++; else it.bad++; it.t = Date.now(); save(); }
 const isNew = id => NEW_FEATURES.includes(id) && !(P.seen && P.seen[id]);
 function markSeen(id){ if(!isNew(id)) return; P.seen = P.seen || {}; P.seen[id] = 1; save(); }
@@ -1092,7 +1109,7 @@ const ZONES = {
   numbers:{name:'יער המספרים', icon:'🌳', chip:'123', c:'#2fbf71', cd:'#1e9456', x:640,y:292, bg:'linear-gradient(160deg,#7fe0a0,#d9f99d)', games:['connect','count','math']},
   colors:{name:'גבעת הצבעים', icon:'🎨', chip:'●', c:'#f59e0b', cd:'#c27803', x:990,y:322, bg:'linear-gradient(160deg,#7cc8ff,#ffe38a)', games:['balloons','sort']},
   books:{name:'ספריית החוברות', icon:'🔍', chip:'?!', c:'#8b5cf6', cd:'#6a3fd6', x:500,y:512, bg:'linear-gradient(160deg,#b9a2ff,#ffb8dc)', games:['dots','maze','color','diff','find']},
-  reading:{name:'עץ הקריאה', icon:'📖', chip:'אבא', c:'#3b82f6', cd:'#1d5fd6', x:800,y:512, bg:'linear-gradient(160deg,#7fb2ff,#fff09a)', games:['reading']},
+  reading:{name:'עץ הקריאה', icon:'📖', chip:'אבא', c:'#3b82f6', cd:'#1d5fd6', x:800,y:512, bg:'linear-gradient(160deg,#7fb2ff,#fff09a)', games:['syllables','readpage','reading']},
 };
 function buildStations(){
   const wrap = $('#stations'); wrap.innerHTML='';
@@ -2087,6 +2104,91 @@ GAMES.find = {
   }
 };
 
+/* ---------- 14. SYLLABLES ---------- */
+const SYL_WORDS = [
+  [['אַ','בָּא'],'👨'], [['אִ','מָּא'],'👩'], [['סַ','בָּא'],'👴'], [['סַבְ','תָּא'],'👵'], [['גָּ','מָל'],'🐪'], [['כֶּ','לֶב'],'🐶'],
+  [['חָ','תוּל'],'🐱'], [['יֶ','לֶד'],'👦'], [['כַּ','דּוּר'],'⚽'], [['שֶׁ','מֶשׁ'],'☀️'], [['עוּ','גָה'],'🎂'], [['מָ','טוֹס'],'✈️'],
+  [['פֶּ','רַח'],'🌸'], [['גֶּ','זֶר'],'🥕'], [['בֵּי','צָה'],'🥚'], [['כּוֹ','כָב'],'⭐'], [['עָ','נָן'],'☁️'], [['נָ','חָשׁ'],'🐍'],
+  [['שָׁ','עוֹן'],'⏰'], [['אַרְ','יֵה'],'🦁'], [['דֻּ','בִּי'],'🧸'],
+  [['בָּ','נָ','נָה'],'🍌'], [['תַּ','פּוּ','חַ'],'🍎'], [['גְּ','לִי','דָה'],'🍦'], [['רַ','כֶּ','בֶת'],'🚂'], [['יָ','רֵ','חַ'],'🌙'],
+];
+const SHORT_WORDS = [['דָּג','🐟'],['צָב','🐢'],['פִּיל','🐘'],['סוּס','🐴'],['יָד','✋'],['לֵב','❤️'],['עֵץ','🌳'],['אַף','👃'],['דֹּב','🐻'],['בַּיִת','🏠'],['סֵפֶר','📖']];
+const showN = t => S.niqqud ? t : stripNiqqud(t);
+GAMES.syllables = {
+  name:'מחברים הברות', icon:'🧩', rounds:5, skill:'reading',
+  init(ctx){
+    const lv = S.autoLevel ? P.lv.reading : 1;
+    const two = SYL_WORDS.filter(w=>w[0].length===2), three = SYL_WORDS.filter(w=>w[0].length===3);
+    ctx.data.list = shuffle(lv >= 2 ? [...shuffle(two).slice(0,3), ...shuffle(three).slice(0,2)] : shuffle(two).slice(0,5));
+  },
+  question(ctx, tok){
+    const [syl, emoji] = ctx.data.list[ctx.q]; const word = syl.join(''), plain = stripNiqqud(word);
+    area.appendChild(h(`<div class="card pic-card" style="top:6px;width:240px;height:240px;left:520px;font-size:150px">${emoji}</div>`));
+    const slots = h(`<div class="slots syl-slots" style="top:282px">${syl.map(()=>'<div class="slot syl-slot"></div>').join('')}</div>`); area.appendChild(slots);
+    const tiles = h(`<div class="tiles" style="top:450px;direction:ltr"></div>`); area.appendChild(tiles);
+    let pos = 0, busy = false;
+    shuffle(syl.map((t,i)=>({t,i}))).forEach(({t,i})=>{
+      const b = h(`<button class="toy tile syl-tile">${showN(t)}</button>`);
+      b.addEventListener('click', async ()=>{
+        if(!ctx.alive(tok) || busy || b.classList.contains('used')) return;
+        if(i === pos){
+          b.classList.add('used'); const sl = slots.children[pos]; sl.textContent = showN(t); sl.classList.add('full'); pos++; sfx.pop();
+          if(pos === syl.length){
+            busy = true;
+            await sayList([[t,'hes']], false);
+            slots.classList.add('joined');
+            await sleep(500);
+            const parts = []; syl.forEach(x=>parts.push([x,'hes'])); parts.push(['מה יוצא ביחד?','he']);
+            for(let k=0;k<syl.length;k++){ slots.children[k].classList.add('read'); }
+            await sayList(parts);
+            if(!ctx.alive(tok)) return;
+            ctx.right(centerOf(slots), [[word,'he'],[pick(PRAISE),'he']]);
+            trackItem('word:'+plain, ctx.qMist===0);
+            ctx.solved(800);
+          } else sayList([[t,'hes']], false);
+        } else { ctx.wrong(b, [[t,'hes'],[pick(OOPS),'he']]); }
+      });
+      tiles.appendChild(b);
+    });
+    ctx.prompt(ctx.q===0 ? [['בוא נחבר הברות','he'],['לחץ על ההברות לפי הסדר','he']] : [['לחץ על ההברות לפי הסדר','he']]);
+  }
+};
+
+/* ---------- 15. READING PAGE ---------- */
+GAMES.readpage = {
+  name:'דף קריאה', icon:'📄', rounds:2, skill:'reading',
+  question(ctx, tok){
+    const pool = shuffle([...SYL_WORDS.map(w=>[w[0].join(''), w[1]]), ...SHORT_WORDS]);
+    const words = pool.slice(0, 6);
+    let phase = 'read', seenN = 0, asks = shuffle(words).slice(0, 3), askI = 0;
+    const grid = h(`<div class="rp-grid"></div>`); area.appendChild(grid);
+    const cards = words.map(([w, e])=>{
+      const c = h(`<button class="rp-card"><div class="rp-word">${showN(w)}</div><div class="rp-pic"><span class="q">?</span><span class="e">${e}</span></div></button>`);
+      c.addEventListener('click', ()=>{
+        if(!ctx.alive(tok)) return;
+        if(phase === 'read'){
+          if(!c.classList.contains('open')){ c.classList.add('open'); seenN++; sfx.pop(); }
+          sayList([[w,'he']]);
+          if(seenN === words.length && phase === 'read'){ phase = 'wait'; setTimeout(startQuiz, 1800); }
+          return;
+        }
+        if(phase !== 'quiz') return;
+        const target = asks[askI][0];
+        if(w === target){
+          c.classList.add('open', 'right'); phase = 'wait'; trackItem('word:'+stripNiqqud(w), true);
+          ctx.right(centerOf(c), [['נכון! כאן כתוב','he'],[w,'he']]);
+          askI++;
+          waitSpeech().then(()=>{ if(!ctx.alive(tok)) return; if(askI < asks.length){ phase = 'quiz'; ask(); } else ctx.solved(300); });
+        } else { trackItem('word:'+stripNiqqud(target), false); ctx.wrong(c, [['כאן כתוב','he'],[w,'he']]); }
+      });
+      grid.appendChild(c); return c;
+    });
+    function startQuiz(){ if(!ctx.alive(tok)) return; cards.forEach(c=>c.classList.remove('open')); phase = 'quiz'; ask(); }
+    function ask(){ ctx.prompt([['איפה כתוב','he'],[asks[askI][0],'he']]); }
+    ctx.prompt([['נסה לקרוא את המילים','he'],['לחץ על מילה כדי לשמוע','he']]);
+  }
+};
+
 /* ---------- 11. DOT TO DOT ---------- */
 const DOT_SHAPES = [
   {name:'כוכב!', c:'#ffd23f', face:[50,52], d:(()=>{ let d=''; for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, r=i%2?20:44; d+=(i?'L':'M')+(50+Math.cos(a)*r).toFixed(1)+' '+(54+Math.sin(a)*r).toFixed(1); } return d+'Z'; })()},
@@ -2361,7 +2463,7 @@ GAMES.reading = {
 /* =========================================================
    VOICE CATALOG: every sentence part Dudu says, grouped for recording
    ========================================================= */
-function NEW_LINES(){ return ['עכשיו תכתוב לבד על האות החלשה', 'עכשיו תכתוב לבד, בלי עזרה', 'כשתסיים, לחץ על הכפתור הירוק', 'בוא ננסה שוב, תכתוב גדול', 'וואו! כתבת מושלם!', 'יפה מאוד! כתבת טוב!', 'ניסיון יפה! נמשיך להתאמן', 'חבר את הנקודות לפי הסדר', 'מתחילים מאחת', 'הנקודה הבאה היא', ...DOT_SHAPES.map(x=>x.name), 'עזור לארנב להגיע לגזר', 'הארנב הגיע לגזר! כל הכבוד!', 'אי אפשר לעבור דרך השיח', 'בחר צבע וצבע את הציור', 'איזה ציור יפה!']; }
+function NEW_LINES(){ return ['עכשיו תכתוב לבד על האות החלשה', 'עכשיו תכתוב לבד, בלי עזרה', 'כשתסיים, לחץ על הכפתור הירוק', 'בוא ננסה שוב, תכתוב גדול', 'וואו! כתבת מושלם!', 'יפה מאוד! כתבת טוב!', 'ניסיון יפה! נמשיך להתאמן', 'חבר את הנקודות לפי הסדר', 'מתחילים מאחת', 'הנקודה הבאה היא', ...DOT_SHAPES.map(x=>x.name), 'עזור לארנב להגיע לגזר', 'הארנב הגיע לגזר! כל הכבוד!', 'אי אפשר לעבור דרך השיח', 'בחר צבע וצבע את הציור', 'איזה ציור יפה!', 'בוא נחבר הברות', 'לחץ על ההברות לפי הסדר', 'מה יוצא ביחד?', 'נסה לקרוא את המילים', 'לחץ על מילה כדי לשמוע', 'איפה כתוב', 'נכון! כאן כתוב', 'כאן כתוב']; }
 function voiceCatalog(){
   const N = S.childName, Mc = S.mascot;
   const he = arr => arr.map(t=>({t, lang:'he'}));
@@ -2381,6 +2483,7 @@ function voiceCatalog(){
     {id:'letters', name:'אותיות', items: HE.flatMap(l=>[{t:l.name, lang:'he', label:`${l.ch}  ·  ${stripNiqqud(l.name)}`}, {t:`כמו ${l.word}`, lang:'he'}])},
     {id:'numbers', name:'מספרים', items: Array.from({length:41},(_,i)=>({t:String(i), lang:'he'}))},
     {id:'newgames', name:'משחקים חדשים', items: he(NEW_LINES())},
+    {id:'syllables', name:'הברות ומילים', items: (()=>{ const out = []; SYL_WORDS.forEach(([sy])=>{ sy.forEach(x=>out.push({t:x, lang:'hes', label:x})); out.push({t:sy.join(''), lang:'he', label:sy.join('')}); }); SHORT_WORDS.forEach(([w])=>out.push({t:w, lang:'he', label:w})); return out; })()},
     {id:'album', name:'מדבקות', items: [{t:'יש לך', lang:'he'}, {t:'מדבקות! כל הכבוד', lang:'he'}, {t:'עוד אין מדבקות. בוא נשחק ונרוויח מדבקה!', lang:'he'}, {t:`כל הכבוד ${N}! קיבלת מדבקה חדשה!`, lang:'he'}, {t:'ובפעם הבאה, זה יהיה קצת יותר מאתגר!', lang:'he'}]},
     {id:'colors', name:'צבעים', items: COLORS.flatMap(c=>[{t:c.he, lang:'he'}, {t:`פוצץ את הבלונים ה${c.pl}!`, lang:'he'}])},
     {id:'words', name:'מילים לקריאה', items: HE_WORDS.map(w=>({t:w[2]||w[0], lang:'he', label:`${w[1]}  ${w[0]}`}))},
@@ -2558,6 +2661,7 @@ const LEARN = [
   {k:'readLang', label:'קריאה: שפה', opts:[['he','עברית'],['en','English'],['both','שתיהן']]},
   {k:'readMode', label:'קריאה: שלב', opts:[['auto','אוטומטי'],['first','אות ראשונה'],['match','מילה לתמונה'],['build','בונים מילה'],['mix','מעורב']]},
   {k:'diffCount', label:'מצא את ההבדלים: כמה הבדלים', opts:[[2,'2'],[3,'3'],[4,'4'],[5,'5']]},
+  {k:'niqqud', label:'ניקוד בהברות ובדף הקריאה', opts:[[true,'להציג'],[false,'להסתיר']]},
   {k:'colorsEn', label:'שמות הצבעים גם באנגלית', opts:[[true,'כן'],[false,'לא']]},
   {k:'autoLevel', label:'התאמה אוטומטית לרמה', opts:[[true,'פועל'],[false,'כבוי']], sub:'מתחיל קל ומעלה רמה אחרי סבב בלי טעויות, עד הגבול שקבעתם כאן'},
 ];
