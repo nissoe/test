@@ -692,7 +692,7 @@ fit();
 
 /* ---------- sound ---------- */
 let AC=null;
-function ac(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC && AC.state==='suspended') AC.resume(); return AC; }
+function ac(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC && AC.state!=='running'){ try{ AC.resume(); }catch(e){} } return AC; }
 function tone(f, dur=.15, type='sine', vol=.18, when=0, f2=null){
   if(!S.sounds) return; const a=ac(); if(!a) return;
   const t=a.currentTime+when, o=a.createOscillator(), g=a.createGain();
@@ -746,19 +746,34 @@ function speakOne(t, lang){
 }
 /* ---------- parent's recorded voice: clips stored on this device, matched by the sentence text ---------- */
 const REC = (()=>{
-  let db = null, cur = null;
-  const map = new Map(), bufs = new Map();
+  let db = null, cur = null, el = null, lastErr = '', lastHow = '';
+  const map = new Map(), bufs = new Map(), urls = new Map();
   const norm = (t, lang) => (lang||'he') + ':' + stripNiqqud(String(t)).replace(/[!?.,:;'"׳״…]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
   const open = () => new Promise(res=>{ try{ const r = indexedDB.open('liam-voice', 1); r.onupgradeneeded = ()=>r.result.createObjectStore('rec'); r.onsuccess = ()=>{ db = r.result; res(true); }; r.onerror = ()=>res(false); }catch(e){ res(false); } });
-  async function load(){ if(!await open()) return; try{ const req = db.transaction('rec').objectStore('rec').openCursor(); req.onsuccess = ()=>{ const c = req.result; if(c){ map.set(c.key, c.value); c.continue(); } }; }catch(e){} }
-  function put(key, blob){ map.set(key, blob); bufs.delete(key); try{ db.transaction('rec','readwrite').objectStore('rec').put(blob, key); }catch(e){} }
-  function del(key){ map.delete(key); bufs.delete(key); try{ db.transaction('rec','readwrite').objectStore('rec').delete(key); }catch(e){} }
+  const ready = open();
+  async function load(){
+    if(!await ready) return;
+    try{
+      const req = db.transaction('rec').objectStore('rec').openCursor();
+      req.onsuccess = ()=>{ const c = req.result; if(!c) return;
+        const v = c.value; map.set(c.key, (v && v.b) ? new Blob([v.b], {type:v.t||'audio/mp4'}) : v); c.continue(); };
+    }catch(e){}
+  }
+  // stored as raw bytes: Blobs in IndexedDB are unreliable on some iPhones
+  async function put(key, blob){
+    map.set(key, blob); bufs.delete(key); urls.delete(key);
+    try{
+      const data = await blob.arrayBuffer();
+      if(!await ready) throw new Error('no db');
+      await new Promise((res, rej)=>{ const tx = db.transaction('rec','readwrite'); tx.objectStore('rec').put({t:blob.type, b:data}, key); tx.oncomplete = res; tx.onerror = ()=>rej(tx.error); tx.onabort = ()=>rej(tx.error); });
+    }catch(e){ lastErr = 'ההקלטה נשמעת עכשיו, אבל לא נשמרה בזיכרון של הטלפון'; }
+  }
+  function del(key){ map.delete(key); bufs.delete(key); urls.delete(key); try{ db.transaction('rec','readwrite').objectStore('rec').delete(key); }catch(e){} }
   async function buffer(key){
     if(bufs.has(key)) return bufs.get(key);
     const a = ac(); if(!a || !map.has(key)) return null;
     const data = await map.get(key).arrayBuffer();
-    const b = await new Promise((res, rej)=>a.decodeAudioData(data, res, rej));
-    // skip the silence (and the tap) before and after the words
+    const b = await new Promise((res, rej)=>{ try{ const pr = a.decodeAudioData(data, res, rej); if(pr && pr.catch) pr.catch(rej); }catch(e){ rej(e); } });
     const d = b.getChannelData(0); let st = 0, en = d.length-1; const th = .025;
     while(st < d.length && Math.abs(d[st]) < th) st++;
     while(en > st && Math.abs(d[en]) < th) en--;
@@ -767,21 +782,50 @@ const REC = (()=>{
     if(o.end - o.start < .1){ o.start = 0; o.end = b.duration; }
     bufs.set(key, o); return o;
   }
-  function play(key){
-    return new Promise(async res=>{
-      try{
-        const o = await buffer(key), a = ac(); if(!o || !a){ res(false); return; }
-        stop();
-        const src = a.createBufferSource(), g = a.createGain(); g.gain.value = 1.5;
-        src.buffer = o.b; src.connect(g); g.connect(a.destination);
-        src.onended = ()=>{ if(cur===src) cur = null; res(true); };
-        cur = src; src.start(0, o.start, Math.max(.05, o.end - o.start));
-      }catch(e){ res(false); }
+  async function playWeb(key){
+    const a = ac(); if(!a) return false;
+    if(a.state !== 'running'){ try{ await Promise.race([a.resume(), sleep(300)]); }catch(e){} }
+    if(a.state !== 'running') return false;
+    const o = await buffer(key); if(!o) return false;
+    stop();
+    return new Promise(res=>{
+      const src = a.createBufferSource(), g = a.createGain(); g.gain.value = 1.5;
+      src.buffer = o.b; src.connect(g); g.connect(a.destination);
+      const dur = Math.max(.05, o.end - o.start);
+      let done = false; const fin = ()=>{ if(done) return; done = true; if(cur && cur.src===src) cur = null; res(true); };
+      src.onended = fin; setTimeout(fin, dur*1000 + 600);
+      cur = {src, stop:()=>{ try{ src.stop(); }catch(e){} fin(); }};
+      src.start(0, o.start, dur);
     });
   }
-  function stop(){ if(cur){ try{ cur.stop(); }catch(e){} cur = null; } }
-  return {norm, load, put, del, play, stop, has:k=>map.has(k), size:()=>map.size};
+  // fallback: a plain audio element (unlocked by the first tap)
+  function audioEl(){ if(!el){ el = new Audio(); el.preload = 'auto'; el.setAttribute('playsinline',''); } return el; }
+  function unlock(){ const a = audioEl(); if(a.dataset.ok) return; a.dataset.ok = 1; try{ a.muted = true; a.src = silentWav(); const pr = a.play(); if(pr && pr.then) pr.then(()=>{ a.pause(); a.muted = false; }).catch(()=>{ a.muted = false; }); }catch(e){ a.muted = false; } }
+  function silentWav(){ const n = 800, buf = new ArrayBuffer(44+n*2), v = new DataView(buf); const w = (o,s)=>{ for(let i=0;i<s.length;i++) v.setUint8(o+i, s.charCodeAt(i)); };
+    w(0,'RIFF'); v.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,16000,true); v.setUint32(28,32000,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,n*2,true);
+    return URL.createObjectURL(new Blob([buf], {type:'audio/wav'})); }
+  async function playEl(key){
+    const a = audioEl(); if(!urls.has(key)) urls.set(key, URL.createObjectURL(map.get(key)));
+    stop();
+    return new Promise(res=>{
+      let done = false; const fin = ok=>{ if(done) return; done = true; a.onended = null; a.onerror = null; if(cur && cur.el) cur = null; res(ok); };
+      a.onended = ()=>fin(true); a.onerror = ()=>fin(false);
+      a.src = urls.get(key); a.muted = false; a.volume = 1;
+      cur = {el:a, stop:()=>{ try{ a.pause(); }catch(e){} fin(true); }};
+      const pr = a.play(); if(pr && pr.catch) pr.catch(()=>fin(false));
+      setTimeout(()=>fin(true), 9000);
+    });
+  }
+  async function play(key){
+    if(!map.has(key)) return false;
+    try{ if(await playWeb(key)){ lastHow = 'web'; return true; } }catch(e){ lastErr = 'פענוח: ' + (e && e.message || e); }
+    try{ if(await playEl(key)){ lastHow = 'element'; return true; } }catch(e){ lastErr = 'נגן: ' + (e && e.message || e); }
+    return false;
+  }
+  function stop(){ if(cur){ const c = cur; cur = null; c.stop(); } }
+  return {norm, load, put, del, play, stop, unlock, has:k=>map.has(k), size:()=>map.size, info:()=>({lastErr, lastHow, ctx: AC ? AC.state : 'none', db: !!db})};
 })();
+document.addEventListener('pointerdown', ()=>{ REC.unlock(); }, {once:true, capture:true});
 function sayList(list, bubble=true){
   const tok = ++speakToken;
   if(bubble) showBubble(list.map(x=>x[0]).join(' '));
@@ -1937,7 +1981,9 @@ async function recToggle(item){
     clearTimeout(recTimer);
     const blob = new Blob(chunks, {type:(recMR && recMR.mimeType) || mime || 'audio/webm'});
     recMR = null; recKey = null;
-    if(blob.size > 600){ REC.put(item.key, blob); REC.play(item.key); }
+    if(recStream){ recStream.getTracks().forEach(t=>t.stop()); recStream = null; }
+    if(blob.size > 600){ REC.put(item.key, blob).then(()=>renderParent()); setTimeout(()=>{ ac(); REC.play(item.key); }, 250); }
+    else vMsg = 'ההקלטה יצאה ריקה. נסו שוב ודברו קרוב לטלפון.';
     renderParent();
   };
   recMR.start();
@@ -1950,6 +1996,7 @@ function renderVoice(body){
   const PER = 12, pages = Math.max(1, Math.ceil(cat.items.length/PER));
   vPage = Math.min(vPage, pages-1);
   const done = cats.reduce((n,c)=>n + c.items.filter(it=>REC.has(it.key)).length, 0), total = cats.reduce((n,c)=>n + c.items.length, 0);
+  const inf = REC.info(); if(inf.lastErr && !vMsg) vMsg = inf.lastErr;
   const head = h(`<div class="v-head"><div class="v-info"><b>${done}</b> מתוך ${total} הוקלטו · לוחצים 🎙 ואומרים את המשפט, ולוחצים שוב לסיום. מה שלא הוקלט נשמע בקריאה האוטומטית. ההקלטות נשמרות בטלפון הזה.</div><div class="seg v-cats"></div></div>`);
   cats.forEach(c=>{ const n = c.items.filter(it=>REC.has(it.key)).length; const b = h(`<button class="${c.id===cat.id?'on':''}">${c.name} <small>${n}/${c.items.length}</small></button>`); b.addEventListener('click', ()=>{ vCat = c.id; vPage = 0; renderParent(); }); head.querySelector('.v-cats').appendChild(b); });
   body.appendChild(head);

@@ -1,5 +1,5 @@
 // Offline cache for the game. The cache name changes with every build, so a new version replaces the old one.
-const CACHE = 'liam-island-0efe7ec4ae';
+const CACHE = 'liam-island-d68a93a913';
 const CORE = ['index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
