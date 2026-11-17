@@ -575,7 +575,7 @@ const DEFAULTS = {
   traceSets:{he:true,en:true,num:true}, traceTol:'medium',
   huntLang:'both', readLang:'he', readMode:'auto',
   diffCount:3, colorsEn:true, autoLevel:true,
-  voice:true, rate:0.9, sounds:true, screenTime:0,
+  voice:true, rate:0.9, sounds:true, screenTime:0, rotDir:1,
 };
 let S = JSON.parse(JSON.stringify(DEFAULTS));
 let P = {stickers:[], stats:{}, lv:{numbers:1,math:0,reading:0,find:0}, decorSeen:0};
@@ -613,9 +613,32 @@ function fit(){
   const s = Math.min(EW/W, EH/H);
   const offX = (EW - W*s)/2, offY = (EH - H*s)/2;
   if(!rot){ M = {rot:false,s,offX,offY}; stage.style.transform = `matrix(${s},0,0,${s},${offX},${offY})`; }
-  else { const tx = vw - offY, ty = offX; M = {rot:true,s,tx,ty}; stage.style.transform = `matrix(0,${s},${-s},0,${tx},${ty})`; }
+  else if((S.rotDir||1) > 0){ const tx = vw - offY, ty = offX; M = {rot:1,s,tx,ty}; stage.style.transform = `matrix(0,${s},${-s},0,${tx},${ty})`; }
+  else { const tx = offY, ty = vh - offX; M = {rot:-1,s,tx,ty}; stage.style.transform = `matrix(0,${-s},${s},0,${tx},${ty})`; }
 }
-function toStage(cx, cy){ return M.rot ? {x:(cy-M.ty)/M.s, y:(M.tx-cx)/M.s} : {x:(cx-M.offX)/M.s, y:(cy-M.offY)/M.s}; }
+function toStage(cx, cy){
+  if(M.rot===1) return {x:(cy-M.ty)/M.s, y:(M.tx-cx)/M.s};
+  if(M.rot===-1) return {x:(M.ty-cy)/M.s, y:(cx-M.tx)/M.s};
+  return {x:(cx-M.offX)/M.s, y:(cy-M.offY)/M.s};
+}
+/* real fullscreen + landscape lock where the browser allows it (Android Chrome); iPhone falls back to the CSS rotation above */
+const fsEnabled = () => !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+const isFull = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function lockLandscape(){ try{ screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} setTimeout(fit, 300); }
+function goFull(){
+  try{
+    if(isFull()){ lockLandscape(); return; }
+    const de = document.documentElement, rq = de.requestFullscreen || de.webkitRequestFullscreen;
+    if(!rq) return;
+    const r = rq.call(de, {navigationUI:'hide'});
+    if(r && r.then) r.then(lockLandscape).catch(()=>{}); else lockLandscape();
+  }catch(e){}
+}
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev, ()=>setTimeout(fit, 150)));
+if(window.visualViewport) visualViewport.addEventListener('resize', fit);
+// any tap re-enters fullscreen if the phone dropped out of it (Android back gesture, notification, etc.)
+document.addEventListener('pointerup', ()=>{ if(fullWanted && !isFull() && fsEnabled()) goFull(); }, true);
+let fullWanted = false;
 function stagePos(node){ let x=0,y=0; while(node && node!==stage){ x+=node.offsetLeft; y+=node.offsetTop; node=node.offsetParent; } return {x,y}; }
 function localPt(e, node){ const p=toStage(e.clientX,e.clientY), o=stagePos(node); return {x:p.x-o.x, y:p.y-o.y}; }
 function centerOf(node){ const p=stagePos(node); return {x:p.x+node.offsetWidth/2, y:p.y+node.offsetHeight/2}; }
@@ -812,10 +835,7 @@ $('#splashDudu').addEventListener('pointerdown', e=>{
 $('#btnPlay').addEventListener('click', ()=>{
   ac(); sfx.win();
   try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){}
-  try{
-    const de=document.documentElement;
-    if(de.requestFullscreen) de.requestFullscreen().then(()=>{ try{ screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} setTimeout(fit,300); }).catch(()=>{});
-  }catch(e){}
+  fullWanted = true; goFull();
   sessionStart = Date.now();
   burst(640, 450, ['⭐','🌟','✨','🎉','🎈'], 26);
   const w = h(`<div class="wipe" style="left:640px;top:450px"></div>`); stage.appendChild(w);
@@ -1799,6 +1819,7 @@ const GENERAL = [
   {k:'voice', label:`הקול של ${'הדובי'}`, opts:[[true,'פועל'],[false,'כבוי']]},
   {k:'rate', label:'מהירות הדיבור', opts:[[0.75,'לאט'],[0.9,'רגיל'],[1.05,'מהר']]},
   {k:'sounds', label:'צלילים ואפקטים', opts:[[true,'פועל'],[false,'כבוי']]},
+  {k:'rotDir', label:'כשהטלפון מוחזק לאורך, המשחק מוצג לרוחב לכיוון', opts:[[1,'ימין'],[-1,'שמאל']], sub:'כדי שהמשחק יישאר קבוע ובגודל מלא: נועלים את סיבוב המסך בטלפון במצב לאורך, ומחזיקים את הטלפון על הצד.', onChange:()=>fit()},
   {k:'screenTime', label:'זמן מסך: הדובי הולך לישון אחרי', opts:[[0,'בלי הגבלה'],[10,'10 דק׳'],[15,'15 דק׳'],[20,'20 דק׳'],[30,'30 דק׳']]},
 ];
 function segRow(def){
@@ -1812,7 +1833,7 @@ function segRow(def){
       if(def.multi){ const nv = !S[def.k][v]; const cnt = Object.values(S[def.k]).filter(Boolean).length; if(!nv && cnt<=1) return; S[def.k][v] = nv; }
       else S[def.k] = v;
       if(def.k==='numMax' || def.k==='mathMax') { /* keep levels within limit */ }
-      save(); [...seg.children].forEach((x,i)=>{ const ov = def.opts[i][0]; x.classList.toggle('on', def.multi ? !!S[def.k][ov] : S[def.k]===ov); });
+      save(); if(def.onChange) def.onChange(); [...seg.children].forEach((x,i)=>{ const ov = def.opts[i][0]; x.classList.toggle('on', def.multi ? !!S[def.k][ov] : S[def.k]===ov); });
     });
     seg.appendChild(b);
   });
@@ -1835,7 +1856,7 @@ function renderParent(){
     const vrow = h(`<div class="p-row"><div class="lbl">בדיקת קול</div><div class="sub" id="voiceInfo"></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="p-btn alt" id="tVoice">להשמיע משפט לדוגמה</button><button class="p-btn alt" id="tFull">מסך מלא</button></div></div>`);
     vrow.querySelector('#voiceInfo').textContent = voices.he ? `קול עברי במכשיר: ${voices.he.name}` : 'לא נמצא קול עברי במכשיר הזה. הטקסט יוצג בבועה. אפשר להתקין קול עברי בהגדרות ההקראה של המכשיר.';
     vrow.querySelector('#tVoice').addEventListener('click', ()=>sayList([[`שלום ${S.childName}! אני ${S.mascot}`,'he'],['Hello! Let’s play!','en']], false));
-    vrow.querySelector('#tFull').addEventListener('click', ()=>{ try{ document.documentElement.requestFullscreen().then(()=>{ try{ screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} }).catch(()=>{}); }catch(e){} });
+    vrow.querySelector('#tFull').addEventListener('click', ()=>{ fullWanted = true; goFull(); });
     g.appendChild(vrow);
     const reset = h(`<div class="p-row"><div class="lbl">איפוס התקדמות</div><div class="sub">מוחק מדבקות, סטטיסטיקה ורמות. ההגדרות נשמרות.</div><div style="display:flex;gap:10px"><button class="p-btn warn" id="rst">לאפס</button><button class="p-btn alt" id="rstNo" hidden>ביטול</button></div></div>`);
     const rst = reset.querySelector('#rst'), no = reset.querySelector('#rstNo'); let armed = false;
