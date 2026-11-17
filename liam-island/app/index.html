@@ -229,6 +229,37 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .word-card.with-model{gap:6px}
 .word-card .model{font:900 130px/1 var(--font-display);color:var(--grape)}
 .word-card.with-model .pic{font-size:90px}
+.dots-board svg{touch-action:none}
+.dot circle{fill:#fff;stroke:#3d2f5b;stroke-width:1}
+.dot text{font:900 5.4px Rubik,sans-serif;fill:#3d2f5b}
+.dot.next circle{fill:#2fd39a;r:3.6;animation:tpulse 1s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.dot.done circle{fill:#ff6b6b}
+.dot.done text{fill:#b9b2d6}
+.dot.hop{animation:boing .5s}
+.dot-line{stroke:#3d2f5b;stroke-width:1.6;stroke-linecap:round}
+.dot-rubber{stroke:#3d2f5b;stroke-width:1.2;stroke-dasharray:2 2}
+.dot-fill{transition:opacity .8s}
+.dots-board.revealed .dot{opacity:0;transition:opacity .6s}
+.maze-board{position:absolute;background:#bfe9a5;border-radius:30px;box-shadow:0 10px 0 #8ccf6e,0 18px 30px rgba(43,35,80,.15);touch-action:none}
+.maze-board svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.hedge-out{fill:none;stroke:#2e7d32;stroke-width:18;stroke-linecap:round}
+.hedge-in{fill:none;stroke:#5cb85c;stroke-width:11;stroke-linecap:round}
+.maze-trail{fill:none;stroke:#ffd23f;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 14;opacity:.95}
+.maze-bunny{position:absolute;transition:left .18s,top .18s;pointer-events:none}
+.maze-bunny svg{width:100%;height:100%;overflow:visible}
+.maze-bunny.eat{animation:dance .4s ease-in-out 4 alternate}
+.carrot.eaten{opacity:0;transition:opacity .6s .3s}
+.color-board{position:absolute;left:190px;top:10px;width:900px;height:520px;background:#fff;border-radius:26px;overflow:hidden;box-shadow:0 10px 0 var(--paper-d),0 18px 30px rgba(43,35,80,.14);touch-action:none}
+.color-board svg{width:100%;height:100%;display:block}
+.color-board .rg{cursor:pointer;transition:fill .25s}
+.palette{position:absolute;left:190px;width:900px;top:545px;display:flex;justify-content:center;gap:12px;direction:ltr}
+.paint{width:58px;height:58px;border-radius:50%;border:4px solid #fff;background:var(--p);box-shadow:0 4px 0 rgba(0,0,0,.15),0 0 0 2px #d8d0ee;padding:0;transition:transform .15s}
+.paint.on{transform:scale(1.25) translateY(-6px);box-shadow:0 6px 0 rgba(0,0,0,.18),0 0 0 4px var(--grape)}
+.album-switch{position:absolute;left:30px;top:20px;padding:12px 20px;font:800 22px var(--font-display);--c:#fff}
+.album-grid.art{grid-template-columns:repeat(4,1fr);gap:22px}
+.art-item{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 0 #f0d7e4;cursor:pointer}
+.art-item svg{display:block;width:100%;height:auto}
+.art-empty{grid-column:1/-1;text-align:center;font:700 28px var(--font-display);color:var(--ink-soft);padding:60px}
 .nb-empty{background:#fff;border-radius:18px;padding:24px;font-size:19px;line-height:1.6;color:var(--ink-soft)}
 .nb-keys{margin-bottom:10px}
 .nb-keys button{min-width:58px}
@@ -485,7 +516,8 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 
   <!-- ALBUM -->
   <section class="screen" id="scr-album" hidden>
-    <div class="album-head">המדבקות שלי</div>
+    <div class="album-head" id="albumHead">המדבקות שלי</div>
+    <button class="toy album-switch" id="btnArt"></button>
     <button class="toy round" id="btnAlbumHome" style="position:absolute;left:1180px;top:14px" aria-label="חזרה לאי">🏠</button>
     <div class="album-grid" id="albumGrid"></div>
   </section>
@@ -649,17 +681,17 @@ const DEFAULTS = {
   voice:true, rate:0.9, sounds:true, screenTime:0, rotMode:'auto',
 };
 let S = JSON.parse(JSON.stringify(DEFAULTS));
-let P = {stickers:[], stats:{}, lv:{numbers:1,math:0,reading:0,find:0}, decorSeen:0};
+let P = {stickers:[], stats:{}, lv:{numbers:1,math:0,reading:0,find:0,maze:0}, decorSeen:0};
 try{
   const raw = localStorage.getItem(STORE);
-  if(raw){ const d = JSON.parse(raw); Object.assign(S, d.S||{}); Object.assign(P, d.P||{}); P.lv = Object.assign({numbers:1,math:0,reading:0,find:0}, P.lv||{}); }
+  if(raw){ const d = JSON.parse(raw); Object.assign(S, d.S||{}); Object.assign(P, d.P||{}); P.lv = Object.assign({numbers:1,math:0,reading:0,find:0,maze:0}, P.lv||{}); }
 }catch(e){}
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify({S,P})); }catch(e){} }
 
 const NUM_LV=[5,10,15,20,30], MATH_LV=[5,10,20], FIND_LV=[3,4,5,6];
 const numMaxNow = () => S.autoLevel ? Math.min(S.numMax, NUM_LV[P.lv.numbers]) : S.numMax;
 const mathMaxNow = () => S.autoLevel ? Math.min(S.mathMax, MATH_LV[P.lv.math]) : S.mathMax;
-const LV_LEN = {numbers:NUM_LV.length, math:MATH_LV.length, reading:3, find:FIND_LV.length};
+const LV_LEN = {numbers:NUM_LV.length, math:MATH_LV.length, reading:3, find:FIND_LV.length, maze:4};
 
 /* =========================================================
    HELPERS
@@ -965,7 +997,7 @@ $$('[data-dudu]').forEach(d=>{ d.innerHTML = duduSVG(); if(d.dataset.dudu==='min
 /* =========================================================
    "NEW" BADGES: shown on anything added recently, until its first tap
    ========================================================= */
-const NEW_FEATURES = ['game:trace', 'tab:notebook'];
+const NEW_FEATURES = ['game:trace', 'tab:notebook', 'game:dots', 'game:maze', 'game:color', 'album:art'];
 function trackItem(key, ok){ P.items = P.items || {}; const it = P.items[key] = P.items[key] || {n:0, ok:0, bad:0, t:0}; it.n++; if(ok) it.ok++; else it.bad++; it.t = Date.now(); save(); }
 const isNew = id => NEW_FEATURES.includes(id) && !(P.seen && P.seen[id]);
 function markSeen(id){ if(!isNew(id)) return; P.seen = P.seen || {}; P.seen[id] = 1; save(); }
@@ -1075,7 +1107,7 @@ const ZONES = {
   letters:{name:'בית האותיות', icon:'🏡', chip:'אB', c:'#ff6b6b', cd:'#d94848', x:290,y:296, bg:'linear-gradient(160deg,#ff9fb0,#ffd59a)', games:['trace','hunt']},
   numbers:{name:'יער המספרים', icon:'🌳', chip:'123', c:'#2fbf71', cd:'#1e9456', x:640,y:292, bg:'linear-gradient(160deg,#7fe0a0,#d9f99d)', games:['connect','count','math']},
   colors:{name:'גבעת הצבעים', icon:'🎨', chip:'●', c:'#f59e0b', cd:'#c27803', x:990,y:322, bg:'linear-gradient(160deg,#7cc8ff,#ffe38a)', games:['balloons','sort']},
-  books:{name:'ספריית החוברות', icon:'🔍', chip:'?!', c:'#8b5cf6', cd:'#6a3fd6', x:500,y:512, bg:'linear-gradient(160deg,#b9a2ff,#ffb8dc)', games:['diff','find']},
+  books:{name:'ספריית החוברות', icon:'🔍', chip:'?!', c:'#8b5cf6', cd:'#6a3fd6', x:500,y:512, bg:'linear-gradient(160deg,#b9a2ff,#ffb8dc)', games:['dots','maze','color','diff','find']},
   reading:{name:'עץ הקריאה', icon:'📖', chip:'אבא', c:'#3b82f6', cd:'#1d5fd6', x:800,y:512, bg:'linear-gradient(160deg,#7fb2ff,#fff09a)', games:['reading']},
 };
 function buildStations(){
@@ -1147,9 +1179,21 @@ function openZone(zid){
 }
 
 /* ---------- album ---------- */
-$('#btnAlbum').addEventListener('click', ()=>{
-  sfx.tap(); show('scr-album');
-  const g = $('#albumGrid'); g.innerHTML='';
+let albumView = 'stickers';
+function artLoad(){ try{ return JSON.parse(localStorage.getItem('liam-art-v1') || '[]'); }catch(e){ return []; } }
+function artAdd(svg){ const a = artLoad(); a.push({t:Date.now(), svg}); while(a.length > 24) a.shift(); try{ localStorage.setItem('liam-art-v1', JSON.stringify(a)); }catch(e){} }
+$('#btnArt').addEventListener('click', ()=>{ sfx.tap(); markSeen('album:art'); albumView = albumView==='art' ? 'stickers' : 'art'; renderAlbum(); });
+function renderAlbum(){
+  const g = $('#albumGrid'); g.innerHTML = '';
+  $('#btnArt').innerHTML = albumView==='art' ? '⭐ המדבקות' : '🖼️ הציורים שלי' + (isNew('album:art') ? newBadge() : '');
+  $('#albumHead').textContent = albumView==='art' ? 'הציורים שלי' : 'המדבקות שלי';
+  g.classList.toggle('art', albumView==='art');
+  if(albumView==='art'){
+    const a = artLoad();
+    if(!a.length) g.appendChild(h(`<div class="art-empty">עוד אין ציורים. בספריית החוברות יש דף צביעה 🎨</div>`));
+    a.slice().reverse().forEach(x=>{ const c = h(`<div class="art-item">${x.svg}</div>`); c.addEventListener('click', ()=>{ retrigger(c,'boing'); sfx.pop(); }); g.appendChild(c); });
+    return;
+  }
   const total = Math.max(32, Math.ceil((P.stickers.length+1)/8)*8);
   for(let i=0;i<Math.min(total,40);i++){
     const st = P.stickers[i];
@@ -1157,6 +1201,9 @@ $('#btnAlbum').addEventListener('click', ()=>{
     if(st) s.addEventListener('click', ()=>{ retrigger(s,'boing'); sfx.pop(); const c=centerOf(s); burst(c.x,c.y,['✨','⭐'],8); });
     g.appendChild(s);
   }
+}
+$('#btnAlbum').addEventListener('click', ()=>{
+  sfx.tap(); show('scr-album'); albumView = 'stickers'; renderAlbum();
   sayList(P.stickers.length ? [['יש לך','he'],[String(P.stickers.length),'he'],['מדבקות! כל הכבוד','he']] : [['עוד אין מדבקות. בוא נשחק ונרוויח מדבקה!','he']], false);
 });
 $('#btnAlbumHome').addEventListener('click', ()=>goMap());
@@ -1741,7 +1788,7 @@ const ILL = (()=>{
   const S2 = `stroke="${O}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"`;
   const BRIGHT = ['#ef5b5b','#4d96ff','#ffd93d','#6bcb77','#ff8fab','#9b5de5','#ff9f1c','#2ec4b6'];
   const other = (cur, pal=BRIGHT) => pick(pal.filter(c=>c!==cur));
-  const puff = (cs, fill) => cs.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${S3}/>`).join('') + cs.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r-1.7}" fill="${fill}"/>`).join('');
+  const puff = (cs, fill) => '<g class="puff">' + cs.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${S3}/>`).join('') + cs.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r-1.7}" fill="${fill}"/>`).join('') + '</g>';
   const eye = (x,y,r=3.2) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${O}"/><circle cx="${x+r*.35}" cy="${y-r*.4}" r="${r*.38}" fill="#fff"/>`;
   const cheek = (x,y,r=4) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.7}" fill="#ff8fa3" opacity=".65"/>`;
   const smile = (x,y,w=5) => `<path d="M${x-w} ${y} q${w} ${w*.9} ${w*2} 0" fill="none" ${S2}/>`;
@@ -1986,7 +2033,8 @@ const ILL = (()=>{
     const vb = CENTER.has(type) ? `${-w/2-4} ${-h/2-4} ${w+8} ${h+8}` : `${-w/2-4} ${-h-4} ${w+8} ${h+8}`;
     return `<svg viewBox="${vb}" width="${px}" height="${px}" style="display:block">${DRAW[type](p)}</svg>`;
   }
-  return {build, render, makeDiffs, hideFriends, icon, FIND, KINDS:Object.keys(SPEC)};
+  const place = (type, x, y, sc, flip, p) => `<g transform="translate(${x} ${y}) scale(${flip?-sc:sc} ${sc})">${DRAW[type](Object.assign(P[type](), p||{}))}</g>`;
+  return {build, render, makeDiffs, hideFriends, icon, place, O, FIND, KINDS:Object.keys(SPEC)};
 })();
 
 /* ---------- 8. SPOT THE DIFFERENCE ---------- */
@@ -2052,6 +2100,205 @@ GAMES.find = {
       } else { const rp = h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`); scene.appendChild(rp); setTimeout(()=>rp.remove(), 520); }
     });
     ctx.prompt([[String(spots.length),'he'],[tname,'he'],['מסתתרים בתמונה. תמצא אותם?','he']]);
+  }
+};
+
+/* ---------- 11. DOT TO DOT ---------- */
+const DOT_SHAPES = [
+  {name:'כוכב!', c:'#ffd23f', face:[50,52], d:(()=>{ let d=''; for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, r=i%2?20:44; d+=(i?'L':'M')+(50+Math.cos(a)*r).toFixed(1)+' '+(54+Math.sin(a)*r).toFixed(1); } return d+'Z'; })()},
+  {name:'לב!', c:'#ff5d8f', face:[50,48], d:'M50 86 C22 66 10 48 20 32 C30 18 46 22 50 34 C54 22 70 18 80 32 C90 48 78 66 50 86 Z'},
+  {name:'בית!', c:'#ff9f1c', face:[50,62], d:'M20 86 L20 46 L50 16 L80 46 L80 86 Z'},
+  {name:'דג!', c:'#2ec4b6', face:[34,48], d:'M12 50 Q36 20 66 40 L88 26 L84 50 L88 74 L66 60 Q36 80 12 50 Z'},
+  {name:'בלון!', c:'#ef5b5b', face:[50,42], d:'M50 12 C24 12 18 38 26 54 C33 68 44 74 50 78 C56 74 67 68 74 54 C82 38 76 12 50 12 Z'},
+  {name:'תפוח!', c:'#e63946', face:[50,56], d:'M50 30 C40 20 16 24 16 50 C16 76 36 90 50 82 C64 90 84 76 84 50 C84 24 60 20 50 30 Z'},
+  {name:'חתול!', c:'#ffb35c', face:[50,56], d:'M20 42 L22 12 L42 28 Q50 26 58 28 L78 12 L80 42 Q88 78 50 84 Q12 78 20 42 Z'},
+  {name:'סירה!', c:'#4d96ff', face:[50,74], d:'M14 62 L46 62 L46 12 L80 62 L88 62 L74 86 L26 86 Z'},
+  {name:'ירח!', c:'#ffe066', face:[34,50], d:'M62 12 A38 38 0 1 0 88 72 A30 30 0 1 1 62 12 Z'},
+];
+GAMES.dots = {
+  name:'מחברים נקודות', icon:'✨', rounds:3, skill:'numbers',
+  init(ctx){ ctx.data.order = shuffle(DOT_SHAPES); },
+  question(ctx, tok){
+    const sh = ctx.data.order[ctx.q % ctx.data.order.length];
+    const N = Math.max(8, Math.min(30, numMaxNow()));
+    const BOX = 580, VB0 = -6, VBS = 112;
+    const board = h(`<div class="trace-paper dots-board" style="left:350px;top:16px;width:${BOX}px;height:${BOX}px"><svg viewBox="${VB0} ${VB0} ${VBS} ${VBS}"></svg></div>`);
+    area.appendChild(board);
+    const svg = board.querySelector('svg');
+    const fill = svgEl('path', {d:sh.d, fill:sh.c, stroke:ILL.O, 'stroke-width':1.6, 'stroke-linejoin':'round', opacity:0, class:'dot-fill'}, svg);
+    const pts = samplePaths([sh.d], 1)[0];
+    // N dots at equal distances along the outline
+    const seg = [0]; for(let i=1;i<pts.length;i++) seg.push(seg[i-1] + Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]));
+    const L = seg[seg.length-1], dots = [];
+    for(let k=0;k<N;k++){ const target = L*k/N; let i = seg.findIndex(v=>v >= target); if(i<0) i = pts.length-1; dots.push(pts[i]); }
+    const cx = dots.reduce((a,p)=>a+p[0],0)/N, cy = dots.reduce((a,p)=>a+p[1],0)/N;
+    const gLines = svgEl('g', {}, svg), rubber = svgEl('line', {class:'dot-rubber', x1:0, y1:0, x2:0, y2:0, opacity:0}, svg), gDots = svgEl('g', {}, svg);
+    const dotEls = dots.map(([x,y],k)=>{
+      const g = svgEl('g', {class:'dot'+(k===0?' next':'')}, gDots);
+      svgEl('circle', {cx:x, cy:y, r:2.6}, g);
+      const ang = Math.atan2(y-cy, x-cx), lx = x + Math.cos(ang)*6, ly = y + Math.sin(ang)*6;
+      const t = svgEl('text', {x:lx, y:ly, 'text-anchor':'middle', 'dominant-baseline':'central'}, g); t.textContent = k+1;
+      return g;
+    });
+    let last = -1, dragging = false, nag = 0, done = false;
+    const toU = e => { const l = localPt(e, board); return [l.x*VBS/BOX+VB0, l.y*VBS/BOX+VB0]; };
+    const nearDot = u => { let best = -1, bd = 7.5; dots.forEach((d,k)=>{ const dd = Math.hypot(d[0]-u[0], d[1]-u[1]); if(dd < bd){ bd = dd; best = k; } }); return best; };
+    function connect(k){
+      if(last >= 0) svgEl('line', {class:'dot-line', x1:dots[last][0], y1:dots[last][1], x2:dots[k][0], y2:dots[k][1]}, gLines);
+      dotEls[k].classList.remove('next'); dotEls[k].classList.add('done'); last = k;
+      if(k+1 < N) dotEls[k+1].classList.add('next');
+      sfx.tick(k/N); sayList([[String(k+1),'he']], false);
+      if(k === N-1) finish();
+    }
+    async function finish(){
+      done = true; rubber.setAttribute('opacity', 0);
+      svgEl('line', {class:'dot-line', x1:dots[N-1][0], y1:dots[N-1][1], x2:dots[0][0], y2:dots[0][1]}, gLines);
+      setTimeout(()=>{
+        fill.setAttribute('opacity', 1); board.classList.add('revealed');
+        const [fx, fy] = sh.face;
+        svgEl('g', {class:'dot-face'}, svg).innerHTML = `<circle cx="${fx-6}" cy="${fy-3}" r="2.2" fill="${ILL.O}"/><circle cx="${fx+6}" cy="${fy-3}" r="2.2" fill="${ILL.O}"/><path d="M${fx-5} ${fy+3} q5 4.5 10 0" fill="none" stroke="${ILL.O}" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="${fx-10}" cy="${fy+2}" rx="2.6" ry="1.8" fill="#ff8fa3" opacity=".7"/><ellipse cx="${fx+10}" cy="${fy+2}" rx="2.6" ry="1.8" fill="#ff8fa3" opacity=".7"/>`;
+        const c = centerOf(board); burst(c.x, c.y, ['⭐','✨','🎉'], 20); sfx.win();
+      }, 350);
+      ctx.right(null, [[sh.name,'he'],[pick(PRAISE),'he']]);
+      ctx.solved(1500);
+    }
+    function tryAt(u, tapped){
+      const k = nearDot(u); if(k < 0) return;
+      if(k === last+1){ connect(k); return; }
+      if(tapped && k > last+1 && performance.now()-nag > 3500){ nag = performance.now(); retrigger(dotEls[last+1], 'hop'); sayList([['הנקודה הבאה היא','he'],[String(last+2),'he']]); }
+    }
+    board.addEventListener('pointerdown', e=>{ if(done || !ctx.alive(tok)) return; e.preventDefault(); try{ board.setPointerCapture(e.pointerId); }catch(_){} dragging = true; tryAt(toU(e), true); });
+    board.addEventListener('pointermove', e=>{
+      if(!dragging || done) return; const u = toU(e); tryAt(u, false);
+      if(last >= 0){ rubber.setAttribute('x1', dots[last][0]); rubber.setAttribute('y1', dots[last][1]); rubber.setAttribute('x2', u[0]); rubber.setAttribute('y2', u[1]); rubber.setAttribute('opacity', .5); }
+    });
+    const up = ()=>{ dragging = false; rubber.setAttribute('opacity', 0); };
+    board.addEventListener('pointerup', up); board.addEventListener('pointercancel', up);
+    ctx.prompt(ctx.q===0 ? [['חבר את הנקודות לפי הסדר','he'],['מתחילים מאחת','he']] : [['חבר את הנקודות לפי הסדר','he']]);
+  }
+};
+
+/* ---------- 12. MAZE ---------- */
+const MAZE_SIZES = [[4,3],[5,3],[6,4],[7,5]];
+function makeMaze(cols, rows){
+  // walls[r][c] = {n,e,s,w}; carved with a depth-first walk
+  const W = Array.from({length:rows}, ()=>Array.from({length:cols}, ()=>({n:1,e:1,s:1,w:1})));
+  const seen = Array.from({length:rows}, ()=>Array(cols).fill(false));
+  const st = [[cols-1, rows-1]]; seen[rows-1][cols-1] = true;
+  const D = [['n',0,-1,'s'],['s',0,1,'n'],['e',1,0,'w'],['w',-1,0,'e']];
+  while(st.length){
+    const [c,r] = st[st.length-1];
+    const opts = shuffle(D).filter(([,dx,dy])=>{ const nc=c+dx, nr=r+dy; return nc>=0 && nr>=0 && nc<cols && nr<rows && !seen[nr][nc]; });
+    if(!opts.length){ st.pop(); continue; }
+    const [k,dx,dy,back] = opts[0]; const nc=c+dx, nr=r+dy;
+    W[r][c][k] = 0; W[nr][nc][back] = 0; seen[nr][nc] = true; st.push([nc,nr]);
+  }
+  return W;
+}
+GAMES.maze = {
+  name:'מבוך', icon:'🐰', rounds:3, skill:'maze',
+  question(ctx, tok){
+    const [cols, rows] = MAZE_SIZES[S.autoLevel ? P.lv.maze : 1];
+    const BW = 1100, BH = 520, cell = Math.min(BW/cols, BH/rows), w = cell*cols, hh = cell*rows;
+    const ox = (1280-w)/2, oy = 40 + (BH-hh)/2;
+    const W = makeMaze(cols, rows);
+    const board = h(`<div class="maze-board" style="left:${ox-14}px;top:${oy-14}px;width:${w+28}px;height:${hh+28}px"><svg viewBox="-14 -14 ${w+28} ${hh+28}"></svg></div>`);
+    area.appendChild(board);
+    const svg = board.querySelector('svg');
+    const trail = svgEl('polyline', {class:'maze-trail', points:''}, svg);
+    let walls = '';
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const x = c*cell, y = r*cell, m = W[r][c];
+      if(m.n) walls += `M${x} ${y} L${x+cell} ${y} `;
+      if(m.w) walls += `M${x} ${y} L${x} ${y+cell} `;
+      if(r===rows-1 && m.s) walls += `M${x} ${y+cell} L${x+cell} ${y+cell} `;
+      if(c===cols-1 && m.e) walls += `M${x+cell} ${y} L${x+cell} ${y+cell} `;
+    }
+    svgEl('path', {d:walls, class:'hedge-out'}, svg); svgEl('path', {d:walls, class:'hedge-in'}, svg);
+    // carrot at the goal (top-left), bunny at the start (bottom-right)
+    const goal = svgEl('g', {transform:`translate(${cell/2} ${cell/2}) scale(${cell/110})`}, svg);
+    goal.innerHTML = `<g class="carrot"><path d="M-8 -30 q-6 -14 4 -18 M0 -30 q0 -16 10 -16 M6 -30 q8 -12 16 -6" fill="none" stroke="#3f9b3b" stroke-width="6" stroke-linecap="round"/><path d="M-14 -30 Q0 -36 14 -30 L2 32 Q0 36 -2 32 Z" fill="#ff8c1a" stroke="${ILL.O}" stroke-width="3.5" stroke-linejoin="round"/><path d="M-8 -14 h7 M-2 2 h8 M-5 16 h6" stroke="#c45f00" stroke-width="3" stroke-linecap="round"/></g>`;
+    const bun = h(`<div class="maze-bunny" style="width:${cell*.8}px;height:${cell*.8}px">${ILL.icon('bunny', Math.round(cell*.8))}</div>`);
+    board.appendChild(bun);
+    let pc = cols-1, pr = rows-1, path = [[pc,pr]], done = false, bonk = 0, active = false;
+    const center = (c,r)=>[c*cell+cell/2, r*cell+cell/2];
+    const place = ()=>{ const [x,y] = center(pc,pr); bun.style.left = (x+14-cell*.4)+'px'; bun.style.top = (y+14-cell*.45)+'px'; trail.setAttribute('points', path.map(([c,r])=>center(c,r).join(',')).join(' ')); };
+    place();
+    const open = (c,r,nc,nr)=>{ const m = W[r][c]; if(nr<r) return !m.n; if(nr>r) return !m.s; if(nc>c) return !m.e; if(nc<c) return !m.w; return false; };
+    function step(nc, nr){
+      if(done || (nc===pc && nr===pr)) return;
+      if(Math.abs(nc-pc) + Math.abs(nr-pr) !== 1) return;
+      if(!open(pc,pr,nc,nr)){ if(performance.now()-bonk > 4000){ bonk = performance.now(); sfx.oops(); retrigger(bun,'shake'); say('אי אפשר לעבור דרך השיח'); } return; }
+      const prev = path[path.length-2];
+      if(prev && prev[0]===nc && prev[1]===nr) path.pop(); else path.push([nc,nr]);
+      pc = nc; pr = nr; place(); sfx.tap();
+      if(pc===0 && pr===0) win();
+    }
+    async function win(){
+      done = true; bun.classList.add('eat'); goal.querySelector('.carrot').classList.add('eaten');
+      const c = centerOf(bun); burst(c.x, c.y, ['🥕','⭐','✨'], 16); sfx.win();
+      ctx.right(null, [['הארנב הגיע לגזר! כל הכבוד!','he']]);
+      ctx.solved(1600);
+    }
+    const cellAt = e => { const l = localPt(e, board); return [Math.floor((l.x-14)/cell), Math.floor((l.y-14)/cell)]; };
+    board.addEventListener('pointerdown', e=>{ if(done || !ctx.alive(tok)) return; e.preventDefault(); try{ board.setPointerCapture(e.pointerId); }catch(_){} active = true; const [c,r] = cellAt(e); step(c,r); });
+    board.addEventListener('pointermove', e=>{ if(!active || done) return; const [c,r] = cellAt(e); step(c,r); });
+    const up = ()=>{ active = false; };
+    board.addEventListener('pointerup', up); board.addEventListener('pointercancel', up);
+    ctx.prompt([['עזור לארנב להגיע לגזר','he']]);
+  }
+};
+
+/* ---------- 13. COLORING PAGE ---------- */
+const COLOR_PAGES = [
+  ()=>`<rect class="rg" x="0" y="0" width="900" height="520" fill="#fff"/><path class="rg" d="M0 360 Q220 310 450 350 Q680 390 900 340 V520 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/>` + ILL.place('sun',110,100,1.2) + ILL.place('cloud',330,90,1.3) + ILL.place('house',600,420,1.7) + ILL.place('tree',230,440,1.5) + ILL.place('flower',380,470,1.4) + ILL.place('flower',820,470,1.4),
+  ()=>`<rect class="rg" x="0" y="0" width="900" height="520" fill="#fff"/><path class="rg" d="M0 400 H900 V520 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/>` + ILL.place('cat',450,480,4.2) + ILL.place('ball',190,470,2.6) + ILL.place('flower',740,480,2.2) + ILL.place('butterfly',160,140,2),
+  ()=>`<rect class="rg" x="0" y="0" width="900" height="520" fill="#fff"/><path class="rg" d="M0 230 H900 V380 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/><path class="rg" d="M0 380 Q300 350 600 380 Q760 396 900 372 V520 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/>` + ILL.place('sun',780,90,1.1) + ILL.place('sailboat',420,300,1.8) + ILL.place('fish',180,300,1.6) + ILL.place('fish',700,320,1.4,true) + ILL.place('crab',240,470,2) + ILL.place('bucket',620,480,2),
+  ()=>`<rect class="rg" x="0" y="0" width="900" height="520" fill="#fff"/><path class="rg" d="M0 380 Q450 330 900 380 V520 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/>` + ILL.place('bunny',450,470,3.4) + ILL.place('mushroom',190,470,2.4) + ILL.place('mushroom',720,470,2) + ILL.place('butterfly',700,150,2) + ILL.place('flower',300,480,1.8) + ILL.place('flower',600,480,1.8),
+  ()=>`<rect class="rg" x="0" y="0" width="900" height="520" fill="#fff"/><path class="rg" d="M0 420 H900 V520 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/>` + ILL.place('car',470,470,3.4) + ILL.place('tree',140,440,1.5) + ILL.place('sun',780,100,1.2) + ILL.place('cloud',420,90,1.4),
+  ()=>`<rect class="rg" x="0" y="0" width="900" height="520" fill="#fff"/><path class="rg" d="M0 400 Q450 360 900 400 V520 H0Z" fill="#fff" stroke="${ILL.O}" stroke-width="4"/>` + ILL.place('dog',450,480,4) + ILL.place('balloon',180,330,2.6) + ILL.place('balloon',730,330,2.6) + ILL.place('bird',780,120,2),
+];
+const PAINT = ['#ef4444','#ff9f1c','#ffd93d','#6bcb77','#2ec4b6','#4d96ff','#9b5de5','#ff8fab','#a0642a','#8bd3ff','#3d2f5b','#ffffff'];
+GAMES.color = {
+  name:'דף צביעה', icon:'🎨', rounds:1,
+  question(ctx, tok){
+    const k = ctx.data.page = (P.lastPage = ((P.lastPage||0) + 1 + Math.floor(Math.random()*(COLOR_PAGES.length-1))) % COLOR_PAGES.length);
+    save();
+    const board = h(`<div class="color-board"><svg viewBox="0 0 900 520">${COLOR_PAGES[k]()}</svg></div>`);
+    area.appendChild(board);
+    const svg = board.querySelector('svg');
+    // every filled shape becomes white and tappable; outlines, eyes and shines stay
+    svg.querySelectorAll('[fill]').forEach(el=>{
+      const f = (el.getAttribute('fill')||'').toLowerCase();
+      if(f==='none' || f===ILL.O.toLowerCase() || el.getAttribute('opacity') || (f==='#fff' && el.tagName==='circle' && +el.getAttribute('r') < 3)) return;
+      if(el.closest('.puff') && !el.classList.contains('rg')){ el.setAttribute('fill', '#fff'); return; }
+      el.setAttribute('fill', '#fff'); el.classList.add('rg');
+    });
+    svg.querySelectorAll('.puff').forEach(g=>g.classList.add('rg-group'));
+    let color = PAINT[0];
+    const pal = h(`<div class="palette"></div>`);
+    PAINT.forEach((c,i)=>{ const b = h(`<button class="paint ${i===0?'on':''}" style="--p:${c}" aria-label="צבע"></button>`); b.addEventListener('click', ()=>{ color = c; pal.querySelectorAll('.paint').forEach(x=>x.classList.toggle('on', x===b)); sfx.tap(); }); pal.appendChild(b); });
+    area.appendChild(pal);
+    let painted = 0;
+    svg.addEventListener('pointerdown', e=>{
+      if(!ctx.alive(tok)) return;
+      const t = e.target; const grp = t.closest('.rg-group');
+      if(grp){ grp.querySelectorAll('circle').forEach(c=>{ if(c.getAttribute('fill')) c.setAttribute('fill', color); }); }
+      else if(t.classList && t.classList.contains('rg')) t.setAttribute('fill', color);
+      else return;
+      painted++; sfx.pop();
+      if(painted===1) doneBtn.classList.add('ready');
+    });
+    const doneBtn = h(`<button class="toy side-btn done-btn" style="left:40px;top:250px" aria-label="סיימתי">✓</button>`);
+    doneBtn.addEventListener('click', async ()=>{
+      if(!painted || !ctx.alive(tok)) return;
+      artAdd(`<svg viewBox="0 0 900 520">${svg.innerHTML}</svg>`);
+      const c = centerOf(board); burst(c.x, c.y, ['🎨','⭐','✨','🌈'], 22); sfx.win();
+      ctx.right(null, [['איזה ציור יפה!','he']]);
+      ctx.solved(1200);
+    });
+    area.appendChild(doneBtn);
+    ctx.prompt([['בחר צבע וצבע את הציור','he'],['כשתסיים, לחץ על הכפתור הירוק','he']]);
   }
 };
 
@@ -2130,7 +2377,7 @@ GAMES.reading = {
 /* =========================================================
    VOICE CATALOG: every sentence part Dudu says, grouped for recording
    ========================================================= */
-function NEW_LINES(){ return ['עכשיו תכתוב לבד על האות החלשה', 'עכשיו תכתוב לבד, בלי עזרה', 'כשתסיים, לחץ על הכפתור הירוק', 'בוא ננסה שוב, תכתוב גדול', 'וואו! כתבת מושלם!', 'יפה מאוד! כתבת טוב!', 'ניסיון יפה! נמשיך להתאמן']; }
+function NEW_LINES(){ return ['עכשיו תכתוב לבד על האות החלשה', 'עכשיו תכתוב לבד, בלי עזרה', 'כשתסיים, לחץ על הכפתור הירוק', 'בוא ננסה שוב, תכתוב גדול', 'וואו! כתבת מושלם!', 'יפה מאוד! כתבת טוב!', 'ניסיון יפה! נמשיך להתאמן', 'חבר את הנקודות לפי הסדר', 'מתחילים מאחת', 'הנקודה הבאה היא', ...DOT_SHAPES.map(x=>x.name), 'עזור לארנב להגיע לגזר', 'הארנב הגיע לגזר! כל הכבוד!', 'אי אפשר לעבור דרך השיח', 'בחר צבע וצבע את הציור', 'איזה ציור יפה!']; }
 function voiceCatalog(){
   const N = S.childName, Mc = S.mascot;
   const he = arr => arr.map(t=>({t, lang:'he'}));
