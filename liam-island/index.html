@@ -338,6 +338,7 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .v-b:disabled{opacity:.3}
 .v-rec{border-color:var(--coral)}
 .v-row.rec .v-rec{background:var(--coral);color:#fff;animation:pulse 1s ease-in-out infinite}
+.v-log{font:500 12px/1.4 ui-monospace,Menlo,monospace;color:var(--ink-soft);background:#fff;border-radius:10px;padding:6px 10px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v-pager{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px;font:700 17px var(--font-display);color:var(--ink-soft)}
 .v-pager .p-btn:disabled{opacity:.35}
 .kpi{background:#fff;border-radius:18px;padding:12px 20px;flex:1;box-shadow:0 2px 0 #e4def6}
@@ -747,6 +748,8 @@ function speakOne(t, lang){
 /* ---------- parent's recorded voice: clips stored on this device, matched by the sentence text ---------- */
 const REC = (()=>{
   let db = null, cur = null, el = null, lastErr = '', lastHow = '';
+  const log = [];
+  const trace = m => { log.push(new Date().toLocaleTimeString('he-IL') + '  ' + m); if(log.length > 8) log.shift(); };
   const map = new Map(), bufs = new Map(), urls = new Map();
   const norm = (t, lang) => (lang||'he') + ':' + stripNiqqud(String(t)).replace(/[!?.,:;'"׳״…]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
   const open = () => new Promise(res=>{ try{ const r = indexedDB.open('liam-voice', 1); r.onupgradeneeded = ()=>r.result.createObjectStore('rec'); r.onsuccess = ()=>{ db = r.result; res(true); }; r.onerror = ()=>res(false); }catch(e){ res(false); } });
@@ -769,11 +772,16 @@ const REC = (()=>{
     }catch(e){ lastErr = 'ההקלטה נשמעת עכשיו, אבל לא נשמרה בזיכרון של הטלפון'; }
   }
   function del(key){ map.delete(key); bufs.delete(key); urls.delete(key); try{ db.transaction('rec','readwrite').objectStore('rec').delete(key); }catch(e){} }
+  const noDecode = new Set();
   async function buffer(key){
     if(bufs.has(key)) return bufs.get(key);
+    if(noDecode.has(key)) return null;
     const a = ac(); if(!a || !map.has(key)) return null;
-    const data = await map.get(key).arrayBuffer();
-    const b = await new Promise((res, rej)=>{ try{ const pr = a.decodeAudioData(data, res, rej); if(pr && pr.catch) pr.catch(rej); }catch(e){ rej(e); } });
+    let b;
+    try{
+      const data = await map.get(key).arrayBuffer();
+      b = await Promise.race([new Promise((res, rej)=>{ try{ const pr = a.decodeAudioData(data, res, rej); if(pr && pr.catch) pr.catch(rej); }catch(e){ rej(e); } }), new Promise((_, rej)=>setTimeout(()=>rej(new Error('decode timeout')), 1500))]);
+    }catch(e){ noDecode.add(key); trace('decode ✗ ' + (e && e.message || e)); return null; }
     const d = b.getChannelData(0); let st = 0, en = d.length-1; const th = .025;
     while(st < d.length && Math.abs(d[st]) < th) st++;
     while(en > st && Math.abs(d[en]) < th) en--;
@@ -785,8 +793,9 @@ const REC = (()=>{
   async function playWeb(key){
     const a = ac(); if(!a) return false;
     if(a.state !== 'running'){ try{ await Promise.race([a.resume(), sleep(300)]); }catch(e){} }
-    if(a.state !== 'running') return false;
+    if(a.state !== 'running'){ trace('web ✗ audio ' + a.state); return false; }
     const o = await buffer(key); if(!o) return false;
+    trace('web ▶ ' + (o.end - o.start).toFixed(1) + 's');
     stop();
     return new Promise(res=>{
       const src = a.createBufferSource(), g = a.createGain(); g.gain.value = 1.5;
@@ -809,31 +818,37 @@ const REC = (()=>{
     const a = audioEl(); if(!urls.has(key)) urls.set(key, URL.createObjectURL(map.get(key)));
     stop();
     return new Promise(res=>{
-      let done = false, endT = null;
-      const fin = ok=>{ if(done) return; done = true; clearTimeout(endT); a.onended = null; a.onerror = null; a.onloadedmetadata = null; if(cur && cur.el) cur = null; res(ok); };
-      a.onended = ()=>fin(true); a.onerror = ()=>fin(false);
+      let done = false, started = false, endT = null, startT = null, capT = null;
+      const fin = ok=>{ if(done) return; done = true; clearTimeout(endT); clearTimeout(startT); clearTimeout(capT); a.onended = null; a.onerror = null; a.onloadedmetadata = null; a.onplaying = null; if(cur && cur.el) cur = null; if(!ok){ try{ a.pause(); }catch(e){} } res(ok); };
+      a.onended = ()=>fin(true);
+      a.onerror = ()=>{ trace('element ✗ error ' + (a.error && a.error.code)); fin(false); };
+      a.onplaying = ()=>{ started = true; trace('element ▶ playing'); };
       cur = {el:a, stop:()=>{ try{ a.pause(); }catch(e){} fin(true); }};
       const go = ()=>{
         try{ if(o && o.start > .02) a.currentTime = o.start; }catch(e){}
-        const pr = a.play(); if(pr && pr.catch) pr.catch(()=>fin(false));
+        const pr = a.play(); if(pr && pr.catch) pr.catch(e=>{ trace('element ✗ ' + (e && e.name || e)); fin(false); });
         if(o) endT = setTimeout(()=>{ try{ a.pause(); }catch(e){} fin(true); }, (o.end - o.start)*1000 + 150);
       };
       a.muted = false; a.volume = 1; a.src = urls.get(key);
       if(o && o.start > .02){ a.onloadedmetadata = go; try{ a.load(); }catch(e){} } else go();
-      setTimeout(()=>fin(true), 9000);
+      startT = setTimeout(()=>{ if(!started && !(a.currentTime > 0 && !a.paused)){ trace('element ✗ did not start'); fin(false); } }, 2500);
+      capT = setTimeout(()=>fin(started), 9000);
     });
   }
   async function play(key){
     if(!map.has(key)) return false;
     // iPhone: Web Audio is muted by the silent switch, the audio element is not, so it goes first there
-    const order = IS_IOS ? [['element', playEl], ['web', playWeb]] : [['web', playWeb], ['element', playEl]];
+    // (if the element fails on iPhone, the device voice speaks: Web Audio could be silenced by the switch)
+    const order = IS_IOS ? [['element', playEl]] : [['web', playWeb], ['element', playEl]];
+    trace('play ' + key.slice(3, 30));
     for(const [how, fn] of order){
-      try{ if(await fn(key)){ lastHow = how; return true; } }catch(e){ lastErr = how + ': ' + (e && e.message || e); }
+      try{ if(await fn(key)){ lastHow = how; trace('✓ ' + how); return true; } }catch(e){ trace(how + ' ✗ ' + (e && e.message || e)); }
     }
+    trace('✗ fell back to device voice');
     return false;
   }
   function stop(){ if(cur){ const c = cur; cur = null; c.stop(); } }
-  return {norm, load, put, del, play, stop, unlock, has:k=>map.has(k), size:()=>map.size, info:()=>({lastErr, lastHow, ctx: AC ? AC.state : 'none', db: !!db})};
+  return {norm, load, put, del, play, stop, unlock, has:k=>map.has(k), size:()=>map.size, info:()=>({lastErr, lastHow, ctx: AC ? AC.state : 'none', db: !!db, log:[...log]})};
 })();
 ['pointerdown','touchend','click'].forEach(ev=>document.addEventListener(ev, ()=>REC.unlock(), {capture:true}));
 /* newer iPhones: treat all game sound as media, so the silent switch does not mute it */
@@ -2008,7 +2023,7 @@ async function recToggle(item){
 function renderVoice(body){
   const cats = voiceCatalog();
   const cat = cats.find(c=>c.id===vCat) || cats[0];
-  const PER = 12, pages = Math.max(1, Math.ceil(cat.items.length/PER));
+  const PER = 10, pages = Math.max(1, Math.ceil(cat.items.length/PER));
   vPage = Math.min(vPage, pages-1);
   const done = cats.reduce((n,c)=>n + c.items.filter(it=>REC.has(it.key)).length, 0), total = cats.reduce((n,c)=>n + c.items.length, 0);
   const inf = REC.info(); if(inf.lastErr && !vMsg) vMsg = inf.lastErr;
@@ -2016,6 +2031,7 @@ function renderVoice(body){
   cats.forEach(c=>{ const n = c.items.filter(it=>REC.has(it.key)).length; const b = h(`<button class="${c.id===cat.id?'on':''}">${c.name} <small>${n}/${c.items.length}</small></button>`); b.addEventListener('click', ()=>{ vCat = c.id; vPage = 0; renderParent(); }); head.querySelector('.v-cats').appendChild(b); });
   body.appendChild(head);
   if(vMsg) body.appendChild(h(`<div class="v-msg">${vMsg}</div>`));
+  if(inf.log.length){ const lg = h(`<div class="v-log" dir="ltr"></div>`); lg.textContent = inf.log.slice(-4).join('   ·   '); body.appendChild(lg); }
   const grid = h(`<div class="v-grid"></div>`);
   cat.items.slice(vPage*PER, vPage*PER+PER).forEach(it=>{
     const has = REC.has(it.key), rec = recKey===it.key;
