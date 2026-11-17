@@ -340,6 +340,22 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .bar{height:12px;border-radius:6px;background:#eee8ff;overflow:hidden;width:160px;display:inline-block;vertical-align:middle;margin-left:10px}
 .bar i{display:block;height:100%;background:var(--mint)}
 .kpis{display:flex;gap:14px;margin-bottom:12px}
+.v-head{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.v-info{font-size:16px;color:var(--ink-soft);line-height:1.4}
+.v-info b{color:var(--grape);font:800 20px var(--font-display)}
+.v-cats button small{opacity:.7;font-size:13px}
+.v-msg{background:#fff4e5;border:2px solid #ffb020;border-radius:14px;padding:10px 14px;font-size:16px;margin-bottom:10px}
+.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
+.v-row{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:6px 8px 6px 12px;box-shadow:0 2px 0 #e4def6;min-height:58px}
+.v-row.has{background:#eafff5}
+.v-row.rec{background:#ffe4e9;box-shadow:0 0 0 3px var(--coral)}
+.v-t{flex:1;min-width:0;font:700 18px/1.25 var(--font-display);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.v-b{width:46px;height:46px;border-radius:50%;border:2px solid #ddd6f3;background:#faf8ff;font-size:20px;display:grid;place-items:center;padding:0;flex:none}
+.v-b:disabled{opacity:.3}
+.v-rec{border-color:var(--coral)}
+.v-row.rec .v-rec{background:var(--coral);color:#fff;animation:pulse 1s ease-in-out infinite}
+.v-pager{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px;font:700 17px var(--font-display);color:var(--ink-soft)}
+.v-pager .p-btn:disabled{opacity:.35}
 .kpi{background:#fff;border-radius:18px;padding:12px 20px;flex:1;box-shadow:0 2px 0 #e4def6}
 .kpi b{display:block;font:800 34px var(--font-display);font-variant-numeric:tabular-nums}
 .kpi span{color:var(--ink-soft);font-size:15px}
@@ -448,6 +464,7 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
       <div class="tabs">
         <button class="tab on" data-tab="learn">הגדרות למידה</button>
         <button class="tab" data-tab="general">כללי</button>
+        <button class="tab" data-tab="voice">הקלטות</button>
         <button class="tab" data-tab="progress">התקדמות</button>
       </div>
       <button class="p-btn" id="btnParentClose">חזרה למשחק</button>
@@ -561,6 +578,7 @@ const EN_WORDS = [
   ['STAR','⭐'],['CAKE','🎂'],['BALL','⚽'],['TREE','🌳'],['FROG','🐸'],['DUCK','🦆'],['BEAR','🐻'],['LION','🦁'],['MILK','🥛'],['BOOK','📖'],
 ];
 const COUNT_ITEMS = ['🍎','🍓','⭐','🎈','🐟','🦆','🌸','🍪','🚗','🐞','🧁','🐣','⚽','🍊','🦋','🐝','🍄','🧸'];
+const COUNT_NAMES = {'🍎':'תפוחים','🍓':'תותים','⭐':'כוכבים','🎈':'בלונים','🐟':'דגים','🦆':'ברווזים','🌸':'פרחים','🍪':'עוגיות','🚗':'מכוניות','🐞':'חיפושיות','🧁':'עוגות','🐣':'אפרוחים','⚽':'כדורים','🍊':'תפוזים','🦋':'פרפרים','🐝':'דבורים','🍄':'פטריות','🧸':'דובונים'};
 const STICKERS = ['🦁','🐯','🦊','🐼','🐨','🐸','🦄','🐙','🦖','🚒','🚀','🌈','🍦','🎈','⭐','🐝','🦋','🐢','🐬','🚂','🏎️','🍓','🌻','🎸','🐳','🦒','🐧','🦉','🍩','🎂','🚁','⚽','🦜','🐞','🍉','🌟','🦕','🚜','🧸','🎠'];
 const PRAISE = ['כל הכבוד!','מעולה!','יופי!','וואו, איזה אלוף!','נכון מאוד!','מדהים!','אלוף!'];
 const OOPS = ['אופס, ננסה שוב?','כמעט! עוד פעם','לא נורא, נסה שוב','הממ... אולי משהו אחר?'];
@@ -739,18 +757,66 @@ function speakOne(t, lang){
       speechSynthesis.speak(u);
     }catch(e){ fin(); }
     setTimeout(fin, 1400 + t.length*150);
+    if(!('speechSynthesis' in window)) fin();
   });
 }
+/* ---------- parent's recorded voice: clips stored on this device, matched by the sentence text ---------- */
+const REC = (()=>{
+  let db = null, cur = null;
+  const map = new Map(), bufs = new Map();
+  const norm = (t, lang) => (lang||'he') + ':' + stripNiqqud(String(t)).replace(/[!?.,:;'"׳״…]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
+  const open = () => new Promise(res=>{ try{ const r = indexedDB.open('liam-voice', 1); r.onupgradeneeded = ()=>r.result.createObjectStore('rec'); r.onsuccess = ()=>{ db = r.result; res(true); }; r.onerror = ()=>res(false); }catch(e){ res(false); } });
+  async function load(){ if(!await open()) return; try{ const req = db.transaction('rec').objectStore('rec').openCursor(); req.onsuccess = ()=>{ const c = req.result; if(c){ map.set(c.key, c.value); c.continue(); } }; }catch(e){} }
+  function put(key, blob){ map.set(key, blob); bufs.delete(key); try{ db.transaction('rec','readwrite').objectStore('rec').put(blob, key); }catch(e){} }
+  function del(key){ map.delete(key); bufs.delete(key); try{ db.transaction('rec','readwrite').objectStore('rec').delete(key); }catch(e){} }
+  async function buffer(key){
+    if(bufs.has(key)) return bufs.get(key);
+    const a = ac(); if(!a || !map.has(key)) return null;
+    const data = await map.get(key).arrayBuffer();
+    const b = await new Promise((res, rej)=>a.decodeAudioData(data, res, rej));
+    // skip the silence (and the tap) before and after the words
+    const d = b.getChannelData(0); let st = 0, en = d.length-1; const th = .025;
+    while(st < d.length && Math.abs(d[st]) < th) st++;
+    while(en > st && Math.abs(d[en]) < th) en--;
+    const pad = Math.floor(b.sampleRate*.05);
+    const o = {b, start:Math.max(0, st-pad)/b.sampleRate, end:Math.min(d.length, en+pad)/b.sampleRate};
+    if(o.end - o.start < .1){ o.start = 0; o.end = b.duration; }
+    bufs.set(key, o); return o;
+  }
+  function play(key){
+    return new Promise(async res=>{
+      try{
+        const o = await buffer(key), a = ac(); if(!o || !a){ res(false); return; }
+        stop();
+        const src = a.createBufferSource(), g = a.createGain(); g.gain.value = 1.5;
+        src.buffer = o.b; src.connect(g); g.connect(a.destination);
+        src.onended = ()=>{ if(cur===src) cur = null; res(true); };
+        cur = src; src.start(0, o.start, Math.max(.05, o.end - o.start));
+      }catch(e){ res(false); }
+    });
+  }
+  function stop(){ if(cur){ try{ cur.stop(); }catch(e){} cur = null; } }
+  return {norm, load, put, del, play, stop, has:k=>map.has(k), size:()=>map.size};
+})();
 function sayList(list, bubble=true){
   const tok = ++speakToken;
   if(bubble) showBubble(list.map(x=>x[0]).join(' '));
-  if(!S.voice || !('speechSynthesis' in window)) return sleep(700 + list.reduce((n,x)=>n+x[0].length,0)*45);
+  if(!S.voice) return sleep(700 + list.reduce((n,x)=>n+x[0].length,0)*45);
   try{ speechSynthesis.cancel(); }catch(e){}
-  setTalking(true);
-  return (async()=>{ for(const [t,lang] of list){ if(tok!==speakToken) break; await speakOne(t, lang||'he'); } if(tok===speakToken) setTalking(false); })();
+  REC.stop(); setTalking(true);
+  return (async()=>{
+    for(const [t,lang] of list){
+      if(tok!==speakToken) break;
+      const k = REC.norm(t, lang);
+      if(REC.has(k) && await REC.play(k)) continue;
+      if(tok!==speakToken) break;
+      await speakOne(t, lang||'he');
+    }
+    if(tok===speakToken) setTalking(false);
+  })();
 }
 const say = (t, lang='he') => sayList([[t,lang]]);
-function stopSpeech(){ speakToken++; try{ speechSynthesis.cancel(); }catch(e){} setTalking(false); }
+function stopSpeech(){ speakToken++; try{ speechSynthesis.cancel(); }catch(e){} REC.stop(); setTalking(false); }
 
 /* ---------- fx ---------- */
 function burst(x, y, set=['⭐','✨','🌟','💛'], n=12){
@@ -995,12 +1061,12 @@ function startGame(gid){
   ctx.prompt = list => { ctx.lastPrompt = list; return sayList(list); };
   ctx.right = (pt, words) => {
     sfx.ding(); if(pt) burst(pt.x, pt.y);
-    if(words!==false) say(words || (Math.random()<.3 ? `כל הכבוד ${S.childName}!` : pick(PRAISE)));
+    if(words!==false){ if(Array.isArray(words)) sayList(words); else say(words || (Math.random()<.3 ? `כל הכבוד ${S.childName}!` : pick(PRAISE))); }
   };
   ctx.wrong = (node, words) => {
     ctx.mist++; ctx.qMist++; sfx.oops();
     if(node) retrigger(node,'shake');
-    if(words!==false) say(words || pick(OOPS));
+    if(words!==false){ if(Array.isArray(words)) sayList(words); else say(words || pick(OOPS)); }
   };
   ctx.solved = (delay=1100) => {
     const tok = ctx.token;
@@ -1172,9 +1238,9 @@ GAMES.trace = {
       paper.classList.add('won'); demo.setAttribute('opacity',0);
       const c = centerOf(paper); burst(c.x, c.y, ['⭐','🌟','✨','🎉'], 22); sfx.win();
       $('.word-card .pic', area)?.classList.add('boing');
-      const wl = item.kind==='he' ? [[`כל הכבוד! ${item.name}, כמו ${item.word}`,'he']]
-               : item.kind==='en' ? [['כל הכבוד!','he'],[`${item.ch}. ${item.ch} is for ${item.word}`,'en']]
-               : [[`כל הכבוד! כתבת את המספר ${item.ch}`,'he']];
+      const wl = item.kind==='he' ? [['כל הכבוד!','he'],[item.name,'he'],[`כמו ${item.word}`,'he']]
+               : item.kind==='en' ? [['כל הכבוד!','he'],[item.ch,'en'],[`${item.ch} is for ${item.word}`,'en']]
+               : [['כל הכבוד!','he'],['כתבת את המספר','he'],[item.ch,'he']];
       await sayList(wl);
       if(ctx.alive(tok)) ctx.solved(500);
     }
@@ -1220,9 +1286,9 @@ GAMES.trace = {
     again.addEventListener('click', ()=>{ if(!ctx.alive(tok)) return; sfx.tap(); area.innerHTML=''; ctx.token++; ctx.g.question(ctx, ctx.token); });
     area.appendChild(again);
     const first = ctx.q===0 ? [['שים את האצבע על הנקודה הירוקה, ותמשיך עם הקו','he']] : [];
-    if(item.kind==='he') ctx.prompt([[`בוא נכתוב את האות ${item.name}`,'he'],...first]);
+    if(item.kind==='he') ctx.prompt([['בוא נכתוב את האות','he'],[item.name,'he'],...first]);
     else if(item.kind==='en') ctx.prompt([['בוא נכתוב באנגלית את האות','he'],[item.ch,'en'],...first]);
-    else ctx.prompt([[`בוא נכתוב את המספר ${item.ch}`,'he'],...first]);
+    else ctx.prompt([['בוא נכתוב את המספר','he'],[item.ch,'he'],...first]);
   }
 };
 
@@ -1249,13 +1315,13 @@ GAMES.hunt = {
           b.dataset.done=1; sfx.pop(); const p=centerOf(b); burst(p.x,p.y,['✨','⭐','🫧'],10);
           b.animate([{transform:'scale(1)'},{transform:'scale(1.5)',opacity:0}],{duration:350,fill:'forwards'});
           found++;
-          if(found===T){ ctx.right(null, lang==='he'?`מצאת את כל האותיות ${target.name}!`:'מצאת את כולן!'); ctx.solved(1500); }
+          if(found===T){ ctx.right(null, lang==='he'?[['מצאת את כל האותיות','he'],[target.name,'he']]:[['מצאת את כולן!','he']]); ctx.solved(1500); }
           else lang==='he' ? say(target.name) : say(target.ch,'en');
-        } else { ctx.wrong(b, lang==='he' ? `זאת האות ${L.name}. נחפש את ${target.name}` : false); if(lang==='en') sayList([['זאת','he'],[L.ch,'en']]); hint.classList.add('on'); }
+        } else { ctx.wrong(b, lang==='he' ? [['זאת האות','he'],[L.name,'he'],['נחפש את','he'],[target.name,'he']] : [['זאת','he'],[L.ch,'en']]); hint.classList.add('on'); }
       });
       area.appendChild(b);
     });
-    if(lang==='he') ctx.prompt([[`מצא את כל האותיות ${target.name}`,'he']]);
+    if(lang==='he') ctx.prompt([['מצא את כל האותיות','he'],[target.name,'he']]);
     else ctx.prompt([['מצא את כל האותיות','he'],[target.ch,'en']]);
   }
 };
@@ -1296,12 +1362,12 @@ GAMES.connect = {
         L.done = R.done = true; L.el.classList.add('done'); R.el.classList.add('done');
         svgEl('line',{x1:L.ax,y1:L.ay,x2:R.ax,y2:R.ay,stroke:colorFor(L.v),'stroke-width':12,'stroke-linecap':'round'},svg);
         done++;
-        ctx.right({x:(L.ax+R.ax)/2, y:100+(L.ay+R.ay)/2}, done===vals.length ? false : `${L.v}! ${pick(PRAISE)}`);
-        if(done===vals.length){ sayList([[`${L.v}! כל הכבוד, חיברת את הכול!`,'he']]); ctx.solved(1600); }
+        ctx.right({x:(L.ax+R.ax)/2, y:100+(L.ay+R.ay)/2}, done===vals.length ? false : [[String(L.v),'he'],[pick(PRAISE),'he']]);
+        if(done===vals.length){ sayList([[String(L.v),'he'],['כל הכבוד, חיברת את הכול!','he']]); ctx.solved(1600); }
       } else {
         const ln = svgEl('line',{x1:L.ax,y1:L.ay,x2:R.ax,y2:R.ay,stroke:'#ff6b6b','stroke-width':10,'stroke-linecap':'round','stroke-dasharray':'4 16'},svg);
         setTimeout(()=>ln.remove(), 600);
-        ctx.wrong(R.el, `הממ... בוא נספור שוב. ${pick(OOPS)}`);
+        ctx.wrong(R.el, [['הממ... בוא נספור שוב.','he'],[pick(OOPS),'he']]);
       }
     }
     const clearSel = ()=>{ if(sel){ sel.el.classList.remove('sel'); sel=null; } };
@@ -1358,8 +1424,8 @@ GAMES.count = {
       area.appendChild(b);
     });
     const opts = distinctOptions(n, 1, Math.max(max, n+3));
-    choices(ctx, tok, opts.map((v,i)=>({label:v, x:980, y:30+i*190, ok:v===n, words:`${n}! ${pick(PRAISE)}`, onRight:()=>ctx.solved(1500)})));
-    ctx.prompt([[`כמה ${({'🍎':'תפוחים','🍓':'תותים','⭐':'כוכבים','🎈':'בלונים','🐟':'דגים','🦆':'ברווזים','🌸':'פרחים','🍪':'עוגיות','🚗':'מכוניות','🐞':'חיפושיות','🧁':'עוגות','🐣':'אפרוחים','⚽':'כדורים','🍊':'תפוזים','🦋':'פרפרים','🐝':'דבורים','🍄':'פטריות','🧸':'דובונים'})[e]} יש? אפשר ללחוץ ולספור`,'he']]);
+    choices(ctx, tok, opts.map((v,i)=>({label:v, x:980, y:30+i*190, ok:v===n, words:[[String(n),'he'],[pick(PRAISE),'he']], onRight:()=>ctx.solved(1500)})));
+    ctx.prompt([[`כמה ${COUNT_NAMES[e]} יש?`,'he'],['אפשר ללחוץ ולספור','he']]);
   }
 };
 
@@ -1380,8 +1446,8 @@ GAMES.math = {
     area.appendChild(row);
     if(sub){ const spans = $$('.mgroup span', row); setTimeout(()=>{ if(!ctx.alive(tok)) return; spans.slice(-b).forEach((s,i)=>setTimeout(()=>{ s.classList.add('gone'); sfx.pop(); }, i*250)); }, 1400); }
     const opts = distinctOptions(ans, 0, max+2);
-    choices(ctx, tok, opts.map((v,i)=>({label:v, x:375+i*200, y:440, ok:v===ans, words:`${ans}! ${pick(PRAISE)}`, onRight:()=>{ $('.mq',row).textContent=ans; ctx.solved(1500); }})));
-    ctx.prompt(sub ? [[`היו ${a}, ${b} הלכו. כמה נשארו?`,'he']] : [[`${a} ועוד ${b}. כמה זה ביחד?`,'he']]);
+    choices(ctx, tok, opts.map((v,i)=>({label:v, x:375+i*200, y:440, ok:v===ans, words:[[String(ans),'he'],[pick(PRAISE),'he']], onRight:()=>{ $('.mq',row).textContent=ans; ctx.solved(1500); }})));
+    ctx.prompt(sub ? [['היו','he'],[String(a),'he'],[String(b),'he'],['הלכו. כמה נשארו?','he']] : [[String(a),'he'],['ועוד','he'],[String(b),'he'],['כמה זה ביחד?','he']]);
   }
 };
 
@@ -1403,9 +1469,9 @@ GAMES.balloons = {
         e.preventDefault(); if(!ctx.alive(tok) || b.dead) return;
         if(b.t){
           b.dead = true; sfx.pop(); burst(b.x+59, 100+b.y+60, ['✨','💥', '⭐'], 10); el.remove(); got++;
-          if(got>=need){ ctx.right(null, false); sayList(S.colorsEn ? [[`כל הכבוד! פוצצת את כל הבלונים ה${target.pl}!`,'he'],[target.en,'en']] : [[`כל הכבוד! פוצצת את כל הבלונים ה${target.pl}!`,'he']]); ctx.solved(1700); }
+          if(got>=need){ ctx.right(null, false); sayList(S.colorsEn ? [['כל הכבוד!','he'],[target.he,'he'],[target.en,'en']] : [['כל הכבוד!','he'],[target.he,'he']]); ctx.solved(1700); }
           else sayList(S.colorsEn && got%2 ? [[target.he,'he'],[target.en,'en']] : [[target.he,'he']], false);
-        } else { retrigger(el,'shake'); ctx.wrong(null, `זה בלון ${col.he}. אנחנו מחפשים ${target.he}`); }
+        } else { retrigger(el,'shake'); ctx.wrong(null, [['זה בלון','he'],[col.he,'he'],['אנחנו מחפשים','he'],[target.he,'he']]); }
       });
       area.appendChild(el); balloons.push(b); spawned++;
     }
@@ -1435,8 +1501,8 @@ GAMES.sort = {
         if(!ctx.alive(tok) || busy) return;
         if(c.id===cid){
           busy = true; item.style.animation='none'; item.style.left = (x+130)+'px'; item.style.top = '430px'; item.style.fontSize='90px';
-          setTimeout(()=>{ if(!ctx.alive(tok)) return; retrigger(b,'boing'); ctx.right(centerOf(b), false); sayList(S.colorsEn ? [[`${c.he}!`,'he'],[c.en,'en']] : [[`${c.he}! ${pick(PRAISE)}`,'he']]); ctx.solved(1400); }, 560);
-        } else ctx.wrong(b, `זה סל ${c.he}. איזה צבע זה?`);
+          setTimeout(()=>{ if(!ctx.alive(tok)) return; retrigger(b,'boing'); ctx.right(centerOf(b), false); sayList(S.colorsEn ? [[c.he,'he'],[c.en,'en']] : [[c.he,'he'],[pick(PRAISE),'he']]); ctx.solved(1400); }, 560);
+        } else ctx.wrong(b, [['זה סל','he'],[c.he,'he'],['איזה צבע זה?','he']]);
       });
       area.appendChild(b);
     });
@@ -1727,7 +1793,7 @@ GAMES.diff = {
         if(cnt===diffs.length) ctx.solved(1700);
       } else { const rp = h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`); p.appendChild(rp); setTimeout(()=>rp.remove(), 520); sfx.tap(); }
     }));
-    ctx.prompt([[`יש ${diffs.length} הבדלים בין שתי התמונות. תמצא אותם?`,'he']]);
+    ctx.prompt([['יש','he'],[String(diffs.length),'he'],['הבדלים בין שתי התמונות. תמצא אותם?','he']]);
   }
 };
 
@@ -1757,11 +1823,11 @@ GAMES.find = {
         const w = wigOf(t); if(w){ w.classList.remove('hint'); w.classList.add('got'); }
         scene.appendChild(h(`<div class="ring" style="left:${t.x}px;top:${t.cy}px;width:${t.r*2+10}px;height:${t.r*2+10}px"></div>`));
         found.children[cnt].classList.add('on');
-        ctx.right(centerOf(found.children[cnt]), cnt===spots.length ? `מצאת את כל ה${tname}!` : String(cnt));
+        ctx.right(centerOf(found.children[cnt]), cnt===spots.length ? 'מצאת את כולם!' : String(cnt));
         if(cnt===spots.length) ctx.solved(1700);
       } else { const rp = h(`<div class="ripple" style="left:${l.x}px;top:${l.y}px"></div>`); scene.appendChild(rp); setTimeout(()=>rp.remove(), 520); }
     });
-    ctx.prompt([[`${spots.length} ${tname} מסתתרים בתמונה. תמצא אותם?`,'he']]);
+    ctx.prompt([[String(spots.length),'he'],[tname,'he'],['מסתתרים בתמונה. תמצא אותם?','he']]);
   }
 };
 
@@ -1789,8 +1855,8 @@ GAMES.reading = {
       area.appendChild(h(`<div style="position:absolute;left:0;right:0;top:340px;text-align:center;font:900 64px var(--font-display);direction:${dir};color:var(--ink)"><span class="fl" style="display:inline-block;min-width:60px;border-bottom:6px solid var(--grape);color:var(--grape)">?</span>${word.slice(1)}</div>`));
       const first = word[0];
       const opts = shuffle([first, ...shuffle(alphabet.filter(c=>c!==first)).slice(0,2)]);
-      choices(ctx, tok, opts.map((c,i)=>({label:c, x:375+i*200, y:450, ok:c===first, words:false, onRight:async()=>{ $('.fl',area).textContent=first; await sayList(lang==='he' ? [[`נכון! ${word} מתחיל ב${HE.find(l=>l.ch===first).name}`,'he']] : [['נכון!','he'],[`${spoken} starts with ${first}`,'en']]); ctx.solved(300); }})));
-      ctx.prompt(lang==='he' ? [[`באיזו אות מתחילה המילה ${spoken}?`,'he']] : [['באיזו אות מתחילה המילה','he'],[spoken,'en']]);
+      choices(ctx, tok, opts.map((c,i)=>({label:c, x:375+i*200, y:450, ok:c===first, words:false, onRight:async()=>{ $('.fl',area).textContent=first; await sayList(lang==='he' ? [['נכון!','he'],[spoken,'he'],['מתחיל ב','he'],[HE.find(l=>l.ch===first).name,'he']] : [['נכון!','he'],[`${spoken} starts with ${first}`,'en']]); ctx.solved(300); }})));
+      ctx.prompt(lang==='he' ? [['באיזו אות מתחילה המילה','he'],[spoken,'he']] : [['באיזו אות מתחילה המילה','he'],[spoken,'en']]);
     }
     else if(mode==='match'){
       area.appendChild(h(`<div class="card word-show" style="direction:${dir}">${word}</div>`));
@@ -1838,12 +1904,100 @@ GAMES.reading = {
 };
 
 /* =========================================================
+   VOICE CATALOG: every sentence part Dudu says, grouped for recording
+   ========================================================= */
+function voiceCatalog(){
+  const N = S.childName, Mc = S.mascot;
+  const he = arr => arr.map(t=>({t, lang:'he'}));
+  const cats = [
+    {id:'general', name:'כללי', items: he([`שלום ${N}! אני ${Mc}. בוא נשחק!`, `שלום ${N}! אני ${Mc}. לאן נלך היום?`, ...PRAISE, `כל הכבוד ${N}!`, 'נכון!', ...OOPS,
+      `כל הכבוד ${N}! קיבלת מדבקה חדשה!`, 'ובפעם הבאה, זה יהיה קצת יותר מאתגר!', `היי ${N}!`, 'הי הי! זה מדגדג!', 'בוא נשחק ביחד!', 'לחץ על הכפתור הגדול!',
+      'לאן עכשיו?', 'מה נשחק עכשיו?', `בוא ${N}, נבחר משחק!`, 'אני אוהב לשחק איתך!', 'בוא נלמד משהו חדש!', 'לחץ על אחד הבתים!',
+      ...Object.values(ZONES).map(z=>`${z.name}! מה נשחק?`), ...DECOR.map(d=>d.say)])},
+    {id:'games', name:'הוראות במשחקים', items: he(['בוא נכתוב את האות', 'בוא נכתוב באנגלית את האות', 'בוא נכתוב את המספר', 'שים את האצבע על הנקודה הירוקה, ותמשיך עם הקו', 'מתחילים בנקודה הירוקה', 'כתבת את המספר',
+      'מצא את כל האותיות', 'מצאת את כל האותיות', 'מצאת את כולן!', 'זאת האות', 'נחפש את', 'זאת',
+      'סופרים כמה יש, ומותחים קו למספר הנכון', 'עוד פעם! חבר כל קבוצה למספר שלה', 'כמה יש כאן?', 'כל הכבוד, חיברת את הכול!', 'הממ... בוא נספור שוב.',
+      'אפשר ללחוץ ולספור', ...Object.values(COUNT_NAMES).map(n=>`כמה ${n} יש?`), 'ועוד', 'כמה זה ביחד?', 'היו', 'הלכו. כמה נשארו?',
+      'זה בלון', 'אנחנו מחפשים', 'לאיזה סל זה שייך? שים בסל באותו הצבע', 'ולאן זה הולך?', 'זה סל', 'איזה צבע זה?',
+      'יש', 'הבדלים בין שתי התמונות. תמצא אותם?', 'מצאת אחד!', 'יופי! עוד אחד?', 'מצאת את כל ההבדלים!',
+      ...[...new Set(Object.values(ILL.FIND).flat().map(x=>x[1]))], 'מסתתרים בתמונה. תמצא אותם?', 'מצאת את כולם!', 'תסתכל כאן... משהו זז!', 'הנה, רמז!', 'מי מציץ שם?',
+      'באיזו אות מתחילה המילה', 'מתחיל ב', 'איזו תמונה מתאימה למילה?', 'נכון! קראת', 'בוא נבנה את המילה', 'כל הכבוד! בנית את המילה'])},
+    {id:'letters', name:'אותיות', items: HE.flatMap(l=>[{t:l.name, lang:'he', label:`${l.ch}  ·  ${stripNiqqud(l.name)}`}, {t:`כמו ${l.word}`, lang:'he'}])},
+    {id:'numbers', name:'מספרים', items: Array.from({length:31},(_,i)=>({t:String(i), lang:'he'}))},
+    {id:'colors', name:'צבעים', items: COLORS.flatMap(c=>[{t:c.he, lang:'he'}, {t:`פוצץ את הבלונים ה${c.pl}!`, lang:'he'}])},
+    {id:'words', name:'מילים לקריאה', items: HE_WORDS.map(w=>({t:w[2]||w[0], lang:'he', label:`${w[1]}  ${w[0]}`}))},
+    {id:'english', name:'English', items: [...EN.flatMap(l=>[{t:l.ch, lang:'en'}, {t:`${l.ch} is for ${l.word}`, lang:'en'}]), ...COLORS.map(c=>({t:c.en, lang:'en'})), ...EN_WORDS.map(w=>({t:w[0].toLowerCase(), lang:'en', label:`${w[1]}  ${w[0]}`}))]},
+  ];
+  for(const c of cats){ const seen = new Set(); c.items = c.items.filter(it=>{ it.key = REC.norm(it.t, it.lang); if(seen.has(it.key)) return false; seen.add(it.key); return true; }); }
+  return cats;
+}
+
+/* ---------- recording in the parents area ---------- */
+let recStream = null, recMR = null, recKey = null, recTimer = null, vCat = 'general', vPage = 0, vMsg = '';
+function releaseMic(){ try{ if(recMR) recMR.stop(); }catch(e){} if(recStream){ recStream.getTracks().forEach(t=>t.stop()); recStream = null; } }
+async function recToggle(item){
+  if(recMR){ recMR.stop(); return; }
+  ac(); stopSpeech();
+  try{
+    if(!recStream) recStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+  }catch(e){
+    vMsg = 'אין גישה למיקרופון כאן. ההקלטה עובדת באפליקציה שבמסך הבית: פותחים אותה, נכנסים לאזור ההורים ומאשרים גישה למיקרופון.';
+    renderParent(); return;
+  }
+  const mime = ['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'].find(m=>window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m));
+  const chunks = [];
+  try{ recMR = new MediaRecorder(recStream, mime ? {mimeType:mime} : undefined); }catch(e){ vMsg = 'המכשיר הזה לא תומך בהקלטה.'; renderParent(); return; }
+  recKey = item.key; vMsg = '';
+  recMR.ondataavailable = e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  recMR.onstop = ()=>{
+    clearTimeout(recTimer);
+    const blob = new Blob(chunks, {type:(recMR && recMR.mimeType) || mime || 'audio/webm'});
+    recMR = null; recKey = null;
+    if(blob.size > 600){ REC.put(item.key, blob); REC.play(item.key); }
+    renderParent();
+  };
+  recMR.start();
+  recTimer = setTimeout(()=>{ if(recMR) recMR.stop(); }, 7000);
+  renderParent();
+}
+function renderVoice(body){
+  const cats = voiceCatalog();
+  const cat = cats.find(c=>c.id===vCat) || cats[0];
+  const PER = 12, pages = Math.max(1, Math.ceil(cat.items.length/PER));
+  vPage = Math.min(vPage, pages-1);
+  const done = cats.reduce((n,c)=>n + c.items.filter(it=>REC.has(it.key)).length, 0), total = cats.reduce((n,c)=>n + c.items.length, 0);
+  const head = h(`<div class="v-head"><div class="v-info"><b>${done}</b> מתוך ${total} הוקלטו · לוחצים 🎙 ואומרים את המשפט, ולוחצים שוב לסיום. מה שלא הוקלט נשמע בקריאה האוטומטית. ההקלטות נשמרות בטלפון הזה.</div><div class="seg v-cats"></div></div>`);
+  cats.forEach(c=>{ const n = c.items.filter(it=>REC.has(it.key)).length; const b = h(`<button class="${c.id===cat.id?'on':''}">${c.name} <small>${n}/${c.items.length}</small></button>`); b.addEventListener('click', ()=>{ vCat = c.id; vPage = 0; renderParent(); }); head.querySelector('.v-cats').appendChild(b); });
+  body.appendChild(head);
+  if(vMsg) body.appendChild(h(`<div class="v-msg">${vMsg}</div>`));
+  const grid = h(`<div class="v-grid"></div>`);
+  cat.items.slice(vPage*PER, vPage*PER+PER).forEach(it=>{
+    const has = REC.has(it.key), rec = recKey===it.key;
+    const row = h(`<div class="v-row ${has?'has':''} ${rec?'rec':''}"><span class="v-t" dir="${it.lang==='en'?'ltr':'rtl'}"></span><button class="v-b v-rec" aria-label="הקלטה">${rec?'⏹':'🎙'}</button><button class="v-b" aria-label="השמעה">▶</button><button class="v-b v-del" aria-label="מחיקה" ${has?'':'disabled'}>🗑</button></div>`);
+    row.querySelector('.v-t').textContent = (has ? '✓ ' : '') + (it.label || stripNiqqud(it.t));
+    const [bRec, bPlay, bDel] = row.querySelectorAll('button');
+    bRec.addEventListener('click', ()=>recToggle(it));
+    bPlay.addEventListener('click', ()=>{ ac(); sayList([[it.t, it.lang]], false); });
+    bDel.addEventListener('click', ()=>{ REC.del(it.key); renderParent(); });
+    grid.appendChild(row);
+  });
+  body.appendChild(grid);
+  if(pages > 1){
+    const pg = h(`<div class="v-pager"><button class="p-btn alt">→ הקודם</button><span>עמוד ${vPage+1} מתוך ${pages}</span><button class="p-btn alt">הבא ←</button></div>`);
+    const [prev, next] = pg.querySelectorAll('button');
+    prev.disabled = vPage===0; next.disabled = vPage>=pages-1;
+    prev.addEventListener('click', ()=>{ vPage--; renderParent(); }); next.addEventListener('click', ()=>{ vPage++; renderParent(); });
+    body.appendChild(pg);
+  }
+}
+
+/* =========================================================
    PARENTS AREA
    ========================================================= */
 holdButton($('#btnGear'), openParent);
 let pTab = 'learn';
 function openParent(){ stopSpeech(); show('scr-parent'); renderParent(); }
-$('#btnParentClose').addEventListener('click', ()=>{ save(); setTitles(); goMap(); });
+$('#btnParentClose').addEventListener('click', ()=>{ releaseMic(); save(); setTitles(); goMap(); });
 $$('.tab').forEach(t=>t.addEventListener('click', ()=>{ pTab = t.dataset.tab; $$('.tab').forEach(x=>x.classList.toggle('on', x===t)); renderParent(); }));
 const LEARN = [
   {k:'numMax', label:'ספירה וקו מחבר: עד כמה סופרים', opts:[[5,'5'],[10,'10'],[20,'20'],[30,'30']]},
@@ -1886,6 +2040,8 @@ function renderParent(){
   const body = $('#pBody'); body.innerHTML = '';
   if(pTab==='learn'){
     const g = h(`<div class="p-grid three"></div>`); LEARN.forEach(d=>g.appendChild(segRow(d))); body.appendChild(g);
+  } else if(pTab==='voice'){
+    renderVoice(body);
   } else if(pTab==='general'){
     const g = h(`<div class="p-grid"></div>`);
     const names = h(`<div class="p-row"><div class="lbl">שמות</div><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><label for="inName">הילד:</label><input type="text" id="inName" maxlength="14" style="width:170px"><label for="inMascot">הדובי:</label><input type="text" id="inMascot" maxlength="14" style="width:170px"></div></div>`);
@@ -1919,6 +2075,7 @@ function renderParent(){
 
 /* boot */
 renderDecor(false);
+REC.load();
 buildSplash();
 show('scr-splash');
 </script>
