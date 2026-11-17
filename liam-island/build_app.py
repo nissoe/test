@@ -17,7 +17,10 @@ page = SRC.read_text(encoding='utf-8')
 m = re.match(r'\s*<title>(.*?)</title>\s*', page)
 title = m.group(1) if m else 'האי של ליאם'
 body = page[m.end():] if m else page
-version = hashlib.sha1(page.encode('utf-8')).hexdigest()[:10]
+_h = hashlib.sha1(page.encode('utf-8'))
+for _icon in sorted(OUT.glob('icon-*.png')):
+    _h.update(_icon.read_bytes())
+version = _h.hexdigest()[:10]
 
 head = f'''<!doctype html>
 <html lang="he" dir="rtl">
