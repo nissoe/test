@@ -37,6 +37,7 @@
 | 32 | 2026-11-19 | שמות התארים | שם המותג + סוג התואר, כמו במקור (Rage World Championship, Throwdown Tag Team Championship). התואר המשני מקבל שם ייחודי לכל מותג | מבנה התארים בכל מותג לפי המקור [לאמת]: עולמי, עולמי נשים, משני, משני נשים, זוגות, זוגות נשים. כתיב נכון בעברית: "תארים". |
 | 33 | 2026-11-19 | תארים משניים | Rage Legacy · Throwdown Iron · Ignite Blaze · Breakout Rising Star · Uproar Brawl (Championship) | Legacy מתחבר ל-Legends. |
 | 34 | 2026-11-19 | אירועי שיא | 16 אירועים: Rise of Legends (פתיחת עונה) · Warpath · Iron Will · Vendetta · Blood & Glory · Steel Storm · Throne Wars · Hostile Takeover · Wildfire · Winter Wars · Full Throttle · Supremacy · Ironclad · Night of Legends · Last Legend Standing · Legends Forever (סיום עונה, הגדול ביותר) | הושמטו שמות של אירועים אמיתיים מוכרים (Uprising, Point of No Return, Fire & Ice, Fallout). שיבוץ לשבועות ואילו חוצי מותגים: לפי המקור [לאמת]. בעונה של 25 שבועות: תת-קבוצה. |
+| 35 | 2026-11-19 | אופי וצבעי המותגים | Rage: גולמי ואגרסיבי, אדום דם + פחם · Throwdown: מלוטש עם כוכבים, סגול מלכותי + כסף · Ignite: מהיר ואווירי, כתום להבה + שחור · Breakout: צעיר ורעב, טורקיז חשמלי + לבן · Uproar: כאוטי ואכזרי, צהוב אזהרה + אפור בטון | זהות משלנו, לא מעתיקה את צבעי המותגים האמיתיים. לוגואים: סקיצות בלבד עד בדיקת הסימן המסחרי. |
 
 ## שאלות פתוחות (בתור לשאלון)
 - משימה במחשב: בדיקת סימן מסחרי, חנויות ודומיין ל-LWF (החלטה 30)

@@ -220,7 +220,7 @@ lead: LWF GM: משחק ניהול היאבקות נאמן למצב המנהל ש
 | מה | שמות |
 | --- | --- |
 | ליגה | LWF – Legends Wrestling Federation |
-| מותגים | Rage (ראשי) · Throwdown (ראשי שני) · Ignite · Breakout (פיתוח) · Uproar |
+| מותגים | **Rage** (ראשי): גולמי ואגרסיבי, אדום דם + פחם · **Throwdown** (ראשי שני): מלוטש עם כוכבים, סגול מלכותי + כסף · **Ignite**: מהיר ואווירי, כתום להבה + שחור · **Breakout** (פיתוח): צעיר ורעב, טורקיז חשמלי + לבן · **Uproar**: כאוטי ואכזרי, צהוב אזהרה + אפור בטון |
 | תארים | שם המותג + סוג התואר, למשל Rage World Championship. תארים משניים: Rage Legacy · Throwdown Iron · Ignite Blaze · Breakout Rising Star · Uproar Brawl |
 | אירועי שיא | Rise of Legends (פתיחה) · Warpath · Iron Will · Vendetta · Blood & Glory · Steel Storm · Throne Wars · Hostile Takeover · Wildfire · Winter Wars · Full Throttle · Supremacy · Ironclad · Night of Legends · Last Legend Standing · Legends Forever (סיום) |
 
