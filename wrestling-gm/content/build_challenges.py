@@ -44,19 +44,48 @@ CAREER = [
 ]
 HOF_TROPHIES = 10
 
+# קלף מתנה לכל אתגר, כמו במקור: ידוע מראש (שם קלף מהחנות) או אקראי ברמת נדירות
+REWARDS = {
+    'Five-Star Night': ('known', 'Hot Crowd'), 'Consistent Quality': ('random', 'נדיר'),
+    'Main Event Mastery': ('known', 'Main Event Push'), 'Stipulation Showcase': ('random', 'נדיר'),
+    'Hot Rivalry': ('known', 'Rivalry Week'), 'Blood Feud Finale': ('random', 'אפי'),
+    'Golden Era': ('known', 'Title Hype'), 'Dominant Champion': ('known', 'Contender Tournament'),
+    'Star Is Born': ('known', 'Training Facility'), 'Training Camp': ('random', 'רגיל'),
+    'Silver Tongue': ('known', 'Hype Machine'), 'Charity Drive': ('known', 'Team Rally'),
+    'Sold Out Tour': ('known', 'Sold Out'), 'Big Spender': ('random', 'נדיר'),
+    'In The Black': ('known', 'Merch Drop'), 'Talent Hunter': ('known', 'Scout Network'),
+    'Legends Night': ('known', 'Contract Extension'), 'Happy Locker Room': ('known', 'Bonus Check'),
+    'Iron Roster': ('known', 'Physio Room'), 'Ratings Leader': ('random', 'אגדי'),
+    # הישגי קריירה: קלף אקראי, בנוסף לגביעים
+    'Season Champion': ('random', 'אפי'), 'Dynasty': ('random', 'אגדי'), 'Underdog Brand': ('random', 'אגדי'),
+    'Homegrown': ('random', 'אפי'), 'Legend Maker': ('random', 'אפי'), 'Full House': ('random', 'אפי'),
+    'Perfect Ten': ('random', 'אגדי'), 'Kingmaker': ('random', 'אגדי'),
+}
+SHOP = {c['name']: c for c in json.load(open(os.path.join(HERE, 'shop_cards.json'), encoding='utf-8'))}
+RARITY_EN = {'רגיל': 'Common', 'נדיר': 'Rare', 'אפי': 'Epic', 'אגדי': 'Legendary'}
+
+
+def reward(name):
+    kind, v = REWARDS[name]
+    if kind == 'known':
+        c = SHOP[v]
+        return {'type': 'known', 'card': v, 'he': f"{c['nameHe']} ({c['rarity']})", 'en': f"{v} ({c['rarityEn']})"}
+    return {'type': 'random', 'rarity': v, 'he': f"קלף {v} אקראי", 'en': f"Random {RARITY_EN[v]} card"}
+
+
 data = {
-    'seasonal': [{'name': c[0], 'nameHe': c[1], 'area': c[2], 'goal': c[3], 'goalEn': c[4]} for c in SEASONAL],
-    'career': [{'name': c[0], 'nameHe': c[1], 'goal': c[2], 'goalEn': c[3], 'trophies': c[4]} for c in CAREER],
+    'seasonal': [{'name': c[0], 'nameHe': c[1], 'area': c[2], 'goal': c[3], 'goalEn': c[4], 'reward': reward(c[0])} for c in SEASONAL],
+    'career': [{'name': c[0], 'nameHe': c[1], 'goal': c[2], 'goalEn': c[3], 'trophies': c[4], 'reward': reward(c[0])} for c in CAREER],
     'rules': {'seasonalPerTrophy': 5, 'maxSeasonalTrophies': 4, 'hallOfFameTrophies': HOF_TROPHIES, 'tieBreak': 'cash'},
 }
 json.dump(data, open(os.path.join(HERE, 'challenges.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
-s_rows = ['| # | אתגר | תחום | היעד |', '| --- | --- | --- | --- |']
+s_rows = ['| # | אתגר | תחום | היעד | קלף מתנה |', '| --- | --- | --- | --- | --- |']
 for i, c in enumerate(SEASONAL, 1):
-    s_rows.append(f"| {i} | {c[1]} ({c[0]}) | {c[2]} | {c[3]} |")
-c_rows = ['| הישג | היעד | גביעים |', '| --- | --- | --- |']
+    s_rows.append(f"| {i} | {c[1]} ({c[0]}) | {c[2]} | {c[3]} | {reward(c[0])['he']} |")
+c_rows = ['| הישג | היעד | גביעים | קלף מתנה |', '| --- | --- | --- | --- |']
 for c in CAREER:
-    c_rows.append(f"| {c[1]} ({c[0]}) | {c[2]} | {c[4]} |")
+    c_rows.append(f"| {c[1]} ({c[0]}) | {c[2]} | {c[4]} | {reward(c[0])['he']} |")
 
 doc = f'''---
 title: אתגרים והיכל התהילה
@@ -74,6 +103,7 @@ lead: 20 אתגרים בכל עונה, וכל 5 שהושלמו נותנים גב
   - הישגי קריירה הם מקור נוסף לגביעים.
   - הטקס מתקיים בסוף העונה שבה מנהל כלשהו הגיע ל-{HOF_TROPHIES} גביעים. בשוויון קובע מי שיש לו יותר כסף.
   - אפשר לדרג את המותגים לפי מעריצים או לפי גביעים.
+  - כל אתגר שהושלם נותן גם קלף מתנה: לפעמים קלף ידוע מראש שמתאים לאתגר, ולפעמים קלף אקראי ברמת נדירות קבועה. זו עוד דרך להשיג קלפים, מלבד החנות.
 - **האתגרים עצמם שלנו:** הרשימה של המקור לא פורסמה, אז בנינו 20 אתגרים שמכסים את כל חלקי המשחק: קרבות, יריבויות, תארים, פיתוח, פרומואים, כלכלה, גיוס וניהול.
 - **בעונה של 25 שבועות:** היעדים המספריים קטנים בחצי [[לאמת]].
 

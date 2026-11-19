@@ -5,140 +5,260 @@
    "nameHe": "לילה של חמישה כוכבים",
    "area": "קרבות",
    "goal": "קרב של 5 כוכבים באירוע שיא.",
-   "goalEn": "A 5-star match at a premium event."
+   "goalEn": "A 5-star match at a premium event.",
+   "reward": {
+    "type": "known",
+    "card": "Hot Crowd",
+    "he": "קהל לוהט (אפי)",
+    "en": "Hot Crowd (Epic)"
+   }
   },
   {
    "name": "Consistent Quality",
    "nameHe": "איכות יציבה",
    "area": "קרבות",
    "goal": "10 תוכניות שבועיות של 3.5 כוכבים ומעלה.",
-   "goalEn": "10 weekly shows rated 3.5 stars or higher."
+   "goalEn": "10 weekly shows rated 3.5 stars or higher.",
+   "reward": {
+    "type": "random",
+    "rarity": "נדיר",
+    "he": "קלף נדיר אקראי",
+    "en": "Random Rare card"
+   }
   },
   {
    "name": "Main Event Mastery",
    "nameHe": "מאסטר הקרב הראשי",
    "area": "קרבות",
    "goal": "5 קרבות ראשיים של 4 כוכבים ומעלה.",
-   "goalEn": "5 main events rated 4 stars or higher."
+   "goalEn": "5 main events rated 4 stars or higher.",
+   "reward": {
+    "type": "known",
+    "card": "Main Event Push",
+    "he": "דחיפה לקרב הראשי (נדיר)",
+    "en": "Main Event Push (Rare)"
+   }
   },
   {
    "name": "Stipulation Showcase",
    "nameHe": "חגיגת תנאים",
    "area": "קרבות",
    "goal": "להשתמש ב-8 תנאים שונים במהלך העונה.",
-   "goalEn": "Use 8 different stipulations this season."
+   "goalEn": "Use 8 different stipulations this season.",
+   "reward": {
+    "type": "random",
+    "rarity": "נדיר",
+    "he": "קלף נדיר אקראי",
+    "en": "Random Rare card"
+   }
   },
   {
    "name": "Hot Rivalry",
    "nameHe": "יריבות לוהטת",
    "area": "יריבויות",
    "goal": "להביא 3 יריבויות לרמה 4.",
-   "goalEn": "Take 3 rivalries to level 4."
+   "goalEn": "Take 3 rivalries to level 4.",
+   "reward": {
+    "type": "known",
+    "card": "Rivalry Week",
+    "he": "שבוע היריבויות (אפי)",
+    "en": "Rivalry Week (Epic)"
+   }
   },
   {
    "name": "Blood Feud Finale",
    "nameHe": "סיום יריבות גדול",
    "area": "יריבויות",
    "goal": "לסיים יריבות ברמה 4 בקרב כלוב או בכספת.",
-   "goalEn": "End a level-4 rivalry in a Steel Cage or The Vault."
+   "goalEn": "End a level-4 rivalry in a Steel Cage or The Vault.",
+   "reward": {
+    "type": "random",
+    "rarity": "אפי",
+    "he": "קלף אפי אקראי",
+    "en": "Random Epic card"
+   }
   },
   {
    "name": "Golden Era",
    "nameHe": "עידן הזהב",
    "area": "תארים",
    "goal": "6 החלפות תואר במהלך העונה.",
-   "goalEn": "6 title changes this season."
+   "goalEn": "6 title changes this season.",
+   "reward": {
+    "type": "known",
+    "card": "Title Hype",
+    "he": "הייפ לתואר (נדיר)",
+    "en": "Title Hype (Rare)"
+   }
   },
   {
    "name": "Dominant Champion",
    "nameHe": "אלוף שולט",
    "area": "תארים",
    "goal": "אלוף שמחזיק בתואר העולמי 15 שבועות ברצף.",
-   "goalEn": "A world champion who holds the title 15 weeks straight."
+   "goalEn": "A world champion who holds the title 15 weeks straight.",
+   "reward": {
+    "type": "known",
+    "card": "Contender Tournament",
+    "he": "טורניר מתמודדים (אפי)",
+    "en": "Contender Tournament (Epic)"
+   }
   },
   {
    "name": "Star Is Born",
    "nameHe": "נולד כוכב",
    "area": "פיתוח",
    "goal": "להעלות צעיר בפיתוח לפופולריות 50.",
-   "goalEn": "Raise a Prospect to 50 popularity."
+   "goalEn": "Raise a Prospect to 50 popularity.",
+   "reward": {
+    "type": "known",
+    "card": "Training Facility",
+    "he": "מתקן אימונים (אפי)",
+    "en": "Training Facility (Epic)"
+   }
   },
   {
    "name": "Training Camp",
    "nameHe": "מחנה אימונים",
    "area": "פיתוח",
    "goal": "12 פרומואי אימון במהלך העונה.",
-   "goalEn": "12 training promos this season."
+   "goalEn": "12 training promos this season.",
+   "reward": {
+    "type": "random",
+    "rarity": "רגיל",
+    "he": "קלף רגיל אקראי",
+    "en": "Random Common card"
+   }
   },
   {
    "name": "Silver Tongue",
    "nameHe": "לשון של כסף",
    "area": "פרומואים",
    "goal": "10 פרומואים מוצלחים של מתאבקים עם 4–5 כוכבים במיקרופון.",
-   "goalEn": "10 successful promos by 4–5 star talkers."
+   "goalEn": "10 successful promos by 4–5 star talkers.",
+   "reward": {
+    "type": "known",
+    "card": "Hype Machine",
+    "he": "מכונת הייפ (אפי)",
+    "en": "Hype Machine (Epic)"
+   }
   },
   {
    "name": "Charity Drive",
    "nameHe": "מבצע צדקה",
    "area": "פרומואים",
    "goal": "5 פרומואי צדקה.",
-   "goalEn": "5 charity promos."
+   "goalEn": "5 charity promos.",
+   "reward": {
+    "type": "known",
+    "card": "Team Rally",
+    "he": "עצרת צוות (נדיר)",
+    "en": "Team Rally (Rare)"
+   }
   },
   {
    "name": "Sold Out Tour",
    "nameHe": "סיבוב סולד אאוט",
    "area": "כלכלה",
    "goal": "8 תוכניות באולם מלא.",
-   "goalEn": "8 shows in a full venue."
+   "goalEn": "8 shows in a full venue.",
+   "reward": {
+    "type": "known",
+    "card": "Sold Out",
+    "he": "כל הכרטיסים נמכרו (אפי)",
+    "en": "Sold Out (Epic)"
+   }
   },
   {
    "name": "Big Spender",
    "nameHe": "בזבזן",
    "area": "כלכלה",
    "goal": "להוציא 2 מיליון דולר על אולמות והפקה.",
-   "goalEn": "Spend $2M on venues and production."
+   "goalEn": "Spend $2M on venues and production.",
+   "reward": {
+    "type": "random",
+    "rarity": "נדיר",
+    "he": "קלף נדיר אקראי",
+    "en": "Random Rare card"
+   }
   },
   {
    "name": "In The Black",
    "nameHe": "ברווח",
    "area": "כלכלה",
    "goal": "לסיים את העונה עם יותר כסף משהתחלת.",
-   "goalEn": "End the season with more money than you started with."
+   "goalEn": "End the season with more money than you started with.",
+   "reward": {
+    "type": "known",
+    "card": "Merch Drop",
+    "he": "השקת מרצ'נדייז (נדיר)",
+    "en": "Merch Drop (Rare)"
+   }
   },
   {
    "name": "Talent Hunter",
    "nameHe": "צייד כישרונות",
    "area": "גיוס",
    "goal": "להחתים 6 מתאבקים במהלך העונה.",
-   "goalEn": "Sign 6 superstars this season."
+   "goalEn": "Sign 6 superstars this season.",
+   "reward": {
+    "type": "known",
+    "card": "Scout Network",
+    "he": "רשת סקאוטים (אפי)",
+    "en": "Scout Network (Epic)"
+   }
   },
   {
    "name": "Legends Night",
    "nameHe": "ערב אגדות",
    "area": "גיוס",
    "goal": "שתי אגדות באותו אירוע שיא.",
-   "goalEn": "Two legends at the same premium event."
+   "goalEn": "Two legends at the same premium event.",
+   "reward": {
+    "type": "known",
+    "card": "Contract Extension",
+    "he": "הארכת חוזה (נדיר)",
+    "en": "Contract Extension (Rare)"
+   }
   },
   {
    "name": "Happy Locker Room",
    "nameHe": "חדר הלבשה מרוצה",
    "area": "ניהול",
    "goal": "למלא 10 בקשות של מתאבקים.",
-   "goalEn": "Fulfill 10 superstar requests."
+   "goalEn": "Fulfill 10 superstar requests.",
+   "reward": {
+    "type": "known",
+    "card": "Bonus Check",
+    "he": "צ'ק בונוס (נדיר)",
+    "en": "Bonus Check (Rare)"
+   }
   },
   {
    "name": "Iron Roster",
    "nameHe": "רוסטר מברזל",
    "area": "ניהול",
    "goal": "לעבור 10 שבועות ברצף בלי פציעה.",
-   "goalEn": "Go 10 weeks in a row without an injury."
+   "goalEn": "Go 10 weeks in a row without an injury.",
+   "reward": {
+    "type": "known",
+    "card": "Physio Room",
+    "he": "חדר פיזיותרפיה (אפי)",
+    "en": "Physio Room (Epic)"
+   }
   },
   {
    "name": "Ratings Leader",
    "nameHe": "מוביל הרייטינג",
    "area": "ניהול",
    "goal": "להיות במקום הראשון בדירוג בשבוע 25 ובשבוע 50.",
-   "goalEn": "Be ranked first at week 25 and week 50."
+   "goalEn": "Be ranked first at week 25 and week 50.",
+   "reward": {
+    "type": "random",
+    "rarity": "אגדי",
+    "he": "קלף אגדי אקראי",
+    "en": "Random Legendary card"
+   }
   }
  ],
  "career": [
@@ -147,56 +267,104 @@
    "nameHe": "אלוף העונה",
    "goal": "לסיים עונה במקום הראשון.",
    "goalEn": "Finish a season in first place.",
-   "trophies": 1
+   "trophies": 1,
+   "reward": {
+    "type": "random",
+    "rarity": "אפי",
+    "he": "קלף אפי אקראי",
+    "en": "Random Epic card"
+   }
   },
   {
    "name": "Dynasty",
    "nameHe": "שושלת",
    "goal": "לסיים 3 עונות ברצף במקום הראשון.",
    "goalEn": "Finish first 3 seasons in a row.",
-   "trophies": 2
+   "trophies": 2,
+   "reward": {
+    "type": "random",
+    "rarity": "אגדי",
+    "he": "קלף אגדי אקראי",
+    "en": "Random Legendary card"
+   }
   },
   {
    "name": "Underdog Brand",
    "nameHe": "מותג אנדרדוג",
    "goal": "לזכות בעונה עם התקציב הנמוך ביותר בליגה.",
    "goalEn": "Win a season with the lowest budget in the league.",
-   "trophies": 1
+   "trophies": 1,
+   "reward": {
+    "type": "random",
+    "rarity": "אגדי",
+    "he": "קלף אגדי אקראי",
+    "en": "Random Legendary card"
+   }
   },
   {
    "name": "Homegrown",
    "nameHe": "גידול בית",
    "goal": "שמתאבק שהגיע מכישרון מקומי יהפוך לאלוף עולם.",
    "goalEn": "Turn a local talent signee into a world champion.",
-   "trophies": 1
+   "trophies": 1,
+   "reward": {
+    "type": "random",
+    "rarity": "אפי",
+    "he": "קלף אפי אקראי",
+    "en": "Random Epic card"
+   }
   },
   {
    "name": "Legend Maker",
    "nameHe": "יוצר אגדות",
    "goal": "להעלות מתאבק לרמת ניסיון 25 (בן אלמוות).",
    "goalEn": "Raise a superstar to ring level 25 (Immortal).",
-   "trophies": 1
+   "trophies": 1,
+   "reward": {
+    "type": "random",
+    "rarity": "אפי",
+    "he": "קלף אפי אקראי",
+    "en": "Random Epic card"
+   }
   },
   {
    "name": "Full House",
    "nameHe": "בית מלא",
    "goal": "קולוסיאום מלא באירוע הסיום של העונה.",
    "goalEn": "A full Colosseum at the season finale.",
-   "trophies": 1
+   "trophies": 1,
+   "reward": {
+    "type": "random",
+    "rarity": "אפי",
+    "he": "קלף אפי אקראי",
+    "en": "Random Epic card"
+   }
   },
   {
    "name": "Perfect Ten",
    "nameHe": "עשר מושלם",
    "goal": "10 קרבות של 5 כוכבים בקריירה.",
    "goalEn": "10 five-star matches over your career.",
-   "trophies": 1
+   "trophies": 1,
+   "reward": {
+    "type": "random",
+    "rarity": "אגדי",
+    "he": "קלף אגדי אקראי",
+    "en": "Random Legendary card"
+   }
   },
   {
    "name": "Kingmaker",
    "nameHe": "עושה המלכים",
    "goal": "כל תארי המותג מוחזקים על ידי מתאבקים שגייסת בעצמך (לא מהדראפט).",
    "goalEn": "All your brand's titles held by superstars you signed yourself (not drafted).",
-   "trophies": 2
+   "trophies": 2,
+   "reward": {
+    "type": "random",
+    "rarity": "אגדי",
+    "he": "קלף אגדי אקראי",
+    "en": "Random Legendary card"
+   }
   }
  ],
  "rules": {
