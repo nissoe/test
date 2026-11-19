@@ -223,24 +223,71 @@ export const s = StyleSheet.create({
 /** זכוכית: טשטוש של הזירה מאחורי הפאנל (בווב) */
 export const GLASS: any = Platform.OS === 'web' ? { backdropFilter: 'blur(14px) saturate(140%)', WebkitBackdropFilter: 'blur(14px) saturate(140%)' } : {};
 
+export function useNarrow() {
+  return useWindowDimensions().width < 900;
+}
+
 /**
  * פריסת מסך כמו במשחק: הזירה החיה נראית, והתוכן יושב בלוח צדדי (מסך רחב)
- * או בגיליון תחתון (טלפון). arenaShare = כמה מהגובה נשאר לזירה בטלפון.
+ * או מתחת לרצועת הזירה (טלפון). overlay = מידע קצר שיושב על הזירה עצמה,
+ * bottomBar = סרגל לשוניות קבוע בתחתית בטלפון (במחשב הוא מופיע בראש הלוח).
  */
-export function Stage({ children, arenaShare = 0.3, side = 'end', width = 560 }: { children: ReactNode; arenaShare?: number; side?: 'start' | 'end'; width?: number }) {
+export function Stage({ children, arenaShare = 0.26, side = 'end', width = 560, overlay, bottomBar }: { children: ReactNode; arenaShare?: number; side?: 'start' | 'end'; width?: number; overlay?: ReactNode; bottomBar?: ReactNode }) {
   const { width: W, height: H } = useWindowDimensions();
   const wide = W >= 900;
   if (wide) {
     return (
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: side === 'end' ? 'flex-end' : 'flex-start', padding: 14 }}>
-        <View style={{ width: Math.min(width, W * 0.55), height: '100%' }}>{children}</View>
+        <View style={{ width: Math.min(width, W * 0.55), height: '100%', gap: 8 }}>
+          {overlay}
+          {bottomBar}
+          <View style={{ flex: 1 }}>{children}</View>
+        </View>
       </View>
     );
   }
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ height: H * arenaShare }} pointerEvents="none" />
-      <View style={{ flex: 1, paddingHorizontal: 10 }}>{children}</View>
+      <View style={{ height: Math.round(H * arenaShare), justifyContent: 'flex-end', paddingHorizontal: 10, paddingBottom: 6 }} pointerEvents="box-none">
+        {overlay}
+      </View>
+      <View style={{ flex: 1, paddingHorizontal: 8 }}>{children}</View>
+      {bottomBar}
+    </View>
+  );
+}
+
+/** סרגל לשוניות תחתון בסגנון משחק מובייל */
+export function TabBar({ tabs, active, onChange, color = C.gold }: { tabs: { key: string; icon: string; label: string }[]; active: string; onChange: (k: string) => void; color?: string }) {
+  const narrow = useNarrow();
+  if (!narrow) {
+    return (
+      <Row gap={6}>
+        {tabs.map((tb) => <Chip key={tb.key} label={tb.label} active={active === tb.key} color={color} onPress={() => onChange(tb.key)} />)}
+      </Row>
+    );
+  }
+  return (
+    <View style={[{ flexDirection: 'row', backgroundColor: '#07080Cf2', borderTopWidth: 1, borderTopColor: '#ffffff1a', paddingTop: 6, paddingBottom: 8 }, GLASS]}>
+      {tabs.map((tb) => {
+        const on = active === tb.key;
+        return (
+          <Pressable key={tb.key} onPress={() => { sfx.click(); onChange(tb.key); }} style={{ flex: 1, alignItems: 'center', gap: 2, paddingVertical: 4 }}>
+            <Text style={{ fontSize: 20, opacity: on ? 1 : 0.55 }}>{tb.icon}</Text>
+            <Head size={11} color={on ? color : C.muted}>{tb.label}</Head>
+            <View style={{ height: 3, width: 26, borderRadius: 2, backgroundColor: on ? color : 'transparent' }} />
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+/** שורת מידע קצרה על הזירה (כמו גרפיקת מסך של שידור) */
+export function Hud({ children, color = C.gold }: { children: ReactNode; color?: string }) {
+  return (
+    <View style={[{ backgroundColor: '#05060Acc', borderRadius: 4, borderLeftWidth: 3, borderLeftColor: color, paddingHorizontal: 10, paddingVertical: 7, gap: 3 }, GLASS]}>
+      {children}
     </View>
   );
 }

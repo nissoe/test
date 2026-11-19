@@ -42,7 +42,7 @@ function Shell() {
       <Arena />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1, direction: lang === 'he' ? 'rtl' : 'ltr' }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#ffffff12', backgroundColor: '#05060Acc' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#ffffff12', backgroundColor: '#05060Acc' }}>
             <Logo />
             <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
               <Pressable onPress={() => sfx.setMuted(!muted)} hitSlop={8}>

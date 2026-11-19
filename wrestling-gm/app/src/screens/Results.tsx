@@ -7,7 +7,7 @@ import type { MatchResult } from '../../../engine/src/types.ts';
 import { brandInfo, content } from '../data.ts';
 import { money } from '../i18n.ts';
 import { useStore } from '../store.tsx';
-import { Btn, C, Display, FadeIn, GLASS, Head, Num, Panel, Plate, Portrait, Row, Stage, Stars, T, shade, wName } from '../ui.tsx';
+import { Btn, C, Display, FadeIn, GLASS, Head, Hud, Num, Panel, Plate, Portrait, Row, Stage, Stars, T, shade, useNarrow, wName } from '../ui.tsx';
 import { arena } from '../arena/arena.ts';
 import * as sfx from '../sfx.ts';
 
@@ -28,17 +28,16 @@ export function Results() {
     else setPhase('hub');
   };
 
+  const narrow = useNarrow();
   useEffect(() => { arena.shot('ring'); arena.hype(mine.isPle ? 0.6 : 0.4); }, []);
   return (
-    <Stage arenaShare={0.3} width={600}>
-    <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 60 }}>
-      <LinearGradient colors={mine.isPle ? [C.goldLo + 'e6', '#1A1206e6', '#0A0C12e6'] : [shade(info.color, -0.4) + 'e6', '#0A0C12e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={{ ...GLASS, borderRadius: 4, padding: 14, borderWidth: 1, borderColor: mine.isPle ? C.gold : info.color + '66' }}>
-        <Head size={12} color="#ffffffaa">{t('tonight')} · {t('week')} {mine.week}</Head>
-        <Display size={34} color="#fff" glow={mine.isPle ? C.gold : info.color} style={{ fontStyle: 'italic' }}>{mine.pleName ?? info.name.toUpperCase()}</Display>
-        {!done ? <T size={12} color="#ffffffaa">{t('matchOf')} {step + 1}/{matches.length}</T> : null}
-      </LinearGradient>
-
+    <Stage arenaShare={0.32} width={600} overlay={
+      <Hud color={mine.isPle ? C.gold : info.color}>
+        <Head size={11} color="#ffffffaa">{t('tonight')} · {t('week')} {mine.week}{!done ? ` · ${t('matchOf')} ${step + 1}/${matches.length}` : ''}</Head>
+        <Display size={narrow ? 22 : 30} color="#fff" numberOfLines={1} style={{ fontStyle: 'italic' }}>{mine.pleName ?? info.name.toUpperCase()}</Display>
+      </Hud>
+    }>
+    <ScrollView contentContainerStyle={{ gap: 8, paddingBottom: 40, paddingTop: 4 }}>
       {matches.slice(0, step).map((m, i) => <MatchLine key={i} m={m} />)}
 
       {!done ? (
@@ -58,6 +57,7 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
   const { t, lang, game } = useStore();
   const st = game!.state;
   const [phase, setPhase] = useState<'vs' | 'stars' | 'winner'>('vs');
+  const narrow = useNarrow();
   const slam = useRef(new Animated.Value(0)).current;
   const a = st.wrestlers[m.match.sides[0][0]];
   const b = st.wrestlers[m.match.sides[1][0]];
@@ -90,8 +90,8 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
     const lost = phase === 'winner' && m.winnerSide !== i;
     return (
       <Animated.View style={{ flex: 1, alignItems: 'center', gap: 6, opacity: lost ? 0.4 : 1, transform: [{ translateX: slam.interpolate({ inputRange: [0, 1], outputRange: [i === 0 ? -80 : 80, 0] }) }] }}>
-        <Portrait w={w} size={84} color={won ? C.gold : color} />
-        <Display size={20} numberOfLines={2} style={{ textAlign: 'center' }} color={won ? C.goldHi : '#fff'}>{wName(w, lang)}</Display>
+        <Portrait w={w} size={narrow ? 60 : 84} color={won ? C.gold : color} />
+        <Display size={narrow ? 17 : 20} numberOfLines={2} style={{ textAlign: 'center' }} color={won ? C.goldHi : '#fff'}>{wName(w, lang)}</Display>
         {won ? <View style={{ alignItems: 'center' }}><Plate label={lang === 'he' ? 'מנצח' : 'WINNER'} /></View> : null}
       </Animated.View>
     );
@@ -99,7 +99,7 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
 
   return (
     <FadeIn>
-      <LinearGradient colors={isMain ? ['#2A1F08e6', '#0E0B05e6', '#07080Ce6'] : [shade(color, -0.6) + 'e6', '#0A0C12e6']} style={{ ...GLASS, borderRadius: 4, padding: 16, gap: 14, borderWidth: isMain ? 2 : 1, borderColor: isMain ? C.gold : color + '66' }}>
+      <LinearGradient colors={isMain ? ['#2A1F08e6', '#0E0B05e6', '#07080Ce6'] : [shade(color, -0.6) + 'e6', '#0A0C12e6']} style={{ ...GLASS, borderRadius: 4, padding: narrow ? 12 : 16, gap: narrow ? 10 : 14, borderWidth: isMain ? 2 : 1, borderColor: isMain ? C.gold : color + '66' }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <Plate label={isMain ? t('main') : m.match.slot === 'opener' ? t('opener') : t('midcard')} color={isMain ? C.gold : '#2A3142'} text={isMain ? '#1A1206' : '#fff'} />
           <Head size={13} color={C.gold}>{lang === 'he' ? stip?.nameHe ?? m.match.stipulation : m.match.stipulation}{m.match.titleId ? ' · 🏆' : ''}</Head>
@@ -107,12 +107,12 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
         <Row wrap={false} gap={6} style={{ alignItems: 'flex-start' }}>
           {side(a, 0)}
           <Animated.View style={{ alignSelf: 'center', transform: [{ scale: slam.interpolate({ inputRange: [0, 1], outputRange: [3, 1] }) }], opacity: slam }}>
-            <Display size={40} color={C.gold} glow={C.gold} style={{ fontStyle: 'italic' }}>VS</Display>
+            <Display size={narrow ? 30 : 40} color={C.gold} glow={C.gold} style={{ fontStyle: 'italic' }}>VS</Display>
           </Animated.View>
           {side(b, 1)}
         </Row>
         <View style={{ alignItems: 'center', minHeight: 30 }}>
-          {phase !== 'vs' ? <Stars value={m.stars} size={30} animate onStar={(i) => sfx.star(i)} /> : null}
+          {phase !== 'vs' ? <Stars value={m.stars} size={narrow ? 26 : 30} animate onStar={(i) => sfx.star(i)} /> : null}
         </View>
         {phase === 'winner' ? (
           <FadeIn style={{ alignItems: 'center', gap: 4 }}>
@@ -167,8 +167,8 @@ function Summary() {
       <FadeIn>
         <LinearGradient colors={['#1F1808', '#0B0E16']} style={{ borderRadius: 4, padding: 16, alignItems: 'center', gap: 8, borderWidth: 1, borderColor: C.gold + '88' }}>
           <Head size={13} color={C.gold}>{t('finalRating')}</Head>
-          <Stars value={mine.rating} size={40} animate onStar={(i) => sfx.star(i)} />
-          <Display size={48} color={C.goldHi} glow={C.gold}>{mine.rating.toFixed(2)}</Display>
+          <Stars value={mine.rating} size={34} animate onStar={(i) => sfx.star(i)} />
+          <Display size={40} color={C.goldHi} glow={C.gold}>{mine.rating.toFixed(2)}</Display>
           <View style={{ alignItems: 'center' }}><Plate label={`#${place} / ${all.length}`} /></View>
           <Row gap={18} style={{ justifyContent: 'center', marginTop: 6 }}>
             <Fig k={t('attendance')} v={mine.attendance.toLocaleString()} />
@@ -236,10 +236,10 @@ export function SeasonEnd() {
     return () => clearInterval(iv);
   }, []);
   return (
-    <Stage arenaShare={0.3} width={600}>
-    <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 40 }}>
+    <Stage arenaShare={0.24} width={600}>
+    <ScrollView contentContainerStyle={{ gap: 8, paddingBottom: 40 }}>
       <FadeIn style={{ alignItems: 'center', paddingVertical: 8 }}>
-        <Display size={52} color={C.goldHi} glow={C.gold} style={{ fontStyle: 'italic' }}>{t('seasonOver').toUpperCase()}</Display>
+        <Display size={40} color={C.goldHi} glow={C.gold} style={{ fontStyle: 'italic' }}>{t('seasonOver').toUpperCase()}</Display>
       </FadeIn>
       {rows.map((b, i) => {
         const info = brandInfo(b.id);

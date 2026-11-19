@@ -24,7 +24,7 @@ export function Setup() {
   }, [brandId, lang]);
 
   return (
-    <Stage arenaShare={0.34}>
+    <Stage arenaShare={0.3}>
     <ScrollView contentContainerStyle={{ gap: 12, paddingBottom: 40 }}>
       <FadeIn>
         <Panel pad={12}>
@@ -34,13 +34,13 @@ export function Setup() {
             {BRANDS.map((b) => {
               const active = b.id === brandId;
               return (
-                <Pressable key={b.id} onPress={() => { sfx.pick(); arena.pop(0.5); setBrand(b.id); }} style={{ flexGrow: 1, flexBasis: 140 }}>
+                <Pressable key={b.id} onPress={() => { sfx.pick(); arena.pop(0.5); setBrand(b.id); }} style={{ flexGrow: 1, flexBasis: 150 }}>
                   <LinearGradient
                     colors={active ? [shade(b.color, -0.1), shade(b.color, -0.75)] : ['#171C29cc', '#0D1018cc']}
                     start={{ x: 0, y: 0 }} end={{ x: 0.4, y: 1 }}
-                    style={{ height: 82, borderRadius: 3, borderWidth: active ? 2 : 1, borderColor: active ? b.color : C.line, padding: 10, justifyContent: 'flex-end', overflow: 'hidden', transform: [{ skewX: '-6deg' }] }}
+                    style={{ height: 64, borderRadius: 3, borderWidth: active ? 2 : 1, borderColor: active ? b.color : C.line, padding: 10, justifyContent: 'flex-end', overflow: 'hidden', transform: [{ skewX: '-6deg' }] }}
                   >
-                    <Display size={24} color={active ? '#fff' : b.color} style={{ fontStyle: 'italic' }}>{b.name.toUpperCase()}</Display>
+                    <Display size={21} color={active ? '#fff' : b.color} style={{ fontStyle: 'italic' }}>{b.name.toUpperCase()}</Display>
                     <T size={11} color={active ? '#ffffffcc' : C.muted} numberOfLines={1}>{lang === 'he' ? b.taglineHe : b.tagline}</T>
                   </LinearGradient>
                 </Pressable>

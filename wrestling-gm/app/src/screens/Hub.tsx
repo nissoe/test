@@ -9,7 +9,7 @@ import type { BookedPromo, ShowPlan, Slot, Wrestler } from '../../../engine/src/
 import { brandInfo, content, singlesStips } from '../data.ts';
 import { money } from '../i18n.ts';
 import { useStore } from '../store.tsx';
-import { Bar, Btn, C, Chip, Display, FadeIn, GLASS, Head, Mic, Num, Panel, Plate, Portrait, Row, Stage, T, shade, wName, wTags } from '../ui.tsx';
+import { Bar, Btn, C, Chip, Display, FadeIn, GLASS, Head, Hud, Mic, Num, Panel, Plate, Portrait, Row, Stage, T, TabBar, shade, useNarrow, wName, wTags } from '../ui.tsx';
 import { arena } from '../arena/arena.ts';
 import * as sfx from '../sfx.ts';
 
@@ -35,35 +35,52 @@ export function Hub() {
     arena.screen({ kicker: `${t('week')} ${st.week}`, title: isPle && pleName ? pleName.toUpperCase() : info.name.toUpperCase(), subtitle: isPle ? 'Premium Live Event' : pleName ? `Next: ${pleName}` : undefined, color: isPle ? '#B8860B' : info.color });
   }, [st.week]);
 
-  return (
-    <Stage arenaShare={0.22} width={620}>
-    <View style={{ flex: 1, gap: 8 }}>
-      <LinearGradient colors={[shade(info.color, -0.3) + 'e6', shade(info.color, -0.8) + 'e6', '#0A0C12e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={{ ...GLASS, borderRadius: 4, paddingHorizontal: 12, paddingVertical: 10, gap: 8, borderWidth: 1, borderColor: info.color + '66', overflow: 'hidden' }}>
-        <Display size={90} color="#ffffff08" style={{ position: 'absolute', right: -10, top: -20, fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
-        <Row style={{ justifyContent: 'space-between' }}>
-          <Display size={26} color="#fff" glow={info.color} style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
-          <Plate label={`${t('week')} ${st.week}/${st.settings.seasonWeeks}`} color="#ffffffdd" size={12} />
-        </Row>
-        <Row gap={16}>
-          <Stat k={t('cash')} v={money(me.cash)} color={C.gold} />
-          <Stat k={t('fans')} v={me.fans.toLocaleString()} />
-          <Stat k={t('standings')} v={`#${rank}`} />
-        </Row>
-        {pleName ? (
-          <Row gap={6}>
-            <Head size={11} color={isPle ? C.gold : '#ffffff99'}>{isPle ? t('thisWeekPle') : `${t('nextPle')} · ${t('week')} ${nextPle}`}</Head>
-            <Head size={15} italic color={isPle ? C.goldHi : '#fff'} style={{ textTransform: 'none' }}>{pleName}</Head>
-          </Row>
-        ) : null}
+  const narrow = useNarrow();
+  const tabs = [
+    { key: 'book', icon: '📋', label: t('bookShow') },
+    { key: 'roster', icon: '👥', label: t('roster') },
+    { key: 'standings', icon: '📊', label: t('standings') },
+    { key: 'titles', icon: '🏆', label: t('titles') },
+  ];
+
+  const header = narrow ? (
+    <Hud color={info.color}>
+      <Row style={{ justifyContent: 'space-between' }} wrap={false}>
+        <Display size={22} color="#fff" style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
+        <Head size={12} color={C.steel}>{t('week')} {st.week}/{st.settings.seasonWeeks}</Head>
+      </Row>
+      <Row gap={12} wrap={false}>
+        <Num size={16} color={C.gold}>{money(me.cash)}</Num>
+        <Num size={16}>{(me.fans / 1000).toFixed(1)}K</Num>
+        <Num size={16}>#{rank}</Num>
+        {pleName ? <Head size={11} color={isPle ? C.gold : C.muted} numberOfLines={1} style={{ flex: 1, textTransform: 'none' }}>{isPle ? '★ ' : `${t('week')} ${nextPle} · `}{pleName}</Head> : null}
+      </Row>
+    </Hud>
+  ) : (
+    <LinearGradient colors={[shade(info.color, -0.3) + 'e6', shade(info.color, -0.8) + 'e6', '#0A0C12e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+      style={{ ...GLASS, borderRadius: 4, paddingHorizontal: 12, paddingVertical: 10, gap: 8, borderWidth: 1, borderColor: info.color + '66', overflow: 'hidden' }}>
+      <Display size={90} color="#ffffff08" style={{ position: 'absolute', right: -10, top: -20, fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
+      <Row style={{ justifyContent: 'space-between' }}>
+        <Display size={26} color="#fff" glow={info.color} style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
+        <Plate label={`${t('week')} ${st.week}/${st.settings.seasonWeeks}`} color="#ffffffdd" size={12} />
+      </Row>
+      <Row gap={16}>
+        <Stat k={t('cash')} v={money(me.cash)} color={C.gold} />
+        <Stat k={t('fans')} v={me.fans.toLocaleString()} />
+        <Stat k={t('standings')} v={`#${rank}`} />
+      </Row>
+      {pleName ? (
         <Row gap={6}>
-          {(['book', 'roster', 'standings', 'titles'] as Tab[]).map((k) => (
-            <Chip key={k} label={k === 'book' ? t('bookShow') : t(k)} active={tab === k} color="#fff" onPress={() => setTab(k)} />
-          ))}
+          <Head size={11} color={isPle ? C.gold : '#ffffff99'}>{isPle ? t('thisWeekPle') : `${t('nextPle')} · ${t('week')} ${nextPle}`}</Head>
+          <Head size={15} italic color={isPle ? C.goldHi : '#fff'} style={{ textTransform: 'none' }}>{pleName}</Head>
         </Row>
-      </LinearGradient>
+      ) : null}
+    </LinearGradient>
+  );
+
+  return (
+    <Stage arenaShare={0.24} width={620} overlay={header} bottomBar={<TabBar tabs={tabs} active={tab} onChange={(k) => setTab(k as Tab)} color={narrow ? C.gold : '#fff'} />}>
       {tab === 'book' ? <Booking /> : tab === 'roster' ? <RosterView /> : tab === 'standings' ? <Standings /> : <Titles />}
-    </View>
     </Stage>
   );
 }
@@ -85,6 +102,7 @@ function Booking() {
   const info = brandInfo(me.id);
   const isPle = pleWeeks(st).includes(st.week);
   const slots = slotsFor(st, content, st.week);
+  const narrow = useNarrow();
   const baseSlots = content.difficulty.find((d) => d.name === st.settings.difficulty)?.matches ?? 0;
 
   const emptyCard = (): { venue: string; matches: MatchDraft[]; promos: PromoDraft[] } => {
@@ -161,11 +179,12 @@ function Booking() {
     .sort((a, b) => b.popularity - a.popularity);
 
   return (
-    <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 110 }}>
+    <View style={{ flex: 1 }}>
+    <ScrollView contentContainerStyle={{ gap: 8, paddingBottom: 16, paddingTop: 2 }}>
       {slots.matches > baseSlots && !isPle ? <Plate label={t('goHome')} /> : null}
 
-      <Panel pad={10}>
-        <Head size={13} color={C.muted}>{t('venue')}</Head>
+      <Panel pad={narrow ? 8 : 10} style={{ gap: 6 }}>
+        <Head size={12} color={C.muted}>{t('venue')}</Head>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
           {content.venues.map((v) => {
             const active = card.venue === v.tier;
@@ -173,10 +192,10 @@ function Booking() {
             return (
               <Pressable key={v.tier} disabled={!affordable} onPress={() => { sfx.click(); setCard((c) => ({ ...c, venue: v.tier })); }}>
                 <LinearGradient colors={active ? [shade(info.color, -0.2), shade(info.color, -0.75)] : ['#171C29', '#0D1018']}
-                  style={{ width: 150, padding: 10, borderRadius: 3, borderWidth: active ? 2 : 1, borderColor: active ? info.color : C.line, opacity: affordable ? 1 : 0.35, gap: 2 }}>
-                  <Head size={14} numberOfLines={1} style={{ textTransform: 'none' }}>{lang === 'he' ? v.tierHe ?? v.tier : v.tier}</Head>
-                  <Num size={18} color={C.gold}>{v.cost ? money(v.cost) : t('free')}</Num>
-                  <T size={11} color="#ffffffaa">{(v.capacity + (isPle ? 5000 : 0)).toLocaleString()} · ${v.ticket + (isPle ? 2 : 0)} · +{v.quality + (isPle ? 5 : 0)}%</T>
+                  style={{ width: narrow ? 124 : 150, padding: narrow ? 7 : 10, borderRadius: 3, borderWidth: active ? 2 : 1, borderColor: active ? info.color : C.line, opacity: affordable ? 1 : 0.35, gap: 2 }}>
+                  <Head size={narrow ? 12 : 14} numberOfLines={1} style={{ textTransform: 'none' }}>{lang === 'he' ? v.tierHe ?? v.tier : v.tier}</Head>
+                  <Num size={narrow ? 15 : 18} color={C.gold}>{v.cost ? money(v.cost) : t('free')}</Num>
+                  <T size={narrow ? 10 : 11} color="#ffffffaa">{(v.capacity + (isPle ? 5000 : 0)).toLocaleString()} · ${v.ticket + (isPle ? 2 : 0)} · +{v.quality + (isPle ? 5 : 0)}%</T>
                 </LinearGradient>
               </Pressable>
             );
@@ -198,7 +217,7 @@ function Booking() {
               </Row>
               <Row gap={8} wrap={false}>
                 <Slotbox w={W(m.a)} color={info.color} onPress={() => setPicker({ kind: 'match', i, side: 'a' })} onClear={() => setMatch(i, { a: null, title: false })} />
-                <Display size={22} color={C.gold} style={{ fontStyle: 'italic' }}>VS</Display>
+                <Display size={narrow ? 16 : 22} color={C.gold} style={{ fontStyle: 'italic' }}>VS</Display>
                 <Slotbox w={W(m.b)} color={info.color} onPress={() => setPicker({ kind: 'match', i, side: 'b' })} onClear={() => setMatch(i, { b: null, title: false })} />
               </Row>
               {title ? <Chip label={`🏆 ${title.name}`} active={m.title} onPress={() => setMatch(i, { title: !m.title })} /> : null}
@@ -219,21 +238,6 @@ function Booking() {
           <Slotbox w={W(p.w)} color={info.color} onPress={() => setPicker({ kind: 'promo', i })} onClear={() => setPromo(i, { w: null })} />
         </Panel>
       ))}
-
-      <Panel style={{ borderColor: info.color + '88' }}>
-        <Row style={{ justifyContent: 'space-between' }}>
-          <View>
-            <Head size={11} color={C.muted}>{t('estCost')}</Head>
-            <Num size={26} color={C.gold}>{money(cost)}</Num>
-          </View>
-          <Row>
-            <Btn small kind="ghost" label={t('clear')} onPress={() => setCard(emptyCard())} />
-            <Btn small kind="ghost" label={t('autoBook')} onPress={autoBook} />
-          </Row>
-        </Row>
-        <Btn label={t('runShow')} onPress={run} disabled={!ready} />
-        {!ready ? <T color={C.muted} size={12}>{t('needMain')}</T> : null}
-      </Panel>
 
       <Modal visible={!!picker} transparent animationType="fade" onRequestClose={() => setPicker(null)}>
         <View style={{ flex: 1, backgroundColor: '#000c', justifyContent: 'center', padding: 12, direction: lang === 'he' ? 'rtl' : 'ltr' }}>
@@ -284,27 +288,40 @@ function Booking() {
         </View>
       </Modal>
     </ScrollView>
+    {/* סרגל פעולה קבוע: עלות, בנייה אוטומטית, והרצת התוכנית */}
+    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8, paddingHorizontal: 4, borderTopWidth: 1, borderTopColor: '#ffffff14', backgroundColor: '#07080Ccc' }, GLASS]}>
+      <View style={{ minWidth: 64 }}>
+        <Head size={10} color={C.muted}>{t('estCost')}</Head>
+        <Num size={20} color={C.gold}>{money(cost)}</Num>
+      </View>
+      <Btn small kind="ghost" label={t('autoBook')} onPress={autoBook} />
+      <View style={{ flex: 1 }}>
+        <Btn small label={t('runShow')} onPress={run} disabled={!ready} />
+      </View>
+    </View>
+    </View>
   );
 }
 
 function Slotbox({ w, onPress, onClear, color }: { w: Wrestler | null; onPress: () => void; onClear: () => void; color: string }) {
   const { t, lang } = useStore();
+  const narrow = useNarrow();
   return (
     <Pressable onPress={() => { sfx.click(); onPress(); }} style={{ flex: 1, minWidth: 0 }}>
       {w ? (
         <LinearGradient colors={[shade(color, -0.6), '#0D1019']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-          style={{ borderRadius: 3, padding: 8, flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderColor: color + '55' }}>
-          <Portrait w={w} size={38} color={color} />
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Head size={15} numberOfLines={1} style={{ textTransform: 'none' }}>{wName(w, lang)}</Head>
-            <T size={10} color={C.muted} numberOfLines={1}>{wTags(w, lang)}</T>
-            <Row gap={4} wrap={false}><Head size={9} color={C.muted}>{t('stamina')}</Head><Bar value={w.stamina} max={w.maxStamina} height={4} /></Row>
+          style={{ borderRadius: 3, padding: narrow ? 6 : 8, flexDirection: 'row', alignItems: 'center', gap: narrow ? 6 : 8, borderWidth: 1, borderColor: color + '55', minHeight: narrow ? 58 : undefined }}>
+          <Portrait w={w} size={narrow ? 30 : 38} color={color} />
+          <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+            <Head size={narrow ? 13 : 15} numberOfLines={2} style={{ textTransform: 'none', lineHeight: narrow ? 15 : 18 }}>{wName(w, lang)}</Head>
+            {!narrow ? <T size={10} color={C.muted} numberOfLines={1}>{wTags(w, lang)}</T> : null}
+            <Bar value={w.stamina} max={w.maxStamina} height={4} />
           </View>
-          <Pressable onPress={onClear} hitSlop={10}><T color={C.muted}>✕</T></Pressable>
+          <Pressable onPress={onClear} hitSlop={12}><T color={C.muted} size={narrow ? 12 : 14}>✕</T></Pressable>
         </LinearGradient>
       ) : (
-        <View style={{ borderRadius: 3, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#3A4256', padding: 14, alignItems: 'center', backgroundColor: '#0A0D14' }}>
-          <Head size={13} color={C.muted}>+ {t('selectWrestler')}</Head>
+        <View style={{ borderRadius: 3, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#3A4256', padding: narrow ? 10 : 14, minHeight: narrow ? 58 : undefined, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0A0D14cc' }}>
+          <Head size={narrow ? 12 : 13} color={C.muted} style={{ textAlign: 'center' }}>+ {t('selectWrestler')}</Head>
         </View>
       )}
     </Pressable>
