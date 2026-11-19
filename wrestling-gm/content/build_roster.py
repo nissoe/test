@@ -29,7 +29,7 @@ WOMEN_SHARE = 0.35
 # שש דרגות קריירה לפי רמת הניסיון, כמו במקור [לאמת: הגבולות]
 RANKS = [(1, 'Rookie', 'מתחיל'), (5, 'Established', 'מבוסס'), (10, 'Renown', 'מוכר'), (15, 'Icon', 'אייקון'), (20, 'Legend', 'אגדה'), (25, 'Immortal', 'בן אלמוות')]
 # מיקרופון לא תלוי בשכבה: לכל אחד יכול להיות 1–5. רק כוכבי על ואגדות נוטים למעלה (מנוסים יותר)
-MIC_WEIGHTS = {'default': [18, 28, 30, 18, 6], 'veteran': [0, 15, 40, 35, 10], 'legend': [5, 10, 15, 40, 30]}
+MIC_WEIGHTS = {'default': [18, 28, 30, 18, 6], 'veteran': [0, 15, 40, 35, 10], 'legend': [5, 10, 15, 40, 30]}  # נדרס במכסות למטה
 # מגמת שיפור במיקרופון: בעיקר לנמוכים, לא למוכרים. ההסתברות לכל שכבה
 MIC_GROWTH_CHANCE = {'prospect': 0.7, 'rising': 0.6, 'local': 0.5, 'free': 0.4, 'midcard': 0.35, 'star': 0.15, 'former': 0.0, 'superstar': 0.0, 'legend': 0.0}
 BEST_MATCH = {'Giant': ('Cruiser', 'קל-משקל'), 'Cruiser': ('Giant', 'ענק'), 'Fighter': ('Bruiser', 'מכתש'), 'Bruiser': ('Fighter', 'לוחם'), 'Specialist': ('Any', 'כולם')}
@@ -222,17 +222,62 @@ for tier in TIERS:
     for i in range(n_w):
         make(tier, 'F', hand_w[i] if i < len(hand_w) else None)
 
-# ---------- מכסת מיקרופון לאגדות: רובן מדברות מצוין, אבל לא כולן ----------
-legend_mics = [5] * 8 + [4] * 13 + [3] * 5 + [2] * 3 + [1] * 1
-random.shuffle(legend_mics)
-for w, m in zip([w for w in wrestlers if w['tier'] == 'legend'], legend_mics):
-    w['mic'] = m
-# מכסה לכוכבי העל: רבע מהם אלופי דיבור
-super_mics = [5] * 5 + [4] * 8 + [3] * 5 + [2] * 2
-random.shuffle(super_mics)
-for w, m in zip([w for w in wrestlers if w['tier'] == 'superstar'], super_mics):
-    w['mic'] = m
-    w['micGrowth'] = 0
+# ---------- מכסות סגנון לכל שכבה ומגדר: פיזור מאוזן ----------
+def quota(n, weights):
+    raw = [n * w / sum(weights) for w in weights]
+    out = [int(x) for x in raw]
+    for i in sorted(range(len(raw)), key=lambda i: raw[i] - out[i], reverse=True)[:n - sum(out)]:
+        out[i] += 1
+    return out
+
+
+for t in TIERS:
+    for g in ('M', 'F'):
+        rows = [w for w in wrestlers if w['tier'] == t[0] and w['gender'] == g]
+        q = quota(len(rows), CLASS_W_WOMEN if g == 'F' else CLASS_W_MEN)
+        cls_list = [CLASSES[i] for i, n in enumerate(q) for _ in range(n)]
+        random.shuffle(cls_list)
+        for w, c in zip(rows, cls_list):
+            w['class'], w['classHe'] = c
+            w['bestMatch'], w['bestMatchHe'] = BEST_MATCH[c[0]]
+            w['stamina'] = random.randint(*STAMINA[c[0]])
+            d = (DESC_F if g == 'F' else DESC)[c[0]]
+            tl = (TIER_LINE_F if g == 'F' else TIER_LINE)[t[0]]
+            w['desc'], w['descEn'] = f'{d[0]}. {tl[0]}', f'{d[1]}. {tl[1]}'
+
+# ---------- מכסות מיקרופון לכל שכבה (החלטה 48) ----------
+# מספר המתאבקים עם 1★..5★ בכל שכבה. ניסיון משפר את הממוצע, 5★ נדיר אבל קיים, ובשכבות הנמוכות יש הפתעות
+MIC_QUOTA = {
+    'superstar': [0, 2, 5, 8, 5],
+    'star': [1, 6, 11, 12, 5],
+    'midcard': [6, 13, 20, 12, 4],
+    'rising': [4, 8, 10, 6, 2],
+    'prospect': [9, 13, 12, 5, 1],
+    'legend': [1, 3, 5, 13, 8],
+    'former': [2, 6, 10, 9, 3],
+    'free': [5, 9, 10, 5, 1],
+    'local': [12, 10, 6, 2, 0],
+}
+for t, q in MIC_QUOTA.items():
+    rows = [w for w in wrestlers if w['tier'] == t]
+    assert sum(q) == len(rows), (t, sum(q), len(rows))
+    mics = [m + 1 for m, n in enumerate(q) for _ in range(n)]
+    random.shuffle(mics)
+    for w, m in zip(rows, mics):
+        w['mic'] = m
+        w['micGrowth'] = 0
+        if m < 5 and random.random() < MIC_GROWTH_CHANCE[t]:
+            w['micGrowth'] = 2 if t in ('prospect', 'rising', 'local') and random.random() < 0.5 else 1
+
+# ---------- משכורת לפי ערך: פופולריות, ניסיון ומיקרופון בתוך טווח השכבה ----------
+for t in TIERS:
+    rows = [w for w in wrestlers if w['tier'] == t[0]]
+    lo_p, hi_p = t[4]
+    lo_r, hi_r = t[5]
+    lo_s, hi_s = t[7]
+    for w in rows:
+        v = 0.6 * (w['popularity'] - lo_p) / max(1, hi_p - lo_p) + 0.25 * (w['ringLevel'] - lo_r) / max(1, hi_r - lo_r) + 0.15 * (w['mic'] - 1) / 4
+        w['salary'] = int(round((lo_s + v * (hi_s - lo_s)) / 5)) * 5 * 1000
 
 # ---------- צמדים: מהפעילים, לא מכוכבי העל ----------
 def assign_tags(gender, names):
@@ -247,6 +292,22 @@ def assign_tags(gender, names):
 
 assign_tags('M', TAG_M)
 assign_tags('F', TAG_W)
+
+# איזון טוב/רע בכל שכבה ומגדר אחרי הצמדים: הופכים צד רק למי שלא בצמד
+for t in TIERS:
+    for g in ('M', 'F'):
+        rows = [w for w in wrestlers if w['tier'] == t[0] and w['gender'] == g]
+        while True:
+            faces = [w for w in rows if w['role'] == 'Face']
+            heels = [w for w in rows if w['role'] == 'Heel']
+            if abs(len(faces) - len(heels)) <= 1:
+                break
+            big = faces if len(faces) > len(heels) else heels
+            free_ = [w for w in big if not w['tagTeam']]
+            if not free_:
+                break
+            w = free_[0]
+            w['role'], w['roleHe'] = ('Heel', 'רע') if w['role'] == 'Face' else ('Face', 'טוב')
 
 # ---------- 20 מנהלים, לכל אחד קלף בלעדי (ארבע משפחות, לפי המקור) ----------
 GMS = [
