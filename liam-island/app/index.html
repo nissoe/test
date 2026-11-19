@@ -1595,95 +1595,68 @@ function freeWrite(ctx, tok, item, stage){
   paper.appendChild(h(`<div class="stage-chip">✏️ ${WRITE_STAGES[stage]}</div>`));
   const svg = paper.querySelector('svg');
   const ghost = stage===1;
+  // the faint letter only shows where to write; the child may write anywhere on the page
   if(ghost) item.s.forEach(d=>svgEl('path', {d, class:'t-ghost'}, svg));
-  const gOk = svgEl('g', {}, svg), gInk = svgEl('g', {}, svg), gRes = svgEl('g', {}, svg);
-  const tpl = samplePaths(item.s), tplAll = tpl.flat();
+  const gInk = svgEl('g', {}, svg), gRes = svgEl('g', {}, svg);
+  const tpl = samplePaths(item.s);
   const toU = e => { const l = localPt(e, paper); return [l.x*VBS/BOX+VB0, l.y*VBS/BOX+VB0]; };
-  let strokes = [], curPts = null, curSeg = null, curOn = null, curG = null, autoT = null, done = false;
-  // ghost stage: which strokes of the letter are already written well
-  const matched = tpl.map(()=>false); let retries = 0, wrongDir = 0, precSum = 0, nag = 0;
-  const color = ()=>STROKE_COLORS[(ghost ? matched.filter(Boolean).length : strokes.length) % STROKE_COLORS.length];
-  function newSeg(u, on){
-    curOn = on;
-    curSeg = svgEl('polyline', {class:'t-free' + (on ? '' : ' off'), stroke: on ? color() : '#cfc8e6', points:`${u[0].toFixed(1)},${u[1].toFixed(1)}`}, curG);
-  }
-  function addPt(u){
-    const on = !ghost || ptNear(u, tplAll) < 8;
-    if(on !== curOn){ const l = curPts[curPts.length-1]; newSeg(l, on); }
-    curSeg.setAttribute('points', curSeg.getAttribute('points') + ` ${u[0].toFixed(1)},${u[1].toFixed(1)}`);
-  }
-  const scheduleAuto = ()=>{ clearTimeout(autoT); if(!ghost && strokes.length >= item.s.length) autoT = setTimeout(()=>{ if(ctx.alive(tok) && !done && !curPts) check(); }, 2600); };
+  let strokes = [], curPts = null, curLine = null, autoT = null, done = false;
+  const praised = tpl.map(()=>false);
+  const scheduleAuto = ()=>{ clearTimeout(autoT); if(strokes.length >= item.s.length) autoT = setTimeout(()=>{ if(ctx.alive(tok) && !done && !curPts) check(); }, 2600); };
   paper.addEventListener('pointerdown', e=>{
     if(done || !ctx.alive(tok)) return;
     e.preventDefault(); try{ paper.setPointerCapture(e.pointerId); }catch(_){}
     clearTimeout(autoT);
-    const u = toU(e); curPts = [u]; curG = svgEl('g', {}, gInk);
-    newSeg(u, !ghost || ptNear(u, tplAll) < 8);
+    const u = toU(e); curPts = [u];
+    curLine = svgEl('polyline', {class:'t-free', stroke:STROKE_COLORS[strokes.length % STROKE_COLORS.length], points:`${u[0].toFixed(1)},${u[1].toFixed(1)}`}, gInk);
   });
   paper.addEventListener('pointermove', e=>{
     if(!curPts) return;
     const u = toU(e), l = curPts[curPts.length-1];
     if(Math.hypot(u[0]-l[0], u[1]-l[1]) < .8) return;
-    curPts.push(u); addPt(u);
+    curPts.push(u); curLine.setAttribute('points', curLine.getAttribute('points') + ` ${u[0].toFixed(1)},${u[1].toFixed(1)}`);
   });
   const up = ()=>{
     if(!curPts) return;
-    const pts = curPts, g = curG; curPts = null; curSeg = null; curG = null;
-    if(pts.length < 3 || pathLen(pts) < 4){ g.remove(); return; }
-    if(ghost) judgeStroke(pts, g);
-    else { strokes.push(pts); doneBtn.classList.add('ready'); scheduleAuto(); }
+    const pts = curPts, line = curLine; curPts = null; curLine = null;
+    if(pts.length < 3 || pathLen(pts) < 4){ line.remove(); return; }
+    strokes.push(pts); doneBtn.classList.add('ready');
+    if(ghost) cheer(pts);
+    scheduleAuto();
   };
   paper.addEventListener('pointerup', up); paper.addEventListener('pointercancel', up);
-  // ghost stage: each stroke is checked as soon as the finger lifts
-  function judgeStroke(pts, g){
-    let best = -1, bs = -1, bc = 0, bp = 0;
+  // encouragement only: a stroke that follows a line of the letter gets a sparkle; nothing is ever erased
+  function cheer(pts){
     tpl.forEach((ts, j)=>{
-      if(matched[j]) return;
+      if(praised[j]) return;
       const cov = ts.filter(q=>ptNear(q, pts) < 9).length / ts.length;
       const prec = pts.filter(q=>ptNear(q, ts) < 9).length / pts.length;
-      if(cov + prec > bs){ bs = cov + prec; best = j; bc = cov; bp = prec; }
+      if(cov >= .65 && prec >= .6){
+        praised[j] = true; sfx.stroke();
+        const e = pts[pts.length-1], o = stagePos(paper);
+        burst(o.x + (e[0]-VB0)*BOX/VBS, o.y + (e[1]-VB0)*BOX/VBS, ['✨','⭐'], 6);
+      }
     });
-    const lenOk = best >= 0 && smoothLen(pts) < pathLen(tpl[best]) * 1.9;
-    if(best >= 0 && bc >= .65 && bp >= .6 && lenOk){
-      matched[best] = true; precSum += bp; strokes.push(pts);
-      const ts = tpl[best];
-      if(Math.hypot(pts[0][0]-ts[0][0], pts[0][1]-ts[0][1]) > Math.hypot(pts[0][0]-ts[ts.length-1][0], pts[0][1]-ts[ts.length-1][1])) wrongDir++;
-      // keep the child's own line (his real handwriting), just colored in to show it was accepted
-      const col = STROKE_COLORS[(matched.filter(Boolean).length-1) % STROKE_COLORS.length];
-      g.querySelectorAll('polyline').forEach(pl=>{ pl.classList.remove('off'); pl.setAttribute('stroke', col); });
-      g.classList.add('t-accepted'); gOk.appendChild(g);
-      sfx.stroke();
-      if(matched.every(Boolean)) finishGhost();
-    } else {
-      retries++;
-      g.animate([{opacity:1},{opacity:0}], {duration:700, fill:'forwards'}).onfinish = ()=>g.remove();
-      sfx.oops();
-      if(performance.now() - nag > 3500){ nag = performance.now(); sayAside([[bp < .4 ? 'זה נראה כמו קשקוש, בוא נכתוב את האות' : 'ננסה את הקו הזה שוב','he']], true); }
-    }
-  }
-  async function finishGhost(){
-    const avgPrec = precSum / tpl.length;
-    let stars = retries === 0 && avgPrec >= .8 ? 3 : retries <= 2 ? 2 : 1;
-    if(wrongDir && stars === 3) stars = 2;
-    await award(stars, avgPrec);
   }
   async function check(){
     if(done) return;
     const res = scoreWriting(strokes, tpl, false);
     if(res.bad){
-      sfx.oops(); say(res.bad==='small' ? 'בוא ננסה שוב, תכתוב גדול' : res.bad==='other' ? 'הממ... זה לא נראה כמו האות. בוא ננסה שוב' : 'זה נראה כמו קשקוש, בוא נכתוב את האות');
-      strokes = []; gInk.innerHTML = ''; doneBtn.classList.remove('ready'); return;
+      clearTimeout(autoT);
+      if(res.bad === 'small'){ say('בוא ננסה שוב, תכתוב גדול'); return; }
+      sfx.oops();
+      await sayList([[res.bad==='other' ? 'הממ... זה לא נראה כמו האות. בוא ננסה שוב' : 'זה נראה כמו קשקוש, בוא נכתוב את האות','he']]);
+      if(!ctx.alive(tok) || done) return;
+      strokes = []; gInk.innerHTML = ''; praised.fill(false); doneBtn.classList.remove('ready'); return;
     }
-    // show the model next to the writing so the difference is visible
-    await award(res.stars, res.score);
-  }
-  async function award(stars, score){
     done = true; clearTimeout(autoT);
+    // after writing alone, a small model appears in the corner to compare
     if(!ghost){ const pv = svgEl('g', {transform:'translate(78 0) scale(.26)', class:'t-preview'}, gRes); item.s.forEach(d=>svgEl('path', {d, class:'t-model'}, pv)); }
     paper.classList.add('checked');
+    const stars = res.stars;
     paper.appendChild(h(`<div class="w-stars">${'⭐'.repeat(stars)}<span>${'⭐'.repeat(3-stars)}</span></div>`));
     const c = centerOf(paper); burst(c.x, c.y, stars===3 ? ['⭐','🌟','✨','🎉'] : ['⭐','✨'], stars===3 ? 22 : 10); sfx.win();
-    nbAdd({k:item.kind+':'+item.ch, ch:item.ch, kind:item.kind, m:stage, st:stars, sc:Math.round(score*100), t:Date.now(), p:strokes.map(st=>st.map(([x,y])=>[Math.round(x), Math.round(y)]))});
+    nbAdd({k:item.kind+':'+item.ch, ch:item.ch, kind:item.kind, m:stage, st:stars, sc:Math.round(res.score*100), t:Date.now(), p:strokes.map(st=>st.map(([x,y])=>[Math.round(x), Math.round(y)]))});
     writeResult(item, stage, stars);
     trackItem(item.kind+':'+item.ch, stars >= 2);
     const words = stars===3 ? 'וואו! כתבת מושלם!' : stars===2 ? 'יפה מאוד! כתבת טוב!' : 'ניסיון יפה! נמשיך להתאמן';
@@ -1692,14 +1665,14 @@ function freeWrite(ctx, tok, item, stage){
   }
   writeCard(item, stage);
   const again = h(`<button class="toy side-btn" style="top:150px" aria-label="למחוק ולכתוב שוב">🔁</button>`);
-  again.addEventListener('click', ()=>{ if(done) return; sfx.tap(); strokes = []; gInk.innerHTML = ''; gOk.innerHTML = ''; matched.fill(false); doneBtn.classList.remove('ready'); clearTimeout(autoT); });
+  again.addEventListener('click', ()=>{ if(done) return; sfx.tap(); strokes = []; gInk.innerHTML = ''; praised.fill(false); doneBtn.classList.remove('ready'); clearTimeout(autoT); });
   const doneBtn = h(`<button class="toy side-btn done-btn" style="top:300px" aria-label="סיימתי">✓</button>`);
   doneBtn.addEventListener('click', ()=>{ if(!strokes.length || done) return; sfx.tap(); check(); });
-  area.appendChild(again); if(!ghost) area.appendChild(doneBtn);
+  area.appendChild(again); area.appendChild(doneBtn);
   const intro = ghost ? 'עכשיו תכתוב לבד על האות החלשה' : 'עכשיו תכתוב לבד, בלי עזרה';
   const name = item.kind==='he' ? [item.name,'he'] : item.kind==='en' ? [item.ch,'en'] : [item.ch,'he'];
-  const first = (ctx.data.freeTold || ghost) ? [] : [['כשתסיים, לחץ על הכפתור הירוק','he']];
-  if(!ghost) ctx.data.freeTold = true;
+  const first = ctx.data.freeTold ? [] : [['כשתסיים, לחץ על הכפתור הירוק','he']];
+  ctx.data.freeTold = true;
   ctx.prompt([[intro,'he'], name, ...first]);
 }
 
