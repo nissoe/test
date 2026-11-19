@@ -1,0 +1,410 @@
+<title>בקשות ואירועים</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● נתוני תוכן</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: טיוטה, המספרים לפי מודל עבודה</span></div>
+      <h1>בקשות ואירועים</h1>
+      <p class="lead">12 סוגי בקשות של מתאבקים, כמו במקור, ו-25 אירועים מאחורי הקלעים, כל אחד עם 2–3 בחירות ותוצאות.</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>בקשות מתאבקים</span></a></li><li><a href="#s3"><span class="n">03</span><span>אירועים מאחורי הקלעים</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<ul>
+<li><strong>כמו במקור (החלטה 55):</strong> מתאבקים שולחים בקשות, מילוי בקשה מעלה מורל והתעלמות מורידה. אחרי אירועי שיא יש אירועים מאחורי הקלעים.</li>
+<li><strong>ועוד אירועים עם בחירות:</strong> סכסוכים, הצעות, ניסיונות חטיפה, רגעים ויראליים ועוד. כל אירוע מציג מצב ו-2–3 בחירות, ולכל בחירה יש מחיר ותוצאה. כך כל עונה נראית אחרת.</li>
+<li><strong>תדירות:</strong> בערך אירוע אחד או שניים בשבוע, ואירוע מיוחד אחרי כל אירוע שיא <span class="badge">לאמת</span>.</li>
+</ul>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>הסכומים, אחוזי הסיכוי ושינויי המורל הם מודל עבודה, ויכוילו בסימולטור האיזון.</p>
+</div>
+<h2 id="s2"><span class="n">02</span><span>בקשות מתאבקים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>בקשה</th>
+<th>מי מבקש</th>
+<th>מה הוא רוצה</th>
+<th>אם ממלאים</th>
+<th>אם מתעלמים</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>תשבץ אותי (Book Me)</td>
+<td>מי שלא הופיע 3 שבועות</td>
+<td>רוצה קרב בתוכנית הבאה.</td>
+<td>+15 מורל</td>
+<td>-10 מורל</td>
+</tr>
+<tr>
+<td>קרב על התואר (Title Shot)</td>
+<td>מתאבק פופולרי בלי תואר</td>
+<td>דורש קרב על תואר בשבועות הקרובים.</td>
+<td>+20 מורל</td>
+<td>-15 מורל, ועלול לבקש לעזוב</td>
+</tr>
+<tr>
+<td>תן לי את הקרב הראשי (Main Event Me)</td>
+<td>כוכב או כוכב על</td>
+<td>רוצה את הקרב הראשי.</td>
+<td>+15 מורל</td>
+<td>-10 מורל</td>
+</tr>
+<tr>
+<td>העלאה במשכורת (Pay Raise)</td>
+<td>מתאבק עם פופולריות שעלתה</td>
+<td>דורש העלאה של 10–20%.</td>
+<td>+20 מורל, משכורת גבוהה יותר</td>
+<td>-15 מורל</td>
+</tr>
+<tr>
+<td>בונוס כדי להישאר (Bonus To Stay)</td>
+<td>מתאבק עם מורל נמוך</td>
+<td>דורש בונוס חד-פעמי (למשל 100 אלף דולר) כדי להישאר.</td>
+<td>נשאר, +25 מורל</td>
+<td>עלול לעבור למותג יריב</td>
+</tr>
+<tr>
+<td>חופשה (Time Off)</td>
+<td>מתאבק עם סיבולת נמוכה</td>
+<td>מבקש שבועיים בלי קרבות.</td>
+<td>+10 מורל, סיבולת מלאה בחזרה</td>
+<td>-10 מורל, סיכון פציעה עולה</td>
+</tr>
+<tr>
+<td>קרב חוזר (Rematch)</td>
+<td>מי שהפסיד בקרב חשוב</td>
+<td>רוצה קרב חוזר מול מי שניצח אותו.</td>
+<td>+10 מורל, סיכוי ליריבות</td>
+<td>-5 מורל</td>
+</tr>
+<tr>
+<td>שותף לצמד (Tag Partner)</td>
+<td>מתאבק בלי צמד</td>
+<td>רוצה להקים צמד עם מתאבק מסוים.</td>
+<td>+10 מורל לשניהם</td>
+<td>-5 מורל</td>
+</tr>
+<tr>
+<td>מקום טוב יותר בכרטיס (Better Spot)</td>
+<td>מתאבק מידקארד</td>
+<td>רוצה לעלות מהקרב הפותח למידקארד או לראשי.</td>
+<td>+10 מורל</td>
+<td>-5 מורל</td>
+</tr>
+<tr>
+<td>זמן מיקרופון (Promo Time)</td>
+<td>מתאבק עם מיקרופון 4–5</td>
+<td>רוצה פרומו בתוכנית הבאה.</td>
+<td>+10 מורל</td>
+<td>-5 מורל</td>
+</tr>
+<tr>
+<td>רוצה להחליף צד (Turn Request)</td>
+<td>מתאבק שנתקע באותו צד הרבה זמן</td>
+<td>רוצה לעבור מטוב לרע או להפך.</td>
+<td>+15 מורל (החלפת צד עולה כמו בפרומו)</td>
+<td>-10 מורל</td>
+</tr>
+<tr>
+<td>רוצה להשתחרר (Release Request)</td>
+<td>מתאבק עם מורל אפס</td>
+<td>מבקש לעזוב את המותג.</td>
+<td>עוזב, החוזה מתבטל</td>
+<td>נשאר במורל 0, ומופיע חלש בקרבות</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s3"><span class="n">03</span><span>אירועים מאחורי הקלעים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>אירוע</th>
+<th>מתי</th>
+<th>מה קרה</th>
+<th>הבחירות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>מסיבת אחרי האירוע (Post-Show Celebration)</td>
+<td>אחרי אירוע שיא מוצלח</td>
+<td>הרוסטר חוגג אחרי ערב גדול.</td>
+<td>• לממן את המסיבה (30 אלף דולר): +10 מורל לכל הרוסטר<br>• להשאיר את זה ככה: קלף רגיל אקראי</td>
+</tr>
+<tr>
+<td>הצעת ספונסר (Sponsor Offer)</td>
+<td>אחרי אירוע שיא</td>
+<td>מותג משקאות רוצה להופיע בתוכנית.</td>
+<td>• לקבל: +100 אלף דולר, -5% איכות תוכנית לשבועיים<br>• לסרב: +5 מורל לכוכבי העל</td>
+</tr>
+<tr>
+<td>דוח רפואי (Medical Report)</td>
+<td>אחרי אירוע שיא</td>
+<td>הצוות הרפואי ממליץ לנוח.</td>
+<td>• להקשיב: +15 סיבולת לכולם, בלי קרבות מסוכנים שבוע<br>• להתעלם: בלי שינוי, סיכון פציעה עולה</td>
+</tr>
+<tr>
+<td>קטטה בחדר ההלבשה (Locker Room Fight)</td>
+<td>אקראי</td>
+<td>שני מתאבקים התקוטטו מאחורי הקלעים.</td>
+<td>• להעניש את שניהם: -10 מורל לשניהם, +5 מורל לשאר<br>• לנצל את זה: יריבות חדשה ביניהם ברמה 2<br>• להתעלם: סיכוי לקטטה נוספת</td>
+</tr>
+<tr>
+<td>ניסיון חטיפה (Contract Poaching)</td>
+<td>אקראי</td>
+<td>מותג יריב מציע לאחד הכוכבים שלך חוזה.</td>
+<td>• להשוות את ההצעה: +20% במשכורת, +15 מורל<br>• לשחרר אותו: הוא עובר ליריב, אתה מקבל 50 אלף דולר<br>• לסמוך עליו: 50% שהוא נשאר</td>
+</tr>
+<tr>
+<td>רגע ויראלי (Viral Moment)</td>
+<td>אחרי קרב של 4 כוכבים ומעלה</td>
+<td>קטע מהקרב הפך ויראלי.</td>
+<td>• לקדם את הרגע: +8 פופולריות למתאבק, 20 אלף דולר<br>• לנצל לפרסום: +10% קהל בתוכנית הבאה</td>
+</tr>
+<tr>
+<td>חשש לפציעה (Injury Scare)</td>
+<td>אקראי, בעיקר בסיבולת נמוכה</td>
+<td>מתאבק נחת רע באימון.</td>
+<td>• לשלוח לבדיקות: מפספס שבוע, בלי פציעה<br>• להמשיך כרגיל: 30% לפציעה של 3 שבועות</td>
+</tr>
+<tr>
+<td>פריצת טירון (Rookie Breakout)</td>
+<td>צעיר עם קרב טוב</td>
+<td>צעיר הרשים את כולם.</td>
+<td>• לקדם אותו לסגל הראשי: +10 פופולריות, משכורת עולה<br>• לתת לו עוד זמן: +ניסיון כפול לשבועיים</td>
+</tr>
+<tr>
+<td>חוכמת ותיק (Veteran Wisdom)</td>
+<td>יש אגדה או כוכב עבר ברוסטר</td>
+<td>ותיק מציע לאמן את הצעירים.</td>
+<td>• לקבל (20 אלף דולר): כל הצעירים מקבלים ניסיון<br>• לסרב: -5 מורל לוותיק</td>
+</tr>
+<tr>
+<td>עצומת מעריצים (Fan Petition)</td>
+<td>מתאבק פופולרי שלא קיבל קרב תואר</td>
+<td>המעריצים דורשים קרב תואר בשבילו.</td>
+<td>• לתת את הקרב: +10% קהל בקרב, +10 מורל<br>• להתעלם: -3 פופולריות למותג</td>
+</tr>
+<tr>
+<td>כתבה רעה (Bad Press)</td>
+<td>אחרי תוכנית חלשה</td>
+<td>מגזין היאבקות קטל את התוכנית.</td>
+<td>• להגיב בפרומו: פרומו בחינם, הצלחה לפי מיקרופון<br>• לשתוק: -5% קהל בתוכנית הבאה</td>
+</tr>
+<tr>
+<td>להיט מרצ&#39;נדייז (Merch Hit)</td>
+<td>מתאבק עם פופולריות 60+</td>
+<td>החולצה של מתאבק נמכרת בטירוף.</td>
+<td>• להדפיס עוד: +60 אלף דולר<br>• לתת לו נתח: +30 אלף דולר, +15 מורל</td>
+</tr>
+<tr>
+<td>מתח בצמד (Tag Team Tension)</td>
+<td>צמד שהפסיד 3 פעמים ברצף</td>
+<td>בני הצמד מאשימים זה את זה.</td>
+<td>• לפרק את הצמד: יריבות ביניהם ברמה 2<br>• שיחת גישור: +10 מורל לשניהם</td>
+</tr>
+<tr>
+<td>הופעת בכורה מפתיעה (Surprise Debut)</td>
+<td>אקראי, לפני אירוע שיא</td>
+<td>סוכן חופשי מוכר מתקשר ומציע להופיע.</td>
+<td>• להחתים להופעה אחת: קרב אחד באירוע השיא, +כוכב לקרב<br>• להחתים לחוזה מלא: חוזה רגיל<br>• לוותר: בלי שינוי</td>
+</tr>
+<tr>
+<td>סערת שופט (Ref Controversy)</td>
+<td>אחרי קרב צמוד</td>
+<td>הקהל בטוח שהשופט טעה.</td>
+<td>• להכריז על קרב חוזר: קרב חוזר עם בונוס חצי כוכב<br>• לגבות את השופט: -5 מורל למפסיד</td>
+</tr>
+<tr>
+<td>טיפ מסקאוט (Talent Scout Tip)</td>
+<td>אקראי</td>
+<td>סקאוט מצא כישרון נדיר באינדי.</td>
+<td>• לשלוח מישהו (15 אלף דולר): צעיר עם פוטנציאל 5 מופיע במאגר<br>• לוותר: בלי שינוי</td>
+</tr>
+<tr>
+<td>הפסקת חשמל (Power Outage)</td>
+<td>אקראי, באולם קטן</td>
+<td>החשמל נפל באמצע התוכנית.</td>
+<td>• להמשיך בחושך: קרב אחד הופך ל&quot;החשכה&quot;, בונוס חצי כוכב<br>• לעצור ולהחזיר כסף: -30 אלף דולר, בלי פגיעה במוניטין</td>
+</tr>
+<tr>
+<td>עקיצה של מנהל יריב (Rival GM Taunt)</td>
+<td>כשאתה מאחור בדירוג</td>
+<td>מנהל יריב לועג למותג שלך בתקשורת.</td>
+<td>• להגיב: פלישה בחינם בשבוע הבא<br>• להתעלם: +5 מורל, &quot;מעל זה&quot;</td>
+</tr>
+<tr>
+<td>גיבור מקומי (Hometown Hero)</td>
+<td>כשהתוכנית בעיר של מתאבק</td>
+<td>התוכנית בעיר של אחד המתאבקים.</td>
+<td>• לתת לו את הקרב הראשי: +כוכב לקרב, +10 פופולריות<br>• רגיל: +5 מורל</td>
+</tr>
+<tr>
+<td>סכסוך חוזה (Contract Dispute)</td>
+<td>חוזה שמסתיים בעוד 3 שבועות</td>
+<td>מתאבק מסרב לחדש בתנאים הנוכחיים.</td>
+<td>• להעלות 15%: מחדש<br>• להציע חוזה קצר: מחדש ל-10 שבועות, -5 מורל<br>• לתת לו ללכת: עוזב בסוף החוזה</td>
+</tr>
+<tr>
+<td>ערב צדקה (Charity Gala)</td>
+<td>אקראי</td>
+<td>הליגה מוזמנת לערב התרמה.</td>
+<td>• לשלוח 3 מתאבקים (15 אלף דולר): +3 פופולריות לכל אחד, נספר באתגרים העונתיים<br>• לוותר: בלי שינוי</td>
+</tr>
+<tr>
+<td>מזוודות אבודות (Lost Luggage)</td>
+<td>אקראי, בסיבוב חו&quot;ל</td>
+<td>הציוד של שני מתאבקים לא הגיע.</td>
+<td>• לקנות ציוד חדש (10 אלף דולר): בלי שינוי<br>• להתאבק עם מה שיש: -רבע כוכב בקרבות שלהם</td>
+</tr>
+<tr>
+<td>הצעה לקבוצה (Stable Pitch)</td>
+<td>שלושה מתאבקים באותו צד</td>
+<td>שלושה מתאבקים רוצים להקים קבוצה.</td>
+<td>• לאשר: +10 מורל לשלושתם, בונוס כשהם בקרב יחד<br>• לסרב: -5 מורל לשלושתם</td>
+</tr>
+<tr>
+<td>איחור (Late Arrival)</td>
+<td>אקראי</td>
+<td>מתאבק נתקע בשדה התעופה ולא יגיע לתוכנית.</td>
+<td>• להחליף אותו במישהו מהרוסטר: הקרב מתקיים, -רבע כוכב<br>• לבטל את הקרב: הקרב מתבטל, בלי קנס</td>
+</tr>
+<tr>
+<td>ביקור אגדה (Legend Visit)</td>
+<td>אקראי</td>
+<td>אגדה מגיעה לבקר מאחורי הקלעים.</td>
+<td>• להעלות אותו לזירה: +5% קהל, פרומו בחינם<br>• להחתים לחוזה קצר: הנחה של 30% על החתימה</td>
+</tr>
+</tbody></table>
+</div>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/events.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>

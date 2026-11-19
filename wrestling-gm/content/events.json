@@ -1,0 +1,580 @@
+{
+ "requests": [
+  {
+   "name": "Book Me",
+   "nameHe": "תשבץ אותי",
+   "who": "מי שלא הופיע 3 שבועות",
+   "ask": "רוצה קרב בתוכנית הבאה.",
+   "askEn": "Wants a match on the next show.",
+   "ifGranted": "+15 מורל",
+   "ifIgnored": "-10 מורל"
+  },
+  {
+   "name": "Title Shot",
+   "nameHe": "קרב על התואר",
+   "who": "מתאבק פופולרי בלי תואר",
+   "ask": "דורש קרב על תואר בשבועות הקרובים.",
+   "askEn": "Demands a title match in the coming weeks.",
+   "ifGranted": "+20 מורל",
+   "ifIgnored": "-15 מורל, ועלול לבקש לעזוב"
+  },
+  {
+   "name": "Main Event Me",
+   "nameHe": "תן לי את הקרב הראשי",
+   "who": "כוכב או כוכב על",
+   "ask": "רוצה את הקרב הראשי.",
+   "askEn": "Wants the main event spot.",
+   "ifGranted": "+15 מורל",
+   "ifIgnored": "-10 מורל"
+  },
+  {
+   "name": "Pay Raise",
+   "nameHe": "העלאה במשכורת",
+   "who": "מתאבק עם פופולריות שעלתה",
+   "ask": "דורש העלאה של 10–20%.",
+   "askEn": "Demands a 10–20% raise.",
+   "ifGranted": "+20 מורל, משכורת גבוהה יותר",
+   "ifIgnored": "-15 מורל"
+  },
+  {
+   "name": "Bonus To Stay",
+   "nameHe": "בונוס כדי להישאר",
+   "who": "מתאבק עם מורל נמוך",
+   "ask": "דורש בונוס חד-פעמי (למשל 100 אלף דולר) כדי להישאר.",
+   "askEn": "Demands a one-time bonus (e.g. $100K) to stay.",
+   "ifGranted": "נשאר, +25 מורל",
+   "ifIgnored": "עלול לעבור למותג יריב"
+  },
+  {
+   "name": "Time Off",
+   "nameHe": "חופשה",
+   "who": "מתאבק עם סיבולת נמוכה",
+   "ask": "מבקש שבועיים בלי קרבות.",
+   "askEn": "Asks for two weeks off.",
+   "ifGranted": "+10 מורל, סיבולת מלאה בחזרה",
+   "ifIgnored": "-10 מורל, סיכון פציעה עולה"
+  },
+  {
+   "name": "Rematch",
+   "nameHe": "קרב חוזר",
+   "who": "מי שהפסיד בקרב חשוב",
+   "ask": "רוצה קרב חוזר מול מי שניצח אותו.",
+   "askEn": "Wants a rematch against the winner.",
+   "ifGranted": "+10 מורל, סיכוי ליריבות",
+   "ifIgnored": "-5 מורל"
+  },
+  {
+   "name": "Tag Partner",
+   "nameHe": "שותף לצמד",
+   "who": "מתאבק בלי צמד",
+   "ask": "רוצה להקים צמד עם מתאבק מסוים.",
+   "askEn": "Wants to team with a specific superstar.",
+   "ifGranted": "+10 מורל לשניהם",
+   "ifIgnored": "-5 מורל"
+  },
+  {
+   "name": "Better Spot",
+   "nameHe": "מקום טוב יותר בכרטיס",
+   "who": "מתאבק מידקארד",
+   "ask": "רוצה לעלות מהקרב הפותח למידקארד או לראשי.",
+   "askEn": "Wants to move up the card.",
+   "ifGranted": "+10 מורל",
+   "ifIgnored": "-5 מורל"
+  },
+  {
+   "name": "Promo Time",
+   "nameHe": "זמן מיקרופון",
+   "who": "מתאבק עם מיקרופון 4–5",
+   "ask": "רוצה פרומו בתוכנית הבאה.",
+   "askEn": "Wants a promo on the next show.",
+   "ifGranted": "+10 מורל",
+   "ifIgnored": "-5 מורל"
+  },
+  {
+   "name": "Turn Request",
+   "nameHe": "רוצה להחליף צד",
+   "who": "מתאבק שנתקע באותו צד הרבה זמן",
+   "ask": "רוצה לעבור מטוב לרע או להפך.",
+   "askEn": "Wants to turn face or heel.",
+   "ifGranted": "+15 מורל (החלפת צד עולה כמו בפרומו)",
+   "ifIgnored": "-10 מורל"
+  },
+  {
+   "name": "Release Request",
+   "nameHe": "רוצה להשתחרר",
+   "who": "מתאבק עם מורל אפס",
+   "ask": "מבקש לעזוב את המותג.",
+   "askEn": "Asks to leave the brand.",
+   "ifGranted": "עוזב, החוזה מתבטל",
+   "ifIgnored": "נשאר במורל 0, ומופיע חלש בקרבות"
+  }
+ ],
+ "events": [
+  {
+   "name": "Post-Show Celebration",
+   "nameHe": "מסיבת אחרי האירוע",
+   "trigger": "אחרי אירוע שיא מוצלח",
+   "situation": "הרוסטר חוגג אחרי ערב גדול.",
+   "situationEn": "The roster celebrates after a big night.",
+   "choices": [
+    {
+     "choice": "לממן את המסיבה (30 אלף דולר)",
+     "result": "+10 מורל לכל הרוסטר"
+    },
+    {
+     "choice": "להשאיר את זה ככה",
+     "result": "קלף רגיל אקראי"
+    }
+   ],
+   "origin": "original"
+  },
+  {
+   "name": "Sponsor Offer",
+   "nameHe": "הצעת ספונסר",
+   "trigger": "אחרי אירוע שיא",
+   "situation": "מותג משקאות רוצה להופיע בתוכנית.",
+   "situationEn": "A drinks brand wants on the show.",
+   "choices": [
+    {
+     "choice": "לקבל",
+     "result": "+100 אלף דולר, -5% איכות תוכנית לשבועיים"
+    },
+    {
+     "choice": "לסרב",
+     "result": "+5 מורל לכוכבי העל"
+    }
+   ],
+   "origin": "original"
+  },
+  {
+   "name": "Medical Report",
+   "nameHe": "דוח רפואי",
+   "trigger": "אחרי אירוע שיא",
+   "situation": "הצוות הרפואי ממליץ לנוח.",
+   "situationEn": "The medical team recommends rest.",
+   "choices": [
+    {
+     "choice": "להקשיב",
+     "result": "+15 סיבולת לכולם, בלי קרבות מסוכנים שבוע"
+    },
+    {
+     "choice": "להתעלם",
+     "result": "בלי שינוי, סיכון פציעה עולה"
+    }
+   ],
+   "origin": "original"
+  },
+  {
+   "name": "Locker Room Fight",
+   "nameHe": "קטטה בחדר ההלבשה",
+   "trigger": "אקראי",
+   "situation": "שני מתאבקים התקוטטו מאחורי הקלעים.",
+   "situationEn": "Two superstars brawled backstage.",
+   "choices": [
+    {
+     "choice": "להעניש את שניהם",
+     "result": "-10 מורל לשניהם, +5 מורל לשאר"
+    },
+    {
+     "choice": "לנצל את זה",
+     "result": "יריבות חדשה ביניהם ברמה 2"
+    },
+    {
+     "choice": "להתעלם",
+     "result": "סיכוי לקטטה נוספת"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Contract Poaching",
+   "nameHe": "ניסיון חטיפה",
+   "trigger": "אקראי",
+   "situation": "מותג יריב מציע לאחד הכוכבים שלך חוזה.",
+   "situationEn": "A rival brand offers one of your stars a contract.",
+   "choices": [
+    {
+     "choice": "להשוות את ההצעה",
+     "result": "+20% במשכורת, +15 מורל"
+    },
+    {
+     "choice": "לשחרר אותו",
+     "result": "הוא עובר ליריב, אתה מקבל 50 אלף דולר"
+    },
+    {
+     "choice": "לסמוך עליו",
+     "result": "50% שהוא נשאר"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Viral Moment",
+   "nameHe": "רגע ויראלי",
+   "trigger": "אחרי קרב של 4 כוכבים ומעלה",
+   "situation": "קטע מהקרב הפך ויראלי.",
+   "situationEn": "A clip from the match went viral.",
+   "choices": [
+    {
+     "choice": "לקדם את הרגע",
+     "result": "+8 פופולריות למתאבק, 20 אלף דולר"
+    },
+    {
+     "choice": "לנצל לפרסום",
+     "result": "+10% קהל בתוכנית הבאה"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Injury Scare",
+   "nameHe": "חשש לפציעה",
+   "trigger": "אקראי, בעיקר בסיבולת נמוכה",
+   "situation": "מתאבק נחת רע באימון.",
+   "situationEn": "A superstar landed badly in training.",
+   "choices": [
+    {
+     "choice": "לשלוח לבדיקות",
+     "result": "מפספס שבוע, בלי פציעה"
+    },
+    {
+     "choice": "להמשיך כרגיל",
+     "result": "30% לפציעה של 3 שבועות"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Rookie Breakout",
+   "nameHe": "פריצת טירון",
+   "trigger": "צעיר עם קרב טוב",
+   "situation": "צעיר הרשים את כולם.",
+   "situationEn": "A prospect impressed everyone.",
+   "choices": [
+    {
+     "choice": "לקדם אותו לסגל הראשי",
+     "result": "+10 פופולריות, משכורת עולה"
+    },
+    {
+     "choice": "לתת לו עוד זמן",
+     "result": "+ניסיון כפול לשבועיים"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Veteran Wisdom",
+   "nameHe": "חוכמת ותיק",
+   "trigger": "יש אגדה או כוכב עבר ברוסטר",
+   "situation": "ותיק מציע לאמן את הצעירים.",
+   "situationEn": "A veteran offers to coach the young roster.",
+   "choices": [
+    {
+     "choice": "לקבל (20 אלף דולר)",
+     "result": "כל הצעירים מקבלים ניסיון"
+    },
+    {
+     "choice": "לסרב",
+     "result": "-5 מורל לוותיק"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Fan Petition",
+   "nameHe": "עצומת מעריצים",
+   "trigger": "מתאבק פופולרי שלא קיבל קרב תואר",
+   "situation": "המעריצים דורשים קרב תואר בשבילו.",
+   "situationEn": "Fans demand a title shot for a favorite.",
+   "choices": [
+    {
+     "choice": "לתת את הקרב",
+     "result": "+10% קהל בקרב, +10 מורל"
+    },
+    {
+     "choice": "להתעלם",
+     "result": "-3 פופולריות למותג"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Bad Press",
+   "nameHe": "כתבה רעה",
+   "trigger": "אחרי תוכנית חלשה",
+   "situation": "מגזין היאבקות קטל את התוכנית.",
+   "situationEn": "A wrestling magazine trashed the show.",
+   "choices": [
+    {
+     "choice": "להגיב בפרומו",
+     "result": "פרומו בחינם, הצלחה לפי מיקרופון"
+    },
+    {
+     "choice": "לשתוק",
+     "result": "-5% קהל בתוכנית הבאה"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Merch Hit",
+   "nameHe": "להיט מרצ'נדייז",
+   "trigger": "מתאבק עם פופולריות 60+",
+   "situation": "החולצה של מתאבק נמכרת בטירוף.",
+   "situationEn": "A superstar's shirt is selling out.",
+   "choices": [
+    {
+     "choice": "להדפיס עוד",
+     "result": "+60 אלף דולר"
+    },
+    {
+     "choice": "לתת לו נתח",
+     "result": "+30 אלף דולר, +15 מורל"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Tag Team Tension",
+   "nameHe": "מתח בצמד",
+   "trigger": "צמד שהפסיד 3 פעמים ברצף",
+   "situation": "בני הצמד מאשימים זה את זה.",
+   "situationEn": "The tag partners blame each other.",
+   "choices": [
+    {
+     "choice": "לפרק את הצמד",
+     "result": "יריבות ביניהם ברמה 2"
+    },
+    {
+     "choice": "שיחת גישור",
+     "result": "+10 מורל לשניהם"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Surprise Debut",
+   "nameHe": "הופעת בכורה מפתיעה",
+   "trigger": "אקראי, לפני אירוע שיא",
+   "situation": "סוכן חופשי מוכר מתקשר ומציע להופיע.",
+   "situationEn": "A known free agent calls offering to appear.",
+   "choices": [
+    {
+     "choice": "להחתים להופעה אחת",
+     "result": "קרב אחד באירוע השיא, +כוכב לקרב"
+    },
+    {
+     "choice": "להחתים לחוזה מלא",
+     "result": "חוזה רגיל"
+    },
+    {
+     "choice": "לוותר",
+     "result": "בלי שינוי"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Ref Controversy",
+   "nameHe": "סערת שופט",
+   "trigger": "אחרי קרב צמוד",
+   "situation": "הקהל בטוח שהשופט טעה.",
+   "situationEn": "The crowd is sure the referee blew it.",
+   "choices": [
+    {
+     "choice": "להכריז על קרב חוזר",
+     "result": "קרב חוזר עם בונוס חצי כוכב"
+    },
+    {
+     "choice": "לגבות את השופט",
+     "result": "-5 מורל למפסיד"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Talent Scout Tip",
+   "nameHe": "טיפ מסקאוט",
+   "trigger": "אקראי",
+   "situation": "סקאוט מצא כישרון נדיר באינדי.",
+   "situationEn": "A scout found a rare indie talent.",
+   "choices": [
+    {
+     "choice": "לשלוח מישהו (15 אלף דולר)",
+     "result": "צעיר עם פוטנציאל 5 מופיע במאגר"
+    },
+    {
+     "choice": "לוותר",
+     "result": "בלי שינוי"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Power Outage",
+   "nameHe": "הפסקת חשמל",
+   "trigger": "אקראי, באולם קטן",
+   "situation": "החשמל נפל באמצע התוכנית.",
+   "situationEn": "The power went out mid-show.",
+   "choices": [
+    {
+     "choice": "להמשיך בחושך",
+     "result": "קרב אחד הופך ל\"החשכה\", בונוס חצי כוכב"
+    },
+    {
+     "choice": "לעצור ולהחזיר כסף",
+     "result": "-30 אלף דולר, בלי פגיעה במוניטין"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Rival GM Taunt",
+   "nameHe": "עקיצה של מנהל יריב",
+   "trigger": "כשאתה מאחור בדירוג",
+   "situation": "מנהל יריב לועג למותג שלך בתקשורת.",
+   "situationEn": "A rival GM mocks your brand in the media.",
+   "choices": [
+    {
+     "choice": "להגיב",
+     "result": "פלישה בחינם בשבוע הבא"
+    },
+    {
+     "choice": "להתעלם",
+     "result": "+5 מורל, \"מעל זה\""
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Hometown Hero",
+   "nameHe": "גיבור מקומי",
+   "trigger": "כשהתוכנית בעיר של מתאבק",
+   "situation": "התוכנית בעיר של אחד המתאבקים.",
+   "situationEn": "The show is in a superstar's hometown.",
+   "choices": [
+    {
+     "choice": "לתת לו את הקרב הראשי",
+     "result": "+כוכב לקרב, +10 פופולריות"
+    },
+    {
+     "choice": "רגיל",
+     "result": "+5 מורל"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Contract Dispute",
+   "nameHe": "סכסוך חוזה",
+   "trigger": "חוזה שמסתיים בעוד 3 שבועות",
+   "situation": "מתאבק מסרב לחדש בתנאים הנוכחיים.",
+   "situationEn": "A superstar refuses to renew on current terms.",
+   "choices": [
+    {
+     "choice": "להעלות 15%",
+     "result": "מחדש"
+    },
+    {
+     "choice": "להציע חוזה קצר",
+     "result": "מחדש ל-10 שבועות, -5 מורל"
+    },
+    {
+     "choice": "לתת לו ללכת",
+     "result": "עוזב בסוף החוזה"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Charity Gala",
+   "nameHe": "ערב צדקה",
+   "trigger": "אקראי",
+   "situation": "הליגה מוזמנת לערב התרמה.",
+   "situationEn": "The league is invited to a charity gala.",
+   "choices": [
+    {
+     "choice": "לשלוח 3 מתאבקים (15 אלף דולר)",
+     "result": "+3 פופולריות לכל אחד, נספר באתגרים העונתיים"
+    },
+    {
+     "choice": "לוותר",
+     "result": "בלי שינוי"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Lost Luggage",
+   "nameHe": "מזוודות אבודות",
+   "trigger": "אקראי, בסיבוב חו\"ל",
+   "situation": "הציוד של שני מתאבקים לא הגיע.",
+   "situationEn": "Two superstars' gear did not arrive.",
+   "choices": [
+    {
+     "choice": "לקנות ציוד חדש (10 אלף דולר)",
+     "result": "בלי שינוי"
+    },
+    {
+     "choice": "להתאבק עם מה שיש",
+     "result": "-רבע כוכב בקרבות שלהם"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Stable Pitch",
+   "nameHe": "הצעה לקבוצה",
+   "trigger": "שלושה מתאבקים באותו צד",
+   "situation": "שלושה מתאבקים רוצים להקים קבוצה.",
+   "situationEn": "Three superstars want to form a stable.",
+   "choices": [
+    {
+     "choice": "לאשר",
+     "result": "+10 מורל לשלושתם, בונוס כשהם בקרב יחד"
+    },
+    {
+     "choice": "לסרב",
+     "result": "-5 מורל לשלושתם"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Late Arrival",
+   "nameHe": "איחור",
+   "trigger": "אקראי",
+   "situation": "מתאבק נתקע בשדה התעופה ולא יגיע לתוכנית.",
+   "situationEn": "A superstar is stuck at the airport.",
+   "choices": [
+    {
+     "choice": "להחליף אותו במישהו מהרוסטר",
+     "result": "הקרב מתקיים, -רבע כוכב"
+    },
+    {
+     "choice": "לבטל את הקרב",
+     "result": "הקרב מתבטל, בלי קנס"
+    }
+   ],
+   "origin": "ours"
+  },
+  {
+   "name": "Legend Visit",
+   "nameHe": "ביקור אגדה",
+   "trigger": "אקראי",
+   "situation": "אגדה מגיעה לבקר מאחורי הקלעים.",
+   "situationEn": "A legend visits backstage.",
+   "choices": [
+    {
+     "choice": "להעלות אותו לזירה",
+     "result": "+5% קהל, פרומו בחינם"
+    },
+    {
+     "choice": "להחתים לחוזה קצר",
+     "result": "הנחה של 30% על החתימה"
+    }
+   ],
+   "origin": "ours"
+  }
+ ]
+}
