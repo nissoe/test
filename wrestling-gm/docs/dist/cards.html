@@ -1,0 +1,528 @@
+<title>קלפי הכוח</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● נתוני תוכן</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: טיוטה, המספרים לפי מודל עבודה</span></div>
+      <h1>קלפי הכוח</h1>
+      <p class="lead">קלף בלעדי לכל אחד מ-20 המנהלים, כמו במקור, אבל רובם לא חד-פעמיים: 8 קבועים, 9 חוזרים ורק 3 מוגבלים. 7 מהם משני משחק, כדי שבחירת המנהל תהיה החלטה קשה.</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>הקלפים הבלעדיים של המנהלים</span></a></li><li><a href="#s3"><span class="n">03</span><span>איך בוחרים מנהל</span></a></li><li><a href="#s4"><span class="n">04</span><span>חנות הקלפים</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<ul>
+<li><strong>כמו במקור:</strong> לכל מנהל קלף בלעדי מאחת מארבע המשפחות (כלכלה, יריבויות, התאוששות, התקפה), ובנוסף יש חנות קלפים.</li>
+<li><strong>פחות חד-פעמי (החלטה 43):</strong><ul>
+<li><strong>קבוע:</strong> פועל כל העונה, בלי צורך להפעיל.</li>
+<li><strong>חוזר:</strong> מפעילים, והוא נטען מחדש אחרי מספר שבועות.</li>
+<li><strong>מוגבל:</strong> פעם או פעמיים בעונה, רק לאפקטים החזקים ביותר.</li>
+</ul>
+</li>
+<li><strong>משני משחק:</strong> 7 קלפים חזקים במיוחד, שכל אחד מהם מכתיב סגנון משחק שלם. לכל משחק מנהל יש יתרון אמיתי, כך שאין &quot;בחירה נכונה&quot; אחת.</li>
+</ul>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>כל המספרים (אחוזים, שבועות, סכומים, מחירים בחנות) הם מודל עבודה. מכיילים אותם במחקר המספרים ובסימולטור האיזון.</p>
+</div>
+<h2 id="s2"><span class="n">02</span><span>הקלפים הבלעדיים של המנהלים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>מנהל</th>
+<th>משפחה</th>
+<th>קלף בלעדי</th>
+<th>שימוש</th>
+<th>מה הוא עושה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>G01</td>
+<td>ויקטוריה סטרלינג (Victoria Sterling)</td>
+<td>כלכלה</td>
+<td>שער הזהב (Golden Gate)</td>
+<td>קבוע</td>
+<td>כל תוכנית מכניסה 10% יותר מכרטיסים.</td>
+</tr>
+<tr>
+<td>G02</td>
+<td>ריימונד קסינגטון (Raymond Kessington)</td>
+<td>כלכלה</td>
+<td>פנקס פתוח (Open Checkbook)</td>
+<td>חוזר, כל 6 שבועות</td>
+<td>כל הקרבות בחינם לשבוע אחד.</td>
+</tr>
+<tr>
+<td>G03</td>
+<td>דלפין אורטיז (Delphine Ortiz)</td>
+<td>כלכלה</td>
+<td>עסקת פריים טיים (Prime Time Deal)</td>
+<td>חוזר, כל 4 שבועות</td>
+<td>בונוסי הלוגיסטיקה כפולים לשבוע אחד.</td>
+</tr>
+<tr>
+<td>G04</td>
+<td>מרקוס ויטפילד (Marcus Whitfield)</td>
+<td>כלכלה</td>
+<td>צייד מציאות (Bargain Hunter)</td>
+<td>קבוע</td>
+<td>כל הקלפים בחנות זולים ב-25%.</td>
+</tr>
+<tr>
+<td>G05</td>
+<td>סופיה בלוצ&#39;י (Sofia Bellucci)</td>
+<td>כלכלה</td>
+<td>רשת האגדות (Legend Network) <strong>(משנה משחק)</strong></td>
+<td>קבוע</td>
+<td>בכל שבוע יש 2 אגדות נוספות במאגר, וכל חתימה של אגדה זולה ב-30%.</td>
+</tr>
+<tr>
+<td>G06</td>
+<td>ביג אל מונטגיו (Big Al Montague)</td>
+<td>יריבויות</td>
+<td>ללבות את האש (Fan The Flames) <strong>(משנה משחק)</strong></td>
+<td>מוגבל, פעמיים בעונה</td>
+<td>כל היריבויות הפעילות עולות בשתי רמות.</td>
+</tr>
+<tr>
+<td>G07</td>
+<td>נדיה רחימי (Nadia Rahimi)</td>
+<td>יריבויות</td>
+<td>דם רע (Bad Blood)</td>
+<td>חוזר, כל 6 שבועות</td>
+<td>יריבות אחת קופצת ישר לרמה 4.</td>
+</tr>
+<tr>
+<td>G08</td>
+<td>תאו לנקסטר (Theo Lancaster)</td>
+<td>יריבויות</td>
+<td>לשון זהב (Silver Tongue) <strong>(משנה משחק)</strong></td>
+<td>קבוע</td>
+<td>כל הפרומואים משפיעים ב-50% יותר.</td>
+</tr>
+<tr>
+<td>G09</td>
+<td>אינגריד סולברג (Ingrid Solberg)</td>
+<td>יריבויות</td>
+<td>קרב חשבונות (Grudge Match)</td>
+<td>חוזר, כל 4 שבועות</td>
+<td>קרב יריבות אחד בשבוע הזה מקבל כוכב שלם נוסף.</td>
+</tr>
+<tr>
+<td>G10</td>
+<td>פליקס אוקורו (Felix Okoro)</td>
+<td>יריבויות</td>
+<td>זרקור (Spotlight)</td>
+<td>חוזר, כל 3 שבועות</td>
+<td>מתאבק אחד מקבל 5 פופולריות.</td>
+</tr>
+<tr>
+<td>G11</td>
+<td>ד&quot;ר הלנה ווס (Dr. Helena Voss)</td>
+<td>התאוששות</td>
+<td>רפואת ספורט (Sports Medicine) <strong>(משנה משחק)</strong></td>
+<td>קבוע</td>
+<td>כל פציעה ברוסטר נמשכת חצי מהזמן.</td>
+</tr>
+<tr>
+<td>G12</td>
+<td>המאמן ברנדון רייס (Coach Brandon Reyes)</td>
+<td>התאוששות</td>
+<td>אמבט קרח (Ice Bath)</td>
+<td>חוזר, כל 4 שבועות</td>
+<td>15 סיבולת לכל הרוסטר.</td>
+</tr>
+<tr>
+<td>G13</td>
+<td>מאמא לוצ&#39;יה (Mama Lucia)</td>
+<td>התאוששות</td>
+<td>ארוחה משפחתית (Family Dinner)</td>
+<td>קבוע</td>
+<td>המורל ברוסטר יורד בחצי מהקצב, ולעולם לא יורד מתחת ל-25.</td>
+</tr>
+<tr>
+<td>G14</td>
+<td>גארט פייק (Garrett Pike)</td>
+<td>התאוששות</td>
+<td>רוח שנייה (Second Wind)</td>
+<td>חוזר, כל 3 שבועות</td>
+<td>מתאבק אחד חוזר לסיבולת מלאה.</td>
+</tr>
+<tr>
+<td>G15</td>
+<td>יוקי טנאבה (Yuki Tanabe)</td>
+<td>התאוששות</td>
+<td>הדוג&#39;ו (The Dojo) <strong>(משנה משחק)</strong></td>
+<td>קבוע</td>
+<td>צעירים בפיתוח וכוכבים עולים צוברים ניסיון כפול.</td>
+</tr>
+<tr>
+<td>G16</td>
+<td>דנטה קורבינו (Dante Corvino)</td>
+<td>התקפה</td>
+<td>מארב מאחורי הקלעים (Backstage Ambush)</td>
+<td>מוגבל, פעמיים בעונה</td>
+<td>שני מתאבקים אקראיים של יריב נפצעים לפני התוכנית הבאה שלו.</td>
+</tr>
+<tr>
+<td>G17</td>
+<td>סרינה בלקוול (Serena Blackwell)</td>
+<td>התקפה</td>
+<td>חטיפה (Poach) <strong>(משנה משחק)</strong></td>
+<td>מוגבל, פעם בעונה</td>
+<td>לוקחים מתאבק ממותג יריב לצמיתות (לא מחזיק תואר).</td>
+</tr>
+<tr>
+<td>G18</td>
+<td>אוקס בראניגן (Ox Brannigan)</td>
+<td>התקפה</td>
+<td>עיתונות רעה (Bad Press)</td>
+<td>חוזר, כל 6 שבועות</td>
+<td>כל הרוסטר של יריב אחד מאבד 5 פופולריות.</td>
+</tr>
+<tr>
+<td>G19</td>
+<td>ויויאן לקרואה (Vivienne Lacroix)</td>
+<td>התקפה</td>
+<td>חבלה (Sabotage)</td>
+<td>חוזר, כל 4 שבועות</td>
+<td>בונוס האיכות של האולם של יריב אחד מתבטל לשבוע אחד.</td>
+</tr>
+<tr>
+<td>G20</td>
+<td>הנציב (The Commissioner)</td>
+<td>התקפה</td>
+<td>מידע פנימי (Inside Information) <strong>(משנה משחק)</strong></td>
+<td>קבוע</td>
+<td>רואים את הקרב הראשי של כל יריב לפני שנועלים את הכרטיס שלך.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s3"><span class="n">03</span><span>איך בוחרים מנהל</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>סגנון משחק</th>
+<th>מנהלים שמתאימים</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>בונה כוכבים מבפנים</td>
+<td>הדוג&#39;ו (יוקי טנאבה), זרקור (פליקס אוקורו)</td>
+</tr>
+<tr>
+<td>סיפורים ויריבויות</td>
+<td>ללבות את האש (ביג אל מונטגיו), לשון זהב (תאו לנקסטר), דם רע (נדיה רחימי)</td>
+</tr>
+<tr>
+<td>כסף ואגדות</td>
+<td>רשת האגדות (סופיה בלוצ&#39;י), שער הזהב (ויקטוריה סטרלינג)</td>
+</tr>
+<tr>
+<td>רוסטר עמיד לעונה ארוכה</td>
+<td>רפואת ספורט (ד&quot;ר הלנה ווס), ארוחה משפחתית (מאמא לוצ&#39;יה)</td>
+</tr>
+<tr>
+<td>פוגע ביריבים</td>
+<td>חטיפה (סרינה בלקוול), מידע פנימי (הנציב), מארב מאחורי הקלעים (דנטה קורבינו)</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s4"><span class="n">04</span><span>חנות הקלפים</span></h2>
+<p>קונים בתקציב. ארבע רמות נדירות: רגיל, נדיר, אפי ואגדי. גם כאן חלק מהקלפים פועלים לאורך זמן.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>קלף</th>
+<th>נדירות</th>
+<th>שימוש</th>
+<th>מה הוא עושה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C01</td>
+<td>סרטון הייפ (Hype Video)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>מתאבק אחד מקבל 3 פופולריות.</td>
+</tr>
+<tr>
+<td>C02</td>
+<td>הפסקת מים (Water Break)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>מתאבק אחד מקבל 10 סיבולת.</td>
+</tr>
+<tr>
+<td>C03</td>
+<td>שיחת עידוד (Pep Talk)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>המורל של מתאבק אחד עולה ב-15.</td>
+</tr>
+<tr>
+<td>C04</td>
+<td>צוות רחוב (Street Team)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>הקהל בתוכנית הבאה גדל ב-5%.</td>
+</tr>
+<tr>
+<td>C05</td>
+<td>ספונסר מקומי (Local Sponsor)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>50 אלף דולר לתקציב.</td>
+</tr>
+<tr>
+<td>C06</td>
+<td>שיקום מהיר (Quick Rehab)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>פציעה של מתאבק אחד מתקצרת בשבוע.</td>
+</tr>
+<tr>
+<td>C07</td>
+<td>טיפ מהסקאוט (Scouting Tip)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>סקאוט נוסף לשבוע הזה.</td>
+</tr>
+<tr>
+<td>C08</td>
+<td>מאמן פרומו (Promo Coach)</td>
+<td>רגיל</td>
+<td>חד-פעמי</td>
+<td>הפרומואים בשבוע הזה משפיעים ב-25% יותר.</td>
+</tr>
+<tr>
+<td>C09</td>
+<td>דחיפה לקרב הראשי (Main Event Push)</td>
+<td>נדיר</td>
+<td>חד-פעמי</td>
+<td>הקרב הראשי בשבוע הזה מקבל חצי כוכב נוסף.</td>
+</tr>
+<tr>
+<td>C10</td>
+<td>ניצוץ יריבות (Rivalry Spark)</td>
+<td>נדיר</td>
+<td>חד-פעמי</td>
+<td>יריבות חדשה מתחילה ברמה 2.</td>
+</tr>
+<tr>
+<td>C11</td>
+<td>השקת מרצ&#39;נדייז (Merch Drop)</td>
+<td>נדיר</td>
+<td>חד-פעמי</td>
+<td>150 אלף דולר לתקציב.</td>
+</tr>
+<tr>
+<td>C12</td>
+<td>צוות רפואי (Medical Team)</td>
+<td>נדיר</td>
+<td>חד-פעמי</td>
+<td>כל הפציעות ברוסטר מתקצרות בשבוע.</td>
+</tr>
+<tr>
+<td>C13</td>
+<td>הארכת חוזה (Contract Extension)</td>
+<td>נדיר</td>
+<td>חד-פעמי</td>
+<td>חוזה של אגדה או סוכן חופשי מתארך ב-5 שבועות.</td>
+</tr>
+<tr>
+<td>C14</td>
+<td>הייפ לתואר (Title Hype)</td>
+<td>נדיר</td>
+<td>חד-פעמי</td>
+<td>קרב תואר אחד בשבוע הזה מקבל חצי כוכב נוסף.</td>
+</tr>
+<tr>
+<td>C15</td>
+<td>עסקת טלוויזיה (TV Deal)</td>
+<td>אפי</td>
+<td>פועל 4 שבועות</td>
+<td>ההכנסות מכל תוכנית גדלות ב-10%.</td>
+</tr>
+<tr>
+<td>C16</td>
+<td>מתקן אימונים (Training Facility)</td>
+<td>אפי</td>
+<td>פועל כל העונה</td>
+<td>כל הרוסטר צובר ניסיון ב-25% יותר.</td>
+</tr>
+<tr>
+<td>C17</td>
+<td>קהל לוהט (Hot Crowd)</td>
+<td>אפי</td>
+<td>חד-פעמי</td>
+<td>כל הקרבות בתוכנית הזו מקבלים חצי כוכב נוסף.</td>
+</tr>
+<tr>
+<td>C18</td>
+<td>עומק רוסטר (Roster Depth)</td>
+<td>אפי</td>
+<td>פועל כל העונה</td>
+<td>אפשר להחזיק 3 מתאבקים יותר מהמגבלה.</td>
+</tr>
+<tr>
+<td>C19</td>
+<td>שובה של אגדה (Legend Return)</td>
+<td>אגדי</td>
+<td>חד-פעמי</td>
+<td>חותמים אגדה אחת בחינם.</td>
+</tr>
+<tr>
+<td>C20</td>
+<td>אהוב הקהל (Crowd Favorite)</td>
+<td>אגדי</td>
+<td>פועל 4 שבועות</td>
+<td>הפופולריות של מתאבק אחד עולה ל-90.</td>
+</tr>
+<tr>
+<td>C21</td>
+<td>פשיטה תאגידית (Corporate Raid)</td>
+<td>אגדי</td>
+<td>חד-פעמי</td>
+<td>לוקחים 200 אלף דולר מהתקציב של יריב.</td>
+</tr>
+<tr>
+<td>C22</td>
+<td>קסם של קרב ראשי (Main Event Magic)</td>
+<td>אגדי</td>
+<td>חד-פעמי</td>
+<td>הקרב הראשי בשבוע הזה מקבל כוכב וחצי נוספים.</td>
+</tr>
+</tbody></table>
+</div>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/cards.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>
