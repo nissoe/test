@@ -1,0 +1,220 @@
+{
+ "tiers": [
+  {
+   "tier": "High School Gym",
+   "tierHe": "אולם ספורט של בית ספר",
+   "cost": 0,
+   "costVerified": true,
+   "capacity": 2000,
+   "ticket": 1.5,
+   "quality": 5,
+   "venues": [
+    {
+     "name": "Northside High Gym",
+     "nameHe": "אולם תיכון נורת'סייד",
+     "city": "Chicago",
+     "cityHe": "שיקגו"
+    },
+    {
+     "name": "Riverbend Academy Gym",
+     "nameHe": "אולם אקדמיית ריברבנד",
+     "city": "Nashville",
+     "cityHe": "נאשוויל"
+    },
+    {
+     "name": "St. Brennan's Gym",
+     "nameHe": "אולם סנט ברנן",
+     "city": "Dublin",
+     "cityHe": "דבלין"
+    },
+    {
+     "name": "Eastgate College Hall",
+     "nameHe": "אולם קולג' איסטגייט",
+     "city": "Manchester",
+     "cityHe": "מנצ'סטר"
+    }
+   ]
+  },
+  {
+   "tier": "Concert Hall",
+   "tierHe": "אולם קונצרטים",
+   "cost": 100000,
+   "costVerified": true,
+   "capacity": 5000,
+   "ticket": 2.0,
+   "quality": 8,
+   "venues": [
+    {
+     "name": "The Copper Room",
+     "nameHe": "חדר הנחושת",
+     "city": "Detroit",
+     "cityHe": "דטרויט"
+    },
+    {
+     "name": "Harborlight Hall",
+     "nameHe": "אולם הארבורלייט",
+     "city": "Glasgow",
+     "cityHe": "גלזגו"
+    },
+    {
+     "name": "The Velvet Theater",
+     "nameHe": "תיאטרון הקטיפה",
+     "city": "Paris",
+     "cityHe": "פריז"
+    },
+    {
+     "name": "Lantern Music Hall",
+     "nameHe": "אולם המוזיקה לנטרן",
+     "city": "Osaka",
+     "cityHe": "אוסקה"
+    }
+   ]
+  },
+  {
+   "tier": "Wrestling Center",
+   "tierHe": "מרכז היאבקות",
+   "cost": 180000,
+   "costVerified": false,
+   "capacity": 10000,
+   "ticket": 2.5,
+   "quality": 11,
+   "venues": [
+    {
+     "name": "Ironworks Center",
+     "nameHe": "מרכז איירונוורקס",
+     "city": "Philadelphia",
+     "cityHe": "פילדלפיה"
+    },
+    {
+     "name": "The Foundry Dome",
+     "nameHe": "כיפת היציקה",
+     "city": "Berlin",
+     "cityHe": "ברלין"
+    },
+    {
+     "name": "Sunset Fight Center",
+     "nameHe": "מרכז הקרבות סאנסט",
+     "city": "Las Vegas",
+     "cityHe": "לאס וגאס"
+    },
+    {
+     "name": "Southern Cross Center",
+     "nameHe": "מרכז סאות'רן קרוס",
+     "city": "Sydney",
+     "cityHe": "סידני"
+    }
+   ]
+  },
+  {
+   "tier": "Arena",
+   "tierHe": "ארנה",
+   "cost": 280000,
+   "costVerified": false,
+   "capacity": 20000,
+   "ticket": 3.0,
+   "quality": 14,
+   "venues": [
+    {
+     "name": "Lakeshore Arena",
+     "nameHe": "ארנת לייקשור",
+     "city": "Toronto",
+     "cityHe": "טורונטו"
+    },
+    {
+     "name": "Granite Bay Arena",
+     "nameHe": "ארנת גרניט ביי",
+     "city": "Houston",
+     "cityHe": "יוסטון"
+    },
+    {
+     "name": "Royal Docks Arena",
+     "nameHe": "ארנת רויאל דוקס",
+     "city": "London",
+     "cityHe": "לונדון"
+    },
+    {
+     "name": "Azteca Norte Arena",
+     "nameHe": "ארנת אסטקה נורטה",
+     "city": "Mexico City",
+     "cityHe": "מקסיקו סיטי"
+    }
+   ]
+  },
+  {
+   "tier": "Stadium",
+   "tierHe": "אצטדיון",
+   "cost": 400000,
+   "costVerified": false,
+   "capacity": 30000,
+   "ticket": 3.5,
+   "quality": 17,
+   "venues": [
+    {
+     "name": "Liberty Field",
+     "nameHe": "אצטדיון ליברטי",
+     "city": "Atlanta",
+     "cityHe": "אטלנטה"
+    },
+    {
+     "name": "Rising Sun Stadium",
+     "nameHe": "אצטדיון השמש העולה",
+     "city": "Tokyo",
+     "cityHe": "טוקיו"
+    },
+    {
+     "name": "Copacabana Stadium",
+     "nameHe": "אצטדיון קופקבנה",
+     "city": "São Paulo",
+     "cityHe": "סאו פאולו"
+    },
+    {
+     "name": "Golden Bay Stadium",
+     "nameHe": "אצטדיון גולדן ביי",
+     "city": "Auckland",
+     "cityHe": "אוקלנד"
+    }
+   ]
+  },
+  {
+   "tier": "Colosseum",
+   "tierHe": "קולוסיאום",
+   "cost": 600000,
+   "costVerified": false,
+   "capacity": 50000,
+   "ticket": 4.0,
+   "quality": 20,
+   "venues": [
+    {
+     "name": "The Grand Colosseum",
+     "nameHe": "הקולוסיאום הגדול",
+     "city": "Rome",
+     "cityHe": "רומא"
+    },
+    {
+     "name": "Legends Dome",
+     "nameHe": "כיפת האגדות",
+     "city": "Las Vegas",
+     "cityHe": "לאס וגאס"
+    },
+    {
+     "name": "Empire Field",
+     "nameHe": "שדה האימפריה",
+     "city": "Madrid",
+     "cityHe": "מדריד"
+    },
+    {
+     "name": "Pacific Crown Stadium",
+     "nameHe": "אצטדיון כתר הפסיפיק",
+     "city": "Honolulu",
+     "cityHe": "הונולולו"
+    }
+   ]
+  }
+ ],
+ "pleBonus": {
+  "cost": 50000,
+  "capacity": 5000,
+  "ticket": 2.0,
+  "quality": 5
+ }
+}
