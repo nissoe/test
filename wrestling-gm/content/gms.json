@@ -7,9 +7,9 @@
   "card": "Golden Gate",
   "cardHe": "שער הזהב",
   "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
+  "useHe": "קבוע: יתרון קטן לאורך כל העונה",
   "useDetail": "כל העונה",
-  "effect": "כל תוכנית מכניסה 10% יותר מכרטיסים.",
+  "effect": "כל תוכנית מכניסה 5% יותר מכרטיסים.",
   "gameChanger": false
  },
  {
@@ -19,9 +19,9 @@
   "family": "כלכלה",
   "card": "Open Checkbook",
   "cardHe": "פנקס פתוח",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 6 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
   "effect": "כל הקרבות בחינם לשבוע אחד.",
   "gameChanger": false
  },
@@ -32,9 +32,9 @@
   "family": "כלכלה",
   "card": "Prime Time Deal",
   "cardHe": "עסקת פריים טיים",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 4 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
   "effect": "בונוסי הלוגיסטיקה כפולים לשבוע אחד.",
   "gameChanger": false
  },
@@ -46,9 +46,9 @@
   "card": "Bargain Hunter",
   "cardHe": "צייד מציאות",
   "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
+  "useHe": "קבוע: יתרון קטן לאורך כל העונה",
   "useDetail": "כל העונה",
-  "effect": "כל הקלפים בחנות זולים ב-25%.",
+  "effect": "כל הקלפים בחנות זולים ב-15%.",
   "gameChanger": false
  },
  {
@@ -58,10 +58,10 @@
   "family": "כלכלה",
   "card": "Legend Network",
   "cardHe": "רשת האגדות",
-  "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
-  "useDetail": "כל העונה",
-  "effect": "בכל שבוע יש 2 אגדות נוספות במאגר, וכל חתימה של אגדה זולה ב-30%.",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעמיים בעונה",
+  "effect": "השבוע מופיעות 2 אגדות נוספות במאגר, וחתימה שלהן זולה בחצי.",
   "gameChanger": true
  },
  {
@@ -72,8 +72,8 @@
   "card": "Fan The Flames",
   "cardHe": "ללבות את האש",
   "use": "limited",
-  "useHe": "מוגבל",
-  "useDetail": "פעמיים בעונה",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעם בעונה",
   "effect": "כל היריבויות הפעילות עולות בשתי רמות.",
   "gameChanger": true
  },
@@ -84,9 +84,9 @@
   "family": "יריבויות",
   "card": "Bad Blood",
   "cardHe": "דם רע",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 6 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעמיים בעונה",
   "effect": "יריבות אחת קופצת ישר לרמה 4.",
   "gameChanger": false
  },
@@ -97,11 +97,11 @@
   "family": "יריבויות",
   "card": "Silver Tongue",
   "cardHe": "לשון זהב",
-  "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
-  "useDetail": "כל העונה",
-  "effect": "כל הפרומואים משפיעים ב-50% יותר.",
-  "gameChanger": true
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "כל הפרומואים בשבוע הזה משפיעים כפול.",
+  "gameChanger": false
  },
  {
   "id": "G09",
@@ -110,9 +110,9 @@
   "family": "יריבויות",
   "card": "Grudge Match",
   "cardHe": "קרב חשבונות",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 4 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
   "effect": "קרב יריבות אחד בשבוע הזה מקבל כוכב שלם נוסף.",
   "gameChanger": false
  },
@@ -123,10 +123,10 @@
   "family": "יריבויות",
   "card": "Spotlight",
   "cardHe": "זרקור",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 3 שבועות",
-  "effect": "מתאבק אחד מקבל 5 פופולריות.",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "מתאבק אחד מקבל 8 פופולריות.",
   "gameChanger": false
  },
  {
@@ -137,10 +137,10 @@
   "card": "Sports Medicine",
   "cardHe": "רפואת ספורט",
   "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
+  "useHe": "קבוע: יתרון קטן לאורך כל העונה",
   "useDetail": "כל העונה",
-  "effect": "כל פציעה ברוסטר נמשכת חצי מהזמן.",
-  "gameChanger": true
+  "effect": "כל פציעה ברוסטר קצרה ב-25%.",
+  "gameChanger": false
  },
  {
   "id": "G12",
@@ -149,9 +149,9 @@
   "family": "התאוששות",
   "card": "Ice Bath",
   "cardHe": "אמבט קרח",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 4 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
   "effect": "15 סיבולת לכל הרוסטר.",
   "gameChanger": false
  },
@@ -162,10 +162,10 @@
   "family": "התאוששות",
   "card": "Family Dinner",
   "cardHe": "ארוחה משפחתית",
-  "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
-  "useDetail": "כל העונה",
-  "effect": "המורל ברוסטר יורד בחצי מהקצב, ולעולם לא יורד מתחת ל-25.",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעמיים בעונה",
+  "effect": "המורל של כל הרוסטר עולה ב-20.",
   "gameChanger": false
  },
  {
@@ -175,9 +175,9 @@
   "family": "התאוששות",
   "card": "Second Wind",
   "cardHe": "רוח שנייה",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 3 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
   "effect": "מתאבק אחד חוזר לסיבולת מלאה.",
   "gameChanger": false
  },
@@ -188,10 +188,10 @@
   "family": "התאוששות",
   "card": "The Dojo",
   "cardHe": "הדוג'ו",
-  "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
-  "useDetail": "כל העונה",
-  "effect": "צעירים בפיתוח וכוכבים עולים צוברים ניסיון כפול.",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעמיים בעונה",
+  "effect": "שבוע אימונים: צעירים בפיתוח וכוכבים עולים צוברים פי 3 ניסיון.",
   "gameChanger": true
  },
  {
@@ -202,7 +202,7 @@
   "card": "Backstage Ambush",
   "cardHe": "מארב מאחורי הקלעים",
   "use": "limited",
-  "useHe": "מוגבל",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "שני מתאבקים אקראיים של יריב נפצעים לפני התוכנית הבאה שלו.",
   "gameChanger": false
@@ -215,7 +215,7 @@
   "card": "Poach",
   "cardHe": "חטיפה",
   "use": "limited",
-  "useHe": "מוגבל",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעם בעונה",
   "effect": "לוקחים מתאבק ממותג יריב לצמיתות (לא מחזיק תואר).",
   "gameChanger": true
@@ -227,9 +227,9 @@
   "family": "התקפה",
   "card": "Bad Press",
   "cardHe": "עיתונות רעה",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 6 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעמיים בעונה",
   "effect": "כל הרוסטר של יריב אחד מאבד 5 פופולריות.",
   "gameChanger": false
  },
@@ -240,9 +240,9 @@
   "family": "התקפה",
   "card": "Sabotage",
   "cardHe": "חבלה",
-  "use": "cooldown",
-  "useHe": "חוזר: נטען מחדש",
-  "useDetail": "כל 4 שבועות",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "3 פעמים בעונה",
   "effect": "בונוס האיכות של האולם של יריב אחד מתבטל לשבוע אחד.",
   "gameChanger": false
  },
@@ -253,10 +253,10 @@
   "family": "התקפה",
   "card": "Inside Information",
   "cardHe": "מידע פנימי",
-  "use": "passive",
-  "useHe": "קבוע: פועל כל העונה",
-  "useDetail": "כל העונה",
-  "effect": "רואים את הקרב הראשי של כל יריב לפני שנועלים את הכרטיס שלך.",
+  "use": "limited",
+  "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
+  "useDetail": "פעמיים בעונה",
+  "effect": "השבוע רואים את כל הכרטיס של כל יריב לפני שנועלים את שלך.",
   "gameChanger": true
  }
 ]
