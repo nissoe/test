@@ -35,6 +35,7 @@ figcaption span { color: var(--ink-soft); font-size: 0.95rem; }
   </header>
   <p class="note">סקיצות בלבד. העיצוב הסופי רק אחרי בדיקת הסימן המסחרי של LWF ושל שמות המותגים (החלטה 30).</p>
 
+  <h2 style="font-family:var(--font-display);font-weight:400;font-size:1.6rem;margin:8px 0 0">LWF: שלוש גרסאות לבחירה</h2>
   <figure class="hero">
     <svg viewBox="0 0 1000 470" role="img" aria-label="LWF Legends Wrestling Federation logo with custom letters">
       <defs>
@@ -60,9 +61,53 @@ figcaption span { color: var(--ink-soft); font-size: 0.95rem; }
       </g>
       <text x="500" y="428" text-anchor="middle" font-family="'Bebas Neue', Impact, sans-serif" font-size="30" letter-spacing="10" fill="#d6a43a">LEGENDS WRESTLING FEDERATION</text>
     </svg>
-    <figcaption><b>LWF – Legends Wrestling Federation</b><span>אותיות מצוירות בהתאמה: זוויות חדות ופינות חתוכות, גימור פלדה עם מסגרת זהב, הטיה קלה קדימה (תנועה), ויהלום זהב מעל ה-W כמו כתר של אגדה. הכול יושב על לוחית בצורת לוחית חגורת אליפות.</span><div class="sw"><i style="background:#d9dde6"></i><i style="background:#d6a43a"></i><i style="background:#0a0c11"></i></div></figcaption>
+    <figcaption><b>גרסה א׳: פלדה על לוחית חגורה</b><span>אותיות מצוירות בהתאמה: זוויות חדות ופינות חתוכות, גימור פלדה עם מסגרת זהב, הטיה קלה קדימה (תנועה), ויהלום זהב מעל ה-W כמו כתר של אגדה. הכול יושב על לוחית בצורת לוחית חגורת אליפות.</span><div class="sw"><i style="background:#d9dde6"></i><i style="background:#d6a43a"></i><i style="background:#0a0c11"></i></div></figcaption>
   </figure>
 
+  <figure class="hero">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="LWF logo version B, gold crown letters">
+      <defs>
+        <linearGradient id="goldB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".45" stop-color="#e2b041"/><stop offset=".55" stop-color="#a8740f"/><stop offset="1" stop-color="#f0c75e"/></linearGradient>
+        <radialGradient id="redB" cx=".5" cy=".5" r=".65"><stop offset="0" stop-color="#5a0b16"/><stop offset="1" stop-color="#0a0507"/></radialGradient>
+        <g id="lwfCrown">
+          <path d="M0 -36 L70 0 V172 H176 L156 240 H0 Z"/>
+          <path d="M190 -36 L262 0 L288 150 L312 60 L326 16 L340 60 L364 150 L390 0 L462 -36 L404 240 H350 L326 160 L302 240 H248 Z"/>
+          <path d="M504 -36 L588 0 H668 L650 58 H568 V96 H640 L624 150 H568 V240 H504 Z"/>
+        </g>
+      </defs>
+      <rect width="1000" height="470" fill="url(#redB)"/>
+      <g stroke="#ffffff" stroke-opacity=".06" stroke-width="3"><path d="M0 120 L1000 40"/><path d="M0 220 L1000 140"/><path d="M0 320 L1000 240"/><path d="M0 420 L1000 340"/></g>
+      <g transform="translate(500 226) scale(0.86) translate(-334 -102) skewX(-8)">
+        <use href="#lwfCrown" fill="none" stroke="#c8101f" stroke-width="22" stroke-linejoin="miter"/>
+        <use href="#lwfCrown" fill="url(#goldB)" stroke="#0a0507" stroke-width="6" stroke-linejoin="miter"/>
+      </g>
+      <text x="500" y="430" text-anchor="middle" font-family="'Bebas Neue', Impact, sans-serif" font-size="30" letter-spacing="10" fill="#f0c75e">LEGENDS WRESTLING FEDERATION</text>
+    </svg>
+    <figcaption><b>גרסה ב׳: אותיות כתר בזהב</b><span>כל אות מסתיימת למעלה בחוד, כך שיחד הן יוצרות קו של כתר. זהב מלא עם מסגרת אדומה, על רקע אדום-שחור עם קווי מהירות. אגרסיבי וחגיגי יותר.</span><div class="sw"><i style="background:#e2b041"></i><i style="background:#c8101f"></i><i style="background:#0a0507"></i></div></figcaption>
+  </figure>
+
+  <figure class="hero">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="LWF logo version C, dark letters on a gold banner">
+      <defs>
+        <linearGradient id="goldC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7dc8c"/><stop offset=".5" stop-color="#d6a43a"/><stop offset="1" stop-color="#b07e1c"/></linearGradient>
+        <g id="lwfBlock">
+          <path d="M0 0 H76 V164 H184 L164 240 H0 Z"/>
+          <path d="M196 0 H262 L286 136 L310 40 H342 L366 136 L390 0 H456 L410 240 H346 L326 150 L306 240 H242 Z"/>
+          <path d="M476 0 H644 L626 64 H546 V94 H616 L600 152 H546 V240 H476 Z"/>
+        </g>
+      </defs>
+      <rect width="1000" height="470" fill="#121419"/>
+      <path d="M150 60 H900 L850 330 H100 Z" fill="url(#goldC)"/>
+      <path d="M100 330 H850 L838 392 H88 Z" fill="#0b0d12"/>
+      <g transform="translate(486 196) scale(0.82) translate(-322 -120) skewX(-10)">
+        <use href="#lwfBlock" fill="#0b0d12"/>
+      </g>
+      <text x="466" y="372" text-anchor="middle" font-family="'Bebas Neue', Impact, sans-serif" font-size="30" letter-spacing="10" fill="#f7dc8c">LEGENDS WRESTLING FEDERATION</text>
+    </svg>
+    <figcaption><b>גרסה ג׳: אותיות כהות על דגל זהב</b><span>אותיות בלוק עבות וכהות, הפוך מהשתיים האחרות: הזהב הוא הרקע. דגל נטוי עם פס שחור לשם המלא. בולט מאוד גם בגודל קטן, טוב לאייקון.</span><div class="sw"><i style="background:#d6a43a"></i><i style="background:#0b0d12"></i></div></figcaption>
+  </figure>
+
+  <h2 style="font-family:var(--font-display);font-weight:400;font-size:1.6rem;margin:8px 0 0">המותגים</h2>
   <div class="grid">
     <figure>
       <svg viewBox="0 0 600 300" role="img" aria-label="LWF Rage logo sketch">
