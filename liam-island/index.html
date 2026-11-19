@@ -205,6 +205,10 @@ button:focus-visible{outline:4px solid var(--grape);outline-offset:4px}
 .stage-chip{position:absolute;top:14px;right:18px;font:800 18px var(--font-display);color:var(--grape);background:#f1ecff;border-radius:12px;padding:5px 12px;pointer-events:none}
 .t-ghost{fill:none;stroke:#e9e3ff;stroke-width:13;stroke-linecap:round;stroke-linejoin:round}
 .t-free{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.t-free.off{stroke-width:4;stroke-dasharray:1.5 2.5}
+.t-accepted polyline{stroke-width:7;stroke-dasharray:none;animation:okIn .4s ease-out}
+@keyframes okIn{from{stroke-width:13;opacity:.4}}
+.t-preview .t-model{stroke-width:6;stroke-dasharray:none;opacity:.8}
 .t-model{fill:none;stroke:#2fd39a;stroke-width:2.2;stroke-dasharray:3 3;stroke-linecap:round;opacity:.9}
 .w-stars{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:58px;font-family:var(--emoji);animation:stickerIn .7s cubic-bezier(.3,1.5,.5,1)}
 .w-stars span{filter:grayscale(1) opacity(.3)}
@@ -1394,20 +1398,33 @@ function samplePaths(dl, step=1.5){
   tmp.remove(); return out;
 }
 /* compare a free-hand letter with the model: size and position do not matter, shape does */
-function scoreWriting(drawn, model){
+const ptNear = (p, arr) => { let m = 1e9; for(const q of arr){ const d = (p[0]-q[0])**2 + (p[1]-q[1])**2; if(d < m) m = d; } return Math.sqrt(m); };
+const pathLen = a => a.reduce((L,p,i)=>i ? L + Math.hypot(p[0]-a[i-1][0], p[1]-a[i-1][1]) : 0, 0);
+const smoothLen = a => pathLen(a.map((p,i)=>{ const w = a.slice(Math.max(0,i-3), i+4); return [w.reduce((s,q)=>s+q[0],0)/w.length, w.reduce((s,q)=>s+q[1],0)/w.length]; }));
+/* compare free-hand writing with the model letter.
+   absolute: the faint letter was on the page, so position counts; otherwise size and position are ignored */
+function scoreWriting(drawn, model, absolute){
   const D = drawn.flat(), T = model.flat();
-  if(D.length < 6) return null;
-  const bb = a => { let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; for(const [x,y] of a){ x0=Math.min(x0,x); y0=Math.min(y0,y); x1=Math.max(x1,x); y1=Math.max(y1,y); } return {x0,y0,x1,y1,cx:(x0+x1)/2,cy:(y0+y1)/2,size:Math.max(x1-x0,y1-y0,1)}; };
+  if(D.length < 6) return {bad:'small'};
+  const bb = a => { let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; for(const [x,y] of a){ x0=Math.min(x0,x); y0=Math.min(y0,y); x1=Math.max(x1,x); y1=Math.max(y1,y); } return {cx:(x0+x1)/2, cy:(y0+y1)/2, size:Math.max(x1-x0, y1-y0, 1)}; };
   const bd = bb(D), bt = bb(T);
-  if(bd.size < 8) return null;
-  const k = bt.size / bd.size;
-  const N = D.map(([x,y])=>[(x-bd.cx)*k + bt.cx, (y-bd.cy)*k + bt.cy]);
-  const near = (p, arr) => { let m = 1e9; for(const q of arr){ const d = (p[0]-q[0])**2 + (p[1]-q[1])**2; if(d < m) m = d; } return Math.sqrt(m); };
-  const r = 11;
-  const cover = T.filter(p=>near(p, N) < r).length / T.length;
-  const prec = N.filter(p=>near(p, T) < r).length / N.length;
-  const score = .6*cover + .4*prec;
-  return {score, stars: score >= .74 ? 3 : score >= .5 ? 2 : 1};
+  if(!absolute && bd.size < 8) return {bad:'small'};
+  const k = absolute ? 1 : bt.size / bd.size;
+  const N = drawn.map(st=>st.map(([x,y])=>absolute ? [x,y] : [(x-bd.cx)*k + bt.cx, (y-bd.cy)*k + bt.cy]));
+  const ND = N.flat(), r = 8;
+  const covers = model.map(ts=>ts.filter(p=>ptNear(p, ND) < r).length / ts.length);
+  const cover = .5*Math.min(...covers) + .5*covers.reduce((a,c)=>a+c, 0)/covers.length;
+  const prec = ND.filter(p=>ptNear(p, T) < r).length / ND.length;
+  const lenRatio = N.reduce((a,st)=>a+smoothLen(st), 0) / Math.max(1, model.reduce((a,st)=>a+pathLen(st), 0));
+  if(prec < .45 || lenRatio > 2.3) return {bad:'scribble', prec, lenRatio};
+  if(prec < .62) return {bad:'other', prec, lenRatio};
+  const extra = Math.max(0, N.length - model.length);
+  const score = .4*cover + .6*prec - .08*extra - .35*Math.max(0, lenRatio - 1.45);
+  if(cover < .55) return {bad:'other', prec, lenRatio};
+  // 3 stars: the whole letter and nothing extra; 2 stars: mostly right
+  let stars = (cover >= .9 && prec >= .9 && score >= .86) ? 3 : (cover >= .75 && prec >= .75 && score >= .7) ? 2 : 1;
+  if(lenRatio > 1.6 && stars === 3) stars = 2;
+  return {score, cover, prec, lenRatio, stars};
 }
 GAMES.trace = {
   name:'כותבים אותיות ומספרים', icon:'✏️', rounds:4,
@@ -1549,54 +1566,112 @@ function freeWrite(ctx, tok, item, stage){
   area.appendChild(paper);
   paper.appendChild(h(`<div class="stage-chip">✏️ ${WRITE_STAGES[stage]}</div>`));
   const svg = paper.querySelector('svg');
-  if(stage===1) item.s.forEach(d=>svgEl('path', {d, class:'t-ghost'}, svg));
-  const gInk = svgEl('g', {}, svg), gRes = svgEl('g', {}, svg);
+  const ghost = stage===1;
+  if(ghost) item.s.forEach(d=>svgEl('path', {d, class:'t-ghost'}, svg));
+  const gOk = svgEl('g', {}, svg), gInk = svgEl('g', {}, svg), gRes = svgEl('g', {}, svg);
+  const tpl = samplePaths(item.s), tplAll = tpl.flat();
   const toU = e => { const l = localPt(e, paper); return [l.x*VBS/BOX+VB0, l.y*VBS/BOX+VB0]; };
-  let strokes = [], curLine = null, curPts = null, autoT = null, done = false;
-  const scheduleAuto = ()=>{ clearTimeout(autoT); if(strokes.length >= item.s.length) autoT = setTimeout(()=>{ if(ctx.alive(tok) && !done && !curPts) check(); }, 2600); };
+  let strokes = [], curPts = null, curSeg = null, curOn = null, curG = null, autoT = null, done = false;
+  // ghost stage: which strokes of the letter are already written well
+  const matched = tpl.map(()=>false); let retries = 0, wrongDir = 0, precSum = 0, nag = 0;
+  const color = ()=>STROKE_COLORS[(ghost ? matched.filter(Boolean).length : strokes.length) % STROKE_COLORS.length];
+  function newSeg(u, on){
+    curOn = on;
+    curSeg = svgEl('polyline', {class:'t-free' + (on ? '' : ' off'), stroke: on ? color() : '#cfc8e6', points:`${u[0].toFixed(1)},${u[1].toFixed(1)}`}, curG);
+  }
+  function addPt(u){
+    const on = !ghost || ptNear(u, tplAll) < 8;
+    if(on !== curOn){ const l = curPts[curPts.length-1]; newSeg(l, on); }
+    curSeg.setAttribute('points', curSeg.getAttribute('points') + ` ${u[0].toFixed(1)},${u[1].toFixed(1)}`);
+  }
+  const scheduleAuto = ()=>{ clearTimeout(autoT); if(!ghost && strokes.length >= item.s.length) autoT = setTimeout(()=>{ if(ctx.alive(tok) && !done && !curPts) check(); }, 2600); };
   paper.addEventListener('pointerdown', e=>{
     if(done || !ctx.alive(tok)) return;
     e.preventDefault(); try{ paper.setPointerCapture(e.pointerId); }catch(_){}
     clearTimeout(autoT);
-    const u = toU(e); curPts = [u];
-    curLine = svgEl('polyline', {class:'t-free', stroke:STROKE_COLORS[strokes.length % STROKE_COLORS.length], points:`${u[0].toFixed(1)},${u[1].toFixed(1)}`}, gInk);
+    const u = toU(e); curPts = [u]; curG = svgEl('g', {}, gInk);
+    newSeg(u, !ghost || ptNear(u, tplAll) < 8);
   });
   paper.addEventListener('pointermove', e=>{
     if(!curPts) return;
     const u = toU(e), l = curPts[curPts.length-1];
     if(Math.hypot(u[0]-l[0], u[1]-l[1]) < .8) return;
-    curPts.push(u); curLine.setAttribute('points', curLine.getAttribute('points') + ` ${u[0].toFixed(1)},${u[1].toFixed(1)}`);
+    curPts.push(u); addPt(u);
   });
-  const up = ()=>{ if(!curPts) return; if(curPts.length > 1) strokes.push(curPts); else curLine.remove(); curPts = null; curLine = null; doneBtn.classList.toggle('ready', strokes.length > 0); scheduleAuto(); };
+  const up = ()=>{
+    if(!curPts) return;
+    const pts = curPts, g = curG; curPts = null; curSeg = null; curG = null;
+    if(pts.length < 3 || pathLen(pts) < 4){ g.remove(); return; }
+    if(ghost) judgeStroke(pts, g);
+    else { strokes.push(pts); doneBtn.classList.add('ready'); scheduleAuto(); }
+  };
   paper.addEventListener('pointerup', up); paper.addEventListener('pointercancel', up);
+  // ghost stage: each stroke is checked as soon as the finger lifts
+  function judgeStroke(pts, g){
+    let best = -1, bs = -1, bc = 0, bp = 0;
+    tpl.forEach((ts, j)=>{
+      if(matched[j]) return;
+      const cov = ts.filter(q=>ptNear(q, pts) < 9).length / ts.length;
+      const prec = pts.filter(q=>ptNear(q, ts) < 9).length / pts.length;
+      if(cov + prec > bs){ bs = cov + prec; best = j; bc = cov; bp = prec; }
+    });
+    const lenOk = best >= 0 && smoothLen(pts) < pathLen(tpl[best]) * 1.9;
+    if(best >= 0 && bc >= .65 && bp >= .6 && lenOk){
+      matched[best] = true; precSum += bp; strokes.push(pts);
+      const ts = tpl[best];
+      if(Math.hypot(pts[0][0]-ts[0][0], pts[0][1]-ts[0][1]) > Math.hypot(pts[0][0]-ts[ts.length-1][0], pts[0][1]-ts[ts.length-1][1])) wrongDir++;
+      // keep the child's own line (his real handwriting), just colored in to show it was accepted
+      const col = STROKE_COLORS[(matched.filter(Boolean).length-1) % STROKE_COLORS.length];
+      g.querySelectorAll('polyline').forEach(pl=>{ pl.classList.remove('off'); pl.setAttribute('stroke', col); });
+      g.classList.add('t-accepted'); gOk.appendChild(g);
+      sfx.stroke();
+      if(matched.every(Boolean)) finishGhost();
+    } else {
+      retries++;
+      g.animate([{opacity:1},{opacity:0}], {duration:700, fill:'forwards'}).onfinish = ()=>g.remove();
+      sfx.oops();
+      if(performance.now() - nag > 3500){ nag = performance.now(); say(bp < .4 ? 'זה נראה כמו קשקוש, בוא נכתוב את האות' : 'ננסה את הקו הזה שוב'); }
+    }
+  }
+  async function finishGhost(){
+    const avgPrec = precSum / tpl.length;
+    let stars = retries === 0 && avgPrec >= .8 ? 3 : retries <= 2 ? 2 : 1;
+    if(wrongDir && stars === 3) stars = 2;
+    await award(stars, avgPrec);
+  }
   async function check(){
     if(done) return;
-    const model = samplePaths(item.s);
-    const res = scoreWriting(strokes, model);
-    if(!res){ say('בוא ננסה שוב, תכתוב גדול'); strokes = []; gInk.innerHTML = ''; doneBtn.classList.remove('ready'); return; }
+    const res = scoreWriting(strokes, tpl, false);
+    if(res.bad){
+      sfx.oops(); say(res.bad==='small' ? 'בוא ננסה שוב, תכתוב גדול' : res.bad==='other' ? 'הממ... זה לא נראה כמו האות. בוא ננסה שוב' : 'זה נראה כמו קשקוש, בוא נכתוב את האות');
+      strokes = []; gInk.innerHTML = ''; doneBtn.classList.remove('ready'); return;
+    }
+    // show the model next to the writing so the difference is visible
+    await award(res.stars, res.score);
+  }
+  async function award(stars, score){
     done = true; clearTimeout(autoT);
-    // show the model over the writing so the difference is visible
-    item.s.forEach(d=>svgEl('path', {d, class:'t-model'}, gRes));
+    if(!ghost){ const pv = svgEl('g', {transform:'translate(78 0) scale(.26)', class:'t-preview'}, gRes); item.s.forEach(d=>svgEl('path', {d, class:'t-model'}, pv)); }
     paper.classList.add('checked');
-    const starsEl = h(`<div class="w-stars">${'⭐'.repeat(res.stars)}<span>${'⭐'.repeat(3-res.stars)}</span></div>`); paper.appendChild(starsEl);
-    const c = centerOf(paper); burst(c.x, c.y, res.stars===3 ? ['⭐','🌟','✨','🎉'] : ['⭐','✨'], res.stars===3 ? 22 : 10); sfx.win();
-    nbAdd({k:item.kind+':'+item.ch, ch:item.ch, kind:item.kind, m:stage, st:res.stars, sc:Math.round(res.score*100), t:Date.now(), p:strokes.map(s=>s.map(([x,y])=>[Math.round(x), Math.round(y)]))});
-    writeResult(item, stage, res.stars);
-    trackItem(item.kind+':'+item.ch, res.stars >= 2);
-    const words = res.stars===3 ? 'וואו! כתבת מושלם!' : res.stars===2 ? 'יפה מאוד! כתבת טוב!' : 'ניסיון יפה! נמשיך להתאמן';
+    paper.appendChild(h(`<div class="w-stars">${'⭐'.repeat(stars)}<span>${'⭐'.repeat(3-stars)}</span></div>`));
+    const c = centerOf(paper); burst(c.x, c.y, stars===3 ? ['⭐','🌟','✨','🎉'] : ['⭐','✨'], stars===3 ? 22 : 10); sfx.win();
+    nbAdd({k:item.kind+':'+item.ch, ch:item.ch, kind:item.kind, m:stage, st:stars, sc:Math.round(score*100), t:Date.now(), p:strokes.map(st=>st.map(([x,y])=>[Math.round(x), Math.round(y)]))});
+    writeResult(item, stage, stars);
+    trackItem(item.kind+':'+item.ch, stars >= 2);
+    const words = stars===3 ? 'וואו! כתבת מושלם!' : stars===2 ? 'יפה מאוד! כתבת טוב!' : 'ניסיון יפה! נמשיך להתאמן';
     await sayList([[words,'he']]);
     if(ctx.alive(tok)) ctx.solved(600);
   }
   writeCard(item, stage);
   const again = h(`<button class="toy side-btn" style="top:150px" aria-label="למחוק ולכתוב שוב">🔁</button>`);
-  again.addEventListener('click', ()=>{ if(done) return; sfx.tap(); strokes = []; gInk.innerHTML = ''; doneBtn.classList.remove('ready'); clearTimeout(autoT); });
+  again.addEventListener('click', ()=>{ if(done) return; sfx.tap(); strokes = []; gInk.innerHTML = ''; gOk.innerHTML = ''; matched.fill(false); doneBtn.classList.remove('ready'); clearTimeout(autoT); });
   const doneBtn = h(`<button class="toy side-btn done-btn" style="top:300px" aria-label="סיימתי">✓</button>`);
   doneBtn.addEventListener('click', ()=>{ if(!strokes.length || done) return; sfx.tap(); check(); });
-  area.appendChild(again); area.appendChild(doneBtn);
-  const intro = stage===1 ? 'עכשיו תכתוב לבד על האות החלשה' : 'עכשיו תכתוב לבד, בלי עזרה';
+  area.appendChild(again); if(!ghost) area.appendChild(doneBtn);
+  const intro = ghost ? 'עכשיו תכתוב לבד על האות החלשה' : 'עכשיו תכתוב לבד, בלי עזרה';
   const name = item.kind==='he' ? [item.name,'he'] : item.kind==='en' ? [item.ch,'en'] : [item.ch,'he'];
-  const first = ctx.data.freeTold ? [] : [['כשתסיים, לחץ על הכפתור הירוק','he']];
-  ctx.data.freeTold = true;
+  const first = (ctx.data.freeTold || ghost) ? [] : [['כשתסיים, לחץ על הכפתור הירוק','he']];
+  if(!ghost) ctx.data.freeTold = true;
   ctx.prompt([[intro,'he'], name, ...first]);
 }
 
@@ -2503,7 +2578,7 @@ GAMES.reading = {
 /* =========================================================
    VOICE CATALOG: every sentence part Dudu says, grouped for recording
    ========================================================= */
-function NEW_LINES(){ return ['עכשיו תכתוב לבד על האות החלשה', 'עכשיו תכתוב לבד, בלי עזרה', 'כשתסיים, לחץ על הכפתור הירוק', 'בוא ננסה שוב, תכתוב גדול', 'וואו! כתבת מושלם!', 'יפה מאוד! כתבת טוב!', 'ניסיון יפה! נמשיך להתאמן', 'חבר את הנקודות לפי הסדר', 'מתחילים מאחת', 'הנקודה הבאה היא', ...DOT_SHAPES.map(x=>x.name), 'עזור לארנב להגיע לגזר', 'הארנב הגיע לגזר! כל הכבוד!', 'אי אפשר לעבור דרך השיח', 'בחר צבע וצבע את הציור', 'איזה ציור יפה!', 'בוא נחבר הברות', 'לחץ על ההברות לפי הסדר', 'מה יוצא ביחד?', 'נסה לקרוא את המילים', 'לחץ על מילה כדי לשמוע', 'איפה כתוב', 'נכון! כאן כתוב', 'כאן כתוב']; }
+function NEW_LINES(){ return ['עכשיו תכתוב לבד על האות החלשה', 'עכשיו תכתוב לבד, בלי עזרה', 'כשתסיים, לחץ על הכפתור הירוק', 'בוא ננסה שוב, תכתוב גדול', 'וואו! כתבת מושלם!', 'יפה מאוד! כתבת טוב!', 'ניסיון יפה! נמשיך להתאמן', 'ננסה את הקו הזה שוב', 'זה נראה כמו קשקוש, בוא נכתוב את האות', 'הממ... זה לא נראה כמו האות. בוא ננסה שוב', 'חבר את הנקודות לפי הסדר', 'מתחילים מאחת', 'הנקודה הבאה היא', ...DOT_SHAPES.map(x=>x.name), 'עזור לארנב להגיע לגזר', 'הארנב הגיע לגזר! כל הכבוד!', 'אי אפשר לעבור דרך השיח', 'בחר צבע וצבע את הציור', 'איזה ציור יפה!', 'בוא נחבר הברות', 'לחץ על ההברות לפי הסדר', 'מה יוצא ביחד?', 'נסה לקרוא את המילים', 'לחץ על מילה כדי לשמוע', 'איפה כתוב', 'נכון! כאן כתוב', 'כאן כתוב']; }
 function voiceCatalog(){
   const N = S.childName, Mc = S.mascot;
   const he = arr => arr.map(t=>({t, lang:'he'}));
