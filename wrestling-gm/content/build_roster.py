@@ -25,6 +25,8 @@ TIERS = [
     ('local', 'כישרון מקומי', 'local', 30, (5, 18), (1, 3), (1, 2), (10, 30), (0, 0)),
 ]
 WOMEN_SHARE = 0.35
+TIER_EN = {'superstar': 'Superstar', 'star': 'Star', 'midcard': 'Midcarder', 'rising': 'Rising Star', 'prospect': 'Prospect',
+           'legend': 'Legend', 'former': 'Former Star', 'free': 'Free Agent', 'local': 'Local Talent'}
 
 # שש דרגות קריירה לפי רמת הניסיון, כמו במקור [לאמת: הגבולות]
 RANKS = [(1, 'Rookie', 'מתחיל'), (5, 'Established', 'מבוסס'), (10, 'Renown', 'מוכר'), (15, 'Icon', 'אייקון'), (20, 'Legend', 'אגדה'), (25, 'Immortal', 'בן אלמוות')]
@@ -171,7 +173,7 @@ def make(tier, gender, name=None):
         'id': f'W{len(wrestlers) + 1:03d}',
         'name': name[0], 'nameHe': name[1],
         'gender': gender,
-        'tier': key, 'tierHe': he, 'pool': pool,
+        'tier': key, 'tierEn': TIER_EN[key], 'tierHe': he, 'pool': pool,
         'class': cls[0], 'classHe': cls[1],
         'role': role[0], 'roleHe': role[1],
         'popularity': rnd(pop), 'ringLevel': rnd(ring),

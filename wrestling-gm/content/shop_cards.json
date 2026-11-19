@@ -5,7 +5,10 @@
   "nameHe": "סרטון הייפ",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "מתאבק אחד מקבל 3 פופולריות."
+  "effect": "מתאבק אחד מקבל 3 פופולריות.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "One superstar gains 3 popularity."
  },
  {
   "id": "C02",
@@ -13,7 +16,10 @@
   "nameHe": "הפסקת מים",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "מתאבק אחד מקבל 10 סיבולת."
+  "effect": "מתאבק אחד מקבל 10 סיבולת.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "One superstar gains 10 stamina."
  },
  {
   "id": "C03",
@@ -21,7 +27,10 @@
   "nameHe": "שיחת עידוד",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "המורל של מתאבק אחד עולה ב-15."
+  "effect": "המורל של מתאבק אחד עולה ב-15.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "One superstar's morale goes up 15."
  },
  {
   "id": "C04",
@@ -29,7 +38,10 @@
   "nameHe": "צוות רחוב",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "הקהל בתוכנית הבאה גדל ב-5%."
+  "effect": "הקהל בתוכנית הבאה גדל ב-5%.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "Attendance at the next show grows by 5%."
  },
  {
   "id": "C05",
@@ -37,7 +49,10 @@
   "nameHe": "ספונסר מקומי",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "50 אלף דולר לתקציב."
+  "effect": "50 אלף דולר לתקציב.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "+$50K to the budget."
  },
  {
   "id": "C06",
@@ -45,7 +60,10 @@
   "nameHe": "שיקום מהיר",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "פציעה של מתאבק אחד מתקצרת בשבוע."
+  "effect": "פציעה של מתאבק אחד מתקצרת בשבוע.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "One superstar's injury is one week shorter."
  },
  {
   "id": "C07",
@@ -53,7 +71,10 @@
   "nameHe": "טיפ מהסקאוט",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "סקאוט נוסף לשבוע הזה."
+  "effect": "סקאוט נוסף לשבוע הזה.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "One extra scout this week."
  },
  {
   "id": "C08",
@@ -61,7 +82,10 @@
   "nameHe": "מאמן פרומו",
   "rarity": "רגיל",
   "use": "חד-פעמי",
-  "effect": "הפרומואים בשבוע הזה משפיעים ב-25% יותר."
+  "effect": "הפרומואים בשבוע הזה משפיעים ב-25% יותר.",
+  "rarityEn": "Common",
+  "useEn": "Single use",
+  "effectEn": "Promos this week have 25% more effect."
  },
  {
   "id": "C09",
@@ -69,7 +93,10 @@
   "nameHe": "דחיפה לקרב הראשי",
   "rarity": "נדיר",
   "use": "חד-פעמי",
-  "effect": "הקרב הראשי בשבוע הזה מקבל חצי כוכב נוסף."
+  "effect": "הקרב הראשי בשבוע הזה מקבל חצי כוכב נוסף.",
+  "rarityEn": "Rare",
+  "useEn": "Single use",
+  "effectEn": "The main event this week gets an extra half star."
  },
  {
   "id": "C10",
@@ -77,7 +104,10 @@
   "nameHe": "ניצוץ יריבות",
   "rarity": "נדיר",
   "use": "חד-פעמי",
-  "effect": "יריבות חדשה מתחילה ברמה 2."
+  "effect": "יריבות חדשה מתחילה ברמה 2.",
+  "rarityEn": "Rare",
+  "useEn": "Single use",
+  "effectEn": "A new rivalry starts at level 2."
  },
  {
   "id": "C11",
@@ -85,7 +115,10 @@
   "nameHe": "השקת מרצ'נדייז",
   "rarity": "נדיר",
   "use": "חד-פעמי",
-  "effect": "150 אלף דולר לתקציב."
+  "effect": "150 אלף דולר לתקציב.",
+  "rarityEn": "Rare",
+  "useEn": "Single use",
+  "effectEn": "+$150K to the budget."
  },
  {
   "id": "C12",
@@ -93,7 +126,10 @@
   "nameHe": "צוות רפואי",
   "rarity": "נדיר",
   "use": "חד-פעמי",
-  "effect": "כל הפציעות ברוסטר מתקצרות בשבוע."
+  "effect": "כל הפציעות ברוסטר מתקצרות בשבוע.",
+  "rarityEn": "Rare",
+  "useEn": "Single use",
+  "effectEn": "Every injury on the roster is one week shorter."
  },
  {
   "id": "C13",
@@ -101,7 +137,10 @@
   "nameHe": "הארכת חוזה",
   "rarity": "נדיר",
   "use": "חד-פעמי",
-  "effect": "חוזה של אגדה או סוכן חופשי מתארך ב-5 שבועות."
+  "effect": "חוזה של אגדה או סוכן חופשי מתארך ב-5 שבועות.",
+  "rarityEn": "Rare",
+  "useEn": "Single use",
+  "effectEn": "A Legend's or Free Agent's contract is extended by 5 weeks."
  },
  {
   "id": "C14",
@@ -109,7 +148,10 @@
   "nameHe": "הייפ לתואר",
   "rarity": "נדיר",
   "use": "חד-פעמי",
-  "effect": "קרב תואר אחד בשבוע הזה מקבל חצי כוכב נוסף."
+  "effect": "קרב תואר אחד בשבוע הזה מקבל חצי כוכב נוסף.",
+  "rarityEn": "Rare",
+  "useEn": "Single use",
+  "effectEn": "One title match this week gets an extra half star."
  },
  {
   "id": "C15",
@@ -117,7 +159,10 @@
   "nameHe": "עסקת טלוויזיה",
   "rarity": "אפי",
   "use": "פועל 4 שבועות",
-  "effect": "ההכנסות מכל תוכנית גדלות ב-10%."
+  "effect": "ההכנסות מכל תוכנית גדלות ב-10%.",
+  "rarityEn": "Epic",
+  "useEn": "Lasts 4 weeks",
+  "effectEn": "Revenue from every show grows by 10%."
  },
  {
   "id": "C16",
@@ -125,7 +170,10 @@
   "nameHe": "מתקן אימונים",
   "rarity": "אפי",
   "use": "פועל 6 שבועות",
-  "effect": "כל הרוסטר צובר ניסיון ב-25% יותר."
+  "effect": "כל הרוסטר צובר ניסיון ב-25% יותר.",
+  "rarityEn": "Epic",
+  "useEn": "Lasts 6 weeks",
+  "effectEn": "The whole roster earns 25% more XP."
  },
  {
   "id": "C17",
@@ -133,7 +181,10 @@
   "nameHe": "קהל לוהט",
   "rarity": "אפי",
   "use": "חד-פעמי",
-  "effect": "כל הקרבות בתוכנית הזו מקבלים חצי כוכב נוסף."
+  "effect": "כל הקרבות בתוכנית הזו מקבלים חצי כוכב נוסף.",
+  "rarityEn": "Epic",
+  "useEn": "Single use",
+  "effectEn": "Every match on this show gets an extra half star."
  },
  {
   "id": "C18",
@@ -141,7 +192,10 @@
   "nameHe": "עומק רוסטר",
   "rarity": "אפי",
   "use": "פועל 6 שבועות",
-  "effect": "אפשר להחזיק 3 מתאבקים יותר מהמגבלה."
+  "effect": "אפשר להחזיק 3 מתאבקים יותר מהמגבלה.",
+  "rarityEn": "Epic",
+  "useEn": "Lasts 6 weeks",
+  "effectEn": "You can hold 3 superstars over the roster limit."
  },
  {
   "id": "C19",
@@ -149,7 +203,10 @@
   "nameHe": "שובה של אגדה",
   "rarity": "אגדי",
   "use": "חד-פעמי",
-  "effect": "חותמים אגדה אחת בחינם."
+  "effect": "חותמים אגדה אחת בחינם.",
+  "rarityEn": "Legendary",
+  "useEn": "Single use",
+  "effectEn": "Sign one Legend for free."
  },
  {
   "id": "C20",
@@ -157,7 +214,10 @@
   "nameHe": "אהוב הקהל",
   "rarity": "אגדי",
   "use": "פועל 4 שבועות",
-  "effect": "הפופולריות של מתאבק אחד עולה ל-90."
+  "effect": "הפופולריות של מתאבק אחד עולה ל-90.",
+  "rarityEn": "Legendary",
+  "useEn": "Lasts 4 weeks",
+  "effectEn": "One superstar's popularity rises to 90."
  },
  {
   "id": "C21",
@@ -165,7 +225,10 @@
   "nameHe": "פשיטה תאגידית",
   "rarity": "אגדי",
   "use": "חד-פעמי",
-  "effect": "לוקחים 200 אלף דולר מהתקציב של יריב."
+  "effect": "לוקחים 200 אלף דולר מהתקציב של יריב.",
+  "rarityEn": "Legendary",
+  "useEn": "Single use",
+  "effectEn": "Take $200K from a rival's budget."
  },
  {
   "id": "C22",
@@ -173,6 +236,9 @@
   "nameHe": "קסם של קרב ראשי",
   "rarity": "אגדי",
   "use": "חד-פעמי",
-  "effect": "הקרב הראשי בשבוע הזה מקבל כוכב וחצי נוספים."
+  "effect": "הקרב הראשי בשבוע הזה מקבל כוכב וחצי נוספים.",
+  "rarityEn": "Legendary",
+  "useEn": "Single use",
+  "effectEn": "The main event this week gets 1.5 extra stars."
  }
 ]

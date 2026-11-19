@@ -6,7 +6,9 @@
   "nameHe": "נקמת דם",
   "useDetail": "פעמיים בעונה",
   "effect": "קרב יריבות אחד מקבל כוכב שלם נוסף, ושני המשתתפים מקבלים 5 פופולריות. סיכון הפציעה בקרב כפול.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "Twice per season",
+  "effectEn": "One rivalry match gets a full extra star and both wrestlers gain 5 popularity. Injury risk in the match is doubled."
  },
  {
   "id": "B02",
@@ -15,7 +17,9 @@
   "nameHe": "חוקי הארדקור",
   "useDetail": "3 פעמים בעונה",
   "effect": "קרב אחד בשבוע הזה הופך לקרב בלי פסילות, בחינם, ומקבל חצי כוכב נוסף.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "3 times per season",
+  "effectEn": "One match this week becomes a no-DQ match for free and gets an extra half star."
  },
  {
   "id": "B03",
@@ -24,7 +28,9 @@
   "nameHe": "כוח כוכבים",
   "useDetail": "פעמיים בעונה",
   "effect": "שלושת המתאבקים הפופולריים ביותר ברוסטר מקבלים 5 פופולריות.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "Twice per season",
+  "effectEn": "The 3 most popular superstars on the roster gain 5 popularity."
  },
  {
   "id": "B04",
@@ -33,7 +39,9 @@
   "nameHe": "שטיח אדום",
   "useDetail": "3 פעמים בעונה",
   "effect": "הקהל בתוכנית הזו גדל ב-15%.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "3 times per season",
+  "effectEn": "Attendance at this show grows by 15%."
  },
  {
   "id": "B05",
@@ -42,7 +50,9 @@
   "nameHe": "בשמיים",
   "useDetail": "פעמיים בעונה",
   "effect": "כל הקרבות בשבוע הזה שיש בהם מתאבק קל-משקל מקבלים כוכב שלם נוסף.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "Twice per season",
+  "effectEn": "Every match this week with a Cruiser gets a full extra star."
  },
  {
   "id": "B06",
@@ -51,7 +61,9 @@
   "nameHe": "מסלול מהיר",
   "useDetail": "3 פעמים בעונה",
   "effect": "כוכב עולה אחד עולה רמת ניסיון אחת.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "3 times per season",
+  "effectEn": "One Rising Star goes up one ring level."
  },
  {
   "id": "B07",
@@ -60,7 +72,9 @@
   "nameHe": "קידום לסגל הראשי",
   "useDetail": "פעם בעונה",
   "effect": "צעיר בפיתוח אחד הופך לכוכב: 20 פופולריות ו-2 רמות ניסיון.",
-  "gameChanger": true
+  "gameChanger": true,
+  "useDetailEn": "Once per season",
+  "effectEn": "One Prospect becomes a Star: +20 popularity and +2 ring levels."
  },
  {
   "id": "B08",
@@ -69,7 +83,9 @@
   "nameHe": "חלון ראווה",
   "useDetail": "3 פעמים בעונה",
   "effect": "כל הצעירים בכרטיס השבוע צוברים ניסיון כפול ומקבלים 3 פופולריות.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "3 times per season",
+  "effectEn": "All Prospects on this week's card earn double XP and gain 3 popularity."
  },
  {
   "id": "B09",
@@ -78,7 +94,9 @@
   "nameHe": "כאוס מוחלט",
   "useDetail": "פעמיים בעונה",
   "effect": "קרב אחד הופך לקטטה פרועה: כוכב וחצי נוספים, אבל התוצאה אקראית והסיבולת נשחקת כפול.",
-  "gameChanger": true
+  "gameChanger": true,
+  "useDetailEn": "Twice per season",
+  "effectEn": "One match becomes a wild brawl: +1.5 stars, but a random winner and double stamina loss."
  },
  {
   "id": "B10",
@@ -87,6 +105,8 @@
   "nameHe": "גל קהל",
   "useDetail": "3 פעמים בעונה",
   "effect": "כל יריבות שמופיעה בכרטיס השבוע עולה ברמה אחת.",
-  "gameChanger": false
+  "gameChanger": false,
+  "useDetailEn": "3 times per season",
+  "effectEn": "Every rivalry on this week's card goes up one level."
  }
 ]

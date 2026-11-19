@@ -8,6 +8,65 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
+FAMILY_EN = {'כלכלה': 'Economy', 'יריבויות': 'Rivalries', 'התאוששות': 'Recovery', 'התקפה': 'Sabotage'}
+USE_EN = {'כל העונה': 'All season', 'פעם בעונה': 'Once per season', 'פעמיים בעונה': 'Twice per season', '3 פעמים בעונה': '3 times per season'}
+RARITY_EN = {'רגיל': 'Common', 'נדיר': 'Rare', 'אפי': 'Epic', 'אגדי': 'Legendary'}
+SHOP_USE_EN = {'חד-פעמי': 'Single use', 'פועל 4 שבועות': 'Lasts 4 weeks', 'פועל 6 שבועות': 'Lasts 6 weeks'}
+EFFECT_EN = {
+    'Golden Gate': 'Every show earns 5% more from tickets.',
+    'Open Checkbook': 'All matches are free for one week.',
+    'Prime Time Deal': 'Logistics bonuses are doubled for one week.',
+    'Bargain Hunter': 'All shop cards are 15% cheaper.',
+    'Legend Network': '2 extra Legends appear in the pool this week, and signing them costs half.',
+    'Fan The Flames': 'All active rivalries go up two levels.',
+    'Bad Blood': 'One rivalry jumps straight to level 4.',
+    'Silver Tongue': 'All promos this week have double effect.',
+    'Grudge Match': 'One rivalry match this week gets a full extra star.',
+    'Spotlight': 'One superstar gains 8 popularity.',
+    'Sports Medicine': 'Every injury on the roster is 25% shorter.',
+    'Ice Bath': '+15 stamina for the whole roster.',
+    'Family Dinner': 'The whole roster gains 20 morale.',
+    'Second Wind': 'One superstar returns to full stamina.',
+    'The Dojo': 'Training week: Prospects and Rising Stars earn triple XP.',
+    'Backstage Ambush': 'Two random superstars of a rival are injured before their next show.',
+    'Poach': 'Take a superstar from a rival brand permanently (not a champion).',
+    'Bad Press': "A rival's whole roster loses 5 popularity.",
+    'Sabotage': "A rival's venue quality bonus is cancelled for one week.",
+    'Inside Information': "This week you see every rival's full card before you lock yours.",
+    'Blood Feud': 'One rivalry match gets a full extra star and both wrestlers gain 5 popularity. Injury risk in the match is doubled.',
+    'Hardcore Rules': 'One match this week becomes a no-DQ match for free and gets an extra half star.',
+    'Star Power': 'The 3 most popular superstars on the roster gain 5 popularity.',
+    'Red Carpet': 'Attendance at this show grows by 15%.',
+    'Sky High': 'Every match this week with a Cruiser gets a full extra star.',
+    'Fast Track': 'One Rising Star goes up one ring level.',
+    'Call-Up': 'One Prospect becomes a Star: +20 popularity and +2 ring levels.',
+    'Showcase': 'All Prospects on this week\'s card earn double XP and gain 3 popularity.',
+    'Total Chaos': 'One match becomes a wild brawl: +1.5 stars, but a random winner and double stamina loss.',
+    'Crowd Surge': "Every rivalry on this week's card goes up one level.",
+    'Hype Video': 'One superstar gains 3 popularity.',
+    'Water Break': 'One superstar gains 10 stamina.',
+    'Pep Talk': "One superstar's morale goes up 15.",
+    'Street Team': 'Attendance at the next show grows by 5%.',
+    'Local Sponsor': '+$50K to the budget.',
+    'Quick Rehab': "One superstar's injury is one week shorter.",
+    'Scouting Tip': 'One extra scout this week.',
+    'Promo Coach': 'Promos this week have 25% more effect.',
+    'Main Event Push': 'The main event this week gets an extra half star.',
+    'Rivalry Spark': 'A new rivalry starts at level 2.',
+    'Merch Drop': '+$150K to the budget.',
+    'Medical Team': 'Every injury on the roster is one week shorter.',
+    'Contract Extension': "A Legend's or Free Agent's contract is extended by 5 weeks.",
+    'Title Hype': 'One title match this week gets an extra half star.',
+    'TV Deal': 'Revenue from every show grows by 10%.',
+    'Training Facility': 'The whole roster earns 25% more XP.',
+    'Hot Crowd': 'Every match on this show gets an extra half star.',
+    'Roster Depth': 'You can hold 3 superstars over the roster limit.',
+    'Legend Return': 'Sign one Legend for free.',
+    'Crowd Favorite': "One superstar's popularity rises to 90.",
+    'Corporate Raid': "Take $200K from a rival's budget.",
+    'Main Event Magic': 'The main event this week gets 1.5 extra stars.',
+}
+
 # סוגי שימוש
 USE = {
     'passive': 'קבוע: יתרון קטן לאורך כל העונה',
@@ -103,10 +162,12 @@ gms = [{
     'id': f'G{i + 1:02d}', 'name': g[0], 'nameHe': g[1], 'family': g[2],
     'card': g[3], 'cardHe': g[4], 'use': g[5], 'useHe': USE[g[5]], 'useDetail': g[6],
     'effect': g[7], 'gameChanger': g[8],
+    'familyEn': FAMILY_EN[g[2]], 'useDetailEn': USE_EN[g[6]], 'effectEn': EFFECT_EN[g[3]],
 } for i, g in enumerate(GMS)]
-brand_cards = [{'id': f'B{i + 1:02d}', 'brand': b[0], 'name': b[1], 'nameHe': b[2], 'useDetail': b[3], 'effect': b[4], 'gameChanger': b[5]} for i, b in enumerate(BRAND_CARDS)]
+brand_cards = [{'id': f'B{i + 1:02d}', 'brand': b[0], 'name': b[1], 'nameHe': b[2], 'useDetail': b[3], 'effect': b[4], 'gameChanger': b[5], 'useDetailEn': USE_EN[b[3]], 'effectEn': EFFECT_EN[b[1]]} for i, b in enumerate(BRAND_CARDS)]
 json.dump(brand_cards, open(os.path.join(HERE, 'brand_cards.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-shop = [{'id': f'C{i + 1:02d}', 'name': c[0], 'nameHe': c[1], 'rarity': c[2], 'use': c[3], 'effect': c[4]} for i, c in enumerate(SHOP)]
+shop = [{'id': f'C{i + 1:02d}', 'name': c[0], 'nameHe': c[1], 'rarity': c[2], 'use': c[3], 'effect': c[4],
+         'rarityEn': RARITY_EN[c[2]], 'useEn': SHOP_USE_EN[c[3]], 'effectEn': EFFECT_EN[c[0]]} for i, c in enumerate(SHOP)]
 json.dump(gms, open(os.path.join(HERE, 'gms.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 json.dump(shop, open(os.path.join(HERE, 'shop_cards.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 

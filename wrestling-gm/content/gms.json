@@ -10,7 +10,10 @@
   "useHe": "קבוע: יתרון קטן לאורך כל העונה",
   "useDetail": "כל העונה",
   "effect": "כל תוכנית מכניסה 5% יותר מכרטיסים.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Economy",
+  "useDetailEn": "All season",
+  "effectEn": "Every show earns 5% more from tickets."
  },
  {
   "id": "G02",
@@ -23,7 +26,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "כל הקרבות בחינם לשבוע אחד.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Economy",
+  "useDetailEn": "3 times per season",
+  "effectEn": "All matches are free for one week."
  },
  {
   "id": "G03",
@@ -36,7 +42,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "בונוסי הלוגיסטיקה כפולים לשבוע אחד.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Economy",
+  "useDetailEn": "3 times per season",
+  "effectEn": "Logistics bonuses are doubled for one week."
  },
  {
   "id": "G04",
@@ -49,7 +58,10 @@
   "useHe": "קבוע: יתרון קטן לאורך כל העונה",
   "useDetail": "כל העונה",
   "effect": "כל הקלפים בחנות זולים ב-15%.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Economy",
+  "useDetailEn": "All season",
+  "effectEn": "All shop cards are 15% cheaper."
  },
  {
   "id": "G05",
@@ -62,7 +74,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "השבוע מופיעות 2 אגדות נוספות במאגר, וחתימה שלהן זולה בחצי.",
-  "gameChanger": true
+  "gameChanger": true,
+  "familyEn": "Economy",
+  "useDetailEn": "Twice per season",
+  "effectEn": "2 extra Legends appear in the pool this week, and signing them costs half."
  },
  {
   "id": "G06",
@@ -75,7 +90,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעם בעונה",
   "effect": "כל היריבויות הפעילות עולות בשתי רמות.",
-  "gameChanger": true
+  "gameChanger": true,
+  "familyEn": "Rivalries",
+  "useDetailEn": "Once per season",
+  "effectEn": "All active rivalries go up two levels."
  },
  {
   "id": "G07",
@@ -88,7 +106,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "יריבות אחת קופצת ישר לרמה 4.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Rivalries",
+  "useDetailEn": "Twice per season",
+  "effectEn": "One rivalry jumps straight to level 4."
  },
  {
   "id": "G08",
@@ -101,7 +122,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "כל הפרומואים בשבוע הזה משפיעים כפול.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Rivalries",
+  "useDetailEn": "3 times per season",
+  "effectEn": "All promos this week have double effect."
  },
  {
   "id": "G09",
@@ -114,7 +138,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "קרב יריבות אחד בשבוע הזה מקבל כוכב שלם נוסף.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Rivalries",
+  "useDetailEn": "3 times per season",
+  "effectEn": "One rivalry match this week gets a full extra star."
  },
  {
   "id": "G10",
@@ -127,7 +154,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "מתאבק אחד מקבל 8 פופולריות.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Rivalries",
+  "useDetailEn": "3 times per season",
+  "effectEn": "One superstar gains 8 popularity."
  },
  {
   "id": "G11",
@@ -140,7 +170,10 @@
   "useHe": "קבוע: יתרון קטן לאורך כל העונה",
   "useDetail": "כל העונה",
   "effect": "כל פציעה ברוסטר קצרה ב-25%.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Recovery",
+  "useDetailEn": "All season",
+  "effectEn": "Every injury on the roster is 25% shorter."
  },
  {
   "id": "G12",
@@ -153,7 +186,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "15 סיבולת לכל הרוסטר.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Recovery",
+  "useDetailEn": "3 times per season",
+  "effectEn": "+15 stamina for the whole roster."
  },
  {
   "id": "G13",
@@ -166,7 +202,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "המורל של כל הרוסטר עולה ב-20.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Recovery",
+  "useDetailEn": "Twice per season",
+  "effectEn": "The whole roster gains 20 morale."
  },
  {
   "id": "G14",
@@ -179,7 +218,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "מתאבק אחד חוזר לסיבולת מלאה.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Recovery",
+  "useDetailEn": "3 times per season",
+  "effectEn": "One superstar returns to full stamina."
  },
  {
   "id": "G15",
@@ -192,7 +234,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "שבוע אימונים: צעירים בפיתוח וכוכבים עולים צוברים פי 3 ניסיון.",
-  "gameChanger": true
+  "gameChanger": true,
+  "familyEn": "Recovery",
+  "useDetailEn": "Twice per season",
+  "effectEn": "Training week: Prospects and Rising Stars earn triple XP."
  },
  {
   "id": "G16",
@@ -205,7 +250,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "שני מתאבקים אקראיים של יריב נפצעים לפני התוכנית הבאה שלו.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Sabotage",
+  "useDetailEn": "Twice per season",
+  "effectEn": "Two random superstars of a rival are injured before their next show."
  },
  {
   "id": "G17",
@@ -218,7 +266,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעם בעונה",
   "effect": "לוקחים מתאבק ממותג יריב לצמיתות (לא מחזיק תואר).",
-  "gameChanger": true
+  "gameChanger": true,
+  "familyEn": "Sabotage",
+  "useDetailEn": "Once per season",
+  "effectEn": "Take a superstar from a rival brand permanently (not a champion)."
  },
  {
   "id": "G18",
@@ -231,7 +282,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "כל הרוסטר של יריב אחד מאבד 5 פופולריות.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Sabotage",
+  "useDetailEn": "Twice per season",
+  "effectEn": "A rival's whole roster loses 5 popularity."
  },
  {
   "id": "G19",
@@ -244,7 +298,10 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "3 פעמים בעונה",
   "effect": "בונוס האיכות של האולם של יריב אחד מתבטל לשבוע אחד.",
-  "gameChanger": false
+  "gameChanger": false,
+  "familyEn": "Sabotage",
+  "useDetailEn": "3 times per season",
+  "effectEn": "A rival's venue quality bonus is cancelled for one week."
  },
  {
   "id": "G20",
@@ -257,6 +314,9 @@
   "useHe": "מוגבל: פעם עד 3 פעמים בעונה",
   "useDetail": "פעמיים בעונה",
   "effect": "השבוע רואים את כל הכרטיס של כל יריב לפני שנועלים את שלך.",
-  "gameChanger": true
+  "gameChanger": true,
+  "familyEn": "Sabotage",
+  "useDetailEn": "Twice per season",
+  "effectEn": "This week you see every rival's full card before you lock yours."
  }
 ]
