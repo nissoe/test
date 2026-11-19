@@ -838,18 +838,26 @@ function showBubble(text){
 function setTalking(on){ $$('.dudu').forEach(d=>d.classList.toggle('talk', on)); }
 function speakOne(t, lang){
   return new Promise(res=>{
-    let done=false; const fin=()=>{ if(!done){ done=true; res(); } };
+    let done = false, started = false, poll = null; const t0 = performance.now();
+    const fin = ()=>{ if(!done){ done = true; clearInterval(poll); res(); } };
+    if(!('speechSynthesis' in window)){ fin(); return; }
+    // expected length of the sentence, with room to spare
+    const est = 900 + stripNiqqud(t).length * 95 / Math.max(.5, S.rate || 1);
     try{
       if(lang!=='en') t = t.replace(/דודו/g,'דוֹדוֹ');
       const u = new SpeechSynthesisUtterance(t);
       u.lang = lang==='en' ? 'en-US' : 'he-IL';
       const v = lang==='en' ? voices.en : voices.he; if(v) u.voice = v;
       u.rate = S.rate * (lang==='en' ? .95 : 1); u.pitch = 1.12;
-      u.onend = fin; u.onerror = fin;
+      u.onstart = ()=>{ started = true; }; u.onend = fin; u.onerror = fin;
       speechSynthesis.speak(u);
-    }catch(e){ fin(); }
-    setTimeout(fin, 1400 + t.length*150);
-    if(!('speechSynthesis' in window)) fin();
+    }catch(e){ fin(); return; }
+    poll = setInterval(()=>{
+      const el = performance.now() - t0;
+      let busy = true; try{ busy = speechSynthesis.speaking || speechSynthesis.pending; }catch(e){}
+      if((started || el > 900) && !busy) fin();
+      if(el > est + 1200) fin();
+    }, 150);
   });
 }
 /* ---------- parent's recorded voice: clips stored on this device, matched by the sentence text ---------- */
@@ -963,12 +971,15 @@ function audioSession(type){ try{ if(navigator.audioSession) navigator.audioSess
 audioSession('playback');
 let speechDone = Promise.resolve();
 const waitSpeech = (max=9000) => Promise.race([speechDone, sleep(max)]);
-function sayList(list, bubble=true){
+let talkingNow = false;
+function sayList(list, bubble=true, opt={}){
+  if(opt.soft && talkingNow) return Promise.resolve();
   const tok = ++speakToken;
   if(bubble) showBubble(list.map(x=>x[0]).join(' '));
   if(!S.voice) return (speechDone = sleep(700 + list.reduce((n,x)=>n+x[0].length,0)*45));
   try{ speechSynthesis.cancel(); }catch(e){}
   REC.stop(); setTalking(true);
+  talkingNow = !opt.soft;
   return speechDone = (async()=>{
     for(const [t,lang] of list){
       if(tok!==speakToken) break;
@@ -977,11 +988,12 @@ function sayList(list, bubble=true){
       if(tok!==speakToken) break;
       await speakOne(t, lang||'he');
     }
-    if(tok===speakToken) setTalking(false);
+    if(tok===speakToken){ setTalking(false); talkingNow = false; }
   })();
 }
 const say = (t, lang='he') => sayList([[t,lang]]);
-function stopSpeech(){ speakToken++; try{ speechSynthesis.cancel(); }catch(e){} REC.stop(); setTalking(false); }
+const sayAside = (list, bubble=false) => sayList(list, bubble, {soft:true});
+function stopSpeech(){ talkingNow = false; speakToken++; try{ speechSynthesis.cancel(); }catch(e){} REC.stop(); setTalking(false); }
 
 /* ---------- fx ---------- */
 function burst(x, y, set=['⭐','✨','🌟','💛'], n=12){
@@ -1630,7 +1642,7 @@ function freeWrite(ctx, tok, item, stage){
       retries++;
       g.animate([{opacity:1},{opacity:0}], {duration:700, fill:'forwards'}).onfinish = ()=>g.remove();
       sfx.oops();
-      if(performance.now() - nag > 3500){ nag = performance.now(); say(bp < .4 ? 'זה נראה כמו קשקוש, בוא נכתוב את האות' : 'ננסה את הקו הזה שוב'); }
+      if(performance.now() - nag > 3500){ nag = performance.now(); sayAside([[bp < .4 ? 'זה נראה כמו קשקוש, בוא נכתוב את האות' : 'ננסה את הקו הזה שוב','he']], true); }
     }
   }
   async function finishGhost(){
@@ -1700,7 +1712,7 @@ GAMES.hunt = {
           b.animate([{transform:'scale(1)'},{transform:'scale(1.5)',opacity:0}],{duration:350,fill:'forwards'});
           found++;
           if(found===T){ ctx.right(null, lang==='he'?[['מצאת את כל האותיות','he'],[target.name,'he']]:[['מצאת את כולן!','he']]); ctx.solved(1500); }
-          else lang==='he' ? say(target.name) : say(target.ch,'en');
+          else sayAside(lang==='he' ? [[target.name,'he']] : [[target.ch,'en']]);
         } else { trackItem(lang+':'+target.ch, false); trackMix(lang+':'+target.ch, lang+':'+L.ch); ctx.wrong(b, lang==='he' ? [['זאת האות','he'],[L.name,'he'],['נחפש את','he'],[target.name,'he']] : [['זאת','he'],[L.ch,'en']]); hint.classList.add('on'); }
       });
       area.appendChild(b);
@@ -1805,7 +1817,7 @@ GAMES.count = {
       b.addEventListener('click', ()=>{
         if(!ctx.alive(tok) || b.classList.contains('counted')) return;
         counted++; b.classList.add('counted'); b.querySelector('.n').textContent = counted; retrigger(b,'boing'); sfx.tick(counted/n);
-        sayList([[String(counted),'he']], false);
+        sayAside([[String(counted),'he']]);
       });
       area.appendChild(b);
     });
@@ -1857,7 +1869,7 @@ GAMES.balloons = {
           if(got===0 && ctx.qMist===0) trackItem('color:'+target.id, true);
           b.dead = true; sfx.pop(); burst(b.x+59, 100+b.y+60, ['✨','💥', '⭐'], 10); el.remove(); got++;
           if(got>=need){ ctx.right(null, false); sayList(S.colorsEn ? [['כל הכבוד!','he'],[target.he,'he'],[target.en,'en']] : [['כל הכבוד!','he'],[target.he,'he']]); ctx.solved(1700); }
-          else sayList(S.colorsEn && got%2 ? [[target.he,'he'],[target.en,'en']] : [[target.he,'he']], false);
+          else sayAside(S.colorsEn && got%2 ? [[target.he,'he'],[target.en,'en']] : [[target.he,'he']]);
         } else { trackItem('color:'+target.id, false); trackMix('color:'+target.id, 'color:'+col.id); retrigger(el,'shake'); ctx.wrong(null, [['זה בלון','he'],[col.he,'he'],['אנחנו מחפשים','he'],[target.he,'he']]); }
       });
       area.appendChild(el); balloons.push(b); spawned++;
@@ -2261,7 +2273,7 @@ GAMES.syllables = {
             ctx.right(centerOf(slots), [[word,'he'],[pick(PRAISE),'he']]);
             trackItem('word:'+plain, ctx.qMist===0);
             ctx.solved(800);
-          } else sayList([[t,'hes']], false);
+          } else sayAside([[t,'hes']]);
         } else { ctx.wrong(b, [[t,'hes'],[pick(OOPS),'he']]); }
       });
       tiles.appendChild(b);
@@ -2284,7 +2296,7 @@ GAMES.readpage = {
         if(phase === 'read'){
           if(!c.classList.contains('open')){ c.classList.add('open'); seenN++; sfx.pop(); }
           sayList([[w,'he']]);
-          if(seenN === words.length && phase === 'read'){ phase = 'wait'; setTimeout(startQuiz, 1800); }
+          if(seenN === words.length && phase === 'read'){ phase = 'wait'; waitSpeech().then(()=>setTimeout(startQuiz, 600)); }
           return;
         }
         if(phase !== 'quiz') return;
@@ -2348,7 +2360,7 @@ GAMES.dots = {
       if(last >= 0) svgEl('line', {class:'dot-line', x1:dots[last][0], y1:dots[last][1], x2:dots[k][0], y2:dots[k][1]}, gLines);
       dotEls[k].classList.remove('next'); dotEls[k].classList.add('done'); last = k;
       if(k+1 < N) dotEls[k+1].classList.add('next');
-      sfx.tick(k/N); sayList([[String(k+1),'he']], false);
+      sfx.tick(k/N); if(k < N-1) sayAside([[String(k+1),'he']]);
       if(k === N-1) finish();
     }
     async function finish(){
@@ -2429,7 +2441,7 @@ GAMES.maze = {
     function step(nc, nr){
       if(done || (nc===pc && nr===pr)) return;
       if(Math.abs(nc-pc) + Math.abs(nr-pr) !== 1) return;
-      if(!open(pc,pr,nc,nr)){ if(performance.now()-bonk > 4000){ bonk = performance.now(); sfx.oops(); retrigger(bun,'shake'); say('אי אפשר לעבור דרך השיח'); } return; }
+      if(!open(pc,pr,nc,nr)){ if(performance.now()-bonk > 4000){ bonk = performance.now(); sfx.oops(); retrigger(bun,'shake'); sayAside([['אי אפשר לעבור דרך השיח','he']], true); } return; }
       const prev = path[path.length-2];
       if(prev && prev[0]===nc && prev[1]===nr) path.pop(); else path.push([nc,nr]);
       pc = nc; pr = nr; place(); sfx.tap();
@@ -2555,7 +2567,7 @@ GAMES.reading = {
           if(!ctx.alive(tok) || t.classList.contains('used') || pos>=letters.length) return;
           if(c===letters[pos]){
             t.classList.add('used'); const s = slots.children[pos]; s.textContent = c; s.classList.add('full'); pos++; sfx.pop();
-            if(lang==='en') sayList([[c,'en']], false); else sayList([[HE.find(l=>l.ch===c)?.name || c,'he']], false);
+            if(lang==='en') sayAside([[c,'en']]); else sayAside([[HE.find(l=>l.ch===c)?.name || c,'he']]);
             if(pos===letters.length){
               ctx.right(centerOf(slots), false);
               for(let k=0;k<letters.length;k++){ slots.children[k].classList.add('read'); await sleep(260); }
