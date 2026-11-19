@@ -29,7 +29,7 @@ WOMEN_SHARE = 0.35
 # שש דרגות קריירה לפי רמת הניסיון, כמו במקור [לאמת: הגבולות]
 RANKS = [(1, 'Rookie', 'מתחיל'), (5, 'Established', 'מבוסס'), (10, 'Renown', 'מוכר'), (15, 'Icon', 'אייקון'), (20, 'Legend', 'אגדה'), (25, 'Immortal', 'בן אלמוות')]
 # מיקרופון לא תלוי בשכבה: לכל אחד יכול להיות 1–5. רק כוכבי על ואגדות נוטים למעלה (מנוסים יותר)
-MIC_WEIGHTS = {'default': [20, 30, 30, 17, 3], 'veteran': [0, 15, 40, 35, 10], 'legend': [5, 10, 15, 40, 30]}
+MIC_WEIGHTS = {'default': [18, 28, 30, 18, 6], 'veteran': [0, 15, 40, 35, 10], 'legend': [5, 10, 15, 40, 30]}
 # מגמת שיפור במיקרופון: בעיקר לנמוכים, לא למוכרים. ההסתברות לכל שכבה
 MIC_GROWTH_CHANCE = {'prospect': 0.7, 'rising': 0.6, 'local': 0.5, 'free': 0.4, 'midcard': 0.35, 'star': 0.15, 'former': 0.0, 'superstar': 0.0, 'legend': 0.0}
 BEST_MATCH = {'Giant': ('Cruiser', 'קל-משקל'), 'Cruiser': ('Giant', 'ענק'), 'Fighter': ('Bruiser', 'מכתש'), 'Bruiser': ('Fighter', 'לוחם'), 'Specialist': ('Any', 'כולם')}
@@ -227,6 +227,12 @@ legend_mics = [5] * 8 + [4] * 13 + [3] * 5 + [2] * 3 + [1] * 1
 random.shuffle(legend_mics)
 for w, m in zip([w for w in wrestlers if w['tier'] == 'legend'], legend_mics):
     w['mic'] = m
+# מכסה לכוכבי העל: רבע מהם אלופי דיבור
+super_mics = [5] * 5 + [4] * 8 + [3] * 5 + [2] * 2
+random.shuffle(super_mics)
+for w, m in zip([w for w in wrestlers if w['tier'] == 'superstar'], super_mics):
+    w['mic'] = m
+    w['micGrowth'] = 0
 
 # ---------- צמדים: מהפעילים, לא מכוכבי העל ----------
 def assign_tags(gender, names):
