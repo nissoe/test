@@ -13,6 +13,7 @@
 ## קבצים
 - `decisions.md` — יומן החלטות האפיון (מקור האמת). לקרוא אותו לפני כל עבודה.
 - `research-summary.md` — תקציר המחקר על מצב MyGM ב-WWE 2K.
+- `HANDOFF.md` — איך ממשיכים לעבוד במחשב.
 - מסמך המחקר המלא (Claude Docs): https://claude.ai/artifact/Fzmg4pp5hGMkoFbgVDT9hA
 
 ## שלבי התהליך
