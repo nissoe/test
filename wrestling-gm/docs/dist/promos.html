@@ -1,0 +1,272 @@
+<title>סוגי הפרומואים</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● נתוני תוכן</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: המחירים של המקור מאומתים, של שלנו מודל עבודה</span></div>
+      <h1>סוגי הפרומואים</h1>
+      <p class="lead">7 פרומואים כמו במקור, באותם מחירים, ועוד 6 משלנו. השפעת הפרומו תלויה במיקרופון של המתאבק (1–5 כוכבים).</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>כמו במקור</span></a></li><li><a href="#s3"><span class="n">03</span><span>משלנו</span></a></li><li><a href="#s4"><span class="n">04</span><span>מקורות</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<ul>
+<li><strong>כמו במקור (החלטה 52):</strong> פרומו עצמי, קריאת תיגר (גם לזוגות), אימון, צדקה, פרסומת ופלישה. המחירים לפי המדריכים של 2K26.</li>
+<li><strong>משלנו:</strong> החלפת צד, שיחה עם מנטור, חתימת חוזה בזירה, נאום האלוף, אתגר פתוח וקטע מאחורי הקלעים.</li>
+<li><strong>המיקרופון קובע:</strong> אותו פרומו מצליח יותר אצל מתאבק עם 4–5 כוכבים, ועלול להזיק אצל מתאבק עם 1–2 כוכבים.</li>
+<li><strong>פרומו וקרב באותה תוכנית:</strong> מותר, כמו במקור, אבל עולה בסיבולת. אם המתאבק נפצע לפני הפרומו, הפרומו מתבטל.</li>
+</ul>
+<h2 id="s2"><span class="n">02</span><span>כמו במקור</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פרומו</th>
+<th>מחיר</th>
+<th>משתתפים</th>
+<th>מה הוא עושה</th>
+<th>הערה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>פרומו עצמי (Self-Promo)</td>
+<td>$2,500</td>
+<td>1</td>
+<td>משנה פופולריות לפי המיקרופון: 4–5 כוכבים מעלים, 1–2 עלולים להוריד.</td>
+<td></td>
+</tr>
+<tr>
+<td>קריאת תיגר (Call-Out)</td>
+<td>$3,000</td>
+<td>2</td>
+<td>פותח או מקדם יריבות בין שני מתאבקים.</td>
+<td></td>
+</tr>
+<tr>
+<td>קריאת תיגר לזוגות (Tag Team Call-Out)</td>
+<td>$3,000</td>
+<td>2×2</td>
+<td>פותח או מקדם יריבות בין שני צמדים.</td>
+<td></td>
+</tr>
+<tr>
+<td>אימון (Training)</td>
+<td>$5,000</td>
+<td>1</td>
+<td>מעלה את נקודות הניסיון של המתאבק.</td>
+<td></td>
+</tr>
+<tr>
+<td>צדקה (Charity)</td>
+<td>$10,000</td>
+<td>1</td>
+<td>מביא מעט מעריצים נוספים השבוע, ואולי גם פופולריות.</td>
+<td>חלק מהאתגרים העונתיים</td>
+</tr>
+<tr>
+<td>פרסומת (Advertising)</td>
+<td>חינם</td>
+<td>1</td>
+<td>בחינם, אבל מסוכן: פרומו חלש מוריד פופולריות.</td>
+<td></td>
+</tr>
+<tr>
+<td>פלישה (Invasion)</td>
+<td>$4,000</td>
+<td>1</td>
+<td>מתאבק תוקף תוכנית יריבה. פרומו טוב גונב ממנה מעריצים, ופרומו חלש מאבד מעריצים.</td>
+<td>רק במרובה משתתפים, כמו במקור <span class="badge">לאמת</span>: מחיר</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s3"><span class="n">03</span><span>משלנו</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פרומו</th>
+<th>מחיר</th>
+<th>משתתפים</th>
+<th>מה הוא עושה</th>
+<th>הערה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>החלפת צד (Turn)</td>
+<td>$6,000</td>
+<td>1</td>
+<td>מתאבק עובר מטוב לרע או להפך, מול הקהל. מעלה פופולריות אם המיקרופון שלו טוב.</td>
+<td>רק כשמתג &quot;החלפת צד&quot; דלוק (החלטה 21)</td>
+</tr>
+<tr>
+<td>שיחה עם מנטור (Mentor Talk)</td>
+<td>$4,000</td>
+<td>2</td>
+<td>ותיק עם מיקרופון טוב מדבר עם צעיר: הצעיר מקבל ניסיון, ומגמת השיפור שלו במיקרופון מתקדמת.</td>
+<td></td>
+</tr>
+<tr>
+<td>חתימת חוזה בזירה (Contract Signing)</td>
+<td>$7,000</td>
+<td>2</td>
+<td>שני המתמודדים על קרב באירוע השיא חותמים מול הקהל: היריבות עולה ברמה, ויש סיכוי להתקפה ופציעה.</td>
+<td>רק בשבוע שלפני אירוע שיא</td>
+</tr>
+<tr>
+<td>נאום האלוף (Champion&#39;s Address)</td>
+<td>$3,500</td>
+<td>1</td>
+<td>אלוף מדבר על התואר: פופולריות לפי המיקרופון, ובונוס לקרב התואר הבא שלו.</td>
+<td>רק למחזיק תואר</td>
+</tr>
+<tr>
+<td>אתגר פתוח (Open Challenge)</td>
+<td>$2,000</td>
+<td>1</td>
+<td>מתאבק קורא לכל מי שרוצה. אם צעיר או כישרון מקומי עונה וזוכה לקרב טוב, הוא מקבל פופולריות.</td>
+<td></td>
+</tr>
+<tr>
+<td>קטע מאחורי הקלעים (Backstage Segment)</td>
+<td>$1,500</td>
+<td>1–3</td>
+<td>קטע קצר ומצולם: זול, השפעה קטנה על פופולריות ויריבות, ולא שוחק סיבולת.</td>
+<td></td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s4"><span class="n">04</span><span>מקורות</span></h2>
+<ul>
+<li><a href="https://www.noobfeed.com/articles/wwe-2k26-mygm-mode">מדריך מצב המנהל ב-2K26 – NoobFeed</a></li>
+<li><a href="https://games.gg/wwe-2k26/guides/wwe-2-k26-my-gm-mode-guide/">מדריך מצב המנהל ב-2K26 – games.gg</a></li>
+</ul>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/promos.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>

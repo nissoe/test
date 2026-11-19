@@ -1,0 +1,132 @@
+[
+ {
+  "name": "Self-Promo",
+  "nameHe": "פרומו עצמי",
+  "origin": "original",
+  "cost": 2500,
+  "participants": "1",
+  "desc": "משנה פופולריות לפי המיקרופון: 4–5 כוכבים מעלים, 1–2 עלולים להוריד.",
+  "descEn": "Changes popularity based on mic skill: 4–5 stars raise it, 1–2 may lower it.",
+  "note": ""
+ },
+ {
+  "name": "Call-Out",
+  "nameHe": "קריאת תיגר",
+  "origin": "original",
+  "cost": 3000,
+  "participants": "2",
+  "desc": "פותח או מקדם יריבות בין שני מתאבקים.",
+  "descEn": "Starts or advances a one-on-one rivalry.",
+  "note": ""
+ },
+ {
+  "name": "Tag Team Call-Out",
+  "nameHe": "קריאת תיגר לזוגות",
+  "origin": "original",
+  "cost": 3000,
+  "participants": "2×2",
+  "desc": "פותח או מקדם יריבות בין שני צמדים.",
+  "descEn": "Starts or advances a tag team rivalry.",
+  "note": ""
+ },
+ {
+  "name": "Training",
+  "nameHe": "אימון",
+  "origin": "original",
+  "cost": 5000,
+  "participants": "1",
+  "desc": "מעלה את נקודות הניסיון של המתאבק.",
+  "descEn": "Raises the superstar's ring XP.",
+  "note": ""
+ },
+ {
+  "name": "Charity",
+  "nameHe": "צדקה",
+  "origin": "original",
+  "cost": 10000,
+  "participants": "1",
+  "desc": "מביא מעט מעריצים נוספים השבוע, ואולי גם פופולריות.",
+  "descEn": "Brings a small fan bonus this week, and maybe popularity.",
+  "note": "חלק מהאתגרים העונתיים"
+ },
+ {
+  "name": "Advertising",
+  "nameHe": "פרסומת",
+  "origin": "original",
+  "cost": 0,
+  "participants": "1",
+  "desc": "בחינם, אבל מסוכן: פרומו חלש מוריד פופולריות.",
+  "descEn": "Free, but risky: a weak promo costs popularity.",
+  "note": ""
+ },
+ {
+  "name": "Invasion",
+  "nameHe": "פלישה",
+  "origin": "original",
+  "cost": 4000,
+  "participants": "1",
+  "desc": "מתאבק תוקף תוכנית יריבה. פרומו טוב גונב ממנה מעריצים, ופרומו חלש מאבד מעריצים.",
+  "descEn": "A superstar invades a rival show. A good promo steals fans, a weak one loses fans.",
+  "note": "רק במרובה משתתפים, כמו במקור [[לאמת]]: מחיר"
+ },
+ {
+  "name": "Turn",
+  "nameHe": "החלפת צד",
+  "origin": "ours",
+  "cost": 6000,
+  "participants": "1",
+  "desc": "מתאבק עובר מטוב לרע או להפך, מול הקהל. מעלה פופולריות אם המיקרופון שלו טוב.",
+  "descEn": "A superstar turns face or heel in front of the crowd. Gains popularity with a good mic.",
+  "note": "רק כשמתג \"החלפת צד\" דלוק (החלטה 21)"
+ },
+ {
+  "name": "Mentor Talk",
+  "nameHe": "שיחה עם מנטור",
+  "origin": "ours",
+  "cost": 4000,
+  "participants": "2",
+  "desc": "ותיק עם מיקרופון טוב מדבר עם צעיר: הצעיר מקבל ניסיון, ומגמת השיפור שלו במיקרופון מתקדמת.",
+  "descEn": "A veteran with a good mic talks with a Prospect: the Prospect gains XP and their mic growth advances.",
+  "note": ""
+ },
+ {
+  "name": "Contract Signing",
+  "nameHe": "חתימת חוזה בזירה",
+  "origin": "ours",
+  "cost": 7000,
+  "participants": "2",
+  "desc": "שני המתמודדים על קרב באירוע השיא חותמים מול הקהל: היריבות עולה ברמה, ויש סיכוי להתקפה ופציעה.",
+  "descEn": "Two opponents for a premium event sign in the ring: the rivalry goes up a level, with a chance of a brawl and injury.",
+  "note": "רק בשבוע שלפני אירוע שיא"
+ },
+ {
+  "name": "Champion's Address",
+  "nameHe": "נאום האלוף",
+  "origin": "ours",
+  "cost": 3500,
+  "participants": "1",
+  "desc": "אלוף מדבר על התואר: פופולריות לפי המיקרופון, ובונוס לקרב התואר הבא שלו.",
+  "descEn": "A champion talks about the title: popularity by mic skill, and a bonus to their next title match.",
+  "note": "רק למחזיק תואר"
+ },
+ {
+  "name": "Open Challenge",
+  "nameHe": "אתגר פתוח",
+  "origin": "ours",
+  "cost": 2000,
+  "participants": "1",
+  "desc": "מתאבק קורא לכל מי שרוצה. אם צעיר או כישרון מקומי עונה וזוכה לקרב טוב, הוא מקבל פופולריות.",
+  "descEn": "A superstar challenges anyone. If a Prospect or local talent answers and has a good match, they gain popularity.",
+  "note": ""
+ },
+ {
+  "name": "Backstage Segment",
+  "nameHe": "קטע מאחורי הקלעים",
+  "origin": "ours",
+  "cost": 1500,
+  "participants": "1–3",
+  "desc": "קטע קצר ומצולם: זול, השפעה קטנה על פופולריות ויריבות, ולא שוחק סיבולת.",
+  "descEn": "A short filmed segment: cheap, a small effect on popularity and rivalries, and no stamina cost.",
+  "note": ""
+ }
+]
