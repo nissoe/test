@@ -1,0 +1,558 @@
+<title>מפרט חגורות האליפות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● מפרט הפקה</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: מוכן להפקה במחשב</span></div>
+      <h1>מפרט חגורות האליפות</h1>
+      <p class="lead">30 חגורות, 6 לכל תוכנית, ברמה של משחקי קונסולה. כל חגורה נוצרת בכלי תמונות לפי בסיס הוראה אחד ומפרט קבוע, והטקסט והלוגואים מתווספים אחר כך בגרפיקה וקטורית.</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>היררכיית התארים</span></a></li><li><a href="#s3"><span class="n">03</span><span>זהות לכל תוכנית</span></a></li><li><a href="#s4"><span class="n">04</span><span>בסיס ההוראה לכלי התמונות</span></a></li><li><a href="#s5"><span class="n">05</span><span>ערכים לכל דרג</span></a></li><li><a href="#s6"><span class="n">06</span><span>ערכים לכל תוכנית</span></a></li><li><a href="#s7"><span class="n">07</span><span>דוגמה מלאה</span></a></li><li><a href="#s8"><span class="n">08</span><span>רשימת 30 החגורות</span></a></li><li><a href="#s9"><span class="n">09</span><span>תהליך ההפקה במחשב</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<ul>
+<li><strong>30 חגורות:</strong> 5 תוכניות × 6 תארים (עולמי, עולמי נשים, משני, משני נשים, זוגות, זוגות נשים). (החלטה 39)</li>
+<li><strong>היררכיה ברורה במבט:</strong> העולמי הוא הגדול והמרשים ביותר, המשני קטן יותר, והזוגות בגודל בינוני ומגיעים כזוג.</li>
+<li><strong>אחידות:</strong> כל החגורות נוצרות מאותו בסיס הוראה (תאורה, זווית, רקע), ומשתנים רק החלקים שבטבלה.</li>
+<li><strong>טקסט בנפרד:</strong> כלי תמונות כותבים טקסט גרוע. מייצרים חגורות בלי כיתוב, ומוסיפים את לוגו התוכנית ושם התואר בשכבה וקטורית (החלטה 14).</li>
+</ul>
+<div class="callout decision"><p class="callout-label">החלטה</p><p>הסקיצות הווקטוריות של החגורות נפסלו: נראו זולות ופשוטות. החגורות מופקות בכלי תמונות לפי המסמך הזה, בדיוק כמו הדיוקנאות.</p>
+</div>
+<h2 id="s2"><span class="n">02</span><span>היררכיית התארים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>דרג</th>
+<th>גודל לוחית מרכזית</th>
+<th>מתכת</th>
+<th>אבנים</th>
+<th>צורה</th>
+<th>מאפיין</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>עולמי</td>
+<td>הגדולה ביותר, כמעט ברוחב הרצועה</td>
+<td>זהב צהוב מלא</td>
+<td>הרבה, כולל אבן מרכזית גדולה</td>
+<td>עגולה-משוננת עם &quot;כתר&quot; עליון</td>
+<td>4 לוחיות צד גדולות, חריטות עמוקות בכל השטח</td>
+</tr>
+<tr>
+<td>עולמי נשים</td>
+<td>זהה בגודל לעולמי</td>
+<td>זהב ורוד או זהב-לבן</td>
+<td>הרבה, בצבע התוכנית</td>
+<td>פרחונית-משוננת, עדינה יותר</td>
+<td>רצועה בהירה יותר, אותה רמת פאר</td>
+</tr>
+<tr>
+<td>משני</td>
+<td>כ-70% מהעולמי</td>
+<td>כסף מלוטש עם פסי זהב</td>
+<td>מעט</td>
+<td>מגן או משושה</td>
+<td>2 לוחיות צד</td>
+</tr>
+<tr>
+<td>משני נשים</td>
+<td>כ-70% מהעולמי</td>
+<td>כסף ורוד-זהב</td>
+<td>מעט</td>
+<td>מגן מעוגל</td>
+<td>2 לוחיות צד</td>
+</tr>
+<tr>
+<td>זוגות</td>
+<td>כ-80% מהעולמי</td>
+<td>שתי מתכות (זהב + כסף)</td>
+<td>בינוני</td>
+<td>כפולה: שתי צורות חופפות</td>
+<td>מגיעות כשתי חגורות זהות. סמל של שתי ידיים לופתות</td>
+</tr>
+<tr>
+<td>זוגות נשים</td>
+<td>כ-80% מהעולמי</td>
+<td>זהב-לבן + ורוד</td>
+<td>בינוני</td>
+<td>כפולה, מעוגלת</td>
+<td>שתי חגורות זהות</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s3"><span class="n">03</span><span>זהות לכל תוכנית</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תוכנית</th>
+<th>צבע רצועה</th>
+<th>אבנים</th>
+<th>מוטיב חריטה</th>
+<th>אופי</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Rage</td>
+<td>עור שחור עם תפרים אדומים</td>
+<td>אודם</td>
+<td>טפרים, להבות חדות</td>
+<td>גולמי ואגרסיבי</td>
+</tr>
+<tr>
+<td>Throwdown</td>
+<td>עור סגול כהה</td>
+<td>אמטיסט וזירקון לבן</td>
+<td>כוכבים, כתר</td>
+<td>מלוטש, כוכבי על</td>
+</tr>
+<tr>
+<td>Ignite</td>
+<td>עור שחור עם תפרים כתומים</td>
+<td>טופז כתום</td>
+<td>להבות, ניצוצות</td>
+<td>מהיר ואווירי</td>
+</tr>
+<tr>
+<td>Breakout</td>
+<td>עור טורקיז כהה</td>
+<td>טורקיז ויהלום</td>
+<td>זכוכית מתנפצת, חצים כלפי מעלה</td>
+<td>צעיר ורעב</td>
+</tr>
+<tr>
+<td>Uproar</td>
+<td>עור שחור עם תפר צהוב</td>
+<td>סיטרין צהוב</td>
+<td>פסי אזהרה, מסמרות</td>
+<td>כאוטי ואכזרי</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s4"><span class="n">04</span><span>בסיס ההוראה לכלי התמונות</span></h2>
+<p>כל חגורה = בסיס קבוע + החלקים מהטבלאות. ההוראות באנגלית, כי כלי התמונות עובדים הכי טוב באנגלית.</p>
+<pre><code class="language-text">Photorealistic product render of a professional wrestling championship title belt,
+front view, laid flat, full belt visible, centered, on a dark charcoal studio background,
+dramatic studio lighting with soft reflections, ultra detailed metal engraving,
+deep etched filigree, polished gemstones, thick premium leather strap with visible stitching,
+{TIER}, {METAL}, {SHAPE}, {STONES}, {MOTIF}, {STRAP},
+blank center area with no text, no letters, no logos, no words,
+high-end video game asset, 8k, sharp focus
+</code></pre>
+<p><strong>פרמטרים (Midjourney):</strong> <code>--ar 3:1 --style raw</code> <span class="badge">לאמת</span>. מייצרים 4 גרסאות לכל חגורה, בוחרים אחת, ומשפרים אותה בשינויים קטנים (Vary).</p>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>לפני ההפקה: לבדוק את תנאי השימוש המסחרי של הכלי (מסמך העלויות), ואת שמות הפרמטרים בגרסה העדכנית שלו.</p>
+</div>
+<h2 id="s5"><span class="n">05</span><span>ערכים לכל דרג</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>דרג</th>
+<th>{TIER}</th>
+<th>{METAL}</th>
+<th>{SHAPE}</th>
+<th>{STONES}</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>עולמי</td>
+<td>massive world heavyweight championship, the most prestigious belt, oversized center plate covering most of the strap, four large side plates</td>
+<td>solid polished yellow gold with deep 3D relief</td>
+<td>round scalloped center plate topped with a crown of spikes</td>
+<td>many gemstones, one large center stone surrounded by smaller stones</td>
+</tr>
+<tr>
+<td>עולמי נשים</td>
+<td>prestigious women&#39;s world championship, oversized center plate, four side plates, elegant</td>
+<td>polished rose gold with white gold accents</td>
+<td>ornate scalloped plate with floral filigree edges</td>
+<td>many gemstones, large center stone</td>
+</tr>
+<tr>
+<td>משני</td>
+<td>mid-card championship, medium center plate, two side plates, smaller than a world title</td>
+<td>polished silver with gold trim</td>
+<td>shield shaped center plate</td>
+<td>a few gemstones</td>
+</tr>
+<tr>
+<td>משני נשים</td>
+<td>women&#39;s mid-card championship, medium center plate, two side plates</td>
+<td>silver with rose gold trim</td>
+<td>rounded shield center plate</td>
+<td>a few gemstones</td>
+</tr>
+<tr>
+<td>זוגות</td>
+<td>tag team championship, large center plate, two side plates</td>
+<td>two-tone gold and silver</td>
+<td>double overlapping shields with two clasped hands motif</td>
+<td>a moderate number of gemstones</td>
+</tr>
+<tr>
+<td>זוגות נשים</td>
+<td>women&#39;s tag team championship, large center plate, two side plates</td>
+<td>white gold and rose gold</td>
+<td>double overlapping rounded plates with two clasped hands motif</td>
+<td>a moderate number of gemstones</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s6"><span class="n">06</span><span>ערכים לכל תוכנית</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תוכנית</th>
+<th>{STONES} – צבע</th>
+<th>{MOTIF}</th>
+<th>{STRAP}</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Rage</td>
+<td>ruby red gemstones</td>
+<td>engraved claw marks and sharp flames</td>
+<td>black leather strap with red stitching</td>
+</tr>
+<tr>
+<td>Throwdown</td>
+<td>amethyst purple and clear white gemstones</td>
+<td>engraved stars and a royal crown</td>
+<td>deep purple leather strap with silver stitching</td>
+</tr>
+<tr>
+<td>Ignite</td>
+<td>orange topaz gemstones</td>
+<td>engraved flames and sparks</td>
+<td>black leather strap with orange stitching</td>
+</tr>
+<tr>
+<td>Breakout</td>
+<td>turquoise and diamond gemstones</td>
+<td>engraved shattered glass and upward arrows</td>
+<td>dark teal leather strap with white stitching</td>
+</tr>
+<tr>
+<td>Uproar</td>
+<td>yellow citrine gemstones</td>
+<td>engraved hazard stripes and rivets</td>
+<td>black leather strap with yellow stitching</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s7"><span class="n">07</span><span>דוגמה מלאה</span></h2>
+<p><strong>Rage World Championship:</strong></p>
+<pre><code class="language-text">Photorealistic product render of a professional wrestling championship title belt,
+front view, laid flat, full belt visible, centered, on a dark charcoal studio background,
+dramatic studio lighting with soft reflections, ultra detailed metal engraving,
+deep etched filigree, polished gemstones, thick premium leather strap with visible stitching,
+massive world heavyweight championship, the most prestigious belt, oversized center plate
+covering most of the strap, four large side plates, solid polished yellow gold with deep 3D relief,
+round scalloped center plate topped with a crown of spikes, many ruby red gemstones,
+one large center stone surrounded by smaller stones, engraved claw marks and sharp flames,
+black leather strap with red stitching,
+blank center area with no text, no letters, no logos, no words,
+high-end video game asset, 8k, sharp focus --ar 3:1 --style raw
+</code></pre>
+<h2 id="s8"><span class="n">08</span><span>רשימת 30 החגורות</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>תוכנית</th>
+<th>תואר</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Rage</td>
+<td>Rage World Championship</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Rage</td>
+<td>Rage Women&#39;s World Championship</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Rage</td>
+<td>Rage Legacy Championship</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Rage</td>
+<td>Rage Women&#39;s Legacy Championship</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Rage</td>
+<td>Rage Tag Team Championship</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Rage</td>
+<td>Rage Women&#39;s Tag Team Championship</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Throwdown</td>
+<td>Throwdown World Championship</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Throwdown</td>
+<td>Throwdown Women&#39;s World Championship</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Throwdown</td>
+<td>Throwdown Iron Championship</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Throwdown</td>
+<td>Throwdown Women&#39;s Iron Championship</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Throwdown</td>
+<td>Throwdown Tag Team Championship</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Throwdown</td>
+<td>Throwdown Women&#39;s Tag Team Championship</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Ignite</td>
+<td>Ignite World Championship</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Ignite</td>
+<td>Ignite Women&#39;s World Championship</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Ignite</td>
+<td>Ignite Blaze Championship</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Ignite</td>
+<td>Ignite Women&#39;s Blaze Championship</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Ignite</td>
+<td>Ignite Tag Team Championship</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Ignite</td>
+<td>Ignite Women&#39;s Tag Team Championship</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Breakout</td>
+<td>Breakout World Championship</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Breakout</td>
+<td>Breakout Women&#39;s World Championship</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Breakout</td>
+<td>Breakout Rising Star Championship</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Breakout</td>
+<td>Breakout Women&#39;s Rising Star Championship</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Breakout</td>
+<td>Breakout Tag Team Championship</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Breakout</td>
+<td>Breakout Women&#39;s Tag Team Championship</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Uproar</td>
+<td>Uproar World Championship</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Uproar</td>
+<td>Uproar Women&#39;s World Championship</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Uproar</td>
+<td>Uproar Brawl Championship</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Uproar</td>
+<td>Uproar Women&#39;s Brawl Championship</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Uproar</td>
+<td>Uproar Tag Team Championship</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Uproar</td>
+<td>Uproar Women&#39;s Tag Team Championship</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s9"><span class="n">09</span><span>תהליך ההפקה במחשב</span></h2>
+<ol>
+<li>לבדוק תנאי שימוש מסחרי ופרמטרים עדכניים של כלי התמונות.</li>
+<li>להפיק קודם את 5 החגורות העולמיות, ולוודא שהן נראות כסדרה אחת. רק אחר כך את השאר.</li>
+<li>לכל חגורה: 4 גרסאות, בחירה, ושיפור קטן.</li>
+<li>להסיר רקע ולשמור כקובץ PNG שקוף ברזולוציה גבוהה.</li>
+<li>להוסיף בשכבה וקטורית: לוגו התוכנית על הלוחית המרכזית, שם התואר על סרט מתחתיו, ו-LWF על לוחיות הצד.</li>
+<li>לשמור בתיקייה <code>assets/belts/</code> לפי מספר מהרשימה, ולעדכן את טבלת התוכן של המשחק.</li>
+</ol>
+<div class="callout note"><p class="callout-label">הערה</p><p>בכלל: אף פעם לא לכתוב בהוראה שם של חגורה, איגוד או משחק אמיתי. מתארים צורה, חומרים ומוטיבים בלבד, כדי שהתוצאה תהיה מקורית.</p>
+</div>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/belts.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>

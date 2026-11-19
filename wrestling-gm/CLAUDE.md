@@ -17,7 +17,7 @@
 - `HANDOFF.md` — איך ממשיכים לעבוד במחשב.
 - `docs/gdd.md` — מסמך האפיון (GDD). דף מפורסם: https://claude.ai/artifact/RcepWhLbcV9pjfxgP5tCHc
 - `brand/logo-sketches.html` — סקיצות לוגו (LWF + 5 מותגים). דף מפורסם: https://claude.ai/artifact/F6GXTPSmugqbwi9ktKD7UU
-- `brand/belt-sketches.html` — סקיצות חגורות (נבנה מ-`brand/build_belts.py`).
+- `brand/belt-sketches.html` — סקיצות חגורות וקטוריות: **נפסלו** (החלטה 39). החגורות מופקות לפי `docs/belts.md`.
 - מסמך המחקר המלא (Claude Docs): https://claude.ai/artifact/Fzmg4pp5hGMkoFbgVDT9hA
 
 ## שלבי התהליך
