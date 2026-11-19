@@ -122,58 +122,120 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <div class="doc" dir="rtl" lang="he">
   <header class="cover">
     <div class="cover-inner gutter">
-      <div class="eyebrow"><span class="live">● סיכום עלויות</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: הערכה ראשונה</span></div>
+      <div class="eyebrow"><span class="live">● סיכום עלויות</span><span>גרסה 0.2</span><span>2026-11-19</span><span>סטטוס: הערכה, מחולקת לשתי תקופות</span></div>
       <h1>תקציב ועלויות</h1>
-      <p class="lead">כמה יעלה לבנות ולהשיק את המשחק לפי ההחלטות עד כה: בערך 230–330 דולר עד ההשקה, ועוד כ-25 דולר בחודש אחריה, לא כולל מנוי Claude ותוספות רשות.</p>
+      <p class="lead">תקופה א׳ (גרסת דפדפן לחברים ולמשפחה) עולה בערך 110–205 דולר בסך הכול ו-0 דולר בחודש. תקופה ב׳ (אפליקציה בחנויות לכולם) מוסיפה בערך 124 דולר בפתיחה, 25 דולר בחודש ו-99 דולר בשנה.</p>
     </div>
     <div class="belt"></div>
   </header>
   <div class="layout gutter">
     <nav class="toc" aria-label="תוכן העניינים">
       <p class="toc-title">תוכן העניינים</p>
-      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>חנויות האפליקציות</span></a></li><li><a href="#s3"><span class="n">03</span><span>שרת וחשבונות (Supabase)</span></a></li><li><a href="#s4"><span class="n">04</span><span>בנייה ועדכונים (Expo)</span></a></li><li><a href="#s5"><span class="n">05</span><span>רכישות בתוך האפליקציה</span></a></li><li><a href="#s6"><span class="n">06</span><span>הפקת תוכן</span></a></li><li><a href="#s7"><span class="n">07</span><span>משפטי ורישום</span></a></li><li><a href="#s8"><span class="n">08</span><span>כלי הפיתוח</span></a></li><li><a href="#s9"><span class="n">09</span><span>איך חושב הסכום</span></a></li><li><a href="#s10"><span class="n">10</span><span>מקורות</span></a></li></ol>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>תקופה א׳: דפדפן, חברים ומשפחה</span></a></li><li><a href="#s3"><span class="n">03</span><span>תקופה ב׳: אפליקציה בחנויות, לכולם</span></a></li><li><a href="#s4"><span class="n">04</span><span>מקורות</span></a></li></ol>
     </nav>
     <main class="content">
 <h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>תקופה</th>
-<th>מינימום</th>
-<th>מומלץ</th>
+<th></th>
+<th>תקופה א׳: דפדפן, חברים ומשפחה</th>
+<th>תקופה ב׳: אפליקציה בחנויות, לכולם</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>עד ההשקה (חד-פעמי + חודשי הפקה)</td>
-<td>‎$234</td>
-<td>‎$330</td>
+<td>חד-פעמי</td>
+<td>‎$110–205 (תוכן)</td>
+<td>‎$124 (חשבונות בחנויות)</td>
 </tr>
 <tr>
-<td>אחרי ההשקה, בכל חודש</td>
+<td>בכל חודש</td>
 <td>‎$0</td>
-<td>‎$25</td>
+<td>‎$25 (שרת)</td>
 </tr>
 <tr>
-<td>אחרי ההשקה, בכל שנה</td>
-<td>‎$99</td>
-<td>‎$99</td>
+<td>בכל שנה</td>
+<td>‎$0–15 (דומיין, רשות)</td>
+<td>‎$99 (חשבון אפל)</td>
 </tr>
 <tr>
-<td>עמלת חנויות על כל מכירה</td>
-<td>15%</td>
+<td>עמלה על מכירה</td>
+<td>אין, אין מכירות</td>
 <td>15%</td>
 </tr>
 </tbody></table>
 </div>
 <ul>
-<li><strong>לא כלול:</strong> מנוי Claude, שהוא כלי הפיתוח העיקרי (20–200 דולר בחודש, לפי התוכנית) <span class="badge">לאמת</span>.</li>
-<li><strong>תוספות רשות (לא בסכום):</strong> רישום סימן מסחר בישראל (כ-1,600 ש&quot;ח לסוג הראשון <span class="badge">לאמת</span>), עורך דין לתנאי שימוש, ופרילנסר ללוגואים.</li>
-<li><strong>מטבע:</strong> המחירים בדולרים, כמו במחירוני הספקים. ההמרה לשקלים לפי השער ביום התשלום.</li>
-<li><strong>אמינות:</strong> המחירים מסיכומים של אתרים חיצוניים מנובמבר 2026, לא מהמחירונים הרשמיים. לפני כל תשלום בודקים באתר של הספק.</li>
+<li><strong>ההפרדה (החלטה 40):</strong> בתקופה א׳ המשחק רץ בדפדפן בלבד, בלי חנויות ובלי תשלום. אתה מעניק גישה מלאה לחברים ולמשפחה מלוח ניהול המנויים.</li>
+<li><strong>התוכן נקנה פעם אחת ומשמש בשתי התקופות:</strong> דיוקנאות, מוזיקה ואפקטים.</li>
+<li><strong>לא כלול:</strong> מנוי Claude, כלי הפיתוח (20–200 דולר בחודש לפי התוכנית) <span class="badge">לאמת</span>.</li>
+<li><strong>אמינות:</strong> המחירים מסיכומים של אתרים חיצוניים מנובמבר 2026. לפני כל תשלום בודקים באתר של הספק.</li>
 </ul>
-<div class="callout note"><p class="callout-label">הערה</p><p>רוב הכלים חינמיים בזמן הפיתוח (Supabase, Expo, הגופנים, כלי הבנייה). הכסף מתחיל לזרום בשני רגעים: הפקת התוכן (תמונות ומוזיקה), והעלייה לחנויות.</p>
+<h2 id="s2"><span class="n">02</span><span>תקופה א׳: דפדפן, חברים ומשפחה</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פריט</th>
+<th>כלי</th>
+<th>מחיר</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>אחסון האתר</td>
+<td>Cloudflare Pages</td>
+<td>‎$0</td>
+<td>תעבורה ללא הגבלה, 500 בניות בחודש.</td>
+</tr>
+<tr>
+<td>שרת וחשבונות</td>
+<td>Supabase, חינמי</td>
+<td>‎$0</td>
+<td>פרויקט חינמי נעצר אחרי שבוע בלי פעילות, ואין בו גיבויים. צריך גיבוי ידני מדי פעם.</td>
+</tr>
+<tr>
+<td>דומיין</td>
+<td>לבחירה</td>
+<td>‎$0–15 בשנה</td>
+<td>אפשר להתחיל בכתובת חינמית של שירות האחסון.</td>
+</tr>
+<tr>
+<td>דיוקנאות</td>
+<td>Midjourney, תוכנית Standard</td>
+<td>‎$90</td>
+<td>כ-3 חודשים של 30 דולר. 300 מתאבקים, 20 מנהלים, 30 חגורות.</td>
+</tr>
+<tr>
+<td>מוזיקה</td>
+<td>Suno, תוכנית Pro</td>
+<td>‎$20</td>
+<td>כ-2 חודשים של 10 דולר.</td>
+</tr>
+<tr>
+<td>אפקטים וקהל</td>
+<td>ספריית סאונד</td>
+<td>‎$0–100</td>
+<td></td>
+</tr>
+<tr>
+<td>לוגואים וממשק</td>
+<td>אני מעצב בקוד</td>
+<td>‎$0</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>סה&quot;כ</strong></td>
+<td></td>
+<td><strong>‎$110–205</strong></td>
+<td><strong>‎$0 בחודש</strong></td>
+</tr>
+</tbody></table>
 </div>
-<h2 id="s2"><span class="n">02</span><span>חנויות האפליקציות</span></h2>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>זכויות שימוש מסחרי בכלי התמונות והמוזיקה קשורות למנוי בתשלום. בודקים את תנאי השימוש העדכניים לפני שמתחילים להפיק, כי התוכן ישמש גם בתקופה ב׳.</p>
+</div>
+<div class="callout note"><p class="callout-label">הערה</p><p>אם השרת החינמי ייעצר יותר מדי, אפשר לעבור כבר בתקופה א׳ לתוכנית בתשלום (25 דולר בחודש). היא לא נעצרת ויש בה גיבויים.</p>
+</div>
+<h2 id="s3"><span class="n">03</span><span>תקופה ב׳: אפליקציה בחנויות, לכולם</span></h2>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -187,272 +249,80 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>חשבון מפתח אפל</td>
 <td>‎$99</td>
 <td>בשנה</td>
-<td>חובה ל-iOS. משלמים כל עוד המשחק בחנות.</td>
+<td>חובה לאייפון.</td>
 </tr>
 <tr>
 <td>חשבון מפתח גוגל</td>
 <td>‎$25</td>
 <td>פעם אחת</td>
-<td>חובה ל-Android.</td>
+<td>חובה לאנדרואיד.</td>
 </tr>
 <tr>
 <td>עמלת אפל</td>
-<td>15% מכל מכירה</td>
-<td>שוטף</td>
-<td>רק אחרי הרשמה ידנית לתוכנית העסקים הקטנים. בלי הרשמה: 30%. עד מיליון דולר בשנה.</td>
+<td>15%</td>
+<td>מכל מכירה</td>
+<td>רק אחרי הרשמה ידנית לתוכנית העסקים הקטנים. בלי הרשמה: 30%.</td>
 </tr>
 <tr>
 <td>עמלת גוגל</td>
-<td>15% מכל מכירה</td>
-<td>שוטף</td>
+<td>15%</td>
+<td>מכל מכירה</td>
 <td>על המיליון הראשון בשנה <span class="badge">לאמת</span>.</td>
+</tr>
+<tr>
+<td>שרת, Supabase בתשלום</td>
+<td>‎$25</td>
+<td>בחודש</td>
+<td>בלי עצירות, עם גיבויים. 8GB אחסון.</td>
+</tr>
+<tr>
+<td>בנייה לחנויות, Expo</td>
+<td>‎$0, או ‎$19</td>
+<td>בחודש</td>
+<td>חינם בהתחלה. בתשלום רק כשמספר השחקנים גדל.</td>
+</tr>
+<tr>
+<td>רכישות, RevenueCat</td>
+<td>‎$0</td>
+<td>עד 2,500 דולר הכנסה בחודש</td>
+<td>אחר כך 1%. רשות.</td>
+</tr>
+<tr>
+<td>מדיניות פרטיות ותנאי שימוש</td>
+<td>‎$0 עד מאות דולרים</td>
+<td>פעם אחת</td>
+<td>חובה בחנויות. מחולל חינמי או עורך דין.</td>
+</tr>
+<tr>
+<td>סימן מסחרי בישראל</td>
+<td>כ-1,600 ש&quot;ח לסוג הראשון <span class="badge">לאמת</span></td>
+<td>פעם אחת</td>
+<td>רשות, מגן על השם.</td>
+</tr>
+<tr>
+<td><strong>סה&quot;כ</strong></td>
+<td><strong>‎$124 בפתיחה</strong></td>
+<td><strong>‎$25 בחודש, ‎$99 בשנה</strong></td>
+<td><strong>ועוד 15% מכל מכירה</strong></td>
 </tr>
 </tbody></table>
 </div>
 <div class="callout decision"><p class="callout-label">החלטה</p><p>להירשם לתוכנית העסקים הקטנים של אפל ביום פתיחת החשבון. זה חוסך חצי מהעמלה.</p>
 </div>
-<h2 id="s3"><span class="n">03</span><span>שרת וחשבונות (Supabase)</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>שלב</th>
-<th>תוכנית</th>
-<th>מחיר</th>
-<th>הערות</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>פיתוח</td>
-<td>חינם</td>
-<td>‎$0</td>
-<td>מספיק לבדיקות. פרויקט חינמי נעצר אחרי תקופה בלי שימוש <span class="badge">לאמת</span>.</td>
-</tr>
-<tr>
-<td>השקה ואילך</td>
-<td>Pro</td>
-<td>‎$25 לחודש</td>
-<td>כולל 8GB אחסון ו-10 דולר זיכוי מחשוב. חריגות בתשלום לפי שימוש.</td>
-</tr>
-<tr>
-<td>גרסה 2 (אונליין)</td>
-<td>Pro</td>
-<td>‎$25 ומעלה</td>
-<td>הרצת שבועות אונליין מוסיפה מחשוב. נעריך כשנגיע.</td>
-</tr>
-</tbody></table>
-</div>
-<h2 id="s4"><span class="n">04</span><span>בנייה ועדכונים (Expo)</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>תוכנית</th>
-<th>מחיר</th>
-<th>מה כלול</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>חינם</td>
-<td>‎$0</td>
-<td>כ-15 בניות לכל פלטפורמה בחודש, עדכונים מרחוק ל-1,000 משתמשים פעילים <span class="badge">לאמת</span></td>
-</tr>
-<tr>
-<td>Starter</td>
-<td>‎$19 לחודש</td>
-<td>45 דולר זיכוי בנייה, עדכונים ל-3,000 משתמשים</td>
-</tr>
-<tr>
-<td>Production</td>
-<td>‎$199 לחודש</td>
-<td>לאפליקציה גדולה. לא צפוי בשנה הראשונה.</td>
-</tr>
-</tbody></table>
-</div>
-<p><strong>המלצה:</strong> חינם עד ההשקה. Starter רק אם מספר השחקנים יעבור את מגבלת העדכונים. הבנייה בענן גם חוסכת את הצורך במחשב מק בשביל iOS.</p>
-<h2 id="s5"><span class="n">05</span><span>רכישות בתוך האפליקציה</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>כלי</th>
-<th>מחיר</th>
-<th>הערות</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>RevenueCat (רשות)</td>
-<td>חינם עד 2,500 דולר הכנסה בחודש, ואחר כך 1%</td>
-<td>מפשט את אימות הרכישה מול אפל וגוגל. אפשר גם בלעדיו, עם קוד שרת ב-Supabase.</td>
-</tr>
-</tbody></table>
-</div>
-<h2 id="s6"><span class="n">06</span><span>הפקת תוכן</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>פריט</th>
-<th>כלי</th>
-<th>מחיר</th>
-<th>משך</th>
-<th>סה&quot;כ</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>דיוקנאות (300 מתאבקים + 20 מנהלים, עם ניסיונות)</td>
-<td>Midjourney, תוכנית Standard</td>
-<td>‎$30 לחודש</td>
-<td>כ-3 חודשים</td>
-<td>‎$90</td>
-</tr>
-<tr>
-<td>מוזיקת רקע</td>
-<td>Suno, תוכנית Pro</td>
-<td>‎$10 לחודש</td>
-<td>כ-2 חודשים</td>
-<td>‎$20</td>
-</tr>
-<tr>
-<td>אפקטים וקהל</td>
-<td>ספריית סאונד ברישיון מסחרי</td>
-<td>‎$0–100</td>
-<td>פעם אחת</td>
-<td>‎$0–100</td>
-</tr>
-<tr>
-<td>לוגואים, חגורות, ממשק</td>
-<td>וקטורי, אני מעצב בקוד</td>
-<td>‎$0</td>
-<td>—</td>
-<td>‎$0</td>
-</tr>
-<tr>
-<td>גופנים</td>
-<td>Google Fonts</td>
-<td>‎$0</td>
-<td>—</td>
-<td>‎$0</td>
-</tr>
-</tbody></table>
-</div>
-<div class="callout verify"><p class="callout-label">לאמת</p><p><strong>זכויות שימוש מסחרי:</strong> בשני הכלים הזכויות המסחריות קשורות למנוי בתשלום. ב-Suno יש גם מכסת הורדות חודשית לשימוש מסחרי (בערך 20 ב-Pro). מקור אחד טוען שביטול מנוי ב-Midjourney מבטל זכויות לתמונות שנוצרו בתקופתו. צריך לקרוא את תנאי השימוש העדכניים לפני שמתחילים להפיק.</p>
-</div>
-<h2 id="s7"><span class="n">07</span><span>משפטי ורישום</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>פריט</th>
-<th>מחיר</th>
-<th>חובה?</th>
-<th>הערות</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>מדיניות פרטיות ותנאי שימוש</td>
-<td>‎$0 (מחולל) עד מאות דולרים (עורך דין)</td>
-<td>חובה</td>
-<td>החנויות דורשות מדיניות פרטיות כשיש חשבונות משתמש.</td>
-</tr>
-<tr>
-<td>דומיין</td>
-<td>כ-‎$10–20 בשנה</td>
-<td>מומלץ</td>
-<td>כתובת לאתר, למדיניות הפרטיות ולמיילים של המשחק.</td>
-</tr>
-<tr>
-<td>סימן מסחר בישראל</td>
-<td>כ-1,600 ש&quot;ח לסוג הראשון, כ-1,200 לכל סוג נוסף <span class="badge">לאמת</span></td>
-<td>רשות</td>
-<td>מגן על שם המשחק. כדאי אחרי שהשם נבחר ונבדק.</td>
-</tr>
-</tbody></table>
-</div>
-<h2 id="s8"><span class="n">08</span><span>כלי הפיתוח</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>פריט</th>
-<th>מחיר</th>
-<th>הערות</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>מנוי Claude</td>
-<td>‎$20 / ‎$100 / ‎$200 לחודש <span class="badge">לאמת</span></td>
-<td>כלי הפיתוח העיקרי. בפרויקט בהיקף כזה, תוכנית גבוהה חוסכת המתנה למגבלות שימוש.</td>
-</tr>
-<tr>
-<td>Node, Expo, VS Code, GitHub</td>
-<td>‎$0</td>
-<td>חינמיים</td>
-</tr>
-<tr>
-<td>טלפונים לבדיקה</td>
-<td>‎$0</td>
-<td>משתמשים במכשירים קיימים.</td>
-</tr>
-</tbody></table>
-</div>
-<h2 id="s9"><span class="n">09</span><span>איך חושב הסכום</span></h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>רכיב</th>
-<th>מינימום</th>
-<th>מומלץ</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>חשבון גוגל</td>
-<td>‎$25</td>
-<td>‎$25</td>
-</tr>
-<tr>
-<td>חשבון אפל (שנה ראשונה)</td>
-<td>‎$99</td>
-<td>‎$99</td>
-</tr>
-<tr>
-<td>דיוקנאות</td>
-<td>‎$90</td>
-<td>‎$90</td>
-</tr>
-<tr>
-<td>מוזיקה</td>
-<td>‎$20</td>
-<td>‎$20</td>
-</tr>
-<tr>
-<td>אפקטים וקהל</td>
-<td>‎$0</td>
-<td>‎$80</td>
-</tr>
-<tr>
-<td>דומיין</td>
-<td>‎$0</td>
-<td>‎$15</td>
-</tr>
-<tr>
-<td><strong>עד ההשקה</strong></td>
-<td><strong>‎$234</strong></td>
-<td><strong>‎$329</strong></td>
-</tr>
-<tr>
-<td>Supabase Pro, לחודש אחרי ההשקה</td>
-<td>‎$0</td>
-<td>‎$25</td>
-</tr>
-</tbody></table>
-</div>
-<h2 id="s10"><span class="n">10</span><span>מקורות</span></h2>
+<h2 id="s4"><span class="n">04</span><span>מקורות</span></h2>
 <ul>
+<li><a href="https://temps.sh/blog/cloudflare-pages-free-tier-limits-2026">מגבלות האחסון החינמי של Cloudflare Pages 2026 – Temps</a></li>
+<li><a href="https://supabase.com/kb/faqs/platform/free-project-pausing">עצירת פרויקטים חינמיים – Supabase</a></li>
+<li><a href="https://toolradar.com/blog/supabase-pricing-2026">מחירון Supabase 2026 – Toolradar</a></li>
 <li><a href="https://newly.app/guides/cost-to-publish-an-app">עלויות פרסום בחנויות 2026 – Newly</a></li>
 <li><a href="https://magora-systems.com/apple-developer-fee/">חשבון מפתח אפל – Magora</a></li>
 <li><a href="https://magora-systems.com/google-play-developer-account-cost/">חשבון מפתח גוגל – Magora</a></li>
 <li><a href="https://www.revenuecat.com/blog/growth/enroll-app-store-small-business-program/">תוכנית העסקים הקטנים של אפל – RevenueCat</a></li>
 <li><a href="https://pricepush.app/blog/app-store-fees-2026">עמלות חנויות 2026 – PricePush</a></li>
-<li><a href="https://toolradar.com/blog/supabase-pricing-2026">מחירון Supabase 2026 – Toolradar</a></li>
 <li><a href="https://toolradar.com/tools/expo/pricing">מחירון Expo – Toolradar</a></li>
 <li><a href="https://www.eesel.ai/en/blog/midjourney-pricing">מחירון Midjourney 2026 – eesel</a></li>
 <li><a href="https://diyai.io/ai-tools/audio-generation/suno-pricing/">מחירון Suno 2026 – DIY AI</a></li>
-<li><a href="https://www.revenuecat.com/guides/revenuecat-replit/decide-how-to-monetize">RevenueCat – החלטה איך לגבות</a></li>
+<li><a href="https://www.revenuecat.com/guides/revenuecat-replit/decide-how-to-monetize">RevenueCat – איך לגבות</a></li>
 <li><a href="https://dwo.co.il/how-much-does-it-cost-to-register-a-trademark-in-israel/">עלות רישום סימן מסחר בישראל – DWO</a></li>
 </ul>
 
