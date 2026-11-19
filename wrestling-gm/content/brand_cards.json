@@ -1,0 +1,92 @@
+[
+ {
+  "id": "B01",
+  "brand": "Rage",
+  "name": "Blood Feud",
+  "nameHe": "נקמת דם",
+  "useDetail": "פעמיים בעונה",
+  "effect": "קרב יריבות אחד מקבל כוכב שלם נוסף, ושני המשתתפים מקבלים 5 פופולריות. סיכון הפציעה בקרב כפול.",
+  "gameChanger": false
+ },
+ {
+  "id": "B02",
+  "brand": "Rage",
+  "name": "Hardcore Rules",
+  "nameHe": "חוקי הארדקור",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "קרב אחד בשבוע הזה הופך לקרב בלי פסילות, בחינם, ומקבל חצי כוכב נוסף.",
+  "gameChanger": false
+ },
+ {
+  "id": "B03",
+  "brand": "Throwdown",
+  "name": "Star Power",
+  "nameHe": "כוח כוכבים",
+  "useDetail": "פעמיים בעונה",
+  "effect": "שלושת המתאבקים הפופולריים ביותר ברוסטר מקבלים 5 פופולריות.",
+  "gameChanger": false
+ },
+ {
+  "id": "B04",
+  "brand": "Throwdown",
+  "name": "Red Carpet",
+  "nameHe": "שטיח אדום",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "הקהל בתוכנית הזו גדל ב-15%.",
+  "gameChanger": false
+ },
+ {
+  "id": "B05",
+  "brand": "Ignite",
+  "name": "Sky High",
+  "nameHe": "בשמיים",
+  "useDetail": "פעמיים בעונה",
+  "effect": "כל הקרבות בשבוע הזה שיש בהם מתאבק קל-משקל מקבלים כוכב שלם נוסף.",
+  "gameChanger": false
+ },
+ {
+  "id": "B06",
+  "brand": "Ignite",
+  "name": "Fast Track",
+  "nameHe": "מסלול מהיר",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "כוכב עולה אחד עולה רמת ניסיון אחת.",
+  "gameChanger": false
+ },
+ {
+  "id": "B07",
+  "brand": "Breakout",
+  "name": "Call-Up",
+  "nameHe": "קידום לסגל הראשי",
+  "useDetail": "פעם בעונה",
+  "effect": "צעיר בפיתוח אחד הופך לכוכב: 20 פופולריות ו-2 רמות ניסיון.",
+  "gameChanger": true
+ },
+ {
+  "id": "B08",
+  "brand": "Breakout",
+  "name": "Showcase",
+  "nameHe": "חלון ראווה",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "כל הצעירים בכרטיס השבוע צוברים ניסיון כפול ומקבלים 3 פופולריות.",
+  "gameChanger": false
+ },
+ {
+  "id": "B09",
+  "brand": "Uproar",
+  "name": "Total Chaos",
+  "nameHe": "כאוס מוחלט",
+  "useDetail": "פעמיים בעונה",
+  "effect": "קרב אחד הופך לקטטה פרועה: כוכב וחצי נוספים, אבל התוצאה אקראית והסיבולת נשחקת כפול.",
+  "gameChanger": true
+ },
+ {
+  "id": "B10",
+  "brand": "Uproar",
+  "name": "Crowd Surge",
+  "nameHe": "גל קהל",
+  "useDetail": "3 פעמים בעונה",
+  "effect": "כל יריבות שמופיעה בכרטיס השבוע עולה ברמה אחת.",
+  "gameChanger": false
+ }
+]
