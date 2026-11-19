@@ -122,7 +122,7 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <div class="doc" dir="rtl" lang="he">
   <header class="cover">
     <div class="cover-inner gutter">
-      <div class="eyebrow"><span class="live">● מסמך אפיון (GDD)</span><span>גרסה 0.3</span><span>2026-11-19</span><span>סטטוס: סיכום כל 50 ההחלטות. ממתין למחקר המספרים ולכמה החלטות פתוחות</span></div>
+      <div class="eyebrow"><span class="live">● מסמך אפיון (GDD)</span><span>גרסה 0.4</span><span>2026-11-19</span><span>סטטוס: סיכום 62 החלטות. כל מה שתקופה א׳ צריכה סגור. ממתין למחקר המספרים</span></div>
       <h1>מסמך אפיון המשחק</h1>
       <p class="lead">LWF GM: משחק ניהול היאבקות נאמן למצב המנהל של המקור, עם עולם בדיוני משלנו (ליגה, 5 תוכניות, 300 מתאבקים, 20 מנהלים), גרפיקה ברמת שידור, ומצבי משחק מול מחשב, באותו מכשיר ואונליין.</p>
     </div>
@@ -154,7 +154,7 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 </tr>
 </thead>
 <tbody><tr>
-<td>50 החלטות</td>
+<td>62 החלטות</td>
 <td><code>decisions.md</code></td>
 </tr>
 <tr>
@@ -176,6 +176,34 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <tr>
 <td>תקציב, מחולק לשתי התקופות</td>
 <td>מסמך העלויות</td>
+</tr>
+<tr>
+<td>סוגי קרבות: 15 פורמטים, 28 תנאים</td>
+<td><code>content/match_types.json</code>, מסמך סוגי הקרבות</td>
+</tr>
+<tr>
+<td>פרומואים: 14 סוגים</td>
+<td><code>content/promos.json</code>, מסמך הפרומואים</td>
+</tr>
+<tr>
+<td>אולמות: 6 שכבות, 24 אולמות</td>
+<td><code>content/venues.json</code>, מסמך האולמות</td>
+</tr>
+<tr>
+<td>12 בקשות ו-25 אירועים</td>
+<td><code>content/events.json</code>, מסמך הבקשות והאירועים</td>
+</tr>
+<tr>
+<td>20 אתגרים עונתיים, 8 הישגי קריירה, היכל התהילה</td>
+<td><code>content/challenges.json</code>, מסמך האתגרים</td>
+</tr>
+<tr>
+<td>5 רמות קושי</td>
+<td><code>content/difficulty.json</code>, מסמך רמות הקושי</td>
+</tr>
+<tr>
+<td>המחשב כיריב, הקרב הכתוב, לוח ניהול המנויים</td>
+<td><code>docs/ai.md</code>, <code>docs/match_viewer.md</code>, <code>docs/admin.md</code></td>
 </tr>
 </tbody></table>
 </div>
@@ -936,84 +964,30 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <li>האם קלפי התוכניות קיימים במקור כמו שתכננו.</li>
 </ol>
 <h2 id="s16"><span class="n">16</span><span>מה עוד פתוח לתכנון</span></h2>
-<p>אלה החלטות תכנון שעוד לא קיבלנו. את רובן אפשר לסגור כאן בשאלון, בלי המחשב.</p>
+<p>כל ההחלטות שתקופה א׳ צריכה נסגרו (החלטות 51–62): סוגי קרבות, פרומואים, אולמות, אירועים ובקשות, אתגרים, רמות קושי, המחשב כיריב, הקרב הכתוב ומהלכי סיום, לוח ניהול המנויים, נגישות והדרכה.</p>
+<p>נשארו שלושה נושאים, ששייכים לשלבים מאוחרים יותר:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>#</th>
 <th>נושא</th>
+<th>מתי</th>
 <th>מה צריך להחליט</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>1</td>
-<td>סוגי קרבות</td>
-<td>הרשימה המלאה, מה כל אחד עולה, ומתי הוא נפתח</td>
-</tr>
-<tr>
-<td>2</td>
-<td>סוגי פרומואים</td>
-<td>הרשימה, המחיר וההשפעה של כל אחד</td>
-</tr>
-<tr>
-<td>3</td>
-<td>אולמות</td>
-<td>שמות בדיוניים לכל שכבת אולם, קיבולת ומחיר</td>
-</tr>
-<tr>
-<td>4</td>
-<td>אירועים ובקשות</td>
-<td>קטלוג האירועים מאחורי הקלעים ובקשות המתאבקים</td>
-</tr>
-<tr>
-<td>5</td>
-<td>אתגרים עונתיים</td>
-<td>רשימת 20 האתגרים</td>
-</tr>
-<tr>
-<td>6</td>
-<td>רמות קושי</td>
-<td>השמות ומה כל רמה משנה</td>
-</tr>
-<tr>
-<td>7</td>
-<td>המחשב כיריב</td>
-<td>איך מנהלי המחשב מדראפטים, בונים תוכנית ומשתמשים בקלפים</td>
-</tr>
-<tr>
-<td>8</td>
-<td>הדרכה</td>
-<td>איך שחקן חדש לומד את המשחק בעונה הראשונה</td>
-</tr>
-<tr>
-<td>9</td>
-<td>קרב כתוב</td>
-<td>הסגנון, האורך, ושמות מהלכי סיום למתאבקים</td>
-</tr>
-<tr>
-<td>10</td>
-<td>לוח ניהול המנויים</td>
-<td>בדיוק מה האדמין רואה ושולט בו</td>
-</tr>
-<tr>
-<td>11</td>
 <td>גרסה חינמית</td>
-<td>אילו מנהלים ותוכניות פתוחים בחינם (תקופה ב׳)</td>
+<td>תקופה ב׳</td>
+<td>אילו מנהלים ותוכניות פתוחים בחינם</td>
 </tr>
 <tr>
-<td>12</td>
 <td>מחיר הרכישה</td>
-<td>המחיר בחנויות (תקופה ב׳)</td>
+<td>תקופה ב׳</td>
+<td>המחיר בחנויות</td>
 </tr>
 <tr>
-<td>13</td>
-<td>נגישות</td>
-<td>גודל טקסט, ניגודיות, קריאת מסך</td>
-</tr>
-<tr>
-<td>14</td>
 <td>אונליין</td>
-<td>החוקים המדויקים לגרסה 2</td>
+<td>גרסה 2</td>
+<td>החוקים המדויקים</td>
 </tr>
 </tbody></table>
 </div>
@@ -1029,13 +1003,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 </thead>
 <tbody><tr>
 <td>1. החלטות יסוד</td>
-<td>50 החלטות</td>
+<td>62 החלטות</td>
 <td>בענן</td>
 <td>הושלם</td>
 </tr>
 <tr>
 <td>2. מסמך אפיון</td>
-<td>המסמך הזה, גרסה 0.3</td>
+<td>המסמך הזה, גרסה 0.4</td>
 <td>בענן</td>
 <td>הושלם</td>
 </tr>
@@ -1047,9 +1021,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 </tr>
 <tr>
 <td>4. סגירת ההחלטות הפתוחות</td>
-<td>14 הנושאים למעלה</td>
-<td>בענן או במחשב</td>
-<td>פתוח</td>
+<td>כל מה שתקופה א׳ צריכה</td>
+<td>בענן</td>
+<td>הושלם</td>
 </tr>
 <tr>
 <td>5. בדיקת סימן מסחרי</td>
@@ -1066,8 +1040,8 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <tr>
 <td>7. אב-טיפוס</td>
 <td>מנוע + ממשק בדפדפן, עונה מלאה עם כל הדמויות ותמונות זמניות</td>
-<td>במחשב, ואפשר להתחיל בענן</td>
-<td>פתוח</td>
+<td>המנוע בענן, השאר במחשב</td>
+<td>בעבודה</td>
 </tr>
 <tr>
 <td>8. תמונות</td>
