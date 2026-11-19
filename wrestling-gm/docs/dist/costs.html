@@ -1,0 +1,464 @@
+<title>תקציב ועלויות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● סיכום עלויות</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: הערכה ראשונה</span></div>
+      <h1>תקציב ועלויות</h1>
+      <p class="lead">כמה יעלה לבנות ולהשיק את המשחק לפי ההחלטות עד כה: בערך 230–330 דולר עד ההשקה, ועוד כ-25 דולר בחודש אחריה, לא כולל מנוי Claude ותוספות רשות.</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>חנויות האפליקציות</span></a></li><li><a href="#s3"><span class="n">03</span><span>שרת וחשבונות (Supabase)</span></a></li><li><a href="#s4"><span class="n">04</span><span>בנייה ועדכונים (Expo)</span></a></li><li><a href="#s5"><span class="n">05</span><span>רכישות בתוך האפליקציה</span></a></li><li><a href="#s6"><span class="n">06</span><span>הפקת תוכן</span></a></li><li><a href="#s7"><span class="n">07</span><span>משפטי ורישום</span></a></li><li><a href="#s8"><span class="n">08</span><span>כלי הפיתוח</span></a></li><li><a href="#s9"><span class="n">09</span><span>איך חושב הסכום</span></a></li><li><a href="#s10"><span class="n">10</span><span>מקורות</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תקופה</th>
+<th>מינימום</th>
+<th>מומלץ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>עד ההשקה (חד-פעמי + חודשי הפקה)</td>
+<td>‎$234</td>
+<td>‎$330</td>
+</tr>
+<tr>
+<td>אחרי ההשקה, בכל חודש</td>
+<td>‎$0</td>
+<td>‎$25</td>
+</tr>
+<tr>
+<td>אחרי ההשקה, בכל שנה</td>
+<td>‎$99</td>
+<td>‎$99</td>
+</tr>
+<tr>
+<td>עמלת חנויות על כל מכירה</td>
+<td>15%</td>
+<td>15%</td>
+</tr>
+</tbody></table>
+</div>
+<ul>
+<li><strong>לא כלול:</strong> מנוי Claude, שהוא כלי הפיתוח העיקרי (20–200 דולר בחודש, לפי התוכנית) <span class="badge">לאמת</span>.</li>
+<li><strong>תוספות רשות (לא בסכום):</strong> רישום סימן מסחר בישראל (כ-1,600 ש&quot;ח לסוג הראשון <span class="badge">לאמת</span>), עורך דין לתנאי שימוש, ופרילנסר ללוגואים.</li>
+<li><strong>מטבע:</strong> המחירים בדולרים, כמו במחירוני הספקים. ההמרה לשקלים לפי השער ביום התשלום.</li>
+<li><strong>אמינות:</strong> המחירים מסיכומים של אתרים חיצוניים מנובמבר 2026, לא מהמחירונים הרשמיים. לפני כל תשלום בודקים באתר של הספק.</li>
+</ul>
+<div class="callout note"><p class="callout-label">הערה</p><p>רוב הכלים חינמיים בזמן הפיתוח (Supabase, Expo, הגופנים, כלי הבנייה). הכסף מתחיל לזרום בשני רגעים: הפקת התוכן (תמונות ומוזיקה), והעלייה לחנויות.</p>
+</div>
+<h2 id="s2"><span class="n">02</span><span>חנויות האפליקציות</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פריט</th>
+<th>מחיר</th>
+<th>תדירות</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>חשבון מפתח אפל</td>
+<td>‎$99</td>
+<td>בשנה</td>
+<td>חובה ל-iOS. משלמים כל עוד המשחק בחנות.</td>
+</tr>
+<tr>
+<td>חשבון מפתח גוגל</td>
+<td>‎$25</td>
+<td>פעם אחת</td>
+<td>חובה ל-Android.</td>
+</tr>
+<tr>
+<td>עמלת אפל</td>
+<td>15% מכל מכירה</td>
+<td>שוטף</td>
+<td>רק אחרי הרשמה ידנית לתוכנית העסקים הקטנים. בלי הרשמה: 30%. עד מיליון דולר בשנה.</td>
+</tr>
+<tr>
+<td>עמלת גוגל</td>
+<td>15% מכל מכירה</td>
+<td>שוטף</td>
+<td>על המיליון הראשון בשנה <span class="badge">לאמת</span>.</td>
+</tr>
+</tbody></table>
+</div>
+<div class="callout decision"><p class="callout-label">החלטה</p><p>להירשם לתוכנית העסקים הקטנים של אפל ביום פתיחת החשבון. זה חוסך חצי מהעמלה.</p>
+</div>
+<h2 id="s3"><span class="n">03</span><span>שרת וחשבונות (Supabase)</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>שלב</th>
+<th>תוכנית</th>
+<th>מחיר</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>פיתוח</td>
+<td>חינם</td>
+<td>‎$0</td>
+<td>מספיק לבדיקות. פרויקט חינמי נעצר אחרי תקופה בלי שימוש <span class="badge">לאמת</span>.</td>
+</tr>
+<tr>
+<td>השקה ואילך</td>
+<td>Pro</td>
+<td>‎$25 לחודש</td>
+<td>כולל 8GB אחסון ו-10 דולר זיכוי מחשוב. חריגות בתשלום לפי שימוש.</td>
+</tr>
+<tr>
+<td>גרסה 2 (אונליין)</td>
+<td>Pro</td>
+<td>‎$25 ומעלה</td>
+<td>הרצת שבועות אונליין מוסיפה מחשוב. נעריך כשנגיע.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s4"><span class="n">04</span><span>בנייה ועדכונים (Expo)</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תוכנית</th>
+<th>מחיר</th>
+<th>מה כלול</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>חינם</td>
+<td>‎$0</td>
+<td>כ-15 בניות לכל פלטפורמה בחודש, עדכונים מרחוק ל-1,000 משתמשים פעילים <span class="badge">לאמת</span></td>
+</tr>
+<tr>
+<td>Starter</td>
+<td>‎$19 לחודש</td>
+<td>45 דולר זיכוי בנייה, עדכונים ל-3,000 משתמשים</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>‎$199 לחודש</td>
+<td>לאפליקציה גדולה. לא צפוי בשנה הראשונה.</td>
+</tr>
+</tbody></table>
+</div>
+<p><strong>המלצה:</strong> חינם עד ההשקה. Starter רק אם מספר השחקנים יעבור את מגבלת העדכונים. הבנייה בענן גם חוסכת את הצורך במחשב מק בשביל iOS.</p>
+<h2 id="s5"><span class="n">05</span><span>רכישות בתוך האפליקציה</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>כלי</th>
+<th>מחיר</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RevenueCat (רשות)</td>
+<td>חינם עד 2,500 דולר הכנסה בחודש, ואחר כך 1%</td>
+<td>מפשט את אימות הרכישה מול אפל וגוגל. אפשר גם בלעדיו, עם קוד שרת ב-Supabase.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s6"><span class="n">06</span><span>הפקת תוכן</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פריט</th>
+<th>כלי</th>
+<th>מחיר</th>
+<th>משך</th>
+<th>סה&quot;כ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>דיוקנאות (300 מתאבקים + 20 מנהלים, עם ניסיונות)</td>
+<td>Midjourney, תוכנית Standard</td>
+<td>‎$30 לחודש</td>
+<td>כ-3 חודשים</td>
+<td>‎$90</td>
+</tr>
+<tr>
+<td>מוזיקת רקע</td>
+<td>Suno, תוכנית Pro</td>
+<td>‎$10 לחודש</td>
+<td>כ-2 חודשים</td>
+<td>‎$20</td>
+</tr>
+<tr>
+<td>אפקטים וקהל</td>
+<td>ספריית סאונד ברישיון מסחרי</td>
+<td>‎$0–100</td>
+<td>פעם אחת</td>
+<td>‎$0–100</td>
+</tr>
+<tr>
+<td>לוגואים, חגורות, ממשק</td>
+<td>וקטורי, אני מעצב בקוד</td>
+<td>‎$0</td>
+<td>—</td>
+<td>‎$0</td>
+</tr>
+<tr>
+<td>גופנים</td>
+<td>Google Fonts</td>
+<td>‎$0</td>
+<td>—</td>
+<td>‎$0</td>
+</tr>
+</tbody></table>
+</div>
+<div class="callout verify"><p class="callout-label">לאמת</p><p><strong>זכויות שימוש מסחרי:</strong> בשני הכלים הזכויות המסחריות קשורות למנוי בתשלום. ב-Suno יש גם מכסת הורדות חודשית לשימוש מסחרי (בערך 20 ב-Pro). מקור אחד טוען שביטול מנוי ב-Midjourney מבטל זכויות לתמונות שנוצרו בתקופתו. צריך לקרוא את תנאי השימוש העדכניים לפני שמתחילים להפיק.</p>
+</div>
+<h2 id="s7"><span class="n">07</span><span>משפטי ורישום</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פריט</th>
+<th>מחיר</th>
+<th>חובה?</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>מדיניות פרטיות ותנאי שימוש</td>
+<td>‎$0 (מחולל) עד מאות דולרים (עורך דין)</td>
+<td>חובה</td>
+<td>החנויות דורשות מדיניות פרטיות כשיש חשבונות משתמש.</td>
+</tr>
+<tr>
+<td>דומיין</td>
+<td>כ-‎$10–20 בשנה</td>
+<td>מומלץ</td>
+<td>כתובת לאתר, למדיניות הפרטיות ולמיילים של המשחק.</td>
+</tr>
+<tr>
+<td>סימן מסחר בישראל</td>
+<td>כ-1,600 ש&quot;ח לסוג הראשון, כ-1,200 לכל סוג נוסף <span class="badge">לאמת</span></td>
+<td>רשות</td>
+<td>מגן על שם המשחק. כדאי אחרי שהשם נבחר ונבדק.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s8"><span class="n">08</span><span>כלי הפיתוח</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פריט</th>
+<th>מחיר</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>מנוי Claude</td>
+<td>‎$20 / ‎$100 / ‎$200 לחודש <span class="badge">לאמת</span></td>
+<td>כלי הפיתוח העיקרי. בפרויקט בהיקף כזה, תוכנית גבוהה חוסכת המתנה למגבלות שימוש.</td>
+</tr>
+<tr>
+<td>Node, Expo, VS Code, GitHub</td>
+<td>‎$0</td>
+<td>חינמיים</td>
+</tr>
+<tr>
+<td>טלפונים לבדיקה</td>
+<td>‎$0</td>
+<td>משתמשים במכשירים קיימים.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s9"><span class="n">09</span><span>איך חושב הסכום</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>רכיב</th>
+<th>מינימום</th>
+<th>מומלץ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>חשבון גוגל</td>
+<td>‎$25</td>
+<td>‎$25</td>
+</tr>
+<tr>
+<td>חשבון אפל (שנה ראשונה)</td>
+<td>‎$99</td>
+<td>‎$99</td>
+</tr>
+<tr>
+<td>דיוקנאות</td>
+<td>‎$90</td>
+<td>‎$90</td>
+</tr>
+<tr>
+<td>מוזיקה</td>
+<td>‎$20</td>
+<td>‎$20</td>
+</tr>
+<tr>
+<td>אפקטים וקהל</td>
+<td>‎$0</td>
+<td>‎$80</td>
+</tr>
+<tr>
+<td>דומיין</td>
+<td>‎$0</td>
+<td>‎$15</td>
+</tr>
+<tr>
+<td><strong>עד ההשקה</strong></td>
+<td><strong>‎$234</strong></td>
+<td><strong>‎$329</strong></td>
+</tr>
+<tr>
+<td>Supabase Pro, לחודש אחרי ההשקה</td>
+<td>‎$0</td>
+<td>‎$25</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s10"><span class="n">10</span><span>מקורות</span></h2>
+<ul>
+<li><a href="https://newly.app/guides/cost-to-publish-an-app">עלויות פרסום בחנויות 2026 – Newly</a></li>
+<li><a href="https://magora-systems.com/apple-developer-fee/">חשבון מפתח אפל – Magora</a></li>
+<li><a href="https://magora-systems.com/google-play-developer-account-cost/">חשבון מפתח גוגל – Magora</a></li>
+<li><a href="https://www.revenuecat.com/blog/growth/enroll-app-store-small-business-program/">תוכנית העסקים הקטנים של אפל – RevenueCat</a></li>
+<li><a href="https://pricepush.app/blog/app-store-fees-2026">עמלות חנויות 2026 – PricePush</a></li>
+<li><a href="https://toolradar.com/blog/supabase-pricing-2026">מחירון Supabase 2026 – Toolradar</a></li>
+<li><a href="https://toolradar.com/tools/expo/pricing">מחירון Expo – Toolradar</a></li>
+<li><a href="https://www.eesel.ai/en/blog/midjourney-pricing">מחירון Midjourney 2026 – eesel</a></li>
+<li><a href="https://diyai.io/ai-tools/audio-generation/suno-pricing/">מחירון Suno 2026 – DIY AI</a></li>
+<li><a href="https://www.revenuecat.com/guides/revenuecat-replit/decide-how-to-monetize">RevenueCat – החלטה איך לגבות</a></li>
+<li><a href="https://dwo.co.il/how-much-does-it-cost-to-register-a-trademark-in-israel/">עלות רישום סימן מסחר בישראל – DWO</a></li>
+</ul>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/costs.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>
