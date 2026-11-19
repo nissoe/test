@@ -7,6 +7,7 @@ import type { GameState, ShowResult, Settings } from '../../engine/src/types.ts'
 import type { Rng } from '../../engine/src/rng.ts';
 import { BRANDS, content } from './data.ts';
 import { translator, type Lang } from './i18n.ts';
+import { setUiLang } from './ui.tsx';
 
 export type Phase = 'setup' | 'draft' | 'hub' | 'results' | 'seasonEnd';
 
@@ -16,6 +17,7 @@ export interface Game {
   playerId: string;
   draftSeq: string[];
   draftIdx: number;
+  draftFeed: { brand: string; wrestler: string; no: number }[];
   lastResults: ShowResult[];
 }
 
@@ -46,6 +48,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const gameRef = useRef<Game | null>(null);
 
   const setLang = (l: Lang) => {
+    setUiLang(l);
     setLangState(l);
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
       document.documentElement.dir = l === 'he' ? 'rtl' : 'ltr';
@@ -56,16 +59,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const start = (o: StartOptions) => {
     const others = BRANDS.filter((b) => b.id !== o.brandId).slice(0, o.rivals);
     const player = BRANDS.find((b) => b.id === o.brandId)!;
+    // מיקום אקראי בסדר הדראפט, כמו הגרלה
+    const order = [player, ...others];
+    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
     const settings: Settings = {
       seed: Date.now() % 1_000_000,
       seasonWeeks: o.seasonWeeks,
       difficulty: o.difficulty,
       budget: 5_000_000,
       rosterTarget: 20,
-      brands: [player, ...others].map((b) => ({ id: b.id, name: b.name, controller: b.id === o.brandId ? 'local' : 'ai' })),
+      brands: order.map((b) => ({ id: b.id, name: b.name, controller: b.id === o.brandId ? 'local' : 'ai' })),
     };
     const { state, rng } = newGame(settings, content, { draft: false });
-    gameRef.current = { state, rng, playerId: o.brandId, draftSeq: draftSequence(state, rng), draftIdx: 0, lastResults: [] };
+    gameRef.current = { state, rng, playerId: o.brandId, draftSeq: draftSequence(state, rng), draftIdx: 0, draftFeed: [], lastResults: [] };
     setPhase('draft');
   };
 

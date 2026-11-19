@@ -1,6 +1,7 @@
-// המסך השבועי: בניית תוכנית, רוסטר, דירוג ותארים.
+// המסך השבועי: לוח שידור עליון, בניית כרטיס הקרבות, רוסטר, דירוג ותארים.
 import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, ScrollView, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { aiPlanShow, isStipUnlocked, pleWeeks, slotsFor } from '../../../engine/src/ai.ts';
 import { advanceWeek } from '../../../engine/src/game.ts';
 import { CONFIG } from '../../../engine/src/config.ts';
@@ -8,14 +9,15 @@ import type { BookedPromo, ShowPlan, Slot, Wrestler } from '../../../engine/src/
 import { brandInfo, content, singlesStips } from '../data.ts';
 import { money } from '../i18n.ts';
 import { useStore } from '../store.tsx';
-import { Bar, Btn, C, Card, H, Mic, Pill, Row, T, wName, wTags } from '../ui.tsx';
+import { Bar, Btn, C, Chip, Display, FadeIn, Head, Mic, Num, Panel, Plate, Portrait, Row, T, shade, wName, wTags } from '../ui.tsx';
+import * as sfx from '../sfx.ts';
 
 type Tab = 'book' | 'roster' | 'standings' | 'titles';
 interface MatchDraft { slot: Slot; a: string | null; b: string | null; stip: string; title: boolean }
 interface PromoDraft { w: string | null; kind: BookedPromo['kind'] }
 
 export function Hub() {
-  const { t, lang, game } = useStore();
+  const { t, game } = useStore();
   const [tab, setTab] = useState<Tab>('book');
   const st = game!.state;
   const me = st.brands.find((b) => b.id === game!.playerId)!;
@@ -24,27 +26,44 @@ export function Hub() {
   const isPle = ples.includes(st.week);
   const nextPle = ples.find((w) => w >= st.week);
   const pleName = nextPle ? CONFIG.pleNames[ples.indexOf(nextPle)] : null;
+  const rank = [...st.brands].sort((a, b) => b.fans - a.fans).findIndex((b) => b.id === me.id) + 1;
 
   return (
-    <View style={{ flex: 1, maxWidth: 1000, width: '100%', alignSelf: 'center', padding: 16, gap: 12 }}>
-      <Card accent={info.color}>
+    <View style={{ flex: 1, maxWidth: 1000, width: '100%', alignSelf: 'center', paddingHorizontal: 12, paddingTop: 12, gap: 10 }}>
+      <LinearGradient colors={[shade(info.color, -0.3), shade(info.color, -0.8), '#0A0C12']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        style={{ borderRadius: 4, paddingHorizontal: 12, paddingVertical: 10, gap: 8, borderWidth: 1, borderColor: info.color + '66', overflow: 'hidden' }}>
+        <Display size={90} color="#ffffff08" style={{ position: 'absolute', right: -10, top: -20, fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
         <Row style={{ justifyContent: 'space-between' }}>
-          <H color={info.color} size={22}>{info.name.toUpperCase()}</H>
-          <T color={C.muted} bold>{t('season')} {st.season} · {t('week')} {st.week}/{st.settings.seasonWeeks}</T>
+          <Display size={26} color="#fff" glow={info.color} style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
+          <Plate label={`${t('week')} ${st.week}/${st.settings.seasonWeeks}`} color="#ffffffdd" size={12} />
         </Row>
-        <Row gap={18}>
-          <T>{t('cash')}: <T bold color={C.gold}>{money(me.cash)}</T></T>
-          <T>{t('fans')}: <T bold>{me.fans.toLocaleString()}</T></T>
-          {pleName ? <T color={isPle ? C.gold : C.muted} bold={isPle}>{isPle ? `${t('thisWeekPle')}: ${pleName}` : `${t('nextPle')}: ${pleName} (${t('week')} ${nextPle})`}</T> : null}
+        <Row gap={16}>
+          <Stat k={t('cash')} v={money(me.cash)} color={C.gold} />
+          <Stat k={t('fans')} v={me.fans.toLocaleString()} />
+          <Stat k={t('standings')} v={`#${rank}`} />
         </Row>
-        <Row>
-          <Pill label={t('bookShow')} active={tab === 'book'} onPress={() => setTab('book')} color={info.color} />
-          <Pill label={t('roster')} active={tab === 'roster'} onPress={() => setTab('roster')} color={info.color} />
-          <Pill label={t('standings')} active={tab === 'standings'} onPress={() => setTab('standings')} color={info.color} />
-          <Pill label={t('titles')} active={tab === 'titles'} onPress={() => setTab('titles')} color={info.color} />
+        {pleName ? (
+          <Row gap={6}>
+            <Head size={11} color={isPle ? C.gold : '#ffffff99'}>{isPle ? t('thisWeekPle') : `${t('nextPle')} · ${t('week')} ${nextPle}`}</Head>
+            <Head size={15} italic color={isPle ? C.goldHi : '#fff'} style={{ textTransform: 'none' }}>{pleName}</Head>
+          </Row>
+        ) : null}
+        <Row gap={6}>
+          {(['book', 'roster', 'standings', 'titles'] as Tab[]).map((k) => (
+            <Chip key={k} label={k === 'book' ? t('bookShow') : t(k)} active={tab === k} color="#fff" onPress={() => setTab(k)} />
+          ))}
         </Row>
-      </Card>
+      </LinearGradient>
       {tab === 'book' ? <Booking /> : tab === 'roster' ? <RosterView /> : tab === 'standings' ? <Standings /> : <Titles />}
+    </View>
+  );
+}
+
+function Stat({ k, v, color = '#fff' }: { k: string; v: string; color?: string }) {
+  return (
+    <View>
+      <Head size={11} color="#ffffff99">{k}</Head>
+      <Num size={20} color={color}>{v}</Num>
     </View>
   );
 }
@@ -57,6 +76,7 @@ function Booking() {
   const info = brandInfo(me.id);
   const isPle = pleWeeks(st).includes(st.week);
   const slots = slotsFor(st, content, st.week);
+  const baseSlots = content.difficulty.find((d) => d.name === st.settings.difficulty)?.matches ?? 0;
 
   const emptyCard = (): { venue: string; matches: MatchDraft[]; promos: PromoDraft[] } => {
     const order: Slot[] = ['opener', ...Array<Slot>(Math.max(0, slots.matches - 2)).fill('midcard'), 'main'];
@@ -85,13 +105,13 @@ function Booking() {
     const plan = aiPlanShow(me, st, content, g.rng);
     const next = emptyCard();
     next.venue = plan.venueTier;
-    const bySlot = (slot: Slot) => plan.matches.filter((m) => m.slot === slot);
-    const queue = { opener: bySlot('opener'), midcard: bySlot('midcard'), main: bySlot('main') };
+    const queue = { opener: plan.matches.filter((m) => m.slot === 'opener'), midcard: plan.matches.filter((m) => m.slot === 'midcard'), main: plan.matches.filter((m) => m.slot === 'main') };
     next.matches = next.matches.map((m) => {
       const pm = queue[m.slot].shift();
       return pm ? { slot: m.slot, a: pm.sides[0][0], b: pm.sides[1][0], stip: pm.stipulation, title: !!pm.titleId } : m;
     });
     next.promos = next.promos.map((p, i) => (plan.promos[i] ? { w: plan.promos[i].wrestlers[0], kind: plan.promos[i].kind } : p));
+    sfx.whoosh();
     setCard(next);
   };
 
@@ -112,6 +132,7 @@ function Booking() {
       promos: card.promos.filter((p) => p.w).map((p) => ({ kind: p.kind, wrestlers: [p.w!] })),
     };
     g.lastResults = advanceWeek(st, content, g.rng, { [me.id]: plan });
+    if (isPle) sfx.fanfare(); else sfx.whoosh();
     setPhase('results');
   };
 
@@ -131,81 +152,100 @@ function Booking() {
     .sort((a, b) => b.popularity - a.popularity);
 
   return (
-    <ScrollView contentContainerStyle={{ gap: 12, paddingBottom: 40 }}>
-      {slots.matches > (content.difficulty.find((d) => d.name === st.settings.difficulty)?.matches ?? 0) && !isPle ? <T color={C.gold}>{t('goHome')}</T> : null}
-      <Card>
-        <H size={15}>{t('venue')}</H>
-        <Row>
-          {content.venues.map((v) => (
-            <Pill key={v.tier} active={card.venue === v.tier} color={info.color} onPress={() => setCard((c) => ({ ...c, venue: v.tier }))}
-              label={`${lang === 'he' ? v.tierHe ?? v.tier : v.tier} · ${v.cost ? money(v.cost) : t('free')}`} />
-          ))}
-        </Row>
-        <T color={C.muted} size={12}>{t('capacity')} {(venue.capacity + (isPle ? 5000 : 0)).toLocaleString()} · {t('ticket')} ${venue.ticket + (isPle ? 2 : 0)} · {t('quality')} +{venue.quality + (isPle ? 5 : 0)}%</T>
-      </Card>
+    <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 110 }}>
+      {slots.matches > baseSlots && !isPle ? <Plate label={t('goHome')} /> : null}
+
+      <Panel pad={10}>
+        <Head size={13} color={C.muted}>{t('venue')}</Head>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+          {content.venues.map((v) => {
+            const active = card.venue === v.tier;
+            const affordable = v.cost <= me.cash;
+            return (
+              <Pressable key={v.tier} disabled={!affordable} onPress={() => { sfx.click(); setCard((c) => ({ ...c, venue: v.tier })); }}>
+                <LinearGradient colors={active ? [shade(info.color, -0.2), shade(info.color, -0.75)] : ['#171C29', '#0D1018']}
+                  style={{ width: 150, padding: 10, borderRadius: 3, borderWidth: active ? 2 : 1, borderColor: active ? info.color : C.line, opacity: affordable ? 1 : 0.35, gap: 2 }}>
+                  <Head size={14} numberOfLines={1} style={{ textTransform: 'none' }}>{lang === 'he' ? v.tierHe ?? v.tier : v.tier}</Head>
+                  <Num size={18} color={C.gold}>{v.cost ? money(v.cost) : t('free')}</Num>
+                  <T size={11} color="#ffffffaa">{(v.capacity + (isPle ? 5000 : 0)).toLocaleString()} · ${v.ticket + (isPle ? 2 : 0)} · +{v.quality + (isPle ? 5 : 0)}%</T>
+                </LinearGradient>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </Panel>
 
       {card.matches.map((m, i) => {
         const title = titleFor(m);
+        const isMain = m.slot === 'main';
         return (
-          <Card key={i} accent={m.slot === 'main' ? C.gold : undefined}>
-            <Row style={{ justifyContent: 'space-between' }}>
-              <H size={14} color={m.slot === 'main' ? C.gold : C.muted}>{slotLabel(m.slot).toUpperCase()}</H>
-              <Pressable onPress={() => setPicker({ kind: 'stip', i })}><T color={C.gold} size={13}>{t('stip')}: {stipLabel(m.stip)} ▾</T></Pressable>
-            </Row>
-            <Row gap={10}>
-              <Slotbox w={W(m.a)} onPress={() => setPicker({ kind: 'match', i, side: 'a' })} onClear={() => setMatch(i, { a: null, title: false })} />
-              <T color={C.muted} bold>{t('vs')}</T>
-              <Slotbox w={W(m.b)} onPress={() => setPicker({ kind: 'match', i, side: 'b' })} onClear={() => setMatch(i, { b: null, title: false })} />
-            </Row>
-            {title ? <Pill label={`${t('forTitle')}: ${title.name}`} active={m.title} onPress={() => setMatch(i, { title: !m.title })} /> : null}
-          </Card>
+          <FadeIn key={`${st.week}-${i}`} delay={i * 50}>
+            <Panel accent={isMain ? C.gold : info.color} pad={10} style={isMain ? { borderColor: C.gold + '88' } : undefined}>
+              <Row style={{ justifyContent: 'space-between' }}>
+                <Plate label={slotLabel(m.slot)} color={isMain ? C.gold : '#2A3142'} text={isMain ? '#1A1206' : '#fff'} />
+                <Pressable onPress={() => { sfx.click(); setPicker({ kind: 'stip', i }); }}>
+                  <Head size={13} color={C.gold}>{stipLabel(m.stip)} ▾</Head>
+                </Pressable>
+              </Row>
+              <Row gap={8} wrap={false}>
+                <Slotbox w={W(m.a)} color={info.color} onPress={() => setPicker({ kind: 'match', i, side: 'a' })} onClear={() => setMatch(i, { a: null, title: false })} />
+                <Display size={22} color={C.gold} style={{ fontStyle: 'italic' }}>VS</Display>
+                <Slotbox w={W(m.b)} color={info.color} onPress={() => setPicker({ kind: 'match', i, side: 'b' })} onClear={() => setMatch(i, { b: null, title: false })} />
+              </Row>
+              {title ? <Chip label={`🏆 ${title.name}`} active={m.title} onPress={() => setMatch(i, { title: !m.title })} /> : null}
+            </Panel>
+          </FadeIn>
         );
       })}
 
       {card.promos.map((p, i) => (
-        <Card key={`p${i}`}>
+        <Panel key={`p${i}`} pad={10}>
           <Row style={{ justifyContent: 'space-between' }}>
-            <H size={14} color={C.muted}>{t('promo').toUpperCase()} {i + 1}</H>
-            <Row>
-              <Pill label={t('selfPromo')} active={p.kind === 'Self-Promo'} onPress={() => setPromo(i, { kind: 'Self-Promo' })} />
-              <Pill label={t('training')} active={p.kind === 'Training'} onPress={() => setPromo(i, { kind: 'Training' })} />
+            <Plate label={`${t('promo')} ${i + 1}`} color="#2A3142" text="#fff" />
+            <Row gap={6}>
+              <Chip label={t('selfPromo')} active={p.kind === 'Self-Promo'} onPress={() => setPromo(i, { kind: 'Self-Promo' })} />
+              <Chip label={t('training')} active={p.kind === 'Training'} onPress={() => setPromo(i, { kind: 'Training' })} />
             </Row>
           </Row>
-          <Slotbox w={W(p.w)} onPress={() => setPicker({ kind: 'promo', i })} onClear={() => setPromo(i, { w: null })} />
-        </Card>
+          <Slotbox w={W(p.w)} color={info.color} onPress={() => setPicker({ kind: 'promo', i })} onClear={() => setPromo(i, { w: null })} />
+        </Panel>
       ))}
 
-      <Card>
+      <Panel style={{ borderColor: info.color + '88' }}>
         <Row style={{ justifyContent: 'space-between' }}>
-          <T>{t('estCost')}: <T bold color={C.gold}>{money(cost)}</T></T>
+          <View>
+            <Head size={11} color={C.muted}>{t('estCost')}</Head>
+            <Num size={26} color={C.gold}>{money(cost)}</Num>
+          </View>
           <Row>
-            <Btn kind="ghost" label={t('clear')} onPress={() => setCard(emptyCard())} />
-            <Btn kind="ghost" label={t('autoBook')} onPress={autoBook} />
-            <Btn label={t('runShow')} onPress={run} disabled={!ready} color={info.color} />
+            <Btn small kind="ghost" label={t('clear')} onPress={() => setCard(emptyCard())} />
+            <Btn small kind="ghost" label={t('autoBook')} onPress={autoBook} />
           </Row>
         </Row>
+        <Btn label={t('runShow')} onPress={run} disabled={!ready} />
         {!ready ? <T color={C.muted} size={12}>{t('needMain')}</T> : null}
-      </Card>
+      </Panel>
 
       <Modal visible={!!picker} transparent animationType="fade" onRequestClose={() => setPicker(null)}>
-        <View style={{ flex: 1, backgroundColor: '#000a', justifyContent: 'center', padding: 16 }}>
-          <Card style={{ maxHeight: '85%', maxWidth: 640, width: '100%', alignSelf: 'center' }}>
+        <View style={{ flex: 1, backgroundColor: '#000c', justifyContent: 'center', padding: 12, direction: lang === 'he' ? 'rtl' : 'ltr' }}>
+          <Panel style={{ maxHeight: '88%', maxWidth: 640, width: '100%', alignSelf: 'center' }}>
             <Row style={{ justifyContent: 'space-between' }}>
-              <H size={16}>{picker?.kind === 'stip' ? t('stip') : t('selectWrestler')}</H>
-              <Btn kind="ghost" label={t('close')} onPress={() => setPicker(null)} />
+              <Head size={18}>{picker?.kind === 'stip' ? t('stip') : t('selectWrestler')}</Head>
+              <Btn small kind="ghost" label={t('close')} onPress={() => setPicker(null)} />
             </Row>
             {picker?.kind === 'stip' ? (
               <ScrollView contentContainerStyle={{ gap: 6 }}>
                 {singlesStips.map((s) => {
                   const open = isStipUnlocked(s, st.week, isPle);
                   return (
-                    <Pressable key={s.name} disabled={!open} onPress={() => { setMatch(picker.i, { stip: s.name }); setPicker(null); }} style={{ opacity: open ? 1 : 0.35 }}>
-                      <Card style={{ paddingVertical: 8 }}>
+                    <Pressable key={s.name} disabled={!open} onPress={() => { sfx.click(); setMatch(picker.i, { stip: s.name }); setPicker(null); }} style={{ opacity: open ? 1 : 0.3 }}>
+                      <View style={{ backgroundColor: '#0D1019', borderWidth: 1, borderColor: C.line, borderRadius: 3, padding: 10 }}>
                         <Row style={{ justifyContent: 'space-between' }}>
-                          <T bold>{lang === 'he' ? s.nameHe ?? s.name : s.name}</T>
-                          <T color={C.muted} size={12}>+{s.starBonus}★ · {money((s.costTier - 1) * CONFIG.economy.stipCostPerTier)} · {s.stamina}{open ? '' : ` · ${s.unlock}`}</T>
+                          <Head size={15} style={{ textTransform: 'none' }}>{lang === 'he' ? s.nameHe ?? s.name : s.name}</Head>
+                          <Num size={15} color={C.gold}>+{s.starBonus}★ · {money((s.costTier - 1) * CONFIG.economy.stipCostPerTier)}</Num>
                         </Row>
-                      </Card>
+                        <T size={11} color={C.muted}>{t('stamina')}: {s.stamina}{open ? '' : ` · 🔒 ${s.unlock}`}</T>
+                      </View>
                     </Pressable>
                   );
                 })}
@@ -220,6 +260,7 @@ function Booking() {
                   return (
                     <Pressable disabled={hurt} style={{ opacity: hurt ? 0.35 : 1 }} onPress={() => {
                       if (!picker) return;
+                      sfx.click();
                       if (picker.kind === 'match') setMatch(picker.i, { [picker.side]: w.id, title: false } as Partial<MatchDraft>);
                       else if (picker.kind === 'promo') setPromo(picker.i, { w: w.id });
                       setPicker(null);
@@ -230,27 +271,32 @@ function Booking() {
                 }}
               />
             )}
-          </Card>
+          </Panel>
         </View>
       </Modal>
     </ScrollView>
   );
 }
 
-function Slotbox({ w, onPress, onClear }: { w: Wrestler | null; onPress: () => void; onClear: () => void }) {
+function Slotbox({ w, onPress, onClear, color }: { w: Wrestler | null; onPress: () => void; onClear: () => void; color: string }) {
   const { t, lang } = useStore();
   return (
-    <Pressable onPress={onPress} style={{ flex: 1, minWidth: 140, padding: 10, borderRadius: 10, borderWidth: 1, borderStyle: w ? 'solid' : 'dashed', borderColor: C.line, backgroundColor: C.panel2 }}>
+    <Pressable onPress={() => { sfx.click(); onPress(); }} style={{ flex: 1, minWidth: 0 }}>
       {w ? (
-        <Row style={{ justifyContent: 'space-between' }}>
-          <View style={{ flex: 1 }}>
-            <T bold>{wName(w, lang)}</T>
-            <T color={C.muted} size={11}>{wTags(w, lang)} · {t('stamina')} {Math.round(w.stamina)}</T>
+        <LinearGradient colors={[shade(color, -0.6), '#0D1019']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          style={{ borderRadius: 3, padding: 8, flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderColor: color + '55' }}>
+          <Portrait w={w} size={38} color={color} />
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Head size={15} numberOfLines={1} style={{ textTransform: 'none' }}>{wName(w, lang)}</Head>
+            <T size={10} color={C.muted} numberOfLines={1}>{wTags(w, lang)}</T>
+            <Row gap={4} wrap={false}><Head size={9} color={C.muted}>{t('stamina')}</Head><Bar value={w.stamina} max={w.maxStamina} height={4} /></Row>
           </View>
-          <Pressable onPress={onClear} hitSlop={8}><T color={C.muted}>✕</T></Pressable>
-        </Row>
+          <Pressable onPress={onClear} hitSlop={10}><T color={C.muted}>✕</T></Pressable>
+        </LinearGradient>
       ) : (
-        <T color={C.muted}>+ {t('selectWrestler')}</T>
+        <View style={{ borderRadius: 3, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#3A4256', padding: 14, alignItems: 'center', backgroundColor: '#0A0D14' }}>
+          <Head size={13} color={C.muted}>+ {t('selectWrestler')}</Head>
+        </View>
       )}
     </Pressable>
   );
@@ -259,21 +305,21 @@ function Slotbox({ w, onPress, onClear }: { w: Wrestler | null; onPress: () => v
 function WrestlerLine({ w }: { w: Wrestler }) {
   const { t, lang, game } = useStore();
   const me = game!.state.brands.find((b) => b.id === game!.playerId)!;
+  const info = brandInfo(me.id);
   const champ = me.titles.find((ti) => ti.holder === w.id);
   return (
-    <Card style={{ paddingVertical: 8 }}>
-      <Row style={{ justifyContent: 'space-between' }}>
-        <View style={{ flexBasis: 200, flexGrow: 1 }}>
-          <T bold>{wName(w, lang)} {champ ? '🏆' : ''}{w.injuredWeeks > 0 ? ` · ${t('injured')} (${w.injuredWeeks})` : ''}</T>
-          <T color={C.muted} size={11}>{wTags(w, lang)} · {t('pop')} {Math.round(w.popularity)} · {t('ring')} {Math.round(w.ringLevel)} · {t('record')} {w.wins}-{w.losses}</T>
-        </View>
-        <View style={{ width: 160, gap: 4 }}>
-          <Row gap={6}><T color={C.muted} size={10}>{t('stamina')}</T><Bar value={w.stamina} max={w.maxStamina} /></Row>
-          <Row gap={6}><T color={C.muted} size={10}>{t('morale')}</T><Bar value={w.morale} /></Row>
-          <Mic value={w.mic} />
-        </View>
-      </Row>
-    </Card>
+    <LinearGradient colors={['#141927', '#0D1019']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+      style={{ borderRadius: 3, padding: 8, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: champ ? C.gold + '88' : C.line }}>
+      <Portrait w={w} size={44} color={info.color} />
+      <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+        <Head size={16} numberOfLines={1} style={{ textTransform: 'none' }}>{champ ? '🏆 ' : ''}{wName(w, lang)}</Head>
+        <T size={11} color={w.injuredWeeks > 0 ? C.bad : C.muted} numberOfLines={1}>{w.injuredWeeks > 0 ? `${t('injured')} · ${w.injuredWeeks} ${t('weeks')}` : `${wTags(w, lang)} · ${t('record')} ${w.wins}-${w.losses}`}</T>
+        <Row gap={6} wrap={false}><Head size={9} color={C.muted}>{t('stamina')}</Head><Bar value={w.stamina} max={w.maxStamina} height={4} /><Head size={9} color={C.muted}>{t('morale')}</Head><Bar value={w.morale} height={4} /></Row>
+      </View>
+      <View style={{ alignItems: 'center' }}><Head size={9} color={C.muted}>{t('pop')}</Head><Num size={20}>{Math.round(w.popularity)}</Num></View>
+      <View style={{ alignItems: 'center' }}><Head size={9} color={C.muted}>{t('ring')}</Head><Num size={20}>{Math.round(w.ringLevel)}</Num></View>
+      <View style={{ alignItems: 'center', gap: 3 }}><Head size={9} color={C.muted}>{t('mic')}</Head><Mic value={w.mic} size={8} /></View>
+    </LinearGradient>
   );
 }
 
@@ -290,22 +336,23 @@ function Standings() {
   const st = game!.state;
   const rows = [...st.brands].sort((a, b) => b.fans - a.fans);
   return (
-    <ScrollView contentContainerStyle={{ gap: 8 }}>
+    <ScrollView contentContainerStyle={{ gap: 8, paddingBottom: 40 }}>
       {rows.map((b, i) => {
         const info = brandInfo(b.id);
         const avg = b.showRatings.length ? b.showRatings.reduce((x, y) => x + y, 0) / b.showRatings.length : 0;
+        const last = b.showRatings[b.showRatings.length - 1];
         return (
-          <Card key={b.id} accent={info.color}>
-            <Row style={{ justifyContent: 'space-between' }}>
-              <H color={info.color}>{i + 1}. {info.name.toUpperCase()}{b.id === game!.playerId ? ' ◀' : ''}</H>
-              <T>{t('fans')}: <T bold>{b.fans.toLocaleString()}</T></T>
-            </Row>
-            <Row gap={16}>
-              <T color={C.muted}>{t('cash')}: {money(b.cash)}</T>
-              <T color={C.muted}>{t('avgRating')}: {avg.toFixed(2)}★</T>
-              <T color={C.muted}>{t('roster')}: {b.roster.length}</T>
-            </Row>
-          </Card>
+          <FadeIn key={b.id} delay={i * 80}>
+            <LinearGradient colors={[shade(info.color, -0.5), '#0D1019']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+              style={{ borderRadius: 3, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 14, borderWidth: b.id === game!.playerId ? 2 : 1, borderColor: b.id === game!.playerId ? info.color : C.line }}>
+              <Display size={40} color={i === 0 ? C.gold : '#ffffff55'}>{i + 1}</Display>
+              <View style={{ flex: 1 }}>
+                <Display size={24} color="#fff" style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
+                <T size={12} color={C.muted}>{money(b.cash)} · {t('avgRating')} {avg.toFixed(2)}★{last != null ? ` · ${t('week')} ${st.week - 1}: ${last.toFixed(2)}★` : ''}</T>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}><Head size={10} color={C.muted}>{t('fans')}</Head><Num size={22}>{b.fans.toLocaleString()}</Num></View>
+            </LinearGradient>
+          </FadeIn>
         );
       })}
     </ScrollView>
@@ -316,19 +363,26 @@ function Titles() {
   const { t, lang, game } = useStore();
   const st = game!.state;
   return (
-    <ScrollView contentContainerStyle={{ gap: 8 }}>
+    <ScrollView contentContainerStyle={{ gap: 8, paddingBottom: 40 }}>
       {st.brands.map((b) => {
         const info = brandInfo(b.id);
         return (
-          <Card key={b.id} accent={info.color}>
-            <H color={info.color} size={16}>{info.name.toUpperCase()}</H>
-            {b.titles.map((ti) => (
-              <Row key={ti.id} style={{ justifyContent: 'space-between' }}>
-                <T color={ti.kind === 'world' ? C.gold : C.text} bold={ti.kind === 'world'}>{ti.name}</T>
-                <T>{ti.holder ? wName(st.wrestlers[ti.holder], lang) : t('vacant')} <T color={C.muted} size={11}>({ti.weeksHeld} {t('weeks')})</T></T>
-              </Row>
-            ))}
-          </Card>
+          <Panel key={b.id} accent={info.color}>
+            <Display size={22} color={info.color} style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
+            {b.titles.map((ti) => {
+              const h = ti.holder ? st.wrestlers[ti.holder] : null;
+              return (
+                <Row key={ti.id} gap={10} wrap={false}>
+                  {h ? <Portrait w={h} size={34} color={ti.kind === 'world' ? C.goldLo : info.color} /> : null}
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Head size={12} color={ti.kind === 'world' ? C.gold : C.steel} numberOfLines={1}>{ti.name}</Head>
+                    <Head size={16} style={{ textTransform: 'none' }}>{h ? wName(h, lang) : t('vacant')}</Head>
+                  </View>
+                  <Num size={14} color={C.muted}>{ti.weeksHeld} {t('weeks')}</Num>
+                </Row>
+              );
+            })}
+          </Panel>
         );
       })}
     </ScrollView>
