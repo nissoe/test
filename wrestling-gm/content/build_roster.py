@@ -222,6 +222,12 @@ for tier in TIERS:
     for i in range(n_w):
         make(tier, 'F', hand_w[i] if i < len(hand_w) else None)
 
+# ---------- מכסת מיקרופון לאגדות: רובן מדברות מצוין, אבל לא כולן ----------
+legend_mics = [5] * 8 + [4] * 13 + [3] * 5 + [2] * 3 + [1] * 1
+random.shuffle(legend_mics)
+for w, m in zip([w for w in wrestlers if w['tier'] == 'legend'], legend_mics):
+    w['mic'] = m
+
 # ---------- צמדים: מהפעילים, לא מכוכבי העל ----------
 def assign_tags(gender, names):
     pool = [w for w in wrestlers if w['pool'] == 'active' and w['gender'] == gender and w['tier'] in ('star', 'midcard', 'rising', 'prospect') and not w['tagTeam']]
