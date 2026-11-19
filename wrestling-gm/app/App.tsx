@@ -12,6 +12,8 @@ import { Rubik_800ExtraBold } from '@expo-google-fonts/rubik/800ExtraBold';
 import { BarlowCondensed_700Bold } from '@expo-google-fonts/barlow-condensed/700Bold';
 import { BarlowCondensed_800ExtraBold } from '@expo-google-fonts/barlow-condensed/800ExtraBold';
 import { BarlowCondensed_800ExtraBold_Italic } from '@expo-google-fonts/barlow-condensed/800ExtraBold_Italic';
+import { Arena } from './src/arena/Arena.tsx';
+import { arena } from './src/arena/arena.ts';
 import { Draft } from './src/screens/Draft.tsx';
 import { Hub } from './src/screens/Hub.tsx';
 import { Results, SeasonEnd } from './src/screens/Results.tsx';
@@ -33,14 +35,14 @@ function Shell() {
   const { phase, lang, setLang, t } = useStore();
   const [muted, setMuted] = useState(sfx.isMuted());
   useEffect(() => sfx.onMute(setMuted), []);
+  useEffect(() => { arena.side(lang === 'he' ? 'start' : 'end'); }, [lang]);
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      {/* תאורת זירה: אור עליון רך ומעבר כהה */}
-      <LinearGradient colors={['#1A2236', '#0B0E16', '#06070B']} locations={[0, 0.35, 1]} style={{ position: 'absolute', inset: 0 } as any} />
-      <LinearGradient colors={['#E2B84B14', 'transparent']} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 0.5 }} style={{ position: 'absolute', inset: 0 } as any} />
+      {/* הזירה החיה מאחורי כל המסכים */}
+      <Arena />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1, direction: lang === 'he' ? 'rtl' : 'ltr' }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#ffffff12' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#ffffff12', backgroundColor: '#05060Acc' }}>
             <Logo />
             <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
               <Pressable onPress={() => sfx.setMuted(!muted)} hitSlop={8}>

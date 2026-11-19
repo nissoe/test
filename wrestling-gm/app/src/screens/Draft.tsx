@@ -1,6 +1,6 @@
 // דראפט חי: כל בחירה של היריבים נחשפת על המסך, עם מיון, סינון, חיפוש ולוח דראפט מלא.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { FlatList, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { aiPick, applyPick, draftPool, draftValue } from '../../../engine/src/draft.ts';
 import { setupTitles } from '../../../engine/src/game.ts';
@@ -8,7 +8,8 @@ import type { ClassName, Wrestler } from '../../../engine/src/types.ts';
 import { brandInfo } from '../data.ts';
 import { money } from '../i18n.ts';
 import { useStore } from '../store.tsx';
-import { Btn, C, Chip, Display, F, FadeIn, Head, Mic, Num, Panel, Plate, Portrait, Row, T, shade, wName, wTags } from '../ui.tsx';
+import { Btn, C, Chip, Display, F, FadeIn, GLASS, Head, Mic, Num, Panel, Plate, Portrait, Row, Stage, T, shade, wName, wTags } from '../ui.tsx';
+import { arena } from '../arena/arena.ts';
 import * as sfx from '../sfx.ts';
 
 type SortKey = 'value' | 'name' | 'popularity' | 'ringLevel' | 'mic' | 'salary';
@@ -27,6 +28,8 @@ export function Draft() {
   const [cls, setCls] = useState<ClassName | 'all'>('all');
   const [role, setRole] = useState<'all' | 'Face' | 'Heel'>('all');
   const [query, setQuery] = useState('');
+  const narrow = useWindowDimensions().width < 900;
+  const [showFilters, setShowFilters] = useState(!narrow);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // דילוג על מותגים שהרוסטר שלהם מלא
@@ -91,6 +94,21 @@ export function Draft() {
   };
 
   const myTurn = b?.id === g.playerId;
+
+  // המסך הענק בזירה מציג את מי שבוחר ואת הבחירה האחרונה
+  useEffect(() => { arena.shot('stage'); arena.hype(0.45); }, []);
+  useEffect(() => {
+    const lf = g.draftFeed[0];
+    if (myTurn && b) {
+      const bi = brandInfo(b.id);
+      arena.screen({ kicker: `${t('round')} ${Math.floor(g.draftIdx / st.brands.length) + 1} · ${t('pick')} ${g.draftIdx + 1}`, title: bi.name.toUpperCase(), subtitle: 'On the clock', color: bi.color });
+    } else if (lf) {
+      const bi = brandInfo(lf.brand);
+      const w = st.wrestlers[lf.wrestler];
+      arena.screen({ kicker: `#${lf.no} · ${bi.name} ${t('selects')}`, title: w.name.toUpperCase(), subtitle: `${w.class} · POP ${w.popularity}`, color: bi.color });
+      if (w.popularity >= 55) arena.pop(0.5);
+    }
+  }, [g.draftIdx, myTurn]);
   const slotsLeft = target - me.roster.length;
   const reserve = Math.max(0, slotsLeft - 1) * 40000;
   const nBrands = st.brands.length;
@@ -122,9 +140,10 @@ export function Draft() {
   const mine = brandInfo(me.id);
 
   return (
-    <View style={{ flex: 1, maxWidth: 1100, width: '100%', alignSelf: 'center', paddingHorizontal: 12, paddingTop: 12, gap: 10 }}>
+    <Stage arenaShare={0.26} width={640}>
+    <View style={{ flex: 1, gap: 8 }}>
       {/* פס עליון: מי בוחר עכשיו */}
-      <LinearGradient colors={[shade(cur?.color ?? C.gold, -0.35), '#0B0E16']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ borderRadius: 4, padding: 12, borderWidth: 1, borderColor: (cur?.color ?? C.gold) + '88' }}>
+      <LinearGradient colors={[shade(cur?.color ?? C.gold, -0.35) + 'e6', '#0B0E16e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ ...GLASS, borderRadius: 4, padding: 12, borderWidth: 1, borderColor: (cur?.color ?? C.gold) + '88' }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <View style={{ gap: 4 }}>
             <Head size={12} color="#ffffffaa">{t('onTheClock')} · {t('round')} {Math.min(round, target)} · {t('pick')} {Math.min(g.draftIdx + 1, g.draftSeq.length)}/{g.draftSeq.length}</Head>
@@ -166,10 +185,12 @@ export function Draft() {
           <Panel pad={10} style={{ gap: 8 }}>
             <TextInput value={query} onChangeText={setQuery} placeholder={t('search')} placeholderTextColor={C.muted}
               style={{ fontFamily: F().body, color: C.text, backgroundColor: '#0A0D14', borderWidth: 1, borderColor: C.line, borderRadius: 3, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, textAlign: lang === 'he' ? 'right' : 'left' }} />
-            <Row gap={6}>
+            {showFilters ? <Row gap={6}>
               <Head size={12} color={C.muted}>{t('sortBy')}</Head>
               {sortChip('value', t('value'))}{sortChip('name', t('name'))}{sortChip('popularity', t('pop'))}{sortChip('ringLevel', t('ring'))}{sortChip('mic', t('mic'))}{sortChip('salary', t('salary'))}
-            </Row>
+            </Row> : null}
+            {narrow ? <Chip label={`${t('sortBy')} / ${lang === 'he' ? 'סינון' : 'Filter'} ${showFilters ? '▲' : '▼'}`} active={showFilters} onPress={() => setShowFilters(!showFilters)} /> : null}
+            {showFilters ? <>
             <Row gap={6}>
               <Chip label={t('all')} active={gender === 'all'} onPress={() => setGender('all')} />
               <Chip label={t('men')} active={gender === 'M'} onPress={() => setGender('M')} />
@@ -182,6 +203,7 @@ export function Draft() {
               <Chip label={t('all')} active={cls === 'all'} onPress={() => setCls('all')} />
               {CLASSES.map((c) => <Chip key={c} label={lang === 'he' ? CLASS_HE[c] : c} active={cls === c} onPress={() => setCls(c)} />)}
             </Row>
+            </> : null}
           </Panel>
           <FlatList
             data={pool}
@@ -192,8 +214,8 @@ export function Draft() {
               return (
                 <Pressable onPress={can ? () => { doPick(me.id, w); sfx.pick(true); sfx.crowd(Math.min(1, w.popularity / 70), 1.6); refresh(); } : undefined}
                   style={({ pressed }) => ({ opacity: w.salary > me.cash - reserve ? 0.35 : pressed ? 0.7 : 1 })}>
-                  <LinearGradient colors={['#141927', '#0D1019']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                    style={{ borderRadius: 4, padding: 8, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: can ? mine.color + '55' : C.line }}>
+                  <LinearGradient colors={['#141927e6', '#0D1019e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    style={{ ...GLASS, borderRadius: 4, padding: 8, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: can ? mine.color + '55' : C.line }}>
                     <Portrait w={w} size={42} color={w.gender === 'F' ? '#7A3F8F' : '#3A4C72'} />
                     <View style={{ flex: 1, minWidth: 0 }}>
                       <Head size={17} numberOfLines={1} style={{ textTransform: 'none' }}>{wName(w, lang)}</Head>
@@ -236,6 +258,7 @@ export function Draft() {
         </ScrollView>
       )}
     </View>
+    </Stage>
   );
 }
 

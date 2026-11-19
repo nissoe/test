@@ -7,7 +7,8 @@ import type { MatchResult } from '../../../engine/src/types.ts';
 import { brandInfo, content } from '../data.ts';
 import { money } from '../i18n.ts';
 import { useStore } from '../store.tsx';
-import { Btn, C, Display, FadeIn, Head, Num, Panel, Plate, Portrait, Row, Stars, T, shade, wName } from '../ui.tsx';
+import { Btn, C, Display, FadeIn, GLASS, Head, Num, Panel, Plate, Portrait, Row, Stage, Stars, T, shade, wName } from '../ui.tsx';
+import { arena } from '../arena/arena.ts';
 import * as sfx from '../sfx.ts';
 
 export function Results() {
@@ -27,10 +28,12 @@ export function Results() {
     else setPhase('hub');
   };
 
+  useEffect(() => { arena.shot('ring'); arena.hype(mine.isPle ? 0.6 : 0.4); }, []);
   return (
-    <ScrollView contentContainerStyle={{ padding: 12, gap: 12, maxWidth: 900, width: '100%', alignSelf: 'center', paddingBottom: 60 }}>
-      <LinearGradient colors={mine.isPle ? [C.goldLo, '#1A1206', '#0A0C12'] : [shade(info.color, -0.4), '#0A0C12']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={{ borderRadius: 4, padding: 14, borderWidth: 1, borderColor: mine.isPle ? C.gold : info.color + '66' }}>
+    <Stage arenaShare={0.3} width={600}>
+    <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 60 }}>
+      <LinearGradient colors={mine.isPle ? [C.goldLo + 'e6', '#1A1206e6', '#0A0C12e6'] : [shade(info.color, -0.4) + 'e6', '#0A0C12e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        style={{ ...GLASS, borderRadius: 4, padding: 14, borderWidth: 1, borderColor: mine.isPle ? C.gold : info.color + '66' }}>
         <Head size={12} color="#ffffffaa">{t('tonight')} · {t('week')} {mine.week}</Head>
         <Display size={34} color="#fff" glow={mine.isPle ? C.gold : info.color} style={{ fontStyle: 'italic' }}>{mine.pleName ?? info.name.toUpperCase()}</Display>
         {!done ? <T size={12} color="#ffffffaa">{t('matchOf')} {step + 1}/{matches.length}</T> : null}
@@ -46,6 +49,7 @@ export function Results() {
 
       {done ? <Btn label={t('continue')} onPress={next} /> : null}
     </ScrollView>
+    </Stage>
   );
 }
 
@@ -61,6 +65,10 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
   const stip = content.stipulations.find((s) => s.name === m.match.stipulation);
 
   useEffect(() => {
+    const last = (w: typeof a) => w.name.split(' ').slice(-1)[0].toUpperCase();
+    arena.shot(isMain ? 'ringside' : 'ring');
+    arena.screen({ kicker: isMain ? 'Main Event' : m.match.slot === 'opener' ? 'Opener' : 'Midcard', title: `${last(a)} VS ${last(b)}`, subtitle: m.match.stipulation + (m.match.titleId ? ' · Title' : ''), color });
+    arena.pop(isMain ? 0.6 : 0.3);
     sfx.bell(isMain ? 3 : 2);
     sfx.crowd(isMain ? 0.6 : 0.35, 2.2);
     Animated.timing(slam, { toValue: 1, duration: 500, easing: Easing.out(Easing.back(2)), useNativeDriver: true }).start();
@@ -68,6 +76,10 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
     const t2 = setTimeout(() => {
       setPhase('winner');
       sfx.crowd(Math.min(1, m.stars / 5), 3);
+      arena.pop(Math.min(1, m.stars / 5));
+      const wn = st.wrestlers[m.winners[0]];
+      arena.screen({ kicker: m.newChampion ? 'And New Champion' : 'Winner', title: wn.name.toUpperCase(), subtitle: `${m.stars.toFixed(2)} stars`, color: m.newChampion ? '#B8860B' : color });
+      if (m.newChampion || (isMain && m.stars >= 4)) arena.pyro();
       if (m.newChampion) sfx.fanfare();
     }, 1500 + Math.ceil(m.stars) * 260 + 500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
@@ -80,14 +92,14 @@ function MatchReveal({ m, color, onNext, onSkip, isLast }: { m: MatchResult; col
       <Animated.View style={{ flex: 1, alignItems: 'center', gap: 6, opacity: lost ? 0.4 : 1, transform: [{ translateX: slam.interpolate({ inputRange: [0, 1], outputRange: [i === 0 ? -80 : 80, 0] }) }] }}>
         <Portrait w={w} size={84} color={won ? C.gold : color} />
         <Display size={20} numberOfLines={2} style={{ textAlign: 'center' }} color={won ? C.goldHi : '#fff'}>{wName(w, lang)}</Display>
-        {won ? <Plate label={lang === 'he' ? 'מנצח' : 'WINNER'} /> : null}
+        {won ? <View style={{ alignItems: 'center' }}><Plate label={lang === 'he' ? 'מנצח' : 'WINNER'} /></View> : null}
       </Animated.View>
     );
   };
 
   return (
     <FadeIn>
-      <LinearGradient colors={isMain ? ['#2A1F08', '#0E0B05', '#07080C'] : [shade(color, -0.6), '#0A0C12']} style={{ borderRadius: 4, padding: 16, gap: 14, borderWidth: isMain ? 2 : 1, borderColor: isMain ? C.gold : color + '66' }}>
+      <LinearGradient colors={isMain ? ['#2A1F08e6', '#0E0B05e6', '#07080Ce6'] : [shade(color, -0.6) + 'e6', '#0A0C12e6']} style={{ ...GLASS, borderRadius: 4, padding: 16, gap: 14, borderWidth: isMain ? 2 : 1, borderColor: isMain ? C.gold : color + '66' }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <Plate label={isMain ? t('main') : m.match.slot === 'opener' ? t('opener') : t('midcard')} color={isMain ? C.gold : '#2A3142'} text={isMain ? '#1A1206' : '#fff'} />
           <Head size={13} color={C.gold}>{lang === 'he' ? stip?.nameHe ?? m.match.stipulation : m.match.stipulation}{m.match.titleId ? ' · 🏆' : ''}</Head>
@@ -143,7 +155,12 @@ function Summary() {
   const others = g.lastResults.filter((r) => r.brand !== g.playerId).sort((a, b) => b.rating - a.rating);
   const all = [...g.lastResults].sort((a, b) => b.rating - a.rating);
   const place = all.findIndex((r) => r.brand === g.playerId) + 1;
-  useEffect(() => { sfx.crowd(Math.min(1, mine.rating / 5), 3); }, []);
+  useEffect(() => {
+    sfx.crowd(Math.min(1, mine.rating / 5), 3);
+    arena.shot('wide');
+    arena.pop(Math.min(1, mine.rating / 5));
+    arena.screen({ kicker: 'Final show rating', title: mine.rating.toFixed(2), subtitle: `#${place} of ${all.length}`, color: brandInfo(g.playerId).color });
+  }, []);
   const name = (id: string) => wName(st.wrestlers[id], lang);
   return (
     <>
@@ -207,10 +224,21 @@ export function SeasonEnd() {
   const { t, game, setPhase } = useStore();
   const st = game!.state;
   const rows = [...st.brands].sort((a, b) => b.fans - a.fans);
-  useEffect(() => { sfx.crowd(1, 4); }, []);
+  useEffect(() => {
+    sfx.crowd(1, 4);
+    const w = brandInfo(rows[0].id);
+    arena.brand(w.color, w.name);
+    arena.shot('stage');
+    arena.hype(0.9);
+    arena.screen({ kicker: 'Season champions', title: w.name.toUpperCase(), subtitle: `${rows[0].fans.toLocaleString()} fans`, color: w.color });
+    arena.pyro();
+    const iv = setInterval(() => arena.pyro(), 2500);
+    return () => clearInterval(iv);
+  }, []);
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12, maxWidth: 800, width: '100%', alignSelf: 'center' }}>
-      <FadeIn style={{ alignItems: 'center', paddingVertical: 20 }}>
+    <Stage arenaShare={0.3} width={600}>
+    <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 40 }}>
+      <FadeIn style={{ alignItems: 'center', paddingVertical: 8 }}>
         <Display size={52} color={C.goldHi} glow={C.gold} style={{ fontStyle: 'italic' }}>{t('seasonOver').toUpperCase()}</Display>
       </FadeIn>
       {rows.map((b, i) => {
@@ -232,5 +260,6 @@ export function SeasonEnd() {
       })}
       <Btn label={t('playAgain')} onPress={() => setPhase('setup')} />
     </ScrollView>
+    </Stage>
   );
 }

@@ -1,6 +1,6 @@
 // שפת העיצוב: שידור טלוויזיוני. פלדה כהה, זהב מתכתי, צורות משופעות, תאורה וזוהר.
 import { useEffect, useRef, type ReactNode } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View, useWindowDimensions, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Wrestler } from '../../engine/src/types.ts';
 import type { Lang } from './i18n.ts';
@@ -100,7 +100,7 @@ export function Btn({ label, onPress, kind = 'primary', disabled, color, style, 
 /** לוח: פאנל כהה עם מעבר פלדה ושוליים דקים */
 export function Panel({ children, style, accent, pad = 14 }: { children: ReactNode; style?: StyleProp<ViewStyle>; accent?: string; pad?: number }) {
   return (
-    <LinearGradient colors={['#151A27', '#0E121C']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={[s.panel, { padding: pad }, style]}>
+    <LinearGradient colors={['#151A27e0', '#0B0E16e8']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={[s.panel, GLASS, { padding: pad }, style]}>
       {accent ? <LinearGradient colors={[accent, 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.accentBar} /> : null}
       {children}
     </LinearGradient>
@@ -219,3 +219,28 @@ export const s = StyleSheet.create({
   accentBar: { position: 'absolute', top: 0, left: 0, right: 0, height: 3 },
   chip: { paddingVertical: 6, paddingHorizontal: 12, borderWidth: 1.5, borderRadius: 3 },
 });
+
+/** זכוכית: טשטוש של הזירה מאחורי הפאנל (בווב) */
+export const GLASS: any = Platform.OS === 'web' ? { backdropFilter: 'blur(14px) saturate(140%)', WebkitBackdropFilter: 'blur(14px) saturate(140%)' } : {};
+
+/**
+ * פריסת מסך כמו במשחק: הזירה החיה נראית, והתוכן יושב בלוח צדדי (מסך רחב)
+ * או בגיליון תחתון (טלפון). arenaShare = כמה מהגובה נשאר לזירה בטלפון.
+ */
+export function Stage({ children, arenaShare = 0.3, side = 'end', width = 560 }: { children: ReactNode; arenaShare?: number; side?: 'start' | 'end'; width?: number }) {
+  const { width: W, height: H } = useWindowDimensions();
+  const wide = W >= 900;
+  if (wide) {
+    return (
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: side === 'end' ? 'flex-end' : 'flex-start', padding: 14 }}>
+        <View style={{ width: Math.min(width, W * 0.55), height: '100%' }}>{children}</View>
+      </View>
+    );
+  }
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ height: H * arenaShare }} pointerEvents="none" />
+      <View style={{ flex: 1, paddingHorizontal: 10 }}>{children}</View>
+    </View>
+  );
+}

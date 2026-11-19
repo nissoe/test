@@ -9,7 +9,8 @@ import type { BookedPromo, ShowPlan, Slot, Wrestler } from '../../../engine/src/
 import { brandInfo, content, singlesStips } from '../data.ts';
 import { money } from '../i18n.ts';
 import { useStore } from '../store.tsx';
-import { Bar, Btn, C, Chip, Display, FadeIn, Head, Mic, Num, Panel, Plate, Portrait, Row, T, shade, wName, wTags } from '../ui.tsx';
+import { Bar, Btn, C, Chip, Display, FadeIn, GLASS, Head, Mic, Num, Panel, Plate, Portrait, Row, Stage, T, shade, wName, wTags } from '../ui.tsx';
+import { arena } from '../arena/arena.ts';
 import * as sfx from '../sfx.ts';
 
 type Tab = 'book' | 'roster' | 'standings' | 'titles';
@@ -27,11 +28,18 @@ export function Hub() {
   const nextPle = ples.find((w) => w >= st.week);
   const pleName = nextPle ? CONFIG.pleNames[ples.indexOf(nextPle)] : null;
   const rank = [...st.brands].sort((a, b) => b.fans - a.fans).findIndex((b) => b.id === me.id) + 1;
+  useEffect(() => {
+    arena.brand(info.color, info.name);
+    arena.shot('wide');
+    arena.hype(isPle ? 0.6 : 0.3);
+    arena.screen({ kicker: `${t('week')} ${st.week}`, title: isPle && pleName ? pleName.toUpperCase() : info.name.toUpperCase(), subtitle: isPle ? 'Premium Live Event' : pleName ? `Next: ${pleName}` : undefined, color: isPle ? '#B8860B' : info.color });
+  }, [st.week]);
 
   return (
-    <View style={{ flex: 1, maxWidth: 1000, width: '100%', alignSelf: 'center', paddingHorizontal: 12, paddingTop: 12, gap: 10 }}>
-      <LinearGradient colors={[shade(info.color, -0.3), shade(info.color, -0.8), '#0A0C12']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={{ borderRadius: 4, paddingHorizontal: 12, paddingVertical: 10, gap: 8, borderWidth: 1, borderColor: info.color + '66', overflow: 'hidden' }}>
+    <Stage arenaShare={0.22} width={620}>
+    <View style={{ flex: 1, gap: 8 }}>
+      <LinearGradient colors={[shade(info.color, -0.3) + 'e6', shade(info.color, -0.8) + 'e6', '#0A0C12e6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        style={{ ...GLASS, borderRadius: 4, paddingHorizontal: 12, paddingVertical: 10, gap: 8, borderWidth: 1, borderColor: info.color + '66', overflow: 'hidden' }}>
         <Display size={90} color="#ffffff08" style={{ position: 'absolute', right: -10, top: -20, fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
         <Row style={{ justifyContent: 'space-between' }}>
           <Display size={26} color="#fff" glow={info.color} style={{ fontStyle: 'italic' }}>{info.name.toUpperCase()}</Display>
@@ -56,6 +64,7 @@ export function Hub() {
       </LinearGradient>
       {tab === 'book' ? <Booking /> : tab === 'roster' ? <RosterView /> : tab === 'standings' ? <Standings /> : <Titles />}
     </View>
+    </Stage>
   );
 }
 
@@ -132,7 +141,7 @@ function Booking() {
       promos: card.promos.filter((p) => p.w).map((p) => ({ kind: p.kind, wrestlers: [p.w!] })),
     };
     g.lastResults = advanceWeek(st, content, g.rng, { [me.id]: plan });
-    if (isPle) sfx.fanfare(); else sfx.whoosh();
+    if (isPle) { sfx.fanfare(); arena.pyro(); } else sfx.whoosh();
     setPhase('results');
   };
 
