@@ -8,5 +8,5 @@
 - תוספות תחביר: `> [!החלטה]`, `> [!לאמת]`, `> [!הערה]`, `> [!לגרסה שלנו]` בתחילת ציטוט, ו-`[[לאמת]]` בתוך שורה.
 
 ## מסמכים
-- `costs.md` — תקציב ועלויות.
+- `costs.md` — תקציב ועלויות. דף מפורסם: https://claude.ai/artifact/6D7rw6N4kdwPzpT2TdqyKn
 - `gdd.md` — מסמך אפיון המשחק. דף מפורסם: https://claude.ai/artifact/RcepWhLbcV9pjfxgP5tCHc (לעדכן אותו: לפרסם מחדש את `dist/gdd.html` לאותה כתובת).
