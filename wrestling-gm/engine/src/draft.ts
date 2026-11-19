@@ -9,7 +9,7 @@ export function draftValue(w: Wrestler): number {
   return w.popularity * 1.0 + w.ringLevel * 1.5 + w.mic * 2 - w.salary / 20000;
 }
 
-function pickOrder(brands: Brand[], round: number, order: DraftOrder, rng: Rng): Brand[] {
+export function pickOrder(brands: Brand[], round: number, order: DraftOrder, rng: Rng): Brand[] {
   const list = [...brands];
   if (order === 'snake' && round % 2 === 1) return list.reverse();
   if (order === 'roundRobin') return list.map((_, i) => list[(i + round) % list.length]);
@@ -19,7 +19,7 @@ function pickOrder(brands: Brand[], round: number, order: DraftOrder, rng: Rng):
 }
 
 /** בחירה של המחשב: הערך הכי גבוה שעדיין משאיר תקציב, עם איזון בין גברים לנשים */
-function aiPick(brand: Brand, pool: Wrestler[], state: GameState, slotsLeft: number): Wrestler | null {
+export function aiPick(brand: Brand, pool: Wrestler[], state: GameState, slotsLeft: number): Wrestler | null {
   const roster = brand.roster.map((id) => state.wrestlers[id]);
   const women = roster.filter((w) => w.gender === 'F').length;
   const wantWoman = women < Math.round(state.settings.rosterTarget * 0.35) && women / Math.max(1, roster.length) < 0.35;
@@ -46,4 +46,28 @@ export function runDraft(state: GameState, rng: Rng, order: DraftOrder = 'snake'
       pool.splice(pool.indexOf(w), 1);
     }
   }
+}
+
+/** סדר הבחירות המלא: רשימת מזהי מותגים, בחירה אחרי בחירה (לדראפט צעד-אחר-צעד בממשק) */
+export function draftSequence(state: GameState, rng: Rng, order: DraftOrder = 'snake'): string[] {
+  const seq: string[] = [];
+  for (let round = 0; round < state.settings.rosterTarget; round++) {
+    for (const b of pickOrder(state.brands, round, order, rng)) seq.push(b.id);
+  }
+  return seq;
+}
+
+/** בחירה אחת: מוסיף את המתאבק לרוסטר ומוריד את המשכורת מהתקציב */
+export function applyPick(state: GameState, brandId: string, wrestlerId: string): void {
+  const brand = state.brands.find((b) => b.id === brandId)!;
+  const w = state.wrestlers[wrestlerId];
+  if (w.brand) throw new Error(`${wrestlerId} already drafted`);
+  brand.roster.push(w.id);
+  brand.cash -= w.salary;
+  w.brand = brand.id;
+}
+
+/** מי עדיין פנוי לבחירה */
+export function draftPool(state: GameState): Wrestler[] {
+  return Object.values(state.wrestlers).filter((w) => w.pool === 'active' && !w.brand);
 }

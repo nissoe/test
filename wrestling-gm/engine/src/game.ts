@@ -6,7 +6,7 @@ import { rateMatch, rateShow } from './rating.ts';
 import { Rng } from './rng.ts';
 import type { Brand, Content, GameState, MatchResult, Settings, ShowPlan, ShowResult, Title, Wrestler } from './types.ts';
 
-export function newGame(settings: Settings, content: Content): { state: GameState; rng: Rng } {
+export function newGame(settings: Settings, content: Content, opts: { draft?: boolean } = {}): { state: GameState; rng: Rng } {
   const rng = new Rng(settings.seed);
   const wrestlers: Record<string, Wrestler> = {};
   for (const d of content.roster) {
@@ -23,9 +23,16 @@ export function newGame(settings: Settings, content: Content): { state: GameStat
     trophies: 0,
   }));
   const state: GameState = { settings, week: 1, season: 1, wrestlers, brands, history: [] };
-  runDraft(state, rng, 'snake');
-  for (const b of brands) assignTitles(b, state);
+  if (opts.draft !== false) {
+    runDraft(state, rng, 'snake');
+    setupTitles(state);
+  }
   return { state, rng };
+}
+
+/** אחרי הדראפט: תארים לכל מותג */
+export function setupTitles(state: GameState): void {
+  for (const b of state.brands) assignTitles(b, state);
 }
 
 /** תארים התחלתיים: עולמי ומשני לגברים ולנשים, למחזיקים החזקים ברוסטר */

@@ -13,7 +13,9 @@ export interface WrestlerData {
   tier: string;
   pool: Pool;
   class: ClassName;
+  classHe?: string;
   role: Role;
+  roleHe?: string;
   popularity: number;
   ringLevel: number;
   mic: number;
@@ -37,6 +39,7 @@ export interface Wrestler extends WrestlerData {
 
 export interface Stipulation {
   name: string;
+  nameHe?: string;
   costTier: number;
   stamina: string;
   starBonus: number;
@@ -46,6 +49,7 @@ export interface Stipulation {
 
 export interface VenueTier {
   tier: string;
+  tierHe?: string;
   cost: number;
   capacity: number;
   ticket: number;
@@ -54,6 +58,7 @@ export interface VenueTier {
 
 export interface DifficultyLevel {
   name: string;
+  nameHe?: string;
   matches: number;
   promos: number;
 }

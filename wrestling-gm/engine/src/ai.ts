@@ -14,6 +14,14 @@ export function slotsFor(state: GameState, content: Content, week: number): { ma
   return { matches: d.matches + extra, promos: d.promos };
 }
 
+/** האם התנאי פתוח השבוע: מההתחלה, משבוע מסוים, או רק באירועי שיא */
+export function isStipUnlocked(stip: { unlock: string }, week: number, isPle: boolean): boolean {
+  if (stip.unlock === 'מההתחלה') return true;
+  if (stip.unlock === 'אירועי שיא') return isPle;
+  const m = stip.unlock.match(/\d+/);
+  return m ? week >= Number(m[0]) : true;
+}
+
 export function pleWeeks(state: GameState): number[] {
   return state.settings.seasonWeeks === 50 ? CONFIG.pleWeeks50 : CONFIG.pleWeeks25;
 }
@@ -65,7 +73,10 @@ export function aiPlanShow(brand: Brand, state: GameState, content: Content, rng
     take(b);
     // באירועי שיא: תנאי מיוחד לקרב הראשי, אם יש תקציב
     let stipulation = 'Standard';
-    if (isPle && slot === 'main' && brand.cash > 300000) stipulation = rng.pick(['No Disqualification', 'Steel Cage', 'Ladder', 'Last Man Standing']);
+    if (isPle && slot === 'main' && brand.cash > 300000) {
+      const opts = content.stipulations.filter((s) => ['No Disqualification', 'Steel Cage', 'Ladder', 'Last Man Standing'].includes(s.name) && isStipUnlocked(s, week, isPle));
+      if (opts.length) stipulation = rng.pick(opts).name;
+    }
     matches.push({ slot, sides: [[a.id], [b.id]], stipulation, titleId });
   }
 
