@@ -1,0 +1,861 @@
+<title>מסמך אפיון המשחק</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● מסמך אפיון (GDD)</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: טיוטה, ממתין למחקר המספרים</span></div>
+      <h1>מסמך אפיון המשחק</h1>
+      <p class="lead">משחק ניהול היאבקות נאמן למצב המנהל של המקור, עם עולם בדיוני משלנו, גרפיקה ברמת שידור, ומצבי משחק מול מחשב, באותו מכשיר ואונליין.</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>עקרונות המוצר</span></a></li><li><a href="#s3"><span class="n">03</span><span>מצבי משחק</span></a></li><li><a href="#s4"><span class="n">04</span><span>פתיחת משחק</span></a></li><li><a href="#s5"><span class="n">05</span><span>לולאת המשחק</span></a></li><li><a href="#s6"><span class="n">06</span><span>הישויות במשחק</span></a></li><li><a href="#s7"><span class="n">07</span><span>מערכות המשחק</span></a></li><li><a href="#s8"><span class="n">08</span><span>הצגת קרב</span></a></li><li><a href="#s9"><span class="n">09</span><span>מסכים</span></a></li><li><a href="#s10"><span class="n">10</span><span>תוספות במתג</span></a></li><li><a href="#s11"><span class="n">11</span><span>חשבונות, רכישה וניהול מנויים</span></a></li><li><a href="#s12"><span class="n">12</span><span>ארכיטקטורה טכנית</span></a></li><li><a href="#s13"><span class="n">13</span><span>תוכן להפקה</span></a></li><li><a href="#s14"><span class="n">14</span><span>מה עוד צריך לאמת</span></a></li><li><a href="#s15"><span class="n">15</span><span>מפת הדרכים</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<p>השחקן הוא מנהל כללי של מותג היאבקות בדיוני. הוא בוחר מנהל ומותג, מדראפט רוסטר, ובכל שבוע בונה תוכנית בתקציב מוגבל כדי לנצח את המותגים היריבים ברייטינג. עונה נמשכת 50 שבועות (או 25), עם אירועי שיא לאורכה, ובסופה דירוג, גביעים לקראת היכל התהילה, ודראפט חדש.</p>
+<ul>
+<li><strong>עיקרון על:</strong> נאמנות למקור (מצב MyGM, הגרסה האחרונה 2K26) בחוקים, במבנה ובמספרים. סוטים רק כשאין ברירה, ואז בוחרים את המקבילה הקרובה ביותר.</li>
+<li><strong>הזהות מקורית לגמרי:</strong> ליגה, מותגים, 300 מתאבקים, 20 מנהלים, תוארים ואולמות בדיוניים.</li>
+<li><strong>שיפורים על המקור:</strong> רק כמתגים בהגדרות, כבויים כברירת מחדל.</li>
+<li><strong>מספרים:</strong> כל מספר במסמך שלא אומת מסומן <span class="badge">לאמת</span>. המחקר המעמיק נעשה במחשב (החלטה 23).</li>
+</ul>
+<div class="callout note"><p class="callout-label">הערה</p><p>מקור האמת להחלטות הוא <code>wrestling-gm/decisions.md</code>. המסמך הזה מפרט אותן לרמת מערכות, מסכים ונתונים. מספר בסוגריים, כמו (החלטה 7), מפנה לשם.</p>
+</div>
+<h2 id="s2"><span class="n">02</span><span>עקרונות המוצר</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>עיקרון</th>
+<th>מה זה אומר בפועל</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>נאמנות למקור</td>
+<td>אותה לולאה, אותן מערכות, אותם טווחי מספרים. כשמשהו לא ידוע, משחזרים אותו במחקר ולא ממציאים.</td>
+</tr>
+<tr>
+<td>עומק לקהל המושבע</td>
+<td>בלי פישוט של מערכות. הדרכה קצרה בעונה הראשונה בלבד (החלטה 4).</td>
+</tr>
+<tr>
+<td>רמת שידור</td>
+<td>כל מסך מרגיש כמו גרפיקה של שידור היאבקות: תנועה, תאורה, דיוקנאות מפורטים (החלטה 6).</td>
+</tr>
+<tr>
+<td>מנוע אחד לכל המצבים</td>
+<td>המנוע לא יודע מי שולט במותג: מחשב, שחקן מקומי או שחקן מרוחק (החלטה 2).</td>
+</tr>
+<tr>
+<td>שתי שפות שוות</td>
+<td>עברית ואנגלית מהיום הראשון, ממשק שמתהפך בין ימין-לשמאל לשמאל-לימין (החלטה 3).</td>
+</tr>
+<tr>
+<td>שיפורים במתג</td>
+<td>כל תוספת על המקור כבויה כברירת מחדל (החלטה 21).</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s3"><span class="n">03</span><span>מצבי משחק</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>מצב</th>
+<th>גרסה</th>
+<th>תיאור</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>מול מחשב</td>
+<td>1</td>
+<td>שחקן אחד מול 1–3 מנהלים של המחשב.</td>
+</tr>
+<tr>
+<td>אותו מכשיר</td>
+<td>1</td>
+<td>2–4 שחקנים על מכשיר אחד. כל אחד מבצע את השבוע שלו, ומסך מעבר מסתיר את ההחלטות מהבא בתור.</td>
+</tr>
+<tr>
+<td>אונליין</td>
+<td>2</td>
+<td>2–4 שחקנים. כל אחד מגיש את התוכנית השבועית עד מועד, והשרת מריץ את השבוע. כמו במקור: בלי מנהלים מהעורך ובלי רוסטרים מותאמים (החלטות 13, 16).</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s4"><span class="n">04</span><span>פתיחת משחק</span></h2>
+<p>לפני העונה הראשונה השחקן (או כל אחד מהשחקנים) קובע את ההגדרות האלה. ברירות המחדל לפי המקור.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>הגדרה</th>
+<th>אפשרויות</th>
+<th>ברירת מחדל</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>אורך עונה</td>
+<td>50 / 25 שבועות</td>
+<td>50 (החלטה 9)</td>
+</tr>
+<tr>
+<td>מספר מותגים</td>
+<td>2–4, מתוך מאגר של 5</td>
+<td>לפי מספר השחקנים (החלטה 10)</td>
+</tr>
+<tr>
+<td>מנהל</td>
+<td>20 מנהלים בדיוניים, ובנוסף מנהלים מהעורך (לא באונליין)</td>
+<td>בחירה</td>
+</tr>
+<tr>
+<td>רמת קושי</td>
+<td>לפי המקור, כולל רמת קושי עליונה חדשה של 2K26 <span class="badge">לאמת</span></td>
+<td>רגיל</td>
+</tr>
+<tr>
+<td>תקציב פתיחה</td>
+<td>3–7 מיליון, בקפיצות <span class="badge">לאמת</span></td>
+<td>5 מיליון <span class="badge">לאמת</span></td>
+</tr>
+<tr>
+<td>סדר הדראפט</td>
+<td>רגיל, נחש, סבב, דירוג הפוך, אקראי</td>
+<td>רגיל</td>
+</tr>
+<tr>
+<td>תוספות סיפור</td>
+<td>מתגים נפרדים (פרק &quot;תוספות במתג&quot;)</td>
+<td>כבוי</td>
+</tr>
+</tbody></table>
+</div>
+<p><strong>מה רמת הקושי משנה (לפי המקור):</strong> מספר הקרבות בכל תוכנית, קיצוץ התקציב בעונות מאוחרות, כמה מהר מתאבק עם מורל נמוך עוזב, וסיכויי פציעה <span class="badge">לאמת</span>.</p>
+<h2 id="s5"><span class="n">05</span><span>לולאת המשחק</span></h2>
+<h3>השבוע</h3>
+<ol>
+<li><strong>ניהול רוסטר:</strong> חוזים, גיוס, טריידים ובקשות פתוחות.</li>
+<li><strong>בניית תוכנית:</strong> קרבות, פרומואים ויריבויות על הכרטיס.</li>
+<li><strong>לוגיסטיקה:</strong> אולם, צוות הפקה, אפקטים ופרסום.</li>
+<li><strong>הרצת התוכנית:</strong> הסימולציה רצה ומחשבת ציון לכל קרב ולתוכנית. השחקן מדלג לתוצאות או צופה בקרב הכתוב (החלטה 5).</li>
+<li><strong>תוצאות:</strong> רייטינג, מעריצים, הכנסות והוצאות, ושינויים בסיבולת, במורל ובפופולריות.</li>
+<li><strong>אירועים:</strong> בקשות של מתאבקים, פציעות, ואחרי אירוע שיא גם אירועים מאחורי הקלעים.</li>
+</ol>
+<h3>העונה</h3>
+<ul>
+<li><strong>אירועי שיא:</strong> 16 בעונה של 50 שבועות. בעונה של 25 שבועות, המספר לפי המקור <span class="badge">לאמת</span>. בחלקם כל המותגים משתתפים יחד (חוצי מותגים).</li>
+<li><strong>אמצע עונה (50 שבועות):</strong> אחרי שבוע 25 כל מותג בוחר עד 6 מתאבקים שמקבלים חיזוק סיבולת ומורל.</li>
+<li><strong>סוף עונה:</strong> דירוג המותגים, חלוקת גביעים לקראת היכל התהילה, בחירת מתאבקים שנשארים (Keepers), ודראפט חדש.</li>
+</ul>
+<h2 id="s6"><span class="n">06</span><span>הישויות במשחק</span></h2>
+<p>הטבלאות האלה הן הבסיס למבנה הנתונים של המנוע. שדה עם <span class="badge">לאמת</span> קיים במקור, אבל הטווח או אופן החישוב שלו עוד לא ידועים.</p>
+<h3>מתאבק</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>שדה</th>
+<th>ערכים</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>שם</td>
+<td>עברית ואנגלית</td>
+<td>ייחודי ובדיוני</td>
+</tr>
+<tr>
+<td>מחלקה</td>
+<td>ענק, קל-משקל, לוחם, מכתש, מומחה, ומחלקות נוספות של המקור <span class="badge">לאמת</span></td>
+<td>קבועה. השמות בעברית זמניים.</td>
+</tr>
+<tr>
+<td>צד</td>
+<td>טוב / רע</td>
+<td>קבוע במקור. ניתן להחלפה רק עם מתג &quot;החלפת צד&quot;.</td>
+</tr>
+<tr>
+<td>פופולריות</td>
+<td>1–100</td>
+<td>עולה בקרבות טובים, בפרומואים ובהחזקת תואר (בערך 10+ <span class="badge">לאמת</span>)</td>
+</tr>
+<tr>
+<td>סיבולת</td>
+<td>0–100 <span class="badge">לאמת</span></td>
+<td>יורדת בכל קרב, יותר בקרבות מסוכנים וקרבות תואר</td>
+</tr>
+<tr>
+<td>מורל</td>
+<td>0–100 <span class="badge">לאמת</span></td>
+<td>0 = עלול לעבור למותג יריב</td>
+</tr>
+<tr>
+<td>רמת ניסיון</td>
+<td>רמות + נקודות ניסיון <span class="badge">לאמת</span></td>
+<td>פותחת יכולות קבועות (Perks) שעוברות איתו בטרייד</td>
+</tr>
+<tr>
+<td>משכורת</td>
+<td>לשבוע</td>
+<td>לפי פופולריות ורמה <span class="badge">לאמת</span></td>
+</tr>
+<tr>
+<td>חוזה</td>
+<td>קבוע (מדראפט) / מוגבל בשבועות (סוכן חופשי, לגנדה)</td>
+<td></td>
+</tr>
+<tr>
+<td>מצב</td>
+<td>כשיר / פצוע (מספר שבועות)</td>
+<td></td>
+</tr>
+<tr>
+<td>דיוקן</td>
+<td>תמונה</td>
+<td>בינה מלאכותית לפי מדריך הסגנון (החלטה 14)</td>
+</tr>
+</tbody></table>
+</div>
+<h3>מנהל</h3>
+<p>שם, דיוקן, קלף כוח בלעדי, ומגבלת שימוש בקלף (למשל פעמיים בעונה). 20 מנהלים, כמו במקור.</p>
+<h3>מותג</h3>
+<p>שם, לוגו, צבעים, אופי, תוארים (ראשי, משני, זוגות ועוד לפי המקור <span class="badge">לאמת</span>), רוסטר, תקציב, מעריצים ומיקום בדירוג.</p>
+<h3>שאר הישויות</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ישות</th>
+<th>שדות עיקריים</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>תואר</td>
+<td>שם, דרג, מחזיק נוכחי, היסטוריית מחזיקים</td>
+</tr>
+<tr>
+<td>יריבות</td>
+<td>שני משתתפים, רמה 1–4, שבוע פתיחה</td>
+</tr>
+<tr>
+<td>קרב</td>
+<td>סוג, משתתפים, משבצת בכרטיס, האם על תואר, ציון, מנצח</td>
+</tr>
+<tr>
+<td>פרומו</td>
+<td>סוג, משתתפים, מחיר, השפעה</td>
+</tr>
+<tr>
+<td>תוכנית</td>
+<td>שבוע, אולם, הפקה, כרטיס, ציון, הכנסות, הוצאות</td>
+</tr>
+<tr>
+<td>קלף כוח</td>
+<td>סוג, אפקט, מחיר, מגבלת שימוש, איסורים (למשל לא בשבוע שלפני אירוע שיא)</td>
+</tr>
+<tr>
+<td>אירוע</td>
+<td>סוג, טריגר, בחירות, תוצאות</td>
+</tr>
+<tr>
+<td>עונה</td>
+<td>אורך, שבוע נוכחי, לוח אירועי שיא, אתגרים עונתיים, דירוג</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s7"><span class="n">07</span><span>מערכות המשחק</span></h2>
+<h3>דראפט</h3>
+<ul>
+<li><strong>מאגר:</strong> כל המתאבקים הפעילים במשחק, ובנוסף מתאבקים מהעורך (לא באונליין).</li>
+<li><strong>סדר:</strong> חמש האפשרויות של המקור (פרק &quot;פתיחת משחק&quot;).</li>
+<li><strong>מיון ומידע:</strong> אפשר למיין לפי רמת ניסיון, מחלקה, צד, פופולריות ומשכורת.</li>
+<li><strong>מחשב:</strong> המנהלים של המחשב בוחרים לפי ערך מחושב (פופולריות, רמה, איזון מחלקות וצדדים) <span class="badge">לאמת</span>.</li>
+<li><strong>גודל רוסטר:</strong> בעונה של 50 שבועות מומלץ 20–25 מתאבקים לכל מותג. מינימום לפי המקור <span class="badge">לאמת</span>.</li>
+</ul>
+<h3>רוסטר, גיוס וטריידים</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>מקור גיוס</th>
+<th>מאפיינים</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>סוכנים חופשיים</td>
+<td>חוזה מוגבל בשבועות, מחיר בינוני</td>
+</tr>
+<tr>
+<td>כישרון מקומי</td>
+<td>זול וחלש</td>
+</tr>
+<tr>
+<td>לגנדות</td>
+<td>יקרות במיוחד, חוזה קצר</td>
+</tr>
+<tr>
+<td>סקאוטים</td>
+<td>מערכת איתור כישרונות (2K25) <span class="badge">לאמת</span></td>
+</tr>
+</tbody></table>
+</div>
+<p><strong>טריידים:</strong> בין מותגים, גם מול המחשב. מחזיק תואר לא ניתן להעברה בחלק מהמנגנונים <span class="badge">לאמת</span>.</p>
+<h3>בניית תוכנית</h3>
+<p><strong>מבנה הכרטיס:</strong> קרב פותח, מידקארד, קרב ראשי ופרומואים. מספר המשבצות לפי רמת הקושי ולפי סוג התוכנית (שבועית או אירוע שיא) <span class="badge">לאמת</span>. מתאבק יכול להופיע גם בפרומו וגם בקרב באותה תוכנית.</p>
+<p><strong>סוגי קרבות (לפי המקור):</strong> יחיד, זוגות, משולש, ארבעה, 5, 6 ו-8 משתתפים, כלוב, סולם, שולחנות, קרב חסר חוקים, שלושה שלבים, גאונטלט, מעורב ועוד <span class="badge">לאמת</span>. לכל סוג: מחיר, השפעה על סיבולת ועל הסיכוי להעלות יריבות, ותנאי פתיחה.</p>
+<p><strong>פרומואים:</strong> יש סוגים עם מטרות שונות, למשל פתיחת יריבות, העלאת פופולריות, אימון (נקודות ניסיון) וצדקה. לכל סוג מחיר והשפעה. במקור מתאבק בפרומו מתאושש פחות ממתאבק שנח <span class="badge">לאמת</span>.</p>
+<h3>ציון קרב ותוכנית</h3>
+<p>הנוסחה המדויקת של המקור נסתרת. מה שידוע הוא אילו גורמים משפיעים:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>גורם</th>
+<th>כיוון ההשפעה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>פופולריות המשתתפים</td>
+<td>גבוהה = ציון גבוה</td>
+</tr>
+<tr>
+<td>התאמת מחלקות</td>
+<td>ענק מול קל-משקל, לוחם מול מכתש, מומחה מול כולם</td>
+</tr>
+<tr>
+<td>צדדים</td>
+<td>טוב מול רע מעלה; אותו צד מוריד מאוד</td>
+</tr>
+<tr>
+<td>רמת ניסיון</td>
+<td>גבוהה = ציון גבוה</td>
+</tr>
+<tr>
+<td>סוג קרב</td>
+<td>יקר יותר = ציון גבוה יותר</td>
+</tr>
+<tr>
+<td>יריבות</td>
+<td>רמה גבוהה = ציון גבוה</td>
+</tr>
+<tr>
+<td>סיבולת</td>
+<td>נמוכה = ביצוע חלש</td>
+</tr>
+<tr>
+<td>תואר</td>
+<td>קרב תואר מעלה ציון ושוחק סיבולת</td>
+</tr>
+</tbody></table>
+</div>
+<p><strong>ציון התוכנית:</strong> הקרב הפותח והקרב הראשי קובעים את רוב הציון, והמידקארד פחות. בנוסף: בונוס איכות של האולם וההפקה.</p>
+<div class="callout note"><p class="callout-label">הערה</p><p><strong>מודל עבודה עד שהמחקר יושלם:</strong> ציון קרב = בסיס לפי פופולריות ורמה, כפול מקדמי התאמה (מחלקות, צדדים, סוג קרב, יריבות, סיבולת), ועוד רכיב אקראי קטן. הציון מוצג בכוכבים (חצאים), כמו במקור. המשקלות יכוילו מול תוצאות אמיתיות מהמחקר.</p>
+</div>
+<h3>יריבויות</h3>
+<ul>
+<li>נפתחות בין שני מתאבקים, בדרך כלל בפרומו.</li>
+<li>כל קרב או פרומו נוסף ביניהם מעלה רמה בהסתברות, עד רמה 4.</li>
+<li>רמה גבוהה = ציון קרב ותגמולים גבוהים יותר. המטרה: רמה 4 באירוע השיא.</li>
+<li>סוגי קרב מסוימים (כמו כלוב) מגדילים את הסיכוי לעלות רמה ומסיימים את היריבות <span class="badge">לאמת</span>.</li>
+</ul>
+<h3>כלכלה</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>הוצאות שבועיות</th>
+<th>הכנסות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>אולם (שכבות מחיר)</td>
+<td>כרטיסים: קיבולת × מחיר כרטיס</td>
+</tr>
+<tr>
+<td>צוות הפקה (שכבות)</td>
+<td>בונוסים מקלפי כוח</td>
+</tr>
+<tr>
+<td>אפקטים (שכבות)</td>
+<td>מקורות נוספים לפי המקור <span class="badge">לאמת</span></td>
+</tr>
+<tr>
+<td>פרסום (שכבות)</td>
+<td></td>
+</tr>
+<tr>
+<td>סוגי קרבות ופרומואים</td>
+<td></td>
+</tr>
+<tr>
+<td>משכורות, בונוסים לבקשות מתאבקים</td>
+<td></td>
+</tr>
+</tbody></table>
+</div>
+<p><strong>אולמות:</strong> מאולם ספורט של בית ספר (2,000 מקומות, 1.5 דולר לכרטיס, בונוס איכות 5%, חינם) ועד קולוסיאום (50,000 מקומות, 4 דולר, 20%). השכבות שבאמצע <span class="badge">לאמת</span>. אצלנו האולמות בדיוניים.</p>
+<h3>קלפי כוח</h3>
+<p>נקנים בחנות, מתקבלים מאירועים, ולכל מנהל יש קלף בלעדי. ארבע משפחות, לפי המקור:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>משפחה</th>
+<th>דוגמאות לאפקט (מהמקור)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>יריבויות</td>
+<td>כל היריבויות הפעילות +2 רמות</td>
+</tr>
+<tr>
+<td>כלכלה</td>
+<td>הכנסות מקהל כפולות; קרבות או פרומואים בחינם לשבוע</td>
+</tr>
+<tr>
+<td>התאוששות</td>
+<td>+15 סיבולת לכל הרוסטר</td>
+</tr>
+<tr>
+<td>התקפה על יריב</td>
+<td>פציעה של שני מתאבקים אקראיים אצל יריב; לקיחת מתאבק (לא מחזיק תואר); הורדת 5 פופולריות לכל הרוסטר של יריב</td>
+</tr>
+</tbody></table>
+</div>
+<p>מחירים, נדירות ורשימה מלאה <span class="badge">לאמת</span>.</p>
+<h3>אירועים, בקשות ופציעות</h3>
+<ul>
+<li><strong>בקשות מתאבקים:</strong> &quot;תשבץ אותי&quot;, &quot;תן לי קרב תואר&quot;, דרישת בונוס (למשל 100 אלף דולר) כדי להישאר. מילוי הבקשה מעלה מורל, והתעלמות גובה מחיר.</li>
+<li><strong>אירועים מאחורי הקלעים:</strong> אחרי כל אירוע שיא. מעניקים קלפים או חיזוק סיבולת <span class="badge">לאמת</span>.</li>
+<li><strong>פציעות:</strong> סיכוי שעולה כשהסיבולת נמוכה, ותלוי ברמת הקושי ובקלפי התקפה. מתאבק פצוע יוצא לכמה שבועות <span class="badge">לאמת</span>.</li>
+</ul>
+<h3>עונה, דירוג והיכל התהילה</h3>
+<ul>
+<li><strong>דירוג עונתי:</strong> לפי מעריצים ורייטינג מצטבר <span class="badge">לאמת</span>.</li>
+<li><strong>היכל התהילה:</strong> 10 גביעים, לאורך כמה עונות שצריך. מקום ראשון בעונה = גביע.</li>
+<li><strong>אתגרים עונתיים:</strong> 20 בכל עונה, וכל 5 שהושלמו = גביע. למשל: מספר מסוים של פרומואי צדקה, או גיוס מספר מסוים של מתאבקים.</li>
+<li><strong>מעבר עונה:</strong> מותג מצליח שומר 2–3 מתאבקים, מותג שסיים נמוך שומר יותר. התקציב מתכווץ בעונות מאוחרות, יותר בקושי גבוה.</li>
+</ul>
+<h2 id="s8"><span class="n">08</span><span>הצגת קרב</span></h2>
+<p>ברירת המחדל: דילוג, ומסך תוצאות עם מנצח וציון כוכבים לכל קרב ולתוכנית.</p>
+<p><strong>צפייה בקרב כתוב:</strong> הקרב &quot;משודר&quot; כרצף רגעים שנבנה מאותה סימולציה. יש פתיחה, רגעי מפנה, ניסיונות הצמדה, התערבויות ותגובת קהל מונפשת, ובסוף הציון. הקהל נשמע ומגיב (החלטה 22). הטקסטים כתובים בשתי השפות ונבחרים לפי מחלקות המשתתפים, סוג הקרב והתוצאה.</p>
+<h2 id="s9"><span class="n">09</span><span>מסכים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>מסך</th>
+<th>תוכן עיקרי</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>כניסה וחשבון</td>
+<td>התחברות, בחירת שפה</td>
+</tr>
+<tr>
+<td>תפריט ראשי</td>
+<td>המשך משחק, משחק חדש, אותו מכשיר, אונליין (גרסה 2), עורך, הגדרות</td>
+</tr>
+<tr>
+<td>הגדרות משחק חדש</td>
+<td>כל הגדרות &quot;פתיחת משחק&quot;</td>
+</tr>
+<tr>
+<td>בחירת מנהל ומותג</td>
+<td>כרטיסי מנהלים עם הקלף הבלעדי, כרטיסי מותגים</td>
+</tr>
+<tr>
+<td>דראפט</td>
+<td>מאגר עם מיון וסינון, תור הבחירה, הרוסטר שנבנה</td>
+</tr>
+<tr>
+<td>דשבורד שבועי</td>
+<td>שבוע, תקציב, דירוג, בקשות פתוחות, יריבויות, אירוע השיא הבא</td>
+</tr>
+<tr>
+<td>רוסטר</td>
+<td>כרטיסי מתאבקים עם כל המדדים, חוזים, טריידים, גיוס</td>
+</tr>
+<tr>
+<td>בניית תוכנית</td>
+<td>משבצות הכרטיס, גרירה ושחרור, תחזית ציון חיה לכל קרב</td>
+</tr>
+<tr>
+<td>לוגיסטיקה</td>
+<td>אולם, הפקה, אפקטים, פרסום, עם תחזית הכנסות והוצאות</td>
+</tr>
+<tr>
+<td>קלפים</td>
+<td>היד שלי, החנות, הפעלה</td>
+</tr>
+<tr>
+<td>צפייה בקרב</td>
+<td>קרב כתוב חי</td>
+</tr>
+<tr>
+<td>תוצאות שבוע</td>
+<td>ציונים, רייטינג, כסף, שינויים במדדים</td>
+</tr>
+<tr>
+<td>אירוע</td>
+<td>בחירה בין אפשרויות</td>
+</tr>
+<tr>
+<td>סוף עונה</td>
+<td>דירוג, גביעים, אתגרים, בחירת מתאבקים שנשארים</td>
+</tr>
+<tr>
+<td>היכל התהילה</td>
+<td>הגביעים שנאספו</td>
+</tr>
+<tr>
+<td>מעבר בין שחקנים</td>
+<td>מסך מסתיר ב&quot;אותו מכשיר&quot;</td>
+</tr>
+<tr>
+<td>עורך</td>
+<td>יצירת מתאבק ומנהל</td>
+</tr>
+<tr>
+<td>ניהול מנויים (אדמין)</td>
+<td>משתמשים, הרשאות, הענקת גישה מלאה, הגדרות הגרסה החינמית</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s10"><span class="n">10</span><span>תוספות במתג</span></h2>
+<p>כל אחת כבויה כברירת מחדל, ומופעלת בהגדרות המשחק החדש (החלטה 21).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תוספת</th>
+<th>מה היא עושה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>החלפת צד</td>
+<td>מתאבק עובר מטוב לרע או להפך, באירוע מתוכנן. משפיע על פופולריות ועל ההתאמות.</td>
+</tr>
+<tr>
+<td>דחיפה</td>
+<td>משבצת &quot;דחיפה&quot; למתאבק אחד: צמיחה מהירה בפופולריות, במחיר מורל של אחרים.</td>
+</tr>
+<tr>
+<td>עלילות יריבות</td>
+<td>יריבות עוברת שלבים נראים (התקפה, בגידה, תקרית) עם טקסטים, ולא רק מספר.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s11"><span class="n">11</span><span>חשבונות, רכישה וניהול מנויים</span></h2>
+<ul>
+<li><strong>חשבון:</strong> מייל, גוגל או אפל (Supabase, החלטה 18).</li>
+<li><strong>גרסה חינמית:</strong> עונה ראשונה מלאה מול מחשב, עם מספר מוגבל של מנהלים ומותגים. ההגבלות מוגדרות מלוח הניהול ולא בקוד (החלטה 8).</li>
+<li><strong>רכישה חד-פעמית:</strong> פותחת הכל. בחנויות האפליקציות הרכישה עוברת דרך גוגל או אפל, והשרת מאמת אותה (החלטה 7).</li>
+<li><strong>לוח ניהול מנויים (אדמין):</strong> רשימת משתמשים, מצב הרשאה (חינמי / רכש / הוענק), הענקה וביטול של גישה מלאה, ועריכת מה פתוח בחינם.</li>
+<li><strong>שמירה:</strong> במכשיר, עם סנכרון לחשבון כשיש חיבור (החלטה 19).</li>
+</ul>
+<h2 id="s12"><span class="n">12</span><span>ארכיטקטורה טכנית</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>שכבה</th>
+<th>בחירה</th>
+<th>הערות</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>אפליקציה</td>
+<td>Expo (React Native + גרסת ווב), TypeScript</td>
+<td>קוד אחד לווב, ל-Android ול-iOS (החלטה 1)</td>
+</tr>
+<tr>
+<td>מנוע המשחק</td>
+<td>חבילת TypeScript טהורה</td>
+<td>בלי תלות בממשק. דטרמיניסטי לפי &quot;זרע&quot; אקראי, כדי שאונליין ובדיקות ייתנו תוצאה זהה.</td>
+</tr>
+<tr>
+<td>בקרים</td>
+<td>מחשב / מקומי / מרוחק</td>
+<td>ממשק אחד שהמנוע פונה אליו לכל מותג</td>
+</tr>
+<tr>
+<td>נתוני תוכן</td>
+<td>קובצי JSON בשתי שפות</td>
+<td>300 מתאבקים, מנהלים, מותגים, תוארים, אולמות, קלפים, אירועים, טקסטי קרב</td>
+</tr>
+<tr>
+<td>תרגום</td>
+<td>קובצי תרגום + היפוך כיוון אוטומטי</td>
+<td></td>
+</tr>
+<tr>
+<td>שרת</td>
+<td>Supabase</td>
+<td>חשבונות, הרשאות, אימות רכישות, סנכרון שמירות, ובגרסה 2 הרצת שבועות אונליין</td>
+</tr>
+<tr>
+<td>איזון</td>
+<td>סימולציה אוטומטית של מאות עונות</td>
+<td>איתור אסטרטגיות ששוברות את המשחק</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s13"><span class="n">13</span><span>תוכן להפקה</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תוכן</th>
+<th>כמות</th>
+<th>אופן הפקה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>מתאבקים</td>
+<td>300</td>
+<td>טבלת נתונים מרכזית, יצירה בקבוצות, דיוקנאות בבינה מלאכותית (החלטות 14, 15)</td>
+</tr>
+<tr>
+<td>מנהלים</td>
+<td>20</td>
+<td>דיוקן + קלף בלעדי</td>
+</tr>
+<tr>
+<td>מותגים</td>
+<td>5</td>
+<td>לוגו וקטורי, צבעים, אופי</td>
+</tr>
+<tr>
+<td>תוארים</td>
+<td>לפי המקור <span class="badge">לאמת</span></td>
+<td>חגורות וקטוריות</td>
+</tr>
+<tr>
+<td>אולמות</td>
+<td>לפי השכבות של המקור <span class="badge">לאמת</span></td>
+<td>שמות בדיוניים</td>
+</tr>
+<tr>
+<td>קלפי כוח</td>
+<td>לפי המקור <span class="badge">לאמת</span></td>
+<td></td>
+</tr>
+<tr>
+<td>אירועים ובקשות</td>
+<td>עשרות</td>
+<td>טקסטים בשתי השפות</td>
+</tr>
+<tr>
+<td>טקסטי קרב</td>
+<td>מאות קטעים</td>
+<td>לפי מחלקות, סוג קרב ותוצאה</td>
+</tr>
+<tr>
+<td>סאונד</td>
+<td>מוזיקה, אפקטים, קהל</td>
+<td>ספריות ברישיון ובינה מלאכותית (החלטה 22)</td>
+</tr>
+<tr>
+<td>שמות</td>
+<td>ליגה, מותגים, משחק</td>
+<td>בשלב התוכן, עם בדיקה (החלטה 12)</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s14"><span class="n">14</span><span>מה עוד צריך לאמת</span></h2>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>את כל אלה משלימים במחקר במחשב: יוטיוב (תמלילים ועצירה על מסכי תפריטים) ומדריכים מלאים (החלטה 23).</p>
+</div>
+<ol>
+<li>נוסחת ציון הקרב והתוכנית: משקלות הגורמים.</li>
+<li>רשימת המחלקות המלאה וטבלת ההתאמות.</li>
+<li>מחירי סוגי הקרבות והפרומואים, והשפעתם על סיבולת ויריבות.</li>
+<li>שכבות האולמות, ההפקה, האפקטים והפרסום: מחירים ובונוסים.</li>
+<li>רשימת קלפי הכוח המלאה: מחירים, נדירות, מגבלות.</li>
+<li>מספר משבצות בכרטיס לפי קושי ולפי סוג תוכנית.</li>
+<li>רמות הקושי ומה כל אחת משנה במספרים.</li>
+<li>טווחי סיבולת ומורל, קצב שחיקה והתאוששות.</li>
+<li>משכורות וחוזים: איך נקבעים.</li>
+<li>נוסחת הדירוג העונתי, מספר אירועי השיא בעונה של 25 שבועות, וכללי השארת מתאבקים.</li>
+<li>רשימת התוארים במותג.</li>
+<li>כללי הטריידים והסקאוטים.</li>
+</ol>
+<h2 id="s15"><span class="n">15</span><span>מפת הדרכים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>שלב</th>
+<th>תוצר</th>
+<th>איפה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. החלטות יסוד</td>
+<td>24 החלטות</td>
+<td>בענן (הושלם)</td>
+</tr>
+<tr>
+<td>2. מסמך אפיון</td>
+<td>המסמך הזה, גרסה 0.1</td>
+<td>בענן (עכשיו)</td>
+</tr>
+<tr>
+<td>3. מחקר מספרים</td>
+<td>השלמת כל ה-<span class="badge">לאמת</span></td>
+<td>במחשב</td>
+</tr>
+<tr>
+<td>4. אב-טיפוס</td>
+<td>מנוע + ממשק בסיסי, עונה שאפשר לשחק</td>
+<td>במחשב</td>
+</tr>
+<tr>
+<td>5. תוכן</td>
+<td>300 מתאבקים, מנהלים, מותגים, שמות</td>
+<td>במחשב</td>
+</tr>
+<tr>
+<td>6. עיצוב וממשק</td>
+<td>גרפיקה ברמת שידור, סאונד</td>
+<td>במחשב</td>
+</tr>
+<tr>
+<td>7. חשבונות ורכישה</td>
+<td>Supabase, ניהול מנויים, חנויות</td>
+<td>במחשב</td>
+</tr>
+<tr>
+<td>8. איזון ובדיקות</td>
+<td>סימולציה אוטומטית</td>
+<td>במחשב</td>
+</tr>
+<tr>
+<td>9. השקה</td>
+<td>גרסה 1 בחנויות</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10. אונליין</td>
+<td>גרסה 2</td>
+<td>—</td>
+</tr>
+</tbody></table>
+</div>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/gdd.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>
