@@ -131,7 +131,7 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
   <div class="layout gutter">
     <nav class="toc" aria-label="תוכן העניינים">
       <p class="toc-title">תוכן העניינים</p>
-      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>השכבות</span></a></li><li><a href="#s3"><span class="n">03</span><span>המנהלים</span></a></li><li><a href="#s4"><span class="n">04</span><span>כוכב על</span></a></li><li><a href="#s5"><span class="n">05</span><span>כוכב</span></a></li><li><a href="#s6"><span class="n">06</span><span>מידקארד</span></a></li><li><a href="#s7"><span class="n">07</span><span>כוכב עולה</span></a></li><li><a href="#s8"><span class="n">08</span><span>צעיר בפיתוח</span></a></li><li><a href="#s9"><span class="n">09</span><span>אגדה</span></a></li><li><a href="#s10"><span class="n">10</span><span>כוכב עבר</span></a></li><li><a href="#s11"><span class="n">11</span><span>סוכן חופשי</span></a></li><li><a href="#s12"><span class="n">12</span><span>כישרון מקומי</span></a></li></ol>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>הנתונים של כל מתאבק</span></a></li><li><a href="#s3"><span class="n">03</span><span>השכבות</span></a></li><li><a href="#s4"><span class="n">04</span><span>המנהלים</span></a></li><li><a href="#s5"><span class="n">05</span><span>כוכב על</span></a></li><li><a href="#s6"><span class="n">06</span><span>כוכב</span></a></li><li><a href="#s7"><span class="n">07</span><span>מידקארד</span></a></li><li><a href="#s8"><span class="n">08</span><span>כוכב עולה</span></a></li><li><a href="#s9"><span class="n">09</span><span>צעיר בפיתוח</span></a></li><li><a href="#s10"><span class="n">10</span><span>אגדה</span></a></li><li><a href="#s11"><span class="n">11</span><span>כוכב עבר</span></a></li><li><a href="#s12"><span class="n">12</span><span>סוכן חופשי</span></a></li><li><a href="#s13"><span class="n">13</span><span>כישרון מקומי</span></a></li></ol>
     </nav>
     <main class="content">
 <h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
@@ -148,9 +148,65 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <li><strong>צמדים:</strong> 20 צמדי גברים ו-10 צמדי נשים מתוך הפעילים. בני הזוג תמיד באותו צד.</li>
 <li><strong>נתונים מלאים:</strong> <code>content/roster.json</code> ו-<code>content/gms.json</code>. כל מתאבק כולל עיר מוצא, גיל, תיאור קצר בשתי השפות, ומשכורת.</li>
 </ul>
-<div class="callout verify"><p class="callout-label">לאמת</p><p>הטווחים של פופולריות, ניסיון ומשכורת הם מודל עבודה לפי מה שידוע מהמקור: פופולריות 1–100, ומשכורות דראפט של עד כ-250 אלף דולר. יעודכנו במחקר המספרים במחשב. השמות ייבדקו מול מתאבקים אמיתיים לפני ההפקה.</p>
+<h2 id="s2"><span class="n">02</span><span>הנתונים של כל מתאבק</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>נתון</th>
+<th>טווח</th>
+<th>הסבר</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>סגנון</td>
+<td>ענק, קל-משקל, לוחם, מכתש, מומחה</td>
+<td>כמו המחלקות במקור.</td>
+</tr>
+<tr>
+<td>מתאים מול</td>
+<td>הסגנון המשלים</td>
+<td>ענק מול קל-משקל, לוחם מול מכתש, ומומחה מול כולם. התאמה נכונה מעלה את ציון הקרב.</td>
+</tr>
+<tr>
+<td>צד</td>
+<td>טוב / רע</td>
+<td>טוב מול רע מעלה את הציון, ואותו צד מוריד אותו.</td>
+</tr>
+<tr>
+<td>פופולריות</td>
+<td>1–100, בהתחלה עד 70</td>
+<td>גם כוכבי העל הגדולים מתחילים ב-60–70. עולה במהלך העונה מקרבות, פרומואים ותארים.</td>
+</tr>
+<tr>
+<td>רמת ניסיון</td>
+<td>1–30</td>
+<td>שש דרגות: מתחיל (1), מבוסס (5), מוכר (10), אייקון (15), אגדה (20), בן אלמוות (25). עולה מקרבות, פרומואים ואימונים (5,000 דולר לאימון).</td>
+</tr>
+<tr>
+<td>מיקרופון</td>
+<td>1–5 כוכבים</td>
+<td>כמה טוב הפרומו שלו.</td>
+</tr>
+<tr>
+<td>סיבולת</td>
+<td>55–100</td>
+<td>התקרה האישית. ענקים נמוכים, קלי-משקל גבוהים. מתחת ל-40 סיכון הפציעה עולה.</td>
+</tr>
+<tr>
+<td>מורל</td>
+<td>60–80 בהתחלה</td>
+<td>נאמנות למותג. ב-0 הוא עלול לעזוב.</td>
+</tr>
+<tr>
+<td>משכורת</td>
+<td>לעונה</td>
+<td>לפי השכבה.</td>
+</tr>
+</tbody></table>
 </div>
-<h2 id="s2"><span class="n">02</span><span>השכבות</span></h2>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>פופולריות של עד 70 בהתחלה ומיקרופון 1–5 נקבעו לפי הניסיון שלך במשחק. רמות הניסיון והדרגות לפי מדריכים של 2K26: מתאבקים טובים ברמה 15 ומעלה ואגדות ב-20 ומעלה. הגבולות המדויקים בין הדרגות, וטווחי הסיבולת, יאומתו במחקר המספרים.</p>
+</div>
+<h2 id="s3"><span class="n">03</span><span>השכבות</span></h2>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -161,6 +217,7 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>סה&quot;כ</th>
 <th>פופולריות</th>
 <th>ניסיון</th>
+<th>מיקרופון</th>
 <th>משכורת לעונה</th>
 </tr>
 </thead>
@@ -170,8 +227,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>13</td>
 <td>7</td>
 <td>20</td>
-<td>85–98</td>
-<td>8–10</td>
+<td>60–70</td>
+<td>15–20</td>
+<td>3–5</td>
 <td>$200K–260K</td>
 </tr>
 <tr>
@@ -180,8 +238,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>23</td>
 <td>12</td>
 <td>35</td>
-<td>70–86</td>
-<td>6–8</td>
+<td>50–62</td>
+<td>11–16</td>
+<td>2–5</td>
 <td>$140K–210K</td>
 </tr>
 <tr>
@@ -190,8 +249,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>36</td>
 <td>19</td>
 <td>55</td>
-<td>50–72</td>
-<td>4–6</td>
+<td>38–52</td>
+<td>7–12</td>
+<td>1–4</td>
 <td>$80K–140K</td>
 </tr>
 <tr>
@@ -200,8 +260,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>20</td>
 <td>10</td>
 <td>30</td>
-<td>45–65</td>
-<td>3–5</td>
+<td>32–46</td>
+<td>5–9</td>
+<td>1–4</td>
 <td>$60K–110K</td>
 </tr>
 <tr>
@@ -210,7 +271,8 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>26</td>
 <td>14</td>
 <td>40</td>
-<td>25–48</td>
+<td>15–32</td>
+<td>1–5</td>
 <td>1–3</td>
 <td>$30K–70K</td>
 </tr>
@@ -220,8 +282,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>20</td>
 <td>10</td>
 <td>30</td>
-<td>85–99</td>
-<td>8–10</td>
+<td>58–70</td>
+<td>20–26</td>
+<td>3–5</td>
 <td>$300K–450K</td>
 </tr>
 <tr>
@@ -230,8 +293,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>20</td>
 <td>10</td>
 <td>30</td>
-<td>55–80</td>
-<td>6–9</td>
+<td>40–58</td>
+<td>12–18</td>
+<td>2–4</td>
 <td>$120K–220K</td>
 </tr>
 <tr>
@@ -240,8 +304,9 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>20</td>
 <td>10</td>
 <td>30</td>
-<td>35–65</td>
-<td>3–6</td>
+<td>25–45</td>
+<td>5–11</td>
+<td>1–3</td>
 <td>$60K–150K</td>
 </tr>
 <tr>
@@ -250,15 +315,16 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>20</td>
 <td>10</td>
 <td>30</td>
-<td>5–25</td>
+<td>5–18</td>
+<td>1–3</td>
 <td>1–2</td>
 <td>$10K–30K</td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s3"><span class="n">03</span><span>המנהלים</span></h2>
+<h2 id="s4"><span class="n">04</span><span>המנהלים</span></h2>
 <p>20 מנהלים, כמו במקור, כל אחד עם קלף בלעדי. הפירוט המלא במסמך קלפי הכוח (<code>docs/cards.md</code>).</p>
-<h2 id="s4"><span class="n">04</span><span>כוכב על</span></h2>
+<h2 id="s5"><span class="n">05</span><span>כוכב על</span></h2>
 <p>פני הליגה, מוכר לכל מעריץ.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -267,10 +333,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
@@ -281,10 +350,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>דומיניק וייל</td>
 <td>גבר</td>
 <td>ענק</td>
+<td>קל-משקל</td>
 <td>טוב</td>
-<td>93</td>
-<td>10</td>
-<td>$255K</td>
+<td>68</td>
+<td>19 (אייקון)</td>
+<td>★★★★★</td>
+<td>58</td>
+<td>$257K</td>
 <td></td>
 </tr>
 <tr>
@@ -292,11 +364,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Colossus</td>
 <td>קולוסוס</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>94</td>
-<td>10</td>
-<td>$226K</td>
+<td>69</td>
+<td>19 (אייקון)</td>
+<td>★★★★★</td>
+<td>85</td>
+<td>$228K</td>
 <td></td>
 </tr>
 <tr>
@@ -305,10 +380,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>מרקוס ויילד</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>96</td>
-<td>9</td>
-<td>$249K</td>
+<td>61</td>
+<td>17 (אייקון)</td>
+<td>★★★</td>
+<td>84</td>
+<td>$252K</td>
 <td></td>
 </tr>
 <tr>
@@ -316,11 +394,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Ryker Lane</td>
 <td>רייקר ליין</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>רע</td>
-<td>94</td>
-<td>8</td>
-<td>$218K</td>
+<td>65</td>
+<td>16 (אייקון)</td>
+<td>★★★★</td>
+<td>73</td>
+<td>$259K</td>
 <td></td>
 </tr>
 <tr>
@@ -329,10 +410,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>דרייבן הולט</td>
 <td>גבר</td>
 <td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>98</td>
-<td>10</td>
-<td>$243K</td>
+<td>68</td>
+<td>20 (אגדה)</td>
+<td>★★★</td>
+<td>75</td>
+<td>$235K</td>
 <td></td>
 </tr>
 <tr>
@@ -340,11 +424,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>King Malachi</td>
 <td>קינג מלאכי</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>90</td>
-<td>9</td>
-<td>$224K</td>
+<td>62</td>
+<td>20 (אגדה)</td>
+<td>★★★★★</td>
+<td>98</td>
+<td>$201K</td>
 <td></td>
 </tr>
 <tr>
@@ -352,10 +439,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Saint Lucien</td>
 <td>סיינט לוסיאן</td>
 <td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>טוב</td>
-<td>96</td>
-<td>9</td>
+<td>67</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
+<td>77</td>
 <td>$235K</td>
 <td></td>
 </tr>
@@ -364,11 +454,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Kenzo Arata</td>
 <td>קנזו אראטה</td>
 <td>גבר</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>רע</td>
-<td>87</td>
-<td>10</td>
-<td>$245K</td>
+<td>68</td>
+<td>19 (אייקון)</td>
+<td>★★★★</td>
+<td>67</td>
+<td>$216K</td>
 <td></td>
 </tr>
 <tr>
@@ -376,11 +469,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>El Fantasma Rojo</td>
 <td>אל פנטסמה רוחו</td>
 <td>גבר</td>
-<td>ענק</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>96</td>
-<td>9</td>
-<td>$229K</td>
+<td>67</td>
+<td>19 (אייקון)</td>
+<td>★★★★★</td>
+<td>70</td>
+<td>$214K</td>
 <td></td>
 </tr>
 <tr>
@@ -388,11 +484,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Axel Wolfe</td>
 <td>אקסל וולף</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>94</td>
-<td>10</td>
-<td>$255K</td>
+<td>68</td>
+<td>20 (אגדה)</td>
+<td>★★★</td>
+<td>89</td>
+<td>$230K</td>
 <td></td>
 </tr>
 <tr>
@@ -400,11 +499,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Cassian Fox</td>
 <td>קסיאן פוקס</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>97</td>
-<td>10</td>
-<td>$231K</td>
+<td>61</td>
+<td>20 (אגדה)</td>
+<td>★★★★★</td>
+<td>84</td>
+<td>$245K</td>
 <td></td>
 </tr>
 <tr>
@@ -412,11 +514,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Viktor Brandt</td>
 <td>ויקטור ברנדט</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>98</td>
-<td>9</td>
-<td>$259K</td>
+<td>66</td>
+<td>20 (אגדה)</td>
+<td>★★★★</td>
+<td>97</td>
+<td>$232K</td>
 <td></td>
 </tr>
 <tr>
@@ -424,11 +529,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Zion Okoye</td>
 <td>ציון אוקויה</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>85</td>
-<td>10</td>
-<td>$249K</td>
+<td>66</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
+<td>79</td>
+<td>$200K</td>
 <td></td>
 </tr>
 <tr>
@@ -436,11 +544,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Seraphina Lux</td>
 <td>סרפינה לוקס</td>
 <td>אישה</td>
-<td>ענק</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>96</td>
-<td>10</td>
-<td>$242K</td>
+<td>69</td>
+<td>18 (אייקון)</td>
+<td>★★★★★</td>
+<td>85</td>
+<td>$258K</td>
 <td></td>
 </tr>
 <tr>
@@ -449,10 +560,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>אורורה ואנס</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>92</td>
-<td>8</td>
-<td>$256K</td>
+<td>67</td>
+<td>19 (אייקון)</td>
+<td>★★★★</td>
+<td>83</td>
+<td>$242K</td>
 <td></td>
 </tr>
 <tr>
@@ -461,10 +575,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>קאידה מורי</td>
 <td>אישה</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>95</td>
-<td>10</td>
-<td>$243K</td>
+<td>65</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
+<td>84</td>
+<td>$216K</td>
 <td></td>
 </tr>
 <tr>
@@ -473,10 +590,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>ניקס דילייני</td>
 <td>אישה</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>93</td>
-<td>9</td>
-<td>$225K</td>
+<td>66</td>
+<td>20 (אגדה)</td>
+<td>★★★★</td>
+<td>72</td>
+<td>$217K</td>
 <td></td>
 </tr>
 <tr>
@@ -484,11 +604,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Ophelia Thorn</td>
 <td>אופליה ת&#39;ורן</td>
 <td>אישה</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>טוב</td>
-<td>95</td>
-<td>10</td>
-<td>$230K</td>
+<td>63</td>
+<td>20 (אגדה)</td>
+<td>★★★★</td>
+<td>69</td>
+<td>$258K</td>
 <td></td>
 </tr>
 <tr>
@@ -496,11 +619,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Ximena Cruz</td>
 <td>חימנה קרוז</td>
 <td>אישה</td>
-<td>מכתש</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>רע</td>
-<td>88</td>
-<td>9</td>
-<td>$217K</td>
+<td>69</td>
+<td>19 (אייקון)</td>
+<td>★★★</td>
+<td>74</td>
+<td>$215K</td>
 <td></td>
 </tr>
 <tr>
@@ -508,16 +634,19 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Freya Knox</td>
 <td>פרייה נוקס</td>
 <td>אישה</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>טוב</td>
-<td>94</td>
-<td>9</td>
-<td>$233K</td>
+<td>68</td>
+<td>17 (אייקון)</td>
+<td>★★★★★</td>
+<td>75</td>
+<td>$209K</td>
 <td></td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s5"><span class="n">05</span><span>כוכב</span></h2>
+<h2 id="s6"><span class="n">06</span><span>כוכב</span></h2>
 <p>כוכב מבוסס שתמיד קרוב לתואר.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -526,437 +655,545 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W021</td>
-<td>Miles Maddox</td>
-<td>מיילס מדוקס</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>85</td>
-<td>7</td>
-<td>$203K</td>
-<td></td>
-</tr>
-<tr>
-<td>W022</td>
-<td>Sam Monroe</td>
-<td>סאם מונרו</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>79</td>
-<td>7</td>
-<td>$152K</td>
-<td>צמד The Bounty</td>
-</tr>
-<tr>
-<td>W023</td>
-<td>Tariq Sato</td>
-<td>טאריק סאטו</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>75</td>
-<td>7</td>
-<td>$148K</td>
-<td></td>
-</tr>
-<tr>
-<td>W024</td>
-<td>Rafa Soto</td>
-<td>ראפה סוטו</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>76</td>
-<td>8</td>
-<td>$158K</td>
-<td></td>
-</tr>
-<tr>
-<td>W025</td>
-<td>Blake Ellis</td>
-<td>בלייק אליס</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>72</td>
-<td>8</td>
-<td>$171K</td>
-<td></td>
-</tr>
-<tr>
-<td>W026</td>
-<td>Cade Rossi</td>
-<td>קייד רוסי</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>81</td>
-<td>6</td>
-<td>$180K</td>
-<td>צמד Steel Syndicate</td>
-</tr>
-<tr>
-<td>W027</td>
-<td>Tate Silva</td>
-<td>טייט סילבה</td>
+<td>Mateo Holm</td>
+<td>מטאו הולם</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>74</td>
-<td>8</td>
+<td>57</td>
+<td>16 (אייקון)</td>
+<td>★★★</td>
+<td>87</td>
 <td>$200K</td>
 <td></td>
 </tr>
 <tr>
-<td>W028</td>
+<td>W022</td>
 <td>Ty Tanaka</td>
 <td>טיי טנאקה</td>
 <td>גבר</td>
 <td>קל-משקל</td>
-<td>רע</td>
-<td>83</td>
-<td>8</td>
-<td>$157K</td>
-<td></td>
-</tr>
-<tr>
-<td>W029</td>
-<td>Cyrus Berg</td>
-<td>סיירוס ברג</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>83</td>
-<td>7</td>
-<td>$206K</td>
-<td></td>
-</tr>
-<tr>
-<td>W030</td>
-<td>Milo Banner</td>
-<td>מיילו באנר</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>82</td>
-<td>6</td>
-<td>$184K</td>
-<td></td>
-</tr>
-<tr>
-<td>W031</td>
-<td>Dorian Blaine</td>
-<td>דוריאן בליין</td>
-<td>גבר</td>
 <td>ענק</td>
-<td>טוב</td>
-<td>85</td>
-<td>7</td>
-<td>$197K</td>
+<td>רע</td>
+<td>56</td>
+<td>16 (אייקון)</td>
+<td>★★★</td>
+<td>84</td>
+<td>$179K</td>
 <td></td>
 </tr>
 <tr>
-<td>W032</td>
-<td>Eli Soto</td>
-<td>אלי סוטו</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>75</td>
-<td>6</td>
-<td>$166K</td>
-<td>צמד The Foundry</td>
-</tr>
-<tr>
-<td>W033</td>
-<td>Luca Moreno</td>
-<td>לוקה מורנו</td>
+<td>W023</td>
+<td>Milo Jensen</td>
+<td>מיילו ג&#39;נסן</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>72</td>
-<td>8</td>
-<td>$144K</td>
-<td>צמד The Outriders</td>
+<td>53</td>
+<td>14 (מוכר)</td>
+<td>★★</td>
+<td>73</td>
+<td>$149K</td>
+<td>צמד Royal Guard</td>
 </tr>
 <tr>
-<td>W034</td>
+<td>W024</td>
+<td>Max Maxwell</td>
+<td>מקס מקסוול</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>62</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>81</td>
+<td>$181K</td>
+<td></td>
+</tr>
+<tr>
+<td>W025</td>
+<td>Reid Tucker</td>
+<td>ריד טאקר</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>57</td>
+<td>14 (מוכר)</td>
+<td>★★★</td>
+<td>74</td>
+<td>$206K</td>
+<td>צמד Live Wire</td>
+</tr>
+<tr>
+<td>W026</td>
+<td>Wes Ward</td>
+<td>ווס וורד</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>53</td>
+<td>16 (אייקון)</td>
+<td>★★</td>
+<td>82</td>
+<td>$144K</td>
+<td>צמד The Night Raiders</td>
+</tr>
+<tr>
+<td>W027</td>
 <td>Cyrus Locke</td>
 <td>סיירוס לוק</td>
 <td>גבר</td>
 <td>ענק</td>
-<td>רע</td>
-<td>71</td>
-<td>7</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>58</td>
+<td>11 (מוכר)</td>
+<td>★★★★★</td>
+<td>75</td>
 <td>$201K</td>
 <td></td>
 </tr>
 <tr>
-<td>W035</td>
+<td>W028</td>
 <td>Kenzie Bishop</td>
 <td>קנזי בישופ</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>58</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>85</td>
+<td>$189K</td>
+<td>צמד Live Wire</td>
+</tr>
+<tr>
+<td>W029</td>
+<td>Ryan Easton</td>
+<td>ראיין איסטון</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>86</td>
-<td>6</td>
-<td>$157K</td>
+<td>56</td>
+<td>13 (מוכר)</td>
+<td>★★★</td>
+<td>81</td>
+<td>$173K</td>
 <td></td>
 </tr>
 <tr>
-<td>W036</td>
-<td>Adrian Lowe</td>
-<td>אדריאן לואו</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>83</td>
-<td>8</td>
-<td>$150K</td>
-<td>צמד The Foundry</td>
-</tr>
-<tr>
-<td>W037</td>
-<td>Grant Webb</td>
-<td>גרנט ווב</td>
+<td>W030</td>
+<td>Beau Easton</td>
+<td>בו איסטון</td>
 <td>גבר</td>
 <td>קל-משקל</td>
-<td>טוב</td>
-<td>84</td>
-<td>7</td>
-<td>$176K</td>
-<td></td>
-</tr>
-<tr>
-<td>W038</td>
-<td>Levi Kato</td>
-<td>לוי קאטו</td>
-<td>גבר</td>
-<td>מכתש</td>
+<td>ענק</td>
 <td>רע</td>
-<td>73</td>
-<td>8</td>
-<td>$175K</td>
+<td>52</td>
+<td>13 (מוכר)</td>
+<td>★★★★★</td>
+<td>94</td>
+<td>$207K</td>
 <td></td>
 </tr>
 <tr>
-<td>W039</td>
-<td>Adrian Mercer</td>
-<td>אדריאן מרסר</td>
+<td>W031</td>
+<td>Felix Rook</td>
+<td>פליקס רוק</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
+<td>53</td>
+<td>12 (מוכר)</td>
+<td>★★</td>
 <td>72</td>
-<td>7</td>
-<td>$192K</td>
+<td>$182K</td>
 <td></td>
 </tr>
 <tr>
-<td>W040</td>
-<td>Julian Carlisle</td>
-<td>ג&#39;וליאן קרלייל</td>
+<td>W032</td>
+<td>Felix Carlisle</td>
+<td>פליקס קרלייל</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>70</td>
-<td>7</td>
+<td>50</td>
+<td>13 (מוכר)</td>
+<td>★★★</td>
+<td>91</td>
+<td>$208K</td>
+<td></td>
+</tr>
+<tr>
+<td>W033</td>
+<td>Wes Rook</td>
+<td>ווס רוק</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>59</td>
+<td>16 (אייקון)</td>
+<td>★★★</td>
+<td>88</td>
+<td>$174K</td>
+<td></td>
+</tr>
+<tr>
+<td>W034</td>
+<td>Evan Fallon</td>
+<td>אוון פאלון</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>51</td>
+<td>14 (מוכר)</td>
+<td>★★★</td>
+<td>73</td>
 <td>$185K</td>
 <td></td>
 </tr>
 <tr>
-<td>W041</td>
-<td>Tate Mensah</td>
-<td>טייט מנסה</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>78</td>
-<td>8</td>
-<td>$177K</td>
-<td></td>
-</tr>
-<tr>
-<td>W042</td>
-<td>Mateo Costa</td>
-<td>מטאו קוסטה</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>78</td>
-<td>6</td>
-<td>$161K</td>
-<td></td>
-</tr>
-<tr>
-<td>W043</td>
-<td>Cal Wells</td>
-<td>קאל וולס</td>
+<td>W035</td>
+<td>Grant Maxwell</td>
+<td>גרנט מקסוול</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>75</td>
-<td>8</td>
-<td>$204K</td>
-<td></td>
+<td>58</td>
+<td>13 (מוכר)</td>
+<td>★★★★</td>
+<td>88</td>
+<td>$177K</td>
+<td>צמד Steel Syndicate</td>
 </tr>
 <tr>
-<td>W044</td>
-<td>Nadia Dane</td>
-<td>נדיה דיין</td>
-<td>אישה</td>
+<td>W036</td>
+<td>Gage Rios</td>
+<td>גייג&#39; ריוס</td>
+<td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>50</td>
+<td>14 (מוכר)</td>
+<td>★★★★</td>
+<td>93</td>
+<td>$147K</td>
+<td>צמד The Collective</td>
+</tr>
+<tr>
+<td>W037</td>
+<td>Brady Sloane</td>
+<td>בריידי סלואן</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>80</td>
-<td>6</td>
+<td>60</td>
+<td>15 (אייקון)</td>
+<td>★★★★</td>
+<td>90</td>
+<td>$144K</td>
+<td>צמד Brute Force</td>
+</tr>
+<tr>
+<td>W038</td>
+<td>Levi Dahl</td>
+<td>לוי דאל</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>57</td>
+<td>14 (מוכר)</td>
+<td>★★</td>
+<td>91</td>
 <td>$172K</td>
 <td></td>
 </tr>
 <tr>
-<td>W045</td>
-<td>Yara Quill</td>
-<td>יארה קוויל</td>
-<td>אישה</td>
-<td>מכתש</td>
+<td>W039</td>
+<td>Oscar Wells</td>
+<td>אוסקר וולס</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>61</td>
+<td>14 (מוכר)</td>
+<td>★★</td>
+<td>64</td>
+<td>$177K</td>
+<td></td>
+</tr>
+<tr>
+<td>W040</td>
+<td>Hugo Frost</td>
+<td>הוגו פרוסט</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>70</td>
-<td>6</td>
-<td>$170K</td>
+<td>56</td>
+<td>13 (מוכר)</td>
+<td>★★</td>
+<td>97</td>
+<td>$165K</td>
+<td>צמד Twin Turbines</td>
+</tr>
+<tr>
+<td>W041</td>
+<td>Marco Flynn</td>
+<td>מרקו פלין</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>51</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>84</td>
+<td>$185K</td>
+<td></td>
+</tr>
+<tr>
+<td>W042</td>
+<td>Diego Slade</td>
+<td>דייגו סלייד</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>59</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>68</td>
+<td>$188K</td>
+<td></td>
+</tr>
+<tr>
+<td>W043</td>
+<td>Nico Monroe</td>
+<td>ניקו מונרו</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>52</td>
+<td>12 (מוכר)</td>
+<td>★★</td>
+<td>97</td>
+<td>$190K</td>
+<td></td>
+</tr>
+<tr>
+<td>W044</td>
+<td>Jess Orr</td>
+<td>ג&#39;ס אור</td>
+<td>אישה</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>54</td>
+<td>15 (אייקון)</td>
+<td>★★★★★</td>
+<td>68</td>
+<td>$180K</td>
+<td></td>
+</tr>
+<tr>
+<td>W045</td>
+<td>Nadia Ellis</td>
+<td>נדיה אליס</td>
+<td>אישה</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>58</td>
+<td>11 (מוכר)</td>
+<td>★★★★</td>
+<td>80</td>
+<td>$206K</td>
 <td></td>
 </tr>
 <tr>
 <td>W046</td>
-<td>Iris Fallon</td>
-<td>איריס פאלון</td>
+<td>Quinn Dalton</td>
+<td>קווין דלטון</td>
 <td>אישה</td>
 <td>לוחם</td>
-<td>טוב</td>
-<td>81</td>
-<td>7</td>
-<td>$144K</td>
-<td></td>
-</tr>
-<tr>
-<td>W047</td>
-<td>Quinn Dahl</td>
-<td>קווין דאל</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>84</td>
-<td>7</td>
-<td>$187K</td>
-<td></td>
-</tr>
-<tr>
-<td>W048</td>
-<td>Hazel Quill</td>
-<td>הייזל קוויל</td>
-<td>אישה</td>
 <td>מכתש</td>
 <td>טוב</td>
-<td>81</td>
-<td>6</td>
-<td>$143K</td>
-<td>צמד Black Orchid</td>
-</tr>
-<tr>
-<td>W049</td>
-<td>Rosa Shaw</td>
-<td>רוזה שו</td>
-<td>אישה</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>73</td>
-<td>7</td>
-<td>$180K</td>
-<td></td>
-</tr>
-<tr>
-<td>W050</td>
-<td>Bree Rossi</td>
-<td>ברי רוסי</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>76</td>
-<td>8</td>
-<td>$154K</td>
-<td></td>
-</tr>
-<tr>
-<td>W051</td>
-<td>Iris Frost</td>
-<td>איריס פרוסט</td>
-<td>אישה</td>
-<td>ענק</td>
-<td>רע</td>
-<td>86</td>
-<td>7</td>
-<td>$143K</td>
-<td></td>
-</tr>
-<tr>
-<td>W052</td>
-<td>Ivy Wells</td>
-<td>אייבי וולס</td>
-<td>אישה</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>82</td>
-<td>6</td>
+<td>50</td>
+<td>16 (אייקון)</td>
+<td>★★★</td>
+<td>85</td>
 <td>$168K</td>
 <td></td>
 </tr>
 <tr>
-<td>W053</td>
-<td>Kira Rossi</td>
-<td>קירה רוסי</td>
+<td>W047</td>
+<td>Jess Crane</td>
+<td>ג&#39;ס קריין</td>
 <td>אישה</td>
-<td>ענק</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>82</td>
-<td>7</td>
-<td>$169K</td>
+<td>55</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>80</td>
+<td>$187K</td>
+<td>צמד Neon Rebels</td>
+</tr>
+<tr>
+<td>W048</td>
+<td>Brooke Moreno</td>
+<td>ברוק מורנו</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>57</td>
+<td>16 (אייקון)</td>
+<td>★★★★</td>
+<td>76</td>
+<td>$192K</td>
 <td></td>
 </tr>
 <tr>
-<td>W054</td>
-<td>Aria Easton</td>
-<td>אריה איסטון</td>
+<td>W049</td>
+<td>Ava Wells</td>
+<td>אווה וולס</td>
 <td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>80</td>
-<td>6</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>58</td>
+<td>16 (אייקון)</td>
+<td>★★★★★</td>
+<td>71</td>
 <td>$162K</td>
 <td></td>
 </tr>
 <tr>
-<td>W055</td>
-<td>Daisy Sato</td>
-<td>דייזי סאטו</td>
+<td>W050</td>
+<td>Tess Rossi</td>
+<td>טס רוסי</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>52</td>
+<td>16 (אייקון)</td>
+<td>★★</td>
+<td>70</td>
+<td>$167K</td>
+<td></td>
+</tr>
+<tr>
+<td>W051</td>
+<td>Nadia Sloane</td>
+<td>נדיה סלואן</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>56</td>
+<td>14 (מוכר)</td>
+<td>★★★</td>
+<td>86</td>
+<td>$150K</td>
+<td></td>
+</tr>
+<tr>
+<td>W052</td>
+<td>Vera Vega</td>
+<td>ורה וגה</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>54</td>
+<td>11 (מוכר)</td>
+<td>★★★</td>
+<td>75</td>
+<td>$177K</td>
+<td>צמד Glass Hearts</td>
+</tr>
+<tr>
+<td>W053</td>
+<td>Sage Hollis</td>
+<td>סייג&#39; הוליס</td>
 <td>אישה</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>80</td>
-<td>8</td>
-<td>$180K</td>
+<td>53</td>
+<td>16 (אייקון)</td>
+<td>★★</td>
+<td>89</td>
+<td>$201K</td>
+<td></td>
+</tr>
+<tr>
+<td>W054</td>
+<td>Aiko Lark</td>
+<td>אייקו לארק</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>50</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>87</td>
+<td>$160K</td>
+<td></td>
+</tr>
+<tr>
+<td>W055</td>
+<td>Iris Sato</td>
+<td>איריס סאטו</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>61</td>
+<td>16 (אייקון)</td>
+<td>★★</td>
+<td>81</td>
+<td>$187K</td>
 <td></td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s6"><span class="n">06</span><span>מידקארד</span></h2>
+<h2 id="s7"><span class="n">07</span><span>מידקארד</span></h2>
 <p>לב הכרטיס, אמין בכל משבצת.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -965,677 +1202,845 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W056</td>
-<td>Julian Banner</td>
-<td>ג&#39;וליאן באנר</td>
+<td>Ryan Jensen</td>
+<td>ראיין ג&#39;נסן</td>
 <td>גבר</td>
 <td>לוחם</td>
-<td>רע</td>
-<td>57</td>
-<td>5</td>
-<td>$94K</td>
-<td>צמד Steel Syndicate</td>
-</tr>
-<tr>
-<td>W057</td>
-<td>Victor Jensen</td>
-<td>ויקטור ג&#39;נסן</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>62</td>
-<td>6</td>
-<td>$140K</td>
-<td>צמד Crimson Order</td>
-</tr>
-<tr>
-<td>W058</td>
-<td>Sam Rook</td>
-<td>סאם רוק</td>
-<td>גבר</td>
 <td>מכתש</td>
 <td>טוב</td>
-<td>56</td>
-<td>5</td>
-<td>$109K</td>
+<td>41</td>
+<td>8 (מבוסס)</td>
+<td>★</td>
+<td>80</td>
+<td>$86K</td>
 <td></td>
 </tr>
 <tr>
-<td>W059</td>
-<td>Sam Ortega</td>
-<td>סאם אורטגה</td>
+<td>W057</td>
+<td>Marco Decker</td>
+<td>מרקו דקר</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>רע</td>
-<td>71</td>
-<td>6</td>
-<td>$92K</td>
+<td>47</td>
+<td>9 (מבוסס)</td>
+<td>★</td>
+<td>76</td>
+<td>$138K</td>
+<td></td>
+</tr>
+<tr>
+<td>W058</td>
+<td>Sam Kato</td>
+<td>סאם קאטו</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>43</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>98</td>
+<td>$85K</td>
+<td>צמד Hellhounds</td>
+</tr>
+<tr>
+<td>W059</td>
+<td>Chase Soto</td>
+<td>צ&#39;ייס סוטו</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>42</td>
+<td>12 (מוכר)</td>
+<td>★★</td>
+<td>75</td>
+<td>$107K</td>
 <td></td>
 </tr>
 <tr>
 <td>W060</td>
-<td>Nico Jensen</td>
-<td>ניקו ג&#39;נסן</td>
+<td>Luca Tucker</td>
+<td>לוקה טאקר</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>50</td>
-<td>5</td>
-<td>$124K</td>
+<td>49</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>82</td>
+<td>$91K</td>
 <td>צמד Crimson Order</td>
 </tr>
 <tr>
 <td>W061</td>
-<td>Cade Hendrix</td>
-<td>קייד הנדריקס</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>59</td>
-<td>5</td>
-<td>$126K</td>
-<td></td>
-</tr>
-<tr>
-<td>W062</td>
-<td>Tariq Fallon</td>
-<td>טאריק פאלון</td>
+<td>Remy Nolan</td>
+<td>רמי נולאן</td>
 <td>גבר</td>
 <td>מומחה</td>
-<td>טוב</td>
-<td>50</td>
-<td>6</td>
-<td>$134K</td>
+<td>כולם</td>
+<td>רע</td>
+<td>52</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>83</td>
+<td>$104K</td>
 <td>צמד Dust Devils</td>
 </tr>
 <tr>
-<td>W063</td>
-<td>Theo Sloane</td>
-<td>תאו סלואן</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>62</td>
-<td>5</td>
-<td>$113K</td>
-<td>צמד Royal Guard</td>
-</tr>
-<tr>
-<td>W064</td>
-<td>Mateo Keane</td>
-<td>מטאו קין</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>53</td>
-<td>4</td>
-<td>$126K</td>
-<td>צמד Brute Force</td>
-</tr>
-<tr>
-<td>W065</td>
-<td>Sam Rios</td>
-<td>סאם ריוס</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>68</td>
-<td>6</td>
-<td>$90K</td>
-<td>צמד Polar Front</td>
-</tr>
-<tr>
-<td>W066</td>
-<td>Knox Wells</td>
-<td>נוקס וולס</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>62</td>
-<td>4</td>
-<td>$80K</td>
-<td></td>
-</tr>
-<tr>
-<td>W067</td>
-<td>Diego Santos</td>
-<td>דייגו סנטוס</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>61</td>
-<td>6</td>
-<td>$126K</td>
-<td>צמד Lone Wolves</td>
-</tr>
-<tr>
-<td>W068</td>
-<td>Grant Sutton</td>
-<td>גרנט סאטון</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>55</td>
-<td>4</td>
-<td>$112K</td>
-<td>צמד Concrete Kings</td>
-</tr>
-<tr>
-<td>W069</td>
-<td>Tariq Maxwell</td>
-<td>טאריק מקסוול</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>61</td>
-<td>4</td>
-<td>$99K</td>
-<td>צמד Live Wire</td>
-</tr>
-<tr>
-<td>W070</td>
-<td>Ezra Lund</td>
-<td>עזרא לונד</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>54</td>
-<td>4</td>
-<td>$111K</td>
-<td></td>
-</tr>
-<tr>
-<td>W071</td>
-<td>Julian Decker</td>
-<td>ג&#39;וליאן דקר</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>69</td>
-<td>5</td>
-<td>$102K</td>
-<td></td>
-</tr>
-<tr>
-<td>W072</td>
-<td>Rhett Frost</td>
-<td>רט פרוסט</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>57</td>
-<td>5</td>
-<td>$138K</td>
-<td>צמד The Bounty</td>
-</tr>
-<tr>
-<td>W073</td>
-<td>Chase Dane</td>
-<td>צ&#39;ייס דיין</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>52</td>
-<td>5</td>
-<td>$96K</td>
-<td></td>
-</tr>
-<tr>
-<td>W074</td>
-<td>Jace Lark</td>
-<td>ג&#39;ייס לארק</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>66</td>
-<td>6</td>
-<td>$100K</td>
-<td></td>
-</tr>
-<tr>
-<td>W075</td>
-<td>Marco Monroe</td>
-<td>מרקו מונרו</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>62</td>
-<td>5</td>
-<td>$92K</td>
-<td>צמד Thunderhearts</td>
-</tr>
-<tr>
-<td>W076</td>
-<td>Jace Webb</td>
-<td>ג&#39;ייס ווב</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>61</td>
-<td>5</td>
-<td>$104K</td>
-<td></td>
-</tr>
-<tr>
-<td>W077</td>
+<td>W062</td>
 <td>Reid Novak</td>
 <td>ריד נובאק</td>
 <td>גבר</td>
 <td>לוחם</td>
-<td>רע</td>
-<td>54</td>
-<td>5</td>
-<td>$101K</td>
-<td></td>
-</tr>
-<tr>
-<td>W078</td>
-<td>Levi Rivers</td>
-<td>לוי ריברס</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>64</td>
-<td>5</td>
-<td>$114K</td>
-<td></td>
-</tr>
-<tr>
-<td>W079</td>
-<td>Jace Vega</td>
-<td>ג&#39;ייס וגה</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>67</td>
-<td>4</td>
-<td>$98K</td>
-<td></td>
-</tr>
-<tr>
-<td>W080</td>
-<td>Zane Crane</td>
-<td>זיין קריין</td>
-<td>גבר</td>
 <td>מכתש</td>
 <td>טוב</td>
-<td>67</td>
-<td>6</td>
-<td>$123K</td>
-<td></td>
-</tr>
-<tr>
-<td>W081</td>
-<td>Colt Wynn</td>
-<td>קולט ווין</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>65</td>
-<td>6</td>
-<td>$140K</td>
-<td></td>
-</tr>
-<tr>
-<td>W082</td>
-<td>Rocco Marsh</td>
-<td>רוקו מארש</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>70</td>
-<td>5</td>
-<td>$139K</td>
-<td>צמד Twin Turbines</td>
-</tr>
-<tr>
-<td>W083</td>
-<td>Grant Banner</td>
-<td>גרנט באנר</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>72</td>
-<td>5</td>
-<td>$101K</td>
-<td>צמד Polar Front</td>
-</tr>
-<tr>
-<td>W084</td>
-<td>Wes Easton</td>
-<td>ווס איסטון</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>65</td>
-<td>5</td>
-<td>$80K</td>
-<td></td>
-</tr>
-<tr>
-<td>W085</td>
-<td>Jace Hendrix</td>
-<td>ג&#39;ייס הנדריקס</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>58</td>
-<td>5</td>
-<td>$129K</td>
-<td></td>
-</tr>
-<tr>
-<td>W086</td>
-<td>Remy Sato</td>
-<td>רמי סאטו</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>70</td>
-<td>5</td>
-<td>$115K</td>
-<td></td>
-</tr>
-<tr>
-<td>W087</td>
-<td>Colt Jensen</td>
-<td>קולט ג&#39;נסן</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>57</td>
-<td>5</td>
-<td>$118K</td>
-<td>צמד Dust Devils</td>
-</tr>
-<tr>
-<td>W088</td>
-<td>Tariq Sloane</td>
-<td>טאריק סלואן</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>63</td>
-<td>6</td>
-<td>$123K</td>
-<td>צמד The Night Raiders</td>
-</tr>
-<tr>
-<td>W089</td>
-<td>Evan Finch</td>
-<td>אוון פינץ&#39;</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>רע</td>
-<td>63</td>
-<td>4</td>
-<td>$115K</td>
-<td>צמד Thunderhearts</td>
-</tr>
-<tr>
-<td>W090</td>
-<td>Jace Ortega</td>
-<td>ג&#39;ייס אורטגה</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>60</td>
-<td>5</td>
+<td>40</td>
+<td>10 (מוכר)</td>
+<td>★★★</td>
+<td>80</td>
 <td>$100K</td>
 <td></td>
 </tr>
 <tr>
-<td>W091</td>
-<td>Jett Silva</td>
-<td>ג&#39;ט סילבה</td>
+<td>W063</td>
+<td>Victor Ingram</td>
+<td>ויקטור אינגרם</td>
 <td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>58</td>
-<td>4</td>
-<td>$88K</td>
-<td>צמד Concrete Kings</td>
-</tr>
-<tr>
-<td>W092</td>
-<td>Tess Quill</td>
-<td>טס קוויל</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>64</td>
-<td>4</td>
-<td>$97K</td>
-<td>צמד Storm Sirens</td>
-</tr>
-<tr>
-<td>W093</td>
-<td>Zoe Slade</td>
-<td>זואי סלייד</td>
-<td>אישה</td>
 <td>קל-משקל</td>
-<td>רע</td>
-<td>51</td>
-<td>5</td>
-<td>$126K</td>
-<td>צמד Neon Rebels</td>
-</tr>
-<tr>
-<td>W094</td>
-<td>Hazel Mensah</td>
-<td>הייזל מנסה</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>59</td>
-<td>5</td>
-<td>$85K</td>
-<td></td>
-</tr>
-<tr>
-<td>W095</td>
-<td>Reina Lund</td>
-<td>ריינה לונד</td>
-<td>אישה</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>60</td>
-<td>6</td>
-<td>$103K</td>
-<td></td>
-</tr>
-<tr>
-<td>W096</td>
-<td>Paloma Locke</td>
-<td>פלומה לוק</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>66</td>
-<td>6</td>
-<td>$120K</td>
-<td></td>
-</tr>
-<tr>
-<td>W097</td>
-<td>Layne Mercer</td>
-<td>ליין מרסר</td>
-<td>אישה</td>
 <td>ענק</td>
-<td>טוב</td>
-<td>57</td>
-<td>4</td>
-<td>$112K</td>
-<td>צמד Glass Hearts</td>
+<td>רע</td>
+<td>46</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>87</td>
+<td>$89K</td>
+<td></td>
 </tr>
 <tr>
-<td>W098</td>
-<td>Lexi Rivers</td>
-<td>לקסי ריברס</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>72</td>
-<td>5</td>
+<td>W064</td>
+<td>Eli Rivers</td>
+<td>אלי ריברס</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>45</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>92</td>
 <td>$115K</td>
-<td></td>
+<td>צמד Gold Standard</td>
 </tr>
 <tr>
-<td>W099</td>
-<td>Quinn West</td>
-<td>קווין ווסט</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>62</td>
-<td>6</td>
-<td>$126K</td>
-<td></td>
-</tr>
-<tr>
-<td>W100</td>
-<td>Jess Dahl</td>
-<td>ג&#39;ס דאל</td>
-<td>אישה</td>
+<td>W065</td>
+<td>Hiro Dorsey</td>
+<td>הירו דורסי</td>
+<td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
-<td>טוב</td>
-<td>54</td>
-<td>6</td>
-<td>$88K</td>
-<td></td>
-</tr>
-<tr>
-<td>W101</td>
-<td>Gwen Petrov</td>
-<td>גוון פטרוב</td>
-<td>אישה</td>
-<td>קל-משקל</td>
 <td>רע</td>
-<td>71</td>
-<td>4</td>
-<td>$130K</td>
-<td></td>
-</tr>
-<tr>
-<td>W102</td>
-<td>Kira Hollis</td>
-<td>קירה הוליס</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>67</td>
-<td>6</td>
-<td>$88K</td>
-<td></td>
-</tr>
-<tr>
-<td>W103</td>
-<td>Kira Carver</td>
-<td>קירה קרבר</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>71</td>
-<td>4</td>
+<td>48</td>
+<td>10 (מוכר)</td>
+<td>★★</td>
+<td>78</td>
 <td>$121K</td>
 <td></td>
 </tr>
 <tr>
-<td>W104</td>
-<td>Aiko Blaine</td>
-<td>אייקו בליין</td>
-<td>אישה</td>
+<td>W066</td>
+<td>Dorian Crane</td>
+<td>דוריאן קריין</td>
+<td>גבר</td>
+<td>לוחם</td>
 <td>מכתש</td>
 <td>טוב</td>
-<td>66</td>
-<td>5</td>
-<td>$85K</td>
-<td>צמד Black Orchid</td>
+<td>38</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>74</td>
+<td>$117K</td>
+<td></td>
 </tr>
 <tr>
-<td>W105</td>
-<td>Quinn Hunt</td>
-<td>קווין האנט</td>
-<td>אישה</td>
+<td>W067</td>
+<td>Nico Ortega</td>
+<td>ניקו אורטגה</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>45</td>
+<td>9 (מבוסס)</td>
+<td>★</td>
+<td>71</td>
+<td>$120K</td>
+<td>צמד The Vanguard</td>
+</tr>
+<tr>
+<td>W068</td>
+<td>Adrian Rivers</td>
+<td>אדריאן ריברס</td>
+<td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>רע</td>
-<td>51</td>
-<td>5</td>
-<td>$83K</td>
-<td>צמד Shieldmaidens</td>
+<td>50</td>
+<td>8 (מבוסס)</td>
+<td>★★★★</td>
+<td>81</td>
+<td>$119K</td>
+<td>צמד The Foundry</td>
 </tr>
 <tr>
-<td>W106</td>
-<td>Rosa Blaine</td>
-<td>רוזה בליין</td>
-<td>אישה</td>
+<td>W069</td>
+<td>Chase Costa</td>
+<td>צ&#39;ייס קוסטה</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>46</td>
+<td>7 (מבוסס)</td>
+<td>★</td>
+<td>74</td>
+<td>$94K</td>
+<td></td>
+</tr>
+<tr>
+<td>W070</td>
+<td>Ty Wynn</td>
+<td>טיי ווין</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>42</td>
+<td>7 (מבוסס)</td>
+<td>★★★★</td>
+<td>96</td>
+<td>$115K</td>
+<td>צמד The Ironsides</td>
+</tr>
+<tr>
+<td>W071</td>
+<td>Brady Rivers</td>
+<td>בריידי ריברס</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>38</td>
+<td>8 (מבוסס)</td>
+<td>★★</td>
+<td>85</td>
+<td>$101K</td>
+<td>צמד The Collective</td>
+</tr>
+<tr>
+<td>W072</td>
+<td>Ty Santos</td>
+<td>טיי סנטוס</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>52</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>81</td>
+<td>$111K</td>
+<td></td>
+</tr>
+<tr>
+<td>W073</td>
+<td>Rex West</td>
+<td>רקס ווסט</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>50</td>
+<td>10 (מוכר)</td>
+<td>★★</td>
+<td>91</td>
+<td>$112K</td>
+<td>צמד Thunderhearts</td>
+</tr>
+<tr>
+<td>W074</td>
+<td>Nate Slade</td>
+<td>נייט סלייד</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>38</td>
+<td>10 (מוכר)</td>
+<td>★</td>
+<td>100</td>
+<td>$123K</td>
+<td>צמד Lone Wolves</td>
+</tr>
+<tr>
+<td>W075</td>
+<td>Adrian Slade</td>
+<td>אדריאן סלייד</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>47</td>
+<td>7 (מבוסס)</td>
+<td>★★★</td>
+<td>85</td>
+<td>$122K</td>
+<td>צמד Dust Devils</td>
+</tr>
+<tr>
+<td>W076</td>
+<td>Grant Decker</td>
+<td>גרנט דקר</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>טוב</td>
+<td>51</td>
+<td>8 (מבוסס)</td>
+<td>★★★</td>
+<td>86</td>
+<td>$135K</td>
+<td>צמד The Bounty</td>
+</tr>
+<tr>
+<td>W077</td>
+<td>Colt Dahl</td>
+<td>קולט דאל</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>38</td>
+<td>10 (מוכר)</td>
+<td>★★</td>
+<td>76</td>
+<td>$112K</td>
+<td></td>
+</tr>
+<tr>
+<td>W078</td>
+<td>Evan Sato</td>
+<td>אוון סאטו</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>51</td>
+<td>9 (מבוסס)</td>
+<td>★★★★</td>
+<td>84</td>
+<td>$123K</td>
+<td></td>
+</tr>
+<tr>
+<td>W079</td>
+<td>Levi West</td>
+<td>לוי ווסט</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>44</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>74</td>
+<td>$115K</td>
+<td>צמד Concrete Kings</td>
+</tr>
+<tr>
+<td>W080</td>
+<td>Marco Hunt</td>
+<td>מרקו האנט</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>51</td>
+<td>12 (מוכר)</td>
+<td>★</td>
+<td>81</td>
+<td>$130K</td>
+<td>צמד The Ironsides</td>
+</tr>
+<tr>
+<td>W081</td>
+<td>Grant Hollis</td>
+<td>גרנט הוליס</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>46</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>84</td>
+<td>$90K</td>
+<td></td>
+</tr>
+<tr>
+<td>W082</td>
+<td>Cal Lowe</td>
+<td>קאל לואו</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>44</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>87</td>
+<td>$99K</td>
+<td></td>
+</tr>
+<tr>
+<td>W083</td>
+<td>Miles Rossi</td>
+<td>מיילס רוסי</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>48</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>59</td>
+<td>$89K</td>
+<td></td>
+</tr>
+<tr>
+<td>W084</td>
+<td>Cade Ortega</td>
+<td>קייד אורטגה</td>
+<td>גבר</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>טוב</td>
-<td>56</td>
-<td>4</td>
+<td>39</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>65</td>
+<td>$90K</td>
+<td></td>
+</tr>
+<tr>
+<td>W085</td>
+<td>Victor Ellis</td>
+<td>ויקטור אליס</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>44</td>
+<td>8 (מבוסס)</td>
+<td>★★</td>
+<td>72</td>
 <td>$122K</td>
+<td></td>
+</tr>
+<tr>
+<td>W086</td>
+<td>Miles Keane</td>
+<td>מיילס קין</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>51</td>
+<td>10 (מוכר)</td>
+<td>★★★★</td>
+<td>84</td>
+<td>$125K</td>
+<td></td>
+</tr>
+<tr>
+<td>W087</td>
+<td>Zane Ingram</td>
+<td>זיין אינגרם</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>46</td>
+<td>11 (מוכר)</td>
+<td>★★★★</td>
+<td>72</td>
+<td>$127K</td>
+<td></td>
+</tr>
+<tr>
+<td>W088</td>
+<td>Dante Drake</td>
+<td>דנטה דרייק</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>48</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>68</td>
+<td>$93K</td>
+<td></td>
+</tr>
+<tr>
+<td>W089</td>
+<td>Gray Falk</td>
+<td>גריי פאלק</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>40</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>64</td>
+<td>$105K</td>
+<td>צמד Hellhounds</td>
+</tr>
+<tr>
+<td>W090</td>
+<td>Rocco Moreno</td>
+<td>רוקו מורנו</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>51</td>
+<td>9 (מבוסס)</td>
+<td>★★★★</td>
+<td>74</td>
+<td>$130K</td>
+<td>צמד Twin Turbines</td>
+</tr>
+<tr>
+<td>W091</td>
+<td>Jace Wells</td>
+<td>ג&#39;ייס וולס</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>47</td>
+<td>12 (מוכר)</td>
+<td>★</td>
+<td>82</td>
+<td>$128K</td>
+<td></td>
+</tr>
+<tr>
+<td>W092</td>
+<td>Ella Navarro</td>
+<td>אלה נבארו</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>46</td>
+<td>11 (מוכר)</td>
+<td>★</td>
+<td>78</td>
+<td>$82K</td>
+<td>צמד Firebrands</td>
+</tr>
+<tr>
+<td>W093</td>
+<td>Cleo Dane</td>
+<td>קליאו דיין</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>45</td>
+<td>11 (מוכר)</td>
+<td>★</td>
+<td>82</td>
+<td>$131K</td>
+<td></td>
+</tr>
+<tr>
+<td>W094</td>
+<td>Skylar Santos</td>
+<td>סקיילר סנטוס</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>40</td>
+<td>9 (מבוסס)</td>
+<td>★★</td>
+<td>70</td>
+<td>$105K</td>
+<td>צמד Neon Rebels</td>
+</tr>
+<tr>
+<td>W095</td>
+<td>Aiko Quill</td>
+<td>אייקו קוויל</td>
+<td>אישה</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>38</td>
+<td>12 (מוכר)</td>
+<td>★</td>
+<td>74</td>
+<td>$87K</td>
 <td>צמד Diamond Edge</td>
 </tr>
 <tr>
-<td>W107</td>
-<td>Kara Parks</td>
-<td>קארה פארקס</td>
+<td>W096</td>
+<td>Rosa Jensen</td>
+<td>רוזה ג&#39;נסן</td>
 <td>אישה</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>45</td>
+<td>8 (מבוסס)</td>
+<td>★★★</td>
+<td>79</td>
+<td>$105K</td>
+<td></td>
+</tr>
+<tr>
+<td>W097</td>
+<td>Quinn Easton</td>
+<td>קווין איסטון</td>
+<td>אישה</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>רע</td>
-<td>65</td>
-<td>4</td>
-<td>$90K</td>
+<td>41</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>69</td>
+<td>$129K</td>
+<td></td>
+</tr>
+<tr>
+<td>W098</td>
+<td>Aria Berg</td>
+<td>אריה ברג</td>
+<td>אישה</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>46</td>
+<td>7 (מבוסס)</td>
+<td>★★★★</td>
+<td>71</td>
+<td>$126K</td>
+<td></td>
+</tr>
+<tr>
+<td>W099</td>
+<td>Elle Hollis</td>
+<td>אל הוליס</td>
+<td>אישה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>51</td>
+<td>11 (מוכר)</td>
+<td>★★★</td>
+<td>88</td>
+<td>$135K</td>
+<td>צמד Storm Sirens</td>
+</tr>
+<tr>
+<td>W100</td>
+<td>Layne Kato</td>
+<td>ליין קאטו</td>
+<td>אישה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>46</td>
+<td>7 (מבוסס)</td>
+<td>★★★</td>
+<td>86</td>
+<td>$84K</td>
+<td></td>
+</tr>
+<tr>
+<td>W101</td>
+<td>Elle Crane</td>
+<td>אל קריין</td>
+<td>אישה</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>50</td>
+<td>7 (מבוסס)</td>
+<td>★★★★</td>
+<td>82</td>
+<td>$95K</td>
+<td></td>
+</tr>
+<tr>
+<td>W102</td>
+<td>Mila Lark</td>
+<td>מילה לארק</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>52</td>
+<td>9 (מבוסס)</td>
+<td>★</td>
+<td>78</td>
+<td>$139K</td>
+<td>צמד Black Orchid</td>
+</tr>
+<tr>
+<td>W103</td>
+<td>Lexi Sawyer</td>
+<td>לקסי סוייר</td>
+<td>אישה</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>46</td>
+<td>7 (מבוסס)</td>
+<td>★★★★</td>
+<td>87</td>
+<td>$102K</td>
+<td></td>
+</tr>
+<tr>
+<td>W104</td>
+<td>Elle Sato</td>
+<td>אל סאטו</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>38</td>
+<td>8 (מבוסס)</td>
+<td>★★★★</td>
+<td>71</td>
+<td>$85K</td>
+<td></td>
+</tr>
+<tr>
+<td>W105</td>
+<td>Eden Rook</td>
+<td>עדן רוק</td>
+<td>אישה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>42</td>
+<td>11 (מוכר)</td>
+<td>★</td>
+<td>95</td>
+<td>$84K</td>
+<td>צמד Black Orchid</td>
+</tr>
+<tr>
+<td>W106</td>
+<td>Paloma Hendrix</td>
+<td>פלומה הנדריקס</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>46</td>
+<td>8 (מבוסס)</td>
+<td>★★★★</td>
+<td>71</td>
+<td>$102K</td>
+<td></td>
+</tr>
+<tr>
+<td>W107</td>
+<td>Zoe Navarro</td>
+<td>זואי נבארו</td>
+<td>אישה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>38</td>
+<td>7 (מבוסס)</td>
+<td>★★★★</td>
+<td>92</td>
+<td>$85K</td>
 <td>צמד Midnight Bloom</td>
 </tr>
 <tr>
 <td>W108</td>
-<td>Gemma Falk</td>
-<td>ג&#39;מה פאלק</td>
+<td>Skylar Locke</td>
+<td>סקיילר לוק</td>
 <td>אישה</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>61</td>
-<td>6</td>
-<td>$99K</td>
+<td>40</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>96</td>
+<td>$105K</td>
 <td>צמד Velvet Fury</td>
 </tr>
 <tr>
 <td>W109</td>
-<td>Cora Costa</td>
-<td>קורה קוסטה</td>
+<td>Daisy Lark</td>
+<td>דייזי לארק</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>52</td>
-<td>4</td>
-<td>$87K</td>
-<td>צמד Neon Rebels</td>
+<td>38</td>
+<td>9 (מבוסס)</td>
+<td>★</td>
+<td>74</td>
+<td>$135K</td>
+<td></td>
 </tr>
 <tr>
 <td>W110</td>
-<td>Sage Wynn</td>
-<td>סייג&#39; ווין</td>
+<td>Maya Ortega</td>
+<td>מאיה אורטגה</td>
 <td>אישה</td>
-<td>לוחם</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>55</td>
-<td>4</td>
-<td>$93K</td>
-<td>צמד Sugar &amp; Spite</td>
+<td>40</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>75</td>
+<td>$115K</td>
+<td></td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s7"><span class="n">07</span><span>כוכב עולה</span></h2>
+<h2 id="s8"><span class="n">08</span><span>כוכב עולה</span></h2>
 <p>בעלייה חדה, הקהל מתחיל להאמין בו.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -1644,377 +2049,470 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W111</td>
-<td>Gray Falk</td>
-<td>גריי פאלק</td>
+<td>Blake Blackwood</td>
+<td>בלייק בלקווד</td>
 <td>גבר</td>
 <td>ענק</td>
+<td>קל-משקל</td>
 <td>טוב</td>
-<td>49</td>
-<td>5</td>
-<td>$110K</td>
-<td>פוטנציאל 5/5</td>
+<td>43</td>
+<td>8 (מבוסס)</td>
+<td>★★★★</td>
+<td>73</td>
+<td>$92K</td>
+<td>צמד Brute Force · פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W112</td>
-<td>Miles Colton</td>
-<td>מיילס קולטון</td>
+<td>Hiro Berg</td>
+<td>הירו ברג</td>
 <td>גבר</td>
 <td>ענק</td>
+<td>קל-משקל</td>
 <td>רע</td>
-<td>61</td>
-<td>4</td>
-<td>$82K</td>
-<td>צמד Gold Standard · פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W113</td>
-<td>Felix Hunt</td>
-<td>פליקס האנט</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>56</td>
-<td>4</td>
-<td>$98K</td>
-<td>פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W114</td>
-<td>Dorian Carlisle</td>
-<td>דוריאן קרלייל</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>53</td>
-<td>5</td>
-<td>$89K</td>
+<td>36</td>
+<td>6 (מבוסס)</td>
+<td>★</td>
+<td>67</td>
+<td>$79K</td>
 <td>פוטנציאל 5/5</td>
 </tr>
 <tr>
-<td>W115</td>
-<td>Oscar Okafor</td>
-<td>אוסקר אוקפור</td>
+<td>W113</td>
+<td>Hiro Novak</td>
+<td>הירו נובאק</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>43</td>
+<td>9 (מבוסס)</td>
+<td>★</td>
+<td>80</td>
+<td>$107K</td>
+<td>פוטנציאל 4/5</td>
+</tr>
+<tr>
+<td>W114</td>
+<td>Theo Fallon</td>
+<td>תאו פאלון</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>48</td>
-<td>4</td>
-<td>$62K</td>
-<td>צמד Live Wire · פוטנציאל 3/5</td>
+<td>39</td>
+<td>6 (מבוסס)</td>
+<td>★★★★</td>
+<td>83</td>
+<td>$68K</td>
+<td>צמד Lone Wolves · פוטנציאל 5/5</td>
+</tr>
+<tr>
+<td>W115</td>
+<td>Leo Hunt</td>
+<td>ליאו האנט</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>36</td>
+<td>5 (מבוסס)</td>
+<td>★★★★</td>
+<td>84</td>
+<td>$69K</td>
+<td>צמד The Night Raiders · פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W116</td>
-<td>Carter Okafor</td>
-<td>קרטר אוקפור</td>
+<td>Blake Ingram</td>
+<td>בלייק אינגרם</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>63</td>
-<td>3</td>
-<td>$101K</td>
-<td>צמד Royal Guard · פוטנציאל 4/5</td>
+<td>33</td>
+<td>6 (מבוסס)</td>
+<td>★★★</td>
+<td>84</td>
+<td>$84K</td>
+<td>פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W117</td>
-<td>Wes Santos</td>
-<td>ווס סנטוס</td>
+<td>Jett Kemp</td>
+<td>ג&#39;ט קמפ</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>49</td>
-<td>4</td>
-<td>$61K</td>
+<td>38</td>
+<td>8 (מבוסס)</td>
+<td>★★★</td>
+<td>80</td>
+<td>$66K</td>
 <td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W118</td>
-<td>Gage Mensah</td>
-<td>גייג&#39; מנסה</td>
+<td>Hank Mercer</td>
+<td>האנק מרסר</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>45</td>
-<td>3</td>
-<td>$108K</td>
+<td>36</td>
+<td>8 (מבוסס)</td>
+<td>★★</td>
+<td>80</td>
+<td>$66K</td>
 <td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W119</td>
-<td>Marco Vega</td>
-<td>מרקו וגה</td>
+<td>Ty Vega</td>
+<td>טיי וגה</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>54</td>
-<td>4</td>
-<td>$80K</td>
-<td>פוטנציאל 5/5</td>
+<td>38</td>
+<td>6 (מבוסס)</td>
+<td>★★★</td>
+<td>87</td>
+<td>$84K</td>
+<td>פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W120</td>
-<td>Jake Crane</td>
-<td>ג&#39;ייק קריין</td>
+<td>Victor Kemp</td>
+<td>ויקטור קמפ</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>55</td>
-<td>4</td>
-<td>$91K</td>
-<td>פוטנציאל 3/5</td>
+<td>40</td>
+<td>7 (מבוסס)</td>
+<td>★</td>
+<td>99</td>
+<td>$79K</td>
+<td>פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W121</td>
-<td>Reid Lyon</td>
-<td>ריד ליון</td>
+<td>Milo Hendrix</td>
+<td>מיילו הנדריקס</td>
 <td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>טוב</td>
-<td>63</td>
-<td>4</td>
-<td>$84K</td>
-<td>פוטנציאל 3/5</td>
+<td>32</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>66</td>
+<td>$92K</td>
+<td>פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W122</td>
-<td>Rhett Mercer</td>
-<td>רט מרסר</td>
+<td>Julian Dorsey</td>
+<td>ג&#39;וליאן דורסי</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>46</td>
-<td>5</td>
-<td>$110K</td>
-<td>צמד Brute Force · פוטנציאל 3/5</td>
+<td>43</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>99</td>
+<td>$82K</td>
+<td>צמד Gold Standard · פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W123</td>
-<td>Victor Kato</td>
-<td>ויקטור קאטו</td>
+<td>Rocco Nolan</td>
+<td>רוקו נולאן</td>
 <td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>58</td>
-<td>5</td>
-<td>$61K</td>
-<td>צמד Hellhounds · פוטנציאל 5/5</td>
-</tr>
-<tr>
-<td>W124</td>
-<td>Gage Okafor</td>
-<td>גייג&#39; אוקפור</td>
-<td>גבר</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>טוב</td>
-<td>56</td>
-<td>3</td>
-<td>$64K</td>
-<td>צמד The Collective · פוטנציאל 4/5</td>
-</tr>
-<tr>
-<td>W125</td>
-<td>Nate Flynn</td>
-<td>נייט פלין</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>58</td>
-<td>4</td>
+<td>40</td>
+<td>8 (מבוסס)</td>
+<td>★★★★</td>
+<td>74</td>
 <td>$75K</td>
 <td>פוטנציאל 4/5</td>
 </tr>
 <tr>
-<td>W126</td>
-<td>Dante Lark</td>
-<td>דנטה לארק</td>
+<td>W124</td>
+<td>Max Blaine</td>
+<td>מקס בליין</td>
 <td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>35</td>
+<td>6 (מבוסס)</td>
+<td>★★★★</td>
+<td>74</td>
+<td>$90K</td>
+<td>פוטנציאל 4/5</td>
+</tr>
+<tr>
+<td>W125</td>
+<td>Rio Lyon</td>
+<td>ריו ליון</td>
+<td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>רע</td>
-<td>56</td>
-<td>3</td>
-<td>$70K</td>
+<td>40</td>
+<td>5 (מבוסס)</td>
+<td>★</td>
+<td>68</td>
+<td>$85K</td>
+<td>צמד The Vanguard · פוטנציאל 5/5</td>
+</tr>
+<tr>
+<td>W126</td>
+<td>Max Hendrix</td>
+<td>מקס הנדריקס</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>46</td>
+<td>5 (מבוסס)</td>
+<td>★★★★</td>
+<td>72</td>
+<td>$79K</td>
 <td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W127</td>
-<td>Tariq Sawyer</td>
-<td>טאריק סוייר</td>
+<td>Kenzie Dane</td>
+<td>קנזי דיין</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>62</td>
-<td>3</td>
-<td>$95K</td>
-<td>פוטנציאל 4/5</td>
+<td>42</td>
+<td>6 (מבוסס)</td>
+<td>★★★★</td>
+<td>90</td>
+<td>$66K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W128</td>
-<td>Kenzie Navarro</td>
-<td>קנזי נבארו</td>
+<td>Victor Romano</td>
+<td>ויקטור רומנו</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>61</td>
-<td>5</td>
-<td>$72K</td>
-<td>פוטנציאל 4/5</td>
+<td>37</td>
+<td>9 (מבוסס)</td>
+<td>★★</td>
+<td>73</td>
+<td>$82K</td>
+<td>צמד The Outriders · פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W129</td>
-<td>Cal Shaw</td>
-<td>קאל שו</td>
+<td>Remy Fallon</td>
+<td>רמי פאלון</td>
 <td>גבר</td>
-<td>ענק</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>65</td>
-<td>3</td>
-<td>$73K</td>
-<td>פוטנציאל 5/5</td>
+<td>40</td>
+<td>8 (מבוסס)</td>
+<td>★★</td>
+<td>72</td>
+<td>$103K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W130</td>
-<td>Diego Burke</td>
-<td>דייגו ברק</td>
+<td>Reid Soto</td>
+<td>ריד סוטו</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>רע</td>
-<td>53</td>
-<td>3</td>
-<td>$70K</td>
-<td>פוטנציאל 5/5</td>
+<td>39</td>
+<td>7 (מבוסס)</td>
+<td>★</td>
+<td>56</td>
+<td>$71K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W131</td>
-<td>Maya Soto</td>
-<td>מאיה סוטו</td>
+<td>Mila Rossi</td>
+<td>מילה רוסי</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>62</td>
-<td>4</td>
-<td>$94K</td>
-<td>פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W132</td>
-<td>Maya Brooks</td>
-<td>מאיה ברוקס</td>
-<td>אישה</td>
-<td>ענק</td>
-<td>רע</td>
-<td>57</td>
-<td>5</td>
-<td>$88K</td>
-<td>פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W133</td>
-<td>Kara Costa</td>
-<td>קארה קוסטה</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>55</td>
-<td>4</td>
-<td>$101K</td>
+<td>38</td>
+<td>5 (מבוסס)</td>
+<td>★★★</td>
+<td>75</td>
+<td>$69K</td>
 <td>פוטנציאל 4/5</td>
 </tr>
 <tr>
-<td>W134</td>
-<td>Ella Bishop</td>
-<td>אלה בישופ</td>
+<td>W132</td>
+<td>Mila Gibbs</td>
+<td>מילה גיבס</td>
+<td>אישה</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>43</td>
+<td>6 (מבוסס)</td>
+<td>★★★</td>
+<td>72</td>
+<td>$100K</td>
+<td>פוטנציאל 5/5</td>
+</tr>
+<tr>
+<td>W133</td>
+<td>Mila Sutton</td>
+<td>מילה סאטון</td>
 <td>אישה</td>
 <td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>41</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>72</td>
+<td>$93K</td>
+<td>צמד Firebrands · פוטנציאל 4/5</td>
+</tr>
+<tr>
+<td>W134</td>
+<td>Mila Brooks</td>
+<td>מילה ברוקס</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>49</td>
-<td>5</td>
-<td>$109K</td>
+<td>36</td>
+<td>9 (מבוסס)</td>
+<td>★★★★</td>
+<td>79</td>
+<td>$107K</td>
 <td>פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W135</td>
-<td>Jess Tucker</td>
-<td>ג&#39;ס טאקר</td>
+<td>Lexi Berg</td>
+<td>לקסי ברג</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>62</td>
-<td>3</td>
-<td>$60K</td>
-<td>פוטנציאל 3/5</td>
+<td>37</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>73</td>
+<td>$67K</td>
+<td>צמד Glass Hearts · פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W136</td>
-<td>Sienna Sawyer</td>
-<td>סיינה סוייר</td>
+<td>Ava Maddox</td>
+<td>אווה מדוקס</td>
 <td>אישה</td>
+<td>לוחם</td>
 <td>מכתש</td>
 <td>רע</td>
-<td>63</td>
-<td>4</td>
-<td>$82K</td>
-<td>פוטנציאל 5/5</td>
+<td>37</td>
+<td>7 (מבוסס)</td>
+<td>★</td>
+<td>80</td>
+<td>$101K</td>
+<td>צמד Shieldmaidens · פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W137</td>
-<td>Nadia Bishop</td>
-<td>נדיה בישופ</td>
+<td>Layne Blackwood</td>
+<td>ליין בלקווד</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>52</td>
-<td>3</td>
-<td>$75K</td>
-<td>צמד Firebrands · פוטנציאל 5/5</td>
+<td>37</td>
+<td>8 (מבוסס)</td>
+<td>★★★★</td>
+<td>88</td>
+<td>$96K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W138</td>
-<td>Dahlia Novak</td>
-<td>דליה נובאק</td>
+<td>Sage Calder</td>
+<td>סייג&#39; קלדר</td>
 <td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>62</td>
-<td>3</td>
-<td>$81K</td>
-<td>צמד Velvet Fury · פוטנציאל 3/5</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>44</td>
+<td>7 (מבוסס)</td>
+<td>★★★★</td>
+<td>70</td>
+<td>$86K</td>
+<td>צמד Sugar &amp; Spite · פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W139</td>
-<td>Elle Berg</td>
-<td>אל ברג</td>
+<td>Bree Shaw</td>
+<td>ברי שו</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>60</td>
-<td>3</td>
-<td>$92K</td>
-<td>צמד Sugar &amp; Spite · פוטנציאל 4/5</td>
+<td>40</td>
+<td>5 (מבוסס)</td>
+<td>★</td>
+<td>80</td>
+<td>$76K</td>
+<td>פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W140</td>
-<td>Iris Dane</td>
-<td>איריס דיין</td>
+<td>Mila Ash</td>
+<td>מילה אש</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>64</td>
-<td>5</td>
-<td>$69K</td>
-<td>פוטנציאל 3/5</td>
+<td>32</td>
+<td>5 (מבוסס)</td>
+<td>★★</td>
+<td>85</td>
+<td>$105K</td>
+<td>צמד Midnight Bloom · פוטנציאל 5/5</td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s8"><span class="n">08</span><span>צעיר בפיתוח</span></h2>
+<h2 id="s9"><span class="n">09</span><span>צעיר בפיתוח</span></h2>
 <p>צעיר עם פוטנציאל, עדיין לומד את המקצוע.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -2023,497 +2521,620 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W141</td>
-<td>Reid Dahl</td>
-<td>ריד דאל</td>
+<td>Ryan Moreno</td>
+<td>ראיין מורנו</td>
 <td>גבר</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>טוב</td>
-<td>29</td>
-<td>2</td>
-<td>$70K</td>
-<td>פוטנציאל 5/5</td>
+<td>32</td>
+<td>5 (מבוסס)</td>
+<td>★★★</td>
+<td>74</td>
+<td>$48K</td>
+<td>פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W142</td>
-<td>Eli Fallon</td>
-<td>אלי פאלון</td>
+<td>Jace Flynn</td>
+<td>ג&#39;ייס פלין</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>17</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>88</td>
+<td>$32K</td>
+<td>פוטנציאל 5/5</td>
+</tr>
+<tr>
+<td>W143</td>
+<td>Omar Blaine</td>
+<td>עומאר בליין</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>24</td>
+<td>4 (מתחיל)</td>
+<td>★★</td>
+<td>87</td>
+<td>$42K</td>
+<td>פוטנציאל 4/5</td>
+</tr>
+<tr>
+<td>W144</td>
+<td>Dorian Mensah</td>
+<td>דוריאן מנסה</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>35</td>
-<td>2</td>
+<td>27</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>94</td>
+<td>$56K</td>
+<td>צמד The Foundry · פוטנציאל 4/5</td>
+</tr>
+<tr>
+<td>W145</td>
+<td>Ezra Ash</td>
+<td>עזרא אש</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>18</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>86</td>
+<td>$59K</td>
+<td>פוטנציאל 2/5</td>
+</tr>
+<tr>
+<td>W146</td>
+<td>Hank Tucker</td>
+<td>האנק טאקר</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>24</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>86</td>
 <td>$54K</td>
 <td>פוטנציאל 4/5</td>
 </tr>
 <tr>
-<td>W143</td>
-<td>Marco Slade</td>
-<td>מרקו סלייד</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>48</td>
-<td>3</td>
-<td>$60K</td>
-<td>צמד The Ironsides · פוטנציאל 2/5</td>
-</tr>
-<tr>
-<td>W144</td>
-<td>Colt Quinlan</td>
-<td>קולט קווינלן</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>31</td>
-<td>1</td>
-<td>$48K</td>
-<td>פוטנציאל 2/5</td>
-</tr>
-<tr>
-<td>W145</td>
-<td>Victor Carlisle</td>
-<td>ויקטור קרלייל</td>
+<td>W147</td>
+<td>Carter Banner</td>
+<td>קרטר באנר</td>
 <td>גבר</td>
 <td>מכתש</td>
-<td>טוב</td>
-<td>28</td>
-<td>1</td>
-<td>$38K</td>
-<td>צמד Twin Turbines · פוטנציאל 5/5</td>
-</tr>
-<tr>
-<td>W146</td>
-<td>Nate Marsh</td>
-<td>נייט מארש</td>
-<td>גבר</td>
 <td>לוחם</td>
-<td>רע</td>
-<td>34</td>
-<td>3</td>
-<td>$54K</td>
+<td>טוב</td>
+<td>17</td>
+<td>3 (מתחיל)</td>
+<td>★★★</td>
+<td>72</td>
+<td>$51K</td>
 <td>פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W147</td>
-<td>Victor Kemp</td>
-<td>ויקטור קמפ</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>41</td>
-<td>2</td>
-<td>$69K</td>
-<td>צמד Gold Standard · פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W148</td>
-<td>Gage Gibbs</td>
-<td>גייג&#39; גיבס</td>
+<td>Ryan Costa</td>
+<td>ראיין קוסטה</td>
 <td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>29</td>
-<td>2</td>
-<td>$70K</td>
-<td>צמד The Night Raiders · פוטנציאל 1/5</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>32</td>
+<td>1 (מתחיל)</td>
+<td>★★★</td>
+<td>62</td>
+<td>$65K</td>
+<td>פוטנציאל 2/5</td>
 </tr>
 <tr>
 <td>W149</td>
-<td>Wes Sloane</td>
-<td>ווס סלואן</td>
+<td>Ezra Lyon</td>
+<td>עזרא ליון</td>
 <td>גבר</td>
 <td>לוחם</td>
-<td>טוב</td>
-<td>44</td>
-<td>3</td>
-<td>$65K</td>
-<td>צמד The Collective · פוטנציאל 2/5</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>18</td>
+<td>4 (מתחיל)</td>
+<td>★★</td>
+<td>88</td>
+<td>$60K</td>
+<td>צמד Concrete Kings · פוטנציאל 2/5</td>
 </tr>
 <tr>
 <td>W150</td>
-<td>Kenji Sawyer</td>
-<td>קנג&#39;י סוייר</td>
+<td>Dante Locke</td>
+<td>דנטה לוק</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>41</td>
-<td>2</td>
+<td>30</td>
+<td>1 (מתחיל)</td>
+<td>★★★</td>
+<td>89</td>
 <td>$69K</td>
-<td>פוטנציאל 3/5</td>
+<td>פוטנציאל 1/5</td>
 </tr>
 <tr>
 <td>W151</td>
-<td>Dante Calder</td>
-<td>דנטה קלדר</td>
+<td>Sam Webb</td>
+<td>סאם ווב</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>25</td>
-<td>2</td>
-<td>$57K</td>
-<td>פוטנציאל 3/5</td>
+<td>22</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>90</td>
+<td>$49K</td>
+<td>צמד Thunderhearts · פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W152</td>
-<td>Adrian Price</td>
-<td>אדריאן פרייס</td>
+<td>Nate Finch</td>
+<td>נייט פינץ&#39;</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>37</td>
-<td>2</td>
-<td>$31K</td>
-<td>צמד The Vanguard · פוטנציאל 2/5</td>
+<td>18</td>
+<td>3 (מתחיל)</td>
+<td>★★★</td>
+<td>93</td>
+<td>$60K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W153</td>
-<td>Grant Silva</td>
-<td>גרנט סילבה</td>
+<td>Evan Carver</td>
+<td>אוון קרבר</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>40</td>
-<td>1</td>
-<td>$62K</td>
+<td>24</td>
+<td>4 (מתחיל)</td>
+<td>★</td>
+<td>76</td>
+<td>$42K</td>
 <td>פוטנציאל 1/5</td>
 </tr>
 <tr>
 <td>W154</td>
-<td>Ryan Drake</td>
-<td>ראיין דרייק</td>
+<td>Brady Sutton</td>
+<td>בריידי סאטון</td>
 <td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>28</td>
-<td>1</td>
-<td>$37K</td>
-<td>צמד Hellhounds · פוטנציאל 3/5</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>25</td>
+<td>1 (מתחיל)</td>
+<td>★★</td>
+<td>95</td>
+<td>$56K</td>
+<td>צמד Steel Syndicate · פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W155</td>
-<td>Zane Kato</td>
-<td>זיין קאטו</td>
+<td>Omar Quinlan</td>
+<td>עומאר קווינלן</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>45</td>
-<td>1</td>
-<td>$45K</td>
-<td>פוטנציאל 1/5</td>
+<td>26</td>
+<td>5 (מבוסס)</td>
+<td>★★★</td>
+<td>95</td>
+<td>$57K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W156</td>
-<td>Dante Ward</td>
-<td>דנטה וורד</td>
+<td>Victor West</td>
+<td>ויקטור ווסט</td>
 <td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>39</td>
-<td>3</td>
-<td>$36K</td>
-<td>צמד The Vanguard · פוטנציאל 2/5</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>23</td>
+<td>5 (מבוסס)</td>
+<td>★★★</td>
+<td>96</td>
+<td>$55K</td>
+<td>צמד Royal Guard · פוטנציאל 1/5</td>
 </tr>
 <tr>
 <td>W157</td>
-<td>Victor Romano</td>
-<td>ויקטור רומנו</td>
+<td>Noah Navarro</td>
+<td>נואה נבארו</td>
 <td>גבר</td>
 <td>מומחה</td>
-<td>רע</td>
-<td>35</td>
-<td>3</td>
-<td>$37K</td>
-<td>צמד Lone Wolves · פוטנציאל 2/5</td>
+<td>כולם</td>
+<td>טוב</td>
+<td>16</td>
+<td>5 (מבוסס)</td>
+<td>★</td>
+<td>85</td>
+<td>$60K</td>
+<td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W158</td>
-<td>Ezra Ingram</td>
-<td>עזרא אינגרם</td>
+<td>Eli Rios</td>
+<td>אלי ריוס</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>רע</td>
 <td>28</td>
-<td>3</td>
-<td>$57K</td>
-<td>פוטנציאל 1/5</td>
+<td>2 (מתחיל)</td>
+<td>★★★</td>
+<td>61</td>
+<td>$43K</td>
+<td>צמד Polar Front · פוטנציאל 1/5</td>
 </tr>
 <tr>
 <td>W159</td>
-<td>Brady Navarro</td>
-<td>בריידי נבארו</td>
+<td>Eli Brooks</td>
+<td>אלי ברוקס</td>
 <td>גבר</td>
+<td>לוחם</td>
 <td>מכתש</td>
 <td>טוב</td>
-<td>27</td>
-<td>2</td>
-<td>$33K</td>
-<td>צמד The Outriders · פוטנציאל 3/5</td>
+<td>31</td>
+<td>4 (מתחיל)</td>
+<td>★★</td>
+<td>75</td>
+<td>$38K</td>
+<td>פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W160</td>
-<td>Cal Dorsey</td>
-<td>קאל דורסי</td>
+<td>Leo Gibbs</td>
+<td>ליאו גיבס</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>45</td>
-<td>1</td>
-<td>$64K</td>
-<td>פוטנציאל 4/5</td>
+<td>28</td>
+<td>5 (מבוסס)</td>
+<td>★★</td>
+<td>86</td>
+<td>$55K</td>
+<td>צמד Crimson Order · פוטנציאל 2/5</td>
 </tr>
 <tr>
 <td>W161</td>
-<td>Colt Webb</td>
-<td>קולט ווב</td>
+<td>Omar Lund</td>
+<td>עומאר לונד</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>25</td>
-<td>1</td>
-<td>$68K</td>
+<td>30</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>77</td>
+<td>$65K</td>
 <td>פוטנציאל 3/5</td>
 </tr>
 <tr>
 <td>W162</td>
-<td>Beau Gibbs</td>
-<td>בו גיבס</td>
+<td>Grant Drake</td>
+<td>גרנט דרייק</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>רע</td>
-<td>47</td>
-<td>1</td>
-<td>$34K</td>
-<td>פוטנציאל 1/5</td>
+<td>22</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>84</td>
+<td>$59K</td>
+<td>צמד Polar Front · פוטנציאל 1/5</td>
 </tr>
 <tr>
 <td>W163</td>
-<td>Tate Riley</td>
-<td>טייט ריילי</td>
+<td>Jonah Shaw</td>
+<td>ג&#39;ונה שו</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>38</td>
-<td>3</td>
-<td>$49K</td>
-<td>צמד The Ironsides · פוטנציאל 5/5</td>
+<td>16</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>80</td>
+<td>$54K</td>
+<td>פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W164</td>
-<td>Rocco Lowe</td>
-<td>רוקו לואו</td>
+<td>Noah Sutton</td>
+<td>נואה סאטון</td>
 <td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>רע</td>
-<td>33</td>
-<td>1</td>
-<td>$69K</td>
-<td>פוטנציאל 4/5</td>
+<td>18</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>66</td>
+<td>$38K</td>
+<td>צמד The Outriders · פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W165</td>
-<td>Knox Dorsey</td>
-<td>נוקס דורסי</td>
+<td>Jace Rios</td>
+<td>ג&#39;ייס ריוס</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>33</td>
-<td>1</td>
-<td>$67K</td>
-<td>פוטנציאל 3/5</td>
+<td>23</td>
+<td>1 (מתחיל)</td>
+<td>★★★</td>
+<td>79</td>
+<td>$66K</td>
+<td>צמד The Bounty · פוטנציאל 4/5</td>
 </tr>
 <tr>
 <td>W166</td>
-<td>Leo Rios</td>
-<td>ליאו ריוס</td>
+<td>Rocco Decker</td>
+<td>רוקו דקר</td>
 <td>גבר</td>
+<td>לוחם</td>
 <td>מכתש</td>
 <td>רע</td>
-<td>44</td>
-<td>1</td>
-<td>$42K</td>
-<td>פוטנציאל 3/5</td>
+<td>19</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>82</td>
+<td>$41K</td>
+<td>פוטנציאל 5/5</td>
 </tr>
 <tr>
 <td>W167</td>
-<td>Quinn Hendrix</td>
-<td>קווין הנדריקס</td>
+<td>Paloma Ash</td>
+<td>פלומה אש</td>
 <td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>35</td>
-<td>2</td>
-<td>$57K</td>
-<td>פוטנציאל 5/5</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>15</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>70</td>
+<td>$70K</td>
+<td>צמד Diamond Edge · פוטנציאל 2/5</td>
 </tr>
 <tr>
 <td>W168</td>
-<td>Vera Wynn</td>
-<td>ורה ווין</td>
+<td>Bree Bishop</td>
+<td>ברי בישופ</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>36</td>
-<td>2</td>
-<td>$58K</td>
-<td>צמד Midnight Bloom · פוטנציאל 5/5</td>
+<td>15</td>
+<td>5 (מבוסס)</td>
+<td>★</td>
+<td>84</td>
+<td>$42K</td>
+<td>צמד Shieldmaidens · פוטנציאל 2/5</td>
 </tr>
 <tr>
 <td>W169</td>
-<td>Mila Santos</td>
-<td>מילה סנטוס</td>
-<td>אישה</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>38</td>
-<td>2</td>
-<td>$68K</td>
-<td>צמד Firebrands · פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W170</td>
-<td>Dana Flynn</td>
-<td>דנה פלין</td>
+<td>Sienna Maddox</td>
+<td>סיינה מדוקס</td>
 <td>אישה</td>
 <td>מומחה</td>
-<td>רע</td>
-<td>38</td>
-<td>2</td>
-<td>$49K</td>
-<td>פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W171</td>
-<td>Ava Marsh</td>
-<td>אווה מארש</td>
-<td>אישה</td>
-<td>קל-משקל</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>27</td>
-<td>1</td>
-<td>$33K</td>
-<td>צמד Glass Hearts · פוטנציאל 5/5</td>
-</tr>
-<tr>
-<td>W172</td>
-<td>Aiko Moreno</td>
-<td>אייקו מורנו</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>44</td>
-<td>3</td>
-<td>$70K</td>
-<td>פוטנציאל 3/5</td>
-</tr>
-<tr>
-<td>W173</td>
-<td>Ivy Finch</td>
-<td>אייבי פינץ&#39;</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>32</td>
-<td>1</td>
-<td>$34K</td>
-<td>צמד Shieldmaidens · פוטנציאל 1/5</td>
-</tr>
-<tr>
-<td>W174</td>
-<td>Nadia Calder</td>
-<td>נדיה קלדר</td>
-<td>אישה</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>39</td>
-<td>3</td>
-<td>$31K</td>
-<td>צמד Storm Sirens · פוטנציאל 4/5</td>
-</tr>
-<tr>
-<td>W175</td>
-<td>Hazel Ingram</td>
-<td>הייזל אינגרם</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>26</td>
-<td>2</td>
-<td>$39K</td>
+<td>16</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>71</td>
+<td>$32K</td>
 <td>פוטנציאל 5/5</td>
 </tr>
 <tr>
-<td>W176</td>
-<td>Zoe Carver</td>
-<td>זואי קרבר</td>
+<td>W170</td>
+<td>Aria Kemp</td>
+<td>אריה קמפ</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>43</td>
-<td>2</td>
-<td>$58K</td>
+<td>18</td>
+<td>4 (מתחיל)</td>
+<td>★★★</td>
+<td>82</td>
+<td>$36K</td>
 <td>פוטנציאל 2/5</td>
 </tr>
 <tr>
-<td>W177</td>
-<td>Ava Saxon</td>
-<td>אווה סקסון</td>
+<td>W171</td>
+<td>Sage Drake</td>
+<td>סייג&#39; דרייק</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>28</td>
-<td>1</td>
-<td>$42K</td>
+<td>20</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>96</td>
+<td>$32K</td>
+<td>צמד Storm Sirens · פוטנציאל 1/5</td>
+</tr>
+<tr>
+<td>W172</td>
+<td>Brooke Marsh</td>
+<td>ברוק מארש</td>
+<td>אישה</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>15</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>67</td>
+<td>$58K</td>
 <td>פוטנציאל 4/5</td>
 </tr>
 <tr>
-<td>W178</td>
-<td>Reina Riley</td>
-<td>ריינה ריילי</td>
+<td>W173</td>
+<td>Gia Ward</td>
+<td>ג&#39;יה וורד</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>טוב</td>
+<td>20</td>
+<td>5 (מבוסס)</td>
+<td>★</td>
+<td>71</td>
+<td>$38K</td>
+<td>צמד Velvet Fury · פוטנציאל 1/5</td>
+</tr>
+<tr>
+<td>W174</td>
+<td>Talia Ellis</td>
+<td>טליה אליס</td>
+<td>אישה</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>35</td>
-<td>1</td>
-<td>$48K</td>
+<td>29</td>
+<td>4 (מתחיל)</td>
+<td>★</td>
+<td>80</td>
+<td>$68K</td>
+<td>פוטנציאל 5/5</td>
+</tr>
+<tr>
+<td>W175</td>
+<td>Lexi Lund</td>
+<td>לקסי לונד</td>
+<td>אישה</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>17</td>
+<td>2 (מתחיל)</td>
+<td>★</td>
+<td>85</td>
+<td>$38K</td>
+<td>צמד Sugar &amp; Spite · פוטנציאל 1/5</td>
+</tr>
+<tr>
+<td>W176</td>
+<td>Iris York</td>
+<td>איריס יורק</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>18</td>
+<td>2 (מתחיל)</td>
+<td>★★★</td>
+<td>89</td>
+<td>$36K</td>
+<td>פוטנציאל 4/5</td>
+</tr>
+<tr>
+<td>W177</td>
+<td>Bree Carlisle</td>
+<td>ברי קרלייל</td>
+<td>אישה</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>25</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>82</td>
+<td>$33K</td>
 <td>פוטנציאל 2/5</td>
 </tr>
 <tr>
-<td>W179</td>
-<td>Elle Calder</td>
-<td>אל קלדר</td>
+<td>W178</td>
+<td>Zoe Soto</td>
+<td>זואי סוטו</td>
 <td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>37</td>
-<td>1</td>
-<td>$53K</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>31</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>83</td>
+<td>$42K</td>
 <td>פוטנציאל 1/5</td>
 </tr>
 <tr>
-<td>W180</td>
-<td>Nina Romano</td>
-<td>נינה רומנו</td>
+<td>W179</td>
+<td>Hazel Keane</td>
+<td>הייזל קין</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>35</td>
-<td>2</td>
-<td>$49K</td>
-<td>צמד Diamond Edge · פוטנציאל 1/5</td>
+<td>22</td>
+<td>4 (מתחיל)</td>
+<td>★★</td>
+<td>69</td>
+<td>$40K</td>
+<td>פוטנציאל 5/5</td>
+</tr>
+<tr>
+<td>W180</td>
+<td>Kira Banner</td>
+<td>קירה באנר</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>19</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>90</td>
+<td>$31K</td>
+<td>פוטנציאל 2/5</td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s9"><span class="n">09</span><span>אגדה</span></h2>
+<h2 id="s10"><span class="n">10</span><span>אגדה</span></h2>
 <p>אגדה של LWF. יקר וזמין לזמן מוגבל.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -2522,10 +3143,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
@@ -2535,36 +3159,45 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Harlan Crowe</td>
 <td>הרלן קרואו</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>86</td>
-<td>10</td>
-<td>$418K</td>
-<td>חוזה 6 שבועות</td>
+<td>66</td>
+<td>21 (אגדה)</td>
+<td>★★★★</td>
+<td>65</td>
+<td>$393K</td>
+<td>חוזה 4 שבועות</td>
 </tr>
 <tr>
 <td>W182</td>
 <td>Earl Brooks</td>
 <td>ארל ברוקס</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>88</td>
-<td>10</td>
-<td>$330K</td>
-<td>חוזה 12 שבועות</td>
+<td>68</td>
+<td>20 (אגדה)</td>
+<td>★★★★★</td>
+<td>86</td>
+<td>$442K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W183</td>
 <td>&quot;Iron&quot; Mike Dellacroce</td>
 <td>&quot;איירון&quot; מייק דלקרוצ&#39;ה</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>90</td>
-<td>8</td>
-<td>$345K</td>
-<td>חוזה 4 שבועות</td>
+<td>59</td>
+<td>23 (אגדה)</td>
+<td>★★★★★</td>
+<td>81</td>
+<td>$359K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W184</td>
@@ -2572,35 +3205,44 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>ת&#39;רסטון הייל</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>94</td>
-<td>8</td>
-<td>$373K</td>
-<td>חוזה 4 שבועות</td>
+<td>64</td>
+<td>24 (אגדה)</td>
+<td>★★★★</td>
+<td>83</td>
+<td>$420K</td>
+<td>חוזה 10 שבועות</td>
 </tr>
 <tr>
 <td>W185</td>
 <td>Rex Malvern</td>
 <td>רקס מלוורן</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>90</td>
-<td>8</td>
-<td>$370K</td>
-<td>חוזה 8 שבועות</td>
+<td>58</td>
+<td>25 (בן אלמוות)</td>
+<td>★★★★★</td>
+<td>69</td>
+<td>$450K</td>
+<td>חוזה 6 שבועות</td>
 </tr>
 <tr>
 <td>W186</td>
 <td>Angus Macrae</td>
 <td>אנגוס מקריי</td>
 <td>גבר</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>רע</td>
-<td>92</td>
-<td>9</td>
-<td>$326K</td>
-<td>חוזה 4 שבועות</td>
+<td>66</td>
+<td>22 (אגדה)</td>
+<td>★★★★</td>
+<td>56</td>
+<td>$310K</td>
+<td>חוזה 6 שבועות</td>
 </tr>
 <tr>
 <td>W187</td>
@@ -2608,11 +3250,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>סניור טורמנטה</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>95</td>
-<td>9</td>
-<td>$422K</td>
-<td>חוזה 8 שבועות</td>
+<td>64</td>
+<td>26 (בן אלמוות)</td>
+<td>★★★★★</td>
+<td>98</td>
+<td>$385K</td>
+<td>חוזה 6 שבועות</td>
 </tr>
 <tr>
 <td>W188</td>
@@ -2620,35 +3265,44 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>ביג ג&#39;ים טוליבר</td>
 <td>גבר</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>96</td>
-<td>8</td>
-<td>$317K</td>
-<td>חוזה 4 שבועות</td>
+<td>62</td>
+<td>26 (בן אלמוות)</td>
+<td>★★★★</td>
+<td>90</td>
+<td>$308K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W189</td>
 <td>Duke Ellison</td>
 <td>דיוק אליסון</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>טוב</td>
-<td>95</td>
-<td>8</td>
-<td>$438K</td>
-<td>חוזה 8 שבועות</td>
+<td>69</td>
+<td>25 (בן אלמוות)</td>
+<td>★★★</td>
+<td>68</td>
+<td>$424K</td>
+<td>חוזה 4 שבועות</td>
 </tr>
 <tr>
 <td>W190</td>
 <td>Sergei Kovak</td>
 <td>סרגיי קובאק</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>95</td>
-<td>9</td>
-<td>$364K</td>
-<td>חוזה 10 שבועות</td>
+<td>59</td>
+<td>21 (אגדה)</td>
+<td>★★★★</td>
+<td>77</td>
+<td>$393K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W191</td>
@@ -2656,22 +3310,28 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>טנק מייסון</td>
 <td>גבר</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>93</td>
-<td>10</td>
-<td>$356K</td>
-<td>חוזה 12 שבועות</td>
+<td>58</td>
+<td>24 (אגדה)</td>
+<td>★★★★★</td>
+<td>90</td>
+<td>$439K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W192</td>
 <td>Lord Percy Ashby</td>
 <td>לורד פרסי אשבי</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>99</td>
-<td>10</td>
-<td>$409K</td>
+<td>59</td>
+<td>23 (אגדה)</td>
+<td>★★★</td>
+<td>81</td>
+<td>$306K</td>
 <td>חוזה 8 שבועות</td>
 </tr>
 <tr>
@@ -2679,11 +3339,14 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Kaz Morita</td>
 <td>קאז מוריטה</td>
 <td>גבר</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>טוב</td>
-<td>89</td>
-<td>10</td>
-<td>$434K</td>
+<td>59</td>
+<td>22 (אגדה)</td>
+<td>★★★</td>
+<td>55</td>
+<td>$330K</td>
 <td>חוזה 12 שבועות</td>
 </tr>
 <tr>
@@ -2692,22 +3355,28 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>ג&#39;וני סאטן</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>86</td>
-<td>10</td>
-<td>$305K</td>
-<td>חוזה 4 שבועות</td>
+<td>67</td>
+<td>25 (בן אלמוות)</td>
+<td>★★★★</td>
+<td>73</td>
+<td>$354K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W195</td>
 <td>Bishop Kincaid</td>
 <td>בישופ קינקייד</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>טוב</td>
-<td>85</td>
-<td>9</td>
-<td>$421K</td>
+<td>66</td>
+<td>21 (אגדה)</td>
+<td>★★★</td>
+<td>71</td>
+<td>$316K</td>
 <td>חוזה 8 שבועות</td>
 </tr>
 <tr>
@@ -2716,23 +3385,29 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>רוקי טרמונט</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>89</td>
-<td>8</td>
-<td>$408K</td>
-<td>חוזה 8 שבועות</td>
+<td>69</td>
+<td>20 (אגדה)</td>
+<td>★★★★★</td>
+<td>74</td>
+<td>$344K</td>
+<td>חוזה 10 שבועות</td>
 </tr>
 <tr>
 <td>W197</td>
 <td>Makoa</td>
 <td>מקואה</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>92</td>
-<td>10</td>
-<td>$331K</td>
-<td>חוזה 10 שבועות</td>
+<td>70</td>
+<td>26 (בן אלמוות)</td>
+<td>★★★★★</td>
+<td>94</td>
+<td>$401K</td>
+<td>חוזה 4 שבועות</td>
 </tr>
 <tr>
 <td>W198</td>
@@ -2740,59 +3415,74 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>סייקלון דיאז</td>
 <td>גבר</td>
 <td>מכתש</td>
+<td>לוחם</td>
 <td>רע</td>
-<td>91</td>
-<td>10</td>
-<td>$350K</td>
-<td>חוזה 6 שבועות</td>
+<td>60</td>
+<td>22 (אגדה)</td>
+<td>★★★★</td>
+<td>81</td>
+<td>$373K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W199</td>
 <td>Gentleman Graves</td>
 <td>ג&#39;נטלמן גרייבס</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>91</td>
-<td>9</td>
-<td>$411K</td>
-<td>חוזה 6 שבועות</td>
+<td>65</td>
+<td>23 (אגדה)</td>
+<td>★★★★</td>
+<td>82</td>
+<td>$340K</td>
+<td>חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W200</td>
 <td>Wildcat Monroe</td>
 <td>ויילדקאט מונרו</td>
 <td>גבר</td>
+<td>קל-משקל</td>
 <td>ענק</td>
 <td>רע</td>
-<td>91</td>
-<td>9</td>
-<td>$355K</td>
-<td>חוזה 12 שבועות</td>
+<td>68</td>
+<td>23 (אגדה)</td>
+<td>★★★★</td>
+<td>92</td>
+<td>$370K</td>
+<td>חוזה 4 שבועות</td>
 </tr>
 <tr>
 <td>W201</td>
 <td>Glory Bellamy</td>
 <td>גלורי בלמי</td>
 <td>אישה</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>96</td>
-<td>9</td>
-<td>$381K</td>
-<td>חוזה 8 שבועות</td>
+<td>61</td>
+<td>23 (אגדה)</td>
+<td>★★★★★</td>
+<td>81</td>
+<td>$387K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W202</td>
 <td>Roxy Lamarr</td>
 <td>רוקסי למאר</td>
 <td>אישה</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>רע</td>
-<td>98</td>
-<td>8</td>
-<td>$368K</td>
-<td>חוזה 10 שבועות</td>
+<td>65</td>
+<td>20 (אגדה)</td>
+<td>★★★★★</td>
+<td>78</td>
+<td>$386K</td>
+<td>חוזה 6 שבועות</td>
 </tr>
 <tr>
 <td>W203</td>
@@ -2800,10 +3490,13 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>קווין מגדלנה</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>96</td>
-<td>8</td>
-<td>$379K</td>
+<td>66</td>
+<td>23 (אגדה)</td>
+<td>★★★★★</td>
+<td>99</td>
+<td>$399K</td>
 <td>חוזה 10 שבועות</td>
 </tr>
 <tr>
@@ -2811,36 +3504,45 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>Jewel Carrington</td>
 <td>ג&#39;ול קרינגטון</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>85</td>
-<td>9</td>
-<td>$374K</td>
-<td>חוזה 4 שבועות</td>
+<td>67</td>
+<td>26 (בן אלמוות)</td>
+<td>★★★★★</td>
+<td>92</td>
+<td>$365K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W205</td>
 <td>Misty Holloway</td>
 <td>מיסטי הולוואי</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>99</td>
-<td>9</td>
-<td>$317K</td>
-<td>חוזה 12 שבועות</td>
+<td>58</td>
+<td>21 (אגדה)</td>
+<td>★★★★</td>
+<td>70</td>
+<td>$380K</td>
+<td>חוזה 6 שבועות</td>
 </tr>
 <tr>
 <td>W206</td>
 <td>Dolores Ibarra</td>
 <td>דולורס איבארה</td>
 <td>אישה</td>
-<td>לוחם</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>96</td>
-<td>9</td>
-<td>$323K</td>
-<td>חוזה 4 שבועות</td>
+<td>60</td>
+<td>26 (בן אלמוות)</td>
+<td>★★★★</td>
+<td>82</td>
+<td>$422K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W207</td>
@@ -2848,35 +3550,44 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>טניה קרוגר</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>93</td>
-<td>8</td>
-<td>$383K</td>
-<td>חוזה 6 שבועות</td>
+<td>64</td>
+<td>22 (אגדה)</td>
+<td>★★★</td>
+<td>83</td>
+<td>$439K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W208</td>
 <td>Bonnie Ryder</td>
 <td>בוני ריידר</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>95</td>
-<td>9</td>
-<td>$372K</td>
-<td>חוזה 12 שבועות</td>
+<td>58</td>
+<td>25 (בן אלמוות)</td>
+<td>★★★</td>
+<td>88</td>
+<td>$343K</td>
+<td>חוזה 4 שבועות</td>
 </tr>
 <tr>
 <td>W209</td>
 <td>Hana Shimizu</td>
 <td>האנה שימיזו</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>97</td>
-<td>9</td>
-<td>$417K</td>
-<td>חוזה 12 שבועות</td>
+<td>66</td>
+<td>23 (אגדה)</td>
+<td>★★★★</td>
+<td>88</td>
+<td>$363K</td>
+<td>חוזה 4 שבועות</td>
 </tr>
 <tr>
 <td>W210</td>
@@ -2884,15 +3595,18 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <td>אלקטרה וון</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>97</td>
-<td>9</td>
-<td>$302K</td>
+<td>58</td>
+<td>26 (בן אלמוות)</td>
+<td>★★★★★</td>
+<td>96</td>
+<td>$427K</td>
 <td>חוזה 4 שבועות</td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s10"><span class="n">10</span><span>כוכב עבר</span></h2>
+<h2 id="s11"><span class="n">11</span><span>כוכב עבר</span></h2>
 <p>כוכב עבר שעדיין יודע להביא קהל. נמצא רק דרך סקאוטים.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -2901,377 +3615,470 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W211</td>
-<td>Wes York</td>
-<td>ווס יורק</td>
+<td>Hugo Gale</td>
+<td>הוגו גייל</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>72</td>
-<td>6</td>
-<td>$120K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
+<td>40</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
+<td>80</td>
+<td>$200K</td>
+<td>סקאוט רמה 4 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W212</td>
-<td>Zane Sutton</td>
-<td>זיין סאטון</td>
+<td>Leo Lowe</td>
+<td>ליאו לואו</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>55</td>
-<td>6</td>
-<td>$126K</td>
-<td>סקאוט רמה 3 · חוזה 20 שבועות</td>
+<td>56</td>
+<td>13 (מוכר)</td>
+<td>★★</td>
+<td>82</td>
+<td>$155K</td>
+<td>סקאוט רמה 4 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W213</td>
-<td>Beau Carver</td>
-<td>בו קרבר</td>
+<td>Jonah Falk</td>
+<td>ג&#39;ונה פאלק</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>80</td>
-<td>7</td>
-<td>$145K</td>
+<td>52</td>
+<td>14 (מוכר)</td>
+<td>★★</td>
+<td>75</td>
+<td>$146K</td>
 <td>סקאוט רמה 3 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W214</td>
-<td>Cade Maddox</td>
-<td>קייד מדוקס</td>
+<td>Reid Lund</td>
+<td>ריד לונד</td>
 <td>גבר</td>
+<td>קל-משקל</td>
 <td>ענק</td>
 <td>רע</td>
-<td>71</td>
-<td>9</td>
-<td>$208K</td>
-<td>סקאוט רמה 5 · חוזה 8 שבועות</td>
+<td>49</td>
+<td>12 (מוכר)</td>
+<td>★★★★</td>
+<td>91</td>
+<td>$217K</td>
+<td>סקאוט רמה 4 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W215</td>
-<td>Rafa Easton</td>
-<td>ראפה איסטון</td>
+<td>Mateo Colton</td>
+<td>מטאו קולטון</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
+<td>51</td>
+<td>18 (אייקון)</td>
+<td>★★</td>
 <td>67</td>
-<td>6</td>
-<td>$159K</td>
-<td>סקאוט רמה 4 · חוזה 8 שבועות</td>
+<td>$195K</td>
+<td>סקאוט רמה 5 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W216</td>
-<td>Chase Ash</td>
-<td>צ&#39;ייס אש</td>
+<td>Carter Gale</td>
+<td>קרטר גייל</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>62</td>
-<td>7</td>
-<td>$126K</td>
+<td>52</td>
+<td>16 (אייקון)</td>
+<td>★★★</td>
+<td>88</td>
+<td>$141K</td>
 <td>סקאוט רמה 4 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W217</td>
-<td>Blake Ash</td>
-<td>בלייק אש</td>
+<td>Rocco Lyon</td>
+<td>רוקו ליון</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>67</td>
-<td>7</td>
+<td>43</td>
+<td>13 (מוכר)</td>
+<td>★★★★</td>
+<td>78</td>
 <td>$131K</td>
-<td>סקאוט רמה 4 · חוזה 16 שבועות</td>
-</tr>
-<tr>
-<td>W218</td>
-<td>Grant Berg</td>
-<td>גרנט ברג</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>56</td>
-<td>6</td>
-<td>$173K</td>
-<td>סקאוט רמה 4 · חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W219</td>
-<td>Victor Ward</td>
-<td>ויקטור וורד</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>74</td>
-<td>7</td>
-<td>$146K</td>
-<td>סקאוט רמה 5 · חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W220</td>
-<td>Omar Lyon</td>
-<td>עומאר ליון</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>56</td>
-<td>7</td>
-<td>$207K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W221</td>
-<td>Victor Frost</td>
-<td>ויקטור פרוסט</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>73</td>
-<td>6</td>
-<td>$182K</td>
-<td>סקאוט רמה 3 · חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W222</td>
-<td>Oscar Ward</td>
-<td>אוסקר וורד</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>72</td>
-<td>8</td>
-<td>$174K</td>
-<td>סקאוט רמה 4 · חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W223</td>
-<td>Ezra Sutton</td>
-<td>עזרא סאטון</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>61</td>
-<td>8</td>
-<td>$212K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W224</td>
-<td>Remy Keane</td>
-<td>רמי קין</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>62</td>
-<td>9</td>
-<td>$139K</td>
-<td>סקאוט רמה 5 · חוזה 25 שבועות</td>
-</tr>
-<tr>
-<td>W225</td>
-<td>Brady Monroe</td>
-<td>בריידי מונרו</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>80</td>
-<td>7</td>
-<td>$187K</td>
-<td>סקאוט רמה 5 · חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W226</td>
-<td>Omar Shaw</td>
-<td>עומאר שו</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>60</td>
-<td>7</td>
-<td>$208K</td>
-<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
-</tr>
-<tr>
-<td>W227</td>
-<td>Zane West</td>
-<td>זיין ווסט</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>56</td>
-<td>6</td>
-<td>$186K</td>
-<td>סקאוט רמה 5 · חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W228</td>
-<td>Blake Slade</td>
-<td>בלייק סלייד</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>58</td>
-<td>9</td>
-<td>$126K</td>
-<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W229</td>
-<td>Luca Locke</td>
-<td>לוקה לוק</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>66</td>
-<td>9</td>
-<td>$202K</td>
 <td>סקאוט רמה 4 · חוזה 12 שבועות</td>
 </tr>
 <tr>
-<td>W230</td>
-<td>Cyrus Navarro</td>
-<td>סיירוס נבארו</td>
+<td>W218</td>
+<td>Zane Riley</td>
+<td>זיין ריילי</td>
 <td>גבר</td>
 <td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>45</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>74</td>
+<td>$163K</td>
+<td>סקאוט רמה 4 · חוזה 25 שבועות</td>
+</tr>
+<tr>
+<td>W219</td>
+<td>Hank Shaw</td>
+<td>האנק שו</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>53</td>
+<td>18 (אייקון)</td>
+<td>★★</td>
+<td>78</td>
+<td>$160K</td>
+<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W220</td>
+<td>Knox York</td>
+<td>נוקס יורק</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>49</td>
+<td>15 (אייקון)</td>
+<td>★★</td>
+<td>88</td>
+<td>$166K</td>
+<td>סקאוט רמה 5 · חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W221</td>
+<td>Omar Burke</td>
+<td>עומאר ברק</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>48</td>
+<td>17 (אייקון)</td>
+<td>★★★★</td>
+<td>65</td>
+<td>$156K</td>
+<td>סקאוט רמה 5 · חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W222</td>
+<td>Hank Parks</td>
+<td>האנק פארקס</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>51</td>
+<td>15 (אייקון)</td>
+<td>★★</td>
+<td>63</td>
+<td>$190K</td>
+<td>סקאוט רמה 5 · חוזה 20 שבועות</td>
+</tr>
+<tr>
+<td>W223</td>
+<td>Julian Maxwell</td>
+<td>ג&#39;וליאן מקסוול</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>53</td>
+<td>12 (מוכר)</td>
+<td>★★</td>
+<td>72</td>
+<td>$134K</td>
+<td>סקאוט רמה 5 · חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W224</td>
+<td>Jett Sloane</td>
+<td>ג&#39;ט סלואן</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>51</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>80</td>
+<td>$215K</td>
+<td>סקאוט רמה 5 · חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W225</td>
+<td>Dante Dane</td>
+<td>דנטה דיין</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>45</td>
+<td>14 (מוכר)</td>
+<td>★★★</td>
+<td>73</td>
+<td>$200K</td>
+<td>סקאוט רמה 5 · חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W226</td>
+<td>Rio Riley</td>
+<td>ריו ריילי</td>
+<td>גבר</td>
+<td>מומחה</td>
+<td>כולם</td>
+<td>רע</td>
+<td>41</td>
+<td>14 (מוכר)</td>
+<td>★★★★</td>
+<td>89</td>
+<td>$151K</td>
+<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W227</td>
+<td>Jace Silva</td>
+<td>ג&#39;ייס סילבה</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>46</td>
+<td>17 (אייקון)</td>
+<td>★★★</td>
+<td>90</td>
+<td>$216K</td>
+<td>סקאוט רמה 4 · חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W228</td>
+<td>Nico Okafor</td>
+<td>ניקו אוקפור</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>49</td>
+<td>13 (מוכר)</td>
+<td>★★★</td>
+<td>79</td>
+<td>$153K</td>
+<td>סקאוט רמה 5 · חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W229</td>
+<td>Cade Blackwood</td>
+<td>קייד בלקווד</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>56</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
+<td>78</td>
+<td>$216K</td>
+<td>סקאוט רמה 4 · חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W230</td>
+<td>Levi Gibbs</td>
+<td>לוי גיבס</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>רע</td>
 <td>56</td>
-<td>7</td>
-<td>$208K</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
+<td>61</td>
+<td>$123K</td>
 <td>סקאוט רמה 5 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W231</td>
-<td>Sage Crane</td>
-<td>סייג&#39; קריין</td>
+<td>Lexi York</td>
+<td>לקסי יורק</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>56</td>
-<td>6</td>
-<td>$136K</td>
-<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
+<td>51</td>
+<td>12 (מוכר)</td>
+<td>★★★</td>
+<td>88</td>
+<td>$140K</td>
+<td>סקאוט רמה 4 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W232</td>
-<td>Zoe Lund</td>
-<td>זואי לונד</td>
+<td>Aiko Monroe</td>
+<td>אייקו מונרו</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>61</td>
-<td>8</td>
-<td>$136K</td>
-<td>סקאוט רמה 4 · חוזה 20 שבועות</td>
+<td>49</td>
+<td>17 (אייקון)</td>
+<td>★★</td>
+<td>87</td>
+<td>$179K</td>
+<td>סקאוט רמה 5 · חוזה 16 שבועות</td>
 </tr>
 <tr>
 <td>W233</td>
-<td>Quinn Tucker</td>
-<td>קווין טאקר</td>
+<td>Lila Blaine</td>
+<td>לילה בליין</td>
 <td>אישה</td>
-<td>ענק</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>61</td>
-<td>8</td>
-<td>$126K</td>
-<td>סקאוט רמה 5 · חוזה 8 שבועות</td>
+<td>54</td>
+<td>15 (אייקון)</td>
+<td>★★★</td>
+<td>82</td>
+<td>$206K</td>
+<td>סקאוט רמה 5 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W234</td>
-<td>Gemma Lyon</td>
-<td>ג&#39;מה ליון</td>
+<td>Daisy Novak</td>
+<td>דייזי נובאק</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>78</td>
-<td>9</td>
-<td>$212K</td>
-<td>סקאוט רמה 5 · חוזה 20 שבועות</td>
+<td>40</td>
+<td>14 (מוכר)</td>
+<td>★★★★</td>
+<td>88</td>
+<td>$186K</td>
+<td>סקאוט רמה 4 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W235</td>
-<td>Eden Maxwell</td>
-<td>עדן מקסוול</td>
+<td>Daisy Hayden</td>
+<td>דייזי היידן</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>79</td>
-<td>8</td>
-<td>$150K</td>
-<td>סקאוט רמה 5 · חוזה 20 שבועות</td>
+<td>53</td>
+<td>16 (אייקון)</td>
+<td>★★★★</td>
+<td>90</td>
+<td>$149K</td>
+<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W236</td>
-<td>Rosa Romano</td>
-<td>רוזה רומנו</td>
+<td>Cora Mensah</td>
+<td>קורה מנסה</td>
 <td>אישה</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>74</td>
-<td>9</td>
-<td>$122K</td>
-<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
+<td>55</td>
+<td>13 (מוכר)</td>
+<td>★★★★</td>
+<td>88</td>
+<td>$171K</td>
+<td>סקאוט רמה 4 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W237</td>
-<td>Eden Burke</td>
-<td>עדן ברק</td>
+<td>Ava Lowe</td>
+<td>אווה לואו</td>
 <td>אישה</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>75</td>
-<td>6</td>
-<td>$142K</td>
-<td>סקאוט רמה 4 · חוזה 8 שבועות</td>
+<td>48</td>
+<td>16 (אייקון)</td>
+<td>★★★</td>
+<td>74</td>
+<td>$190K</td>
+<td>סקאוט רמה 3 · חוזה 16 שבועות</td>
 </tr>
 <tr>
 <td>W238</td>
-<td>Sage Keane</td>
-<td>סייג&#39; קין</td>
+<td>Skylar Wynn</td>
+<td>סקיילר ווין</td>
 <td>אישה</td>
-<td>ענק</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>רע</td>
+<td>42</td>
+<td>18 (אייקון)</td>
+<td>★★★</td>
 <td>77</td>
-<td>6</td>
-<td>$154K</td>
-<td>סקאוט רמה 5 · חוזה 25 שבועות</td>
+<td>$185K</td>
+<td>סקאוט רמה 4 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W239</td>
-<td>Lexi Saxon</td>
-<td>לקסי סקסון</td>
+<td>Zoe Carlisle</td>
+<td>זואי קרלייל</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>55</td>
-<td>7</td>
-<td>$185K</td>
+<td>54</td>
+<td>16 (אייקון)</td>
+<td>★★★★</td>
+<td>91</td>
+<td>$182K</td>
 <td>סקאוט רמה 4 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W240</td>
-<td>Lila York</td>
-<td>לילה יורק</td>
+<td>Gwen Wynn</td>
+<td>גוון ווין</td>
 <td>אישה</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>78</td>
-<td>6</td>
-<td>$143K</td>
-<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
+<td>53</td>
+<td>15 (אייקון)</td>
+<td>★★</td>
+<td>87</td>
+<td>$212K</td>
+<td>סקאוט רמה 4 · חוזה 12 שבועות</td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s11"><span class="n">11</span><span>סוכן חופשי</span></h2>
+<h2 id="s12"><span class="n">12</span><span>סוכן חופשי</span></h2>
 <p>סוכן חופשי שמחפש הזדמנות.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -3280,377 +4087,470 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W241</td>
-<td>Kenji Blackwood</td>
-<td>קנג&#39;י בלקווד</td>
+<td>Carter Colton</td>
+<td>קרטר קולטון</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>60</td>
-<td>6</td>
-<td>$110K</td>
-<td>סקאוט רמה 1 · חוזה 8 שבועות</td>
+<td>33</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>86</td>
+<td>$68K</td>
+<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W242</td>
-<td>Cyrus Lark</td>
-<td>סיירוס לארק</td>
+<td>Rafa Maddox</td>
+<td>ראפה מדוקס</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>רע</td>
-<td>47</td>
-<td>5</td>
-<td>$146K</td>
-<td>סקאוט רמה 1 · חוזה 20 שבועות</td>
+<td>33</td>
+<td>5 (מבוסס)</td>
+<td>★</td>
+<td>69</td>
+<td>$69K</td>
+<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W243</td>
-<td>Noah Rivers</td>
-<td>נואה ריברס</td>
+<td>Wes Carver</td>
+<td>ווס קרבר</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>37</td>
-<td>4</td>
-<td>$140K</td>
-<td>סקאוט רמה 2 · חוזה 20 שבועות</td>
+<td>35</td>
+<td>8 (מבוסס)</td>
+<td>★★</td>
+<td>81</td>
+<td>$127K</td>
+<td>סקאוט רמה 1 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W244</td>
-<td>Cade Rook</td>
-<td>קייד רוק</td>
+<td>Remy Tanaka</td>
+<td>רמי טנאקה</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>64</td>
-<td>6</td>
-<td>$88K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
+<td>35</td>
+<td>10 (מוכר)</td>
+<td>★★</td>
+<td>81</td>
+<td>$135K</td>
+<td>סקאוט רמה 1 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W245</td>
-<td>Mateo West</td>
-<td>מטאו ווסט</td>
+<td>Theo Petrov</td>
+<td>תאו פטרוב</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
 <td>44</td>
-<td>6</td>
-<td>$118K</td>
-<td>סקאוט רמה 1 · חוזה 8 שבועות</td>
+<td>6 (מבוסס)</td>
+<td>★★★</td>
+<td>96</td>
+<td>$77K</td>
+<td>סקאוט רמה 2 · חוזה 16 שבועות</td>
 </tr>
 <tr>
 <td>W246</td>
-<td>Luca Falk</td>
-<td>לוקה פאלק</td>
+<td>Levi Frost</td>
+<td>לוי פרוסט</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>42</td>
-<td>4</td>
-<td>$125K</td>
-<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
+<td>33</td>
+<td>6 (מבוסס)</td>
+<td>★★</td>
+<td>73</td>
+<td>$101K</td>
+<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W247</td>
-<td>Remy Finch</td>
-<td>רמי פינץ&#39;</td>
+<td>Beau Romano</td>
+<td>בו רומנו</td>
 <td>גבר</td>
-<td>ענק</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>59</td>
-<td>6</td>
-<td>$92K</td>
-<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
+<td>40</td>
+<td>8 (מבוסס)</td>
+<td>★</td>
+<td>77</td>
+<td>$117K</td>
+<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W248</td>
-<td>Leo Burke</td>
-<td>ליאו ברק</td>
+<td>Knox Nolan</td>
+<td>נוקס נולאן</td>
 <td>גבר</td>
 <td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>49</td>
-<td>4</td>
-<td>$100K</td>
-<td>סקאוט רמה 2 · חוזה 12 שבועות</td>
+<td>43</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>78</td>
+<td>$126K</td>
+<td>סקאוט רמה 1 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W249</td>
-<td>Cyrus Ash</td>
-<td>סיירוס אש</td>
+<td>Julian Frost</td>
+<td>ג&#39;וליאן פרוסט</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>טוב</td>
-<td>47</td>
-<td>6</td>
-<td>$70K</td>
-<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
+<td>31</td>
+<td>6 (מבוסס)</td>
+<td>★★</td>
+<td>88</td>
+<td>$125K</td>
+<td>סקאוט רמה 1 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W250</td>
-<td>Mateo Price</td>
-<td>מטאו פרייס</td>
+<td>Kenji Quinlan</td>
+<td>קנג&#39;י קווינלן</td>
 <td>גבר</td>
-<td>לוחם</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
 <td>40</td>
-<td>4</td>
-<td>$134K</td>
-<td>סקאוט רמה 3 · חוזה 20 שבועות</td>
+<td>7 (מבוסס)</td>
+<td>★★</td>
+<td>72</td>
+<td>$128K</td>
+<td>סקאוט רמה 2 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W251</td>
-<td>Nico Petrov</td>
-<td>ניקו פטרוב</td>
+<td>Zane Hunt</td>
+<td>זיין האנט</td>
 <td>גבר</td>
 <td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>58</td>
-<td>6</td>
-<td>$74K</td>
-<td>סקאוט רמה 1 · חוזה 25 שבועות</td>
+<td>27</td>
+<td>5 (מבוסס)</td>
+<td>★★★</td>
+<td>77</td>
+<td>$110K</td>
+<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W252</td>
-<td>Hugo Gale</td>
-<td>הוגו גייל</td>
+<td>Max Quinlan</td>
+<td>מקס קווינלן</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>35</td>
-<td>6</td>
-<td>$71K</td>
+<td>30</td>
+<td>8 (מבוסס)</td>
+<td>★</td>
+<td>71</td>
+<td>$78K</td>
 <td>סקאוט רמה 3 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W253</td>
-<td>Wes Hunt</td>
-<td>ווס האנט</td>
+<td>Max Holm</td>
+<td>מקס הולם</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>51</td>
-<td>5</td>
-<td>$83K</td>
-<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W254</td>
-<td>Beau Ingram</td>
-<td>בו אינגרם</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>64</td>
-<td>6</td>
-<td>$86K</td>
+<td>25</td>
+<td>7 (מבוסס)</td>
+<td>★★</td>
+<td>67</td>
+<td>$125K</td>
 <td>סקאוט רמה 1 · חוזה 8 שבועות</td>
 </tr>
 <tr>
-<td>W255</td>
-<td>Noah Ortega</td>
-<td>נואה אורטגה</td>
+<td>W254</td>
+<td>Leo Calder</td>
+<td>ליאו קלדר</td>
 <td>גבר</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>36</td>
+<td>7 (מבוסס)</td>
+<td>★★</td>
+<td>70</td>
+<td>$86K</td>
+<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
+</tr>
+<tr>
+<td>W255</td>
+<td>Dorian Orr</td>
+<td>דוריאן אור</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
 <td>טוב</td>
-<td>49</td>
-<td>4</td>
-<td>$96K</td>
-<td>סקאוט רמה 1 · חוזה 12 שבועות</td>
+<td>30</td>
+<td>6 (מבוסס)</td>
+<td>★★</td>
+<td>65</td>
+<td>$138K</td>
+<td>סקאוט רמה 1 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W256</td>
-<td>Mateo Colton</td>
-<td>מטאו קולטון</td>
+<td>Jake Tanaka</td>
+<td>ג&#39;ייק טנאקה</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>55</td>
-<td>5</td>
-<td>$68K</td>
-<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
+<td>31</td>
+<td>5 (מבוסס)</td>
+<td>★★</td>
+<td>88</td>
+<td>$148K</td>
+<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W257</td>
-<td>Carter Gale</td>
-<td>קרטר גייל</td>
+<td>Jace Vega</td>
+<td>ג&#39;ייס וגה</td>
 <td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>טוב</td>
-<td>57</td>
-<td>6</td>
-<td>$113K</td>
-<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
+<td>32</td>
+<td>11 (מוכר)</td>
+<td>★★</td>
+<td>74</td>
+<td>$94K</td>
+<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W258</td>
-<td>Remy Ellis</td>
-<td>רמי אליס</td>
+<td>Gray Dahl</td>
+<td>גריי דאל</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>מומחה</td>
+<td>כולם</td>
 <td>רע</td>
-<td>41</td>
-<td>3</td>
-<td>$132K</td>
-<td>סקאוט רמה 2 · חוזה 20 שבועות</td>
+<td>44</td>
+<td>9 (מבוסס)</td>
+<td>★</td>
+<td>84</td>
+<td>$84K</td>
+<td>סקאוט רמה 3 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W259</td>
-<td>Chase York</td>
-<td>צ&#39;ייס יורק</td>
+<td>Kenji Costa</td>
+<td>קנג&#39;י קוסטה</td>
 <td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>טוב</td>
-<td>63</td>
-<td>4</td>
-<td>$139K</td>
-<td>סקאוט רמה 2 · חוזה 12 שבועות</td>
+<td>25</td>
+<td>10 (מוכר)</td>
+<td>★</td>
+<td>79</td>
+<td>$78K</td>
+<td>סקאוט רמה 2 · חוזה 16 שבועות</td>
 </tr>
 <tr>
 <td>W260</td>
-<td>Tate Tanaka</td>
-<td>טייט טנאקה</td>
+<td>Rhett Kato</td>
+<td>רט קאטו</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>38</td>
-<td>6</td>
-<td>$111K</td>
-<td>סקאוט רמה 1 · חוזה 12 שבועות</td>
+<td>26</td>
+<td>7 (מבוסס)</td>
+<td>★★★</td>
+<td>73</td>
+<td>$130K</td>
+<td>סקאוט רמה 1 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W261</td>
-<td>Gemma Brooks</td>
-<td>ג&#39;מה ברוקס</td>
+<td>Zoe Flynn</td>
+<td>זואי פלין</td>
 <td>אישה</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>63</td>
-<td>5</td>
-<td>$60K</td>
-<td>סקאוט רמה 1 · חוזה 16 שבועות</td>
+<td>32</td>
+<td>9 (מבוסס)</td>
+<td>★★★</td>
+<td>85</td>
+<td>$120K</td>
+<td>סקאוט רמה 2 · חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W262</td>
-<td>Skylar Saxon</td>
-<td>סקיילר סקסון</td>
+<td>Talia Banner</td>
+<td>טליה באנר</td>
 <td>אישה</td>
+<td>לוחם</td>
 <td>מכתש</td>
 <td>רע</td>
-<td>61</td>
-<td>6</td>
-<td>$141K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
+<td>42</td>
+<td>8 (מבוסס)</td>
+<td>★</td>
+<td>84</td>
+<td>$88K</td>
+<td>סקאוט רמה 1 · חוזה 16 שבועות</td>
 </tr>
 <tr>
 <td>W263</td>
-<td>Bree Moreno</td>
-<td>ברי מורנו</td>
+<td>Quinn Keane</td>
+<td>קווין קין</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>טוב</td>
-<td>57</td>
-<td>5</td>
-<td>$96K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
+<td>32</td>
+<td>8 (מבוסס)</td>
+<td>★★★</td>
+<td>87</td>
+<td>$94K</td>
+<td>סקאוט רמה 1 · חוזה 16 שבועות</td>
 </tr>
 <tr>
 <td>W264</td>
-<td>Lexi Parks</td>
-<td>לקסי פארקס</td>
+<td>Gia Silva</td>
+<td>ג&#39;יה סילבה</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>60</td>
-<td>5</td>
-<td>$65K</td>
-<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
+<td>27</td>
+<td>7 (מבוסס)</td>
+<td>★★★</td>
+<td>84</td>
+<td>$102K</td>
+<td>סקאוט רמה 1 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W265</td>
-<td>Paloma Maddox</td>
-<td>פלומה מדוקס</td>
+<td>Rosa Santos</td>
+<td>רוזה סנטוס</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
-<td>51</td>
-<td>3</td>
-<td>$102K</td>
-<td>סקאוט רמה 3 · חוזה 25 שבועות</td>
+<td>36</td>
+<td>10 (מוכר)</td>
+<td>★</td>
+<td>78</td>
+<td>$106K</td>
+<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W266</td>
-<td>Ava Decker</td>
-<td>אווה דקר</td>
+<td>Bree Calder</td>
+<td>ברי קלדר</td>
 <td>אישה</td>
+<td>ענק</td>
 <td>קל-משקל</td>
 <td>רע</td>
-<td>53</td>
-<td>5</td>
-<td>$96K</td>
-<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
+<td>37</td>
+<td>9 (מבוסס)</td>
+<td>★★</td>
+<td>70</td>
+<td>$98K</td>
+<td>סקאוט רמה 2 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W267</td>
-<td>Maya Riley</td>
-<td>מאיה ריילי</td>
+<td>Nora Gale</td>
+<td>נורה גייל</td>
 <td>אישה</td>
-<td>לוחם</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>39</td>
-<td>3</td>
-<td>$145K</td>
+<td>35</td>
+<td>10 (מוכר)</td>
+<td>★★★</td>
+<td>93</td>
+<td>$65K</td>
 <td>סקאוט רמה 1 · חוזה 25 שבועות</td>
 </tr>
 <tr>
 <td>W268</td>
-<td>Paloma Maxwell</td>
-<td>פלומה מקסוול</td>
+<td>Lena Mercer</td>
+<td>לנה מרסר</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>61</td>
-<td>3</td>
-<td>$134K</td>
-<td>סקאוט רמה 3 · חוזה 8 שבועות</td>
+<td>39</td>
+<td>7 (מבוסס)</td>
+<td>★★★</td>
+<td>77</td>
+<td>$145K</td>
+<td>סקאוט רמה 2 · חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W269</td>
-<td>Brooke Orr</td>
-<td>ברוק אור</td>
+<td>Mila Colton</td>
+<td>מילה קולטון</td>
 <td>אישה</td>
 <td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>47</td>
-<td>6</td>
-<td>$100K</td>
-<td>סקאוט רמה 1 · חוזה 16 שבועות</td>
+<td>27</td>
+<td>5 (מבוסס)</td>
+<td>★★★</td>
+<td>87</td>
+<td>$72K</td>
+<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
 </tr>
 <tr>
 <td>W270</td>
-<td>Nova Rios</td>
-<td>נובה ריוס</td>
+<td>Tess Mercer</td>
+<td>טס מרסר</td>
 <td>אישה</td>
-<td>מומחה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>רע</td>
-<td>51</td>
-<td>3</td>
-<td>$134K</td>
-<td>סקאוט רמה 2 · חוזה 8 שבועות</td>
+<td>38</td>
+<td>10 (מוכר)</td>
+<td>★★★</td>
+<td>95</td>
+<td>$119K</td>
+<td>סקאוט רמה 3 · חוזה 16 שבועות</td>
 </tr>
 </tbody></table>
 </div>
-<h2 id="s12"><span class="n">12</span><span>כישרון מקומי</span></h2>
+<h2 id="s13"><span class="n">13</span><span>כישרון מקומי</span></h2>
 <p>כישרון מקומי, זול ופנוי בכל שבוע.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -3659,373 +4559,466 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 <th>שם</th>
 <th>בעברית</th>
 <th>מגדר</th>
-<th>מחלקה</th>
+<th>סגנון</th>
+<th>מתאים מול</th>
 <th>צד</th>
 <th>פופולריות</th>
-<th>ניסיון</th>
+<th>ניסיון (דרגה)</th>
+<th>מיקרופון</th>
+<th>סיבולת</th>
 <th>משכורת</th>
 <th>הערות</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>W271</td>
-<td>Marco Blackwood</td>
-<td>מרקו בלקווד</td>
+<td>Jett Monroe</td>
+<td>ג&#39;ט מונרו</td>
 <td>גבר</td>
-<td>מכתש</td>
+<td>קל-משקל</td>
+<td>ענק</td>
 <td>טוב</td>
-<td>21</td>
-<td>2</td>
-<td>$14K</td>
-<td>חוזה 16 שבועות</td>
+<td>18</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>94</td>
+<td>$23K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W272</td>
-<td>Nate Drake</td>
-<td>נייט דרייק</td>
+<td>Miles Webb</td>
+<td>מיילס ווב</td>
 <td>גבר</td>
-<td>קל-משקל</td>
+<td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>20</td>
-<td>2</td>
-<td>$23K</td>
-<td>חוזה 20 שבועות</td>
+<td>16</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>80</td>
+<td>$24K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W273</td>
-<td>Hank Price</td>
-<td>האנק פרייס</td>
+<td>Julian Burke</td>
+<td>ג&#39;וליאן ברק</td>
 <td>גבר</td>
 <td>ענק</td>
+<td>קל-משקל</td>
 <td>טוב</td>
-<td>24</td>
-<td>1</td>
-<td>$17K</td>
-<td>חוזה 20 שבועות</td>
+<td>6</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>60</td>
+<td>$22K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 <tr>
 <td>W274</td>
-<td>Nate Hayden</td>
-<td>נייט היידן</td>
+<td>Mateo Falk</td>
+<td>מטאו פאלק</td>
 <td>גבר</td>
+<td>מכתש</td>
 <td>לוחם</td>
 <td>רע</td>
-<td>22</td>
-<td>1</td>
-<td>$18K</td>
-<td>חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W275</td>
-<td>Cyrus Orr</td>
-<td>סיירוס אור</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>25</td>
-<td>2</td>
-<td>$23K</td>
-<td>חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W276</td>
-<td>Oscar Holm</td>
-<td>אוסקר הולם</td>
-<td>גבר</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>16</td>
-<td>2</td>
-<td>$13K</td>
-<td>חוזה 16 שבועות</td>
-</tr>
-<tr>
-<td>W277</td>
-<td>Ryan Flynn</td>
-<td>ראיין פלין</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>9</td>
-<td>2</td>
-<td>$22K</td>
-<td>חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W278</td>
-<td>Grant Tanaka</td>
-<td>גרנט טנאקה</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>22</td>
-<td>2</td>
-<td>$20K</td>
-<td>חוזה 16 שבועות</td>
-</tr>
-<tr>
-<td>W279</td>
-<td>Remy Quinlan</td>
-<td>רמי קווינלן</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>19</td>
-<td>1</td>
-<td>$22K</td>
-<td>חוזה 25 שבועות</td>
-</tr>
-<tr>
-<td>W280</td>
-<td>Nate Lowe</td>
-<td>נייט לואו</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>14</td>
-<td>2</td>
-<td>$25K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W281</td>
-<td>Zane Rook</td>
-<td>זיין רוק</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>טוב</td>
 <td>11</td>
-<td>1</td>
-<td>$12K</td>
-<td>חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W282</td>
-<td>Hank Tucker</td>
-<td>האנק טאקר</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>6</td>
-<td>2</td>
-<td>$11K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W283</td>
-<td>Theo Ellis</td>
-<td>תאו אליס</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>17</td>
-<td>1</td>
-<td>$16K</td>
-<td>חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W284</td>
-<td>Rio Kemp</td>
-<td>ריו קמפ</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>17</td>
-<td>2</td>
-<td>$25K</td>
-<td>חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W285</td>
-<td>Evan Nolan</td>
-<td>אוון נולאן</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>טוב</td>
-<td>13</td>
-<td>2</td>
-<td>$27K</td>
-<td>חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W286</td>
-<td>Grant Kemp</td>
-<td>גרנט קמפ</td>
-<td>גבר</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>5</td>
-<td>2</td>
-<td>$11K</td>
-<td>חוזה 25 שבועות</td>
-</tr>
-<tr>
-<td>W287</td>
-<td>Knox Quinlan</td>
-<td>נוקס קווינלן</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>20</td>
-<td>2</td>
-<td>$12K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W288</td>
-<td>Gage Hayden</td>
-<td>גייג&#39; היידן</td>
-<td>גבר</td>
-<td>מכתש</td>
-<td>רע</td>
-<td>9</td>
-<td>2</td>
-<td>$10K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W289</td>
-<td>Grant Colton</td>
-<td>גרנט קולטון</td>
-<td>גבר</td>
-<td>מומחה</td>
-<td>טוב</td>
-<td>24</td>
-<td>2</td>
-<td>$17K</td>
-<td>חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W290</td>
-<td>Rex Decker</td>
-<td>רקס דקר</td>
-<td>גבר</td>
-<td>ענק</td>
-<td>רע</td>
-<td>16</td>
-<td>1</td>
-<td>$22K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W291</td>
-<td>Tess Vega</td>
-<td>טס וגה</td>
-<td>אישה</td>
-<td>מכתש</td>
-<td>טוב</td>
-<td>10</td>
-<td>1</td>
-<td>$18K</td>
-<td>חוזה 12 שבועות</td>
-</tr>
-<tr>
-<td>W292</td>
-<td>Kara Nolan</td>
-<td>קארה נולאן</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>13</td>
-<td>1</td>
-<td>$20K</td>
-<td>חוזה 8 שבועות</td>
-</tr>
-<tr>
-<td>W293</td>
-<td>Skylar Gale</td>
-<td>סקיילר גייל</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>19</td>
-<td>2</td>
-<td>$17K</td>
-<td>חוזה 16 שבועות</td>
-</tr>
-<tr>
-<td>W294</td>
-<td>Jess Dorsey</td>
-<td>ג&#39;ס דורסי</td>
-<td>אישה</td>
-<td>לוחם</td>
-<td>רע</td>
-<td>15</td>
-<td>2</td>
-<td>$23K</td>
-<td>חוזה 25 שבועות</td>
-</tr>
-<tr>
-<td>W295</td>
-<td>Rosa Parks</td>
-<td>רוזה פארקס</td>
-<td>אישה</td>
-<td>לוחם</td>
-<td>טוב</td>
-<td>22</td>
-<td>1</td>
-<td>$25K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W296</td>
-<td>Elle Nolan</td>
-<td>אל נולאן</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>רע</td>
-<td>13</td>
-<td>2</td>
-<td>$15K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W297</td>
-<td>Hazel Hollis</td>
-<td>הייזל הוליס</td>
-<td>אישה</td>
-<td>קל-משקל</td>
-<td>טוב</td>
-<td>8</td>
-<td>2</td>
-<td>$12K</td>
-<td>חוזה 20 שבועות</td>
-</tr>
-<tr>
-<td>W298</td>
-<td>Aiko Petrov</td>
-<td>אייקו פטרוב</td>
-<td>אישה</td>
-<td>מומחה</td>
-<td>רע</td>
-<td>21</td>
-<td>1</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>67</td>
 <td>$28K</td>
 <td>חוזה 8 שבועות</td>
 </tr>
 <tr>
-<td>W299</td>
-<td>Layne Blackwood</td>
-<td>ליין בלקווד</td>
-<td>אישה</td>
-<td>מומחה</td>
+<td>W275</td>
+<td>Cade Quill</td>
+<td>קייד קוויל</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
 <td>טוב</td>
 <td>17</td>
-<td>2</td>
-<td>$24K</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>85</td>
+<td>$10K</td>
+<td>חוזה 20 שבועות</td>
+</tr>
+<tr>
+<td>W276</td>
+<td>Kenzie Quill</td>
+<td>קנזי קוויל</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>7</td>
+<td>2 (מתחיל)</td>
+<td>★</td>
+<td>83</td>
+<td>$23K</td>
+<td>חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W277</td>
+<td>Kenzie Burke</td>
+<td>קנזי ברק</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>5</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>93</td>
+<td>$17K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W278</td>
+<td>Mateo Petrov</td>
+<td>מטאו פטרוב</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>18</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>77</td>
+<td>$14K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W279</td>
+<td>Leo Ward</td>
+<td>ליאו וורד</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>14</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>87</td>
+<td>$18K</td>
+<td>חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W280</td>
+<td>Chase Petrov</td>
+<td>צ&#39;ייס פטרוב</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>18</td>
+<td>1 (מתחיל)</td>
+<td>★★</td>
+<td>71</td>
+<td>$16K</td>
+<td>חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W281</td>
+<td>Cyrus Bishop</td>
+<td>סיירוס בישופ</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>6</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>90</td>
+<td>$19K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W282</td>
+<td>Gray Brooks</td>
+<td>גריי ברוקס</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>5</td>
+<td>1 (מתחיל)</td>
+<td>★★</td>
+<td>75</td>
+<td>$21K</td>
+<td>חוזה 25 שבועות</td>
+</tr>
+<tr>
+<td>W283</td>
+<td>Wes Marsh</td>
+<td>ווס מארש</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>10</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>70</td>
+<td>$14K</td>
+<td>חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W284</td>
+<td>Kenzie Mensah</td>
+<td>קנזי מנסה</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>18</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>71</td>
+<td>$21K</td>
+<td>חוזה 20 שבועות</td>
+</tr>
+<tr>
+<td>W285</td>
+<td>Eli Okafor</td>
+<td>אלי אוקפור</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>9</td>
+<td>2 (מתחיל)</td>
+<td>★</td>
+<td>76</td>
+<td>$22K</td>
+<td>חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W286</td>
+<td>Zane Carver</td>
+<td>זיין קרבר</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>11</td>
+<td>2 (מתחיל)</td>
+<td>★</td>
+<td>74</td>
+<td>$30K</td>
+<td>חוזה 12 שבועות</td>
+</tr>
+<tr>
+<td>W287</td>
+<td>Mateo Hayden</td>
+<td>מטאו היידן</td>
+<td>גבר</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>6</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>75</td>
+<td>$16K</td>
+<td>חוזה 25 שבועות</td>
+</tr>
+<tr>
+<td>W288</td>
+<td>Hank Holm</td>
+<td>האנק הולם</td>
+<td>גבר</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>10</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>81</td>
+<td>$28K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W289</td>
+<td>Felix Orr</td>
+<td>פליקס אור</td>
+<td>גבר</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>טוב</td>
+<td>12</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>69</td>
+<td>$10K</td>
+<td>חוזה 20 שבועות</td>
+</tr>
+<tr>
+<td>W290</td>
+<td>Eli Hayden</td>
+<td>אלי היידן</td>
+<td>גבר</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>6</td>
+<td>1 (מתחיל)</td>
+<td>★★</td>
+<td>71</td>
+<td>$14K</td>
+<td>חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W291</td>
+<td>Quinn Dorsey</td>
+<td>קווין דורסי</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>6</td>
+<td>2 (מתחיל)</td>
+<td>★</td>
+<td>72</td>
+<td>$13K</td>
+<td>חוזה 25 שבועות</td>
+</tr>
+<tr>
+<td>W292</td>
+<td>Mila Saxon</td>
+<td>מילה סקסון</td>
+<td>אישה</td>
+<td>מכתש</td>
+<td>לוחם</td>
+<td>רע</td>
+<td>13</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>85</td>
+<td>$29K</td>
+<td>חוזה 25 שבועות</td>
+</tr>
+<tr>
+<td>W293</td>
+<td>Bree Riley</td>
+<td>ברי ריילי</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>16</td>
+<td>3 (מתחיל)</td>
+<td>★★</td>
+<td>77</td>
+<td>$28K</td>
+<td>חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W294</td>
+<td>Eden Okafor</td>
+<td>עדן אוקפור</td>
+<td>אישה</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>רע</td>
+<td>15</td>
+<td>1 (מתחיל)</td>
+<td>★★</td>
+<td>56</td>
+<td>$28K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W295</td>
+<td>Jess Dalton</td>
+<td>ג&#39;ס דלטון</td>
+<td>אישה</td>
+<td>ענק</td>
+<td>קל-משקל</td>
+<td>טוב</td>
+<td>15</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>71</td>
+<td>$14K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W296</td>
+<td>Vera Saxon</td>
+<td>ורה סקסון</td>
+<td>אישה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>רע</td>
+<td>7</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>94</td>
+<td>$20K</td>
+<td>חוזה 16 שבועות</td>
+</tr>
+<tr>
+<td>W297</td>
+<td>Hazel Dalton</td>
+<td>הייזל דלטון</td>
+<td>אישה</td>
+<td>קל-משקל</td>
+<td>ענק</td>
+<td>טוב</td>
+<td>6</td>
+<td>1 (מתחיל)</td>
+<td>★★</td>
+<td>90</td>
+<td>$11K</td>
+<td>חוזה 8 שבועות</td>
+</tr>
+<tr>
+<td>W298</td>
+<td>Dahlia Price</td>
+<td>דליה פרייס</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>רע</td>
+<td>17</td>
+<td>1 (מתחיל)</td>
+<td>★</td>
+<td>76</td>
+<td>$10K</td>
+<td>חוזה 20 שבועות</td>
+</tr>
+<tr>
+<td>W299</td>
+<td>Cleo Sawyer</td>
+<td>קליאו סוייר</td>
+<td>אישה</td>
+<td>לוחם</td>
+<td>מכתש</td>
+<td>טוב</td>
+<td>13</td>
+<td>2 (מתחיל)</td>
+<td>★★</td>
+<td>90</td>
+<td>$22K</td>
 <td>חוזה 20 שבועות</td>
 </tr>
 <tr>
 <td>W300</td>
-<td>Elle Gibbs</td>
-<td>אל גיבס</td>
+<td>Hazel Silva</td>
+<td>הייזל סילבה</td>
 <td>אישה</td>
 <td>לוחם</td>
+<td>מכתש</td>
 <td>רע</td>
-<td>11</td>
-<td>2</td>
-<td>$16K</td>
-<td>חוזה 20 שבועות</td>
+<td>10</td>
+<td>3 (מתחיל)</td>
+<td>★</td>
+<td>84</td>
+<td>$18K</td>
+<td>חוזה 12 שבועות</td>
 </tr>
 </tbody></table>
 </div>
