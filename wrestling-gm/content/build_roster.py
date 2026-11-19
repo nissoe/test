@@ -28,6 +28,10 @@ WOMEN_SHARE = 0.35
 
 # שש דרגות קריירה לפי רמת הניסיון, כמו במקור [לאמת: הגבולות]
 RANKS = [(1, 'Rookie', 'מתחיל'), (5, 'Established', 'מבוסס'), (10, 'Renown', 'מוכר'), (15, 'Icon', 'אייקון'), (20, 'Legend', 'אגדה'), (25, 'Immortal', 'בן אלמוות')]
+# מיקרופון לא תלוי בשכבה: לכל אחד יכול להיות 1–5. רק כוכבי על ואגדות נוטים למעלה (מנוסים יותר)
+MIC_WEIGHTS = {'default': [15, 25, 30, 20, 10], 'veteran': [0, 10, 30, 35, 25]}
+# מגמת שיפור במיקרופון: בעיקר לנמוכים, לא למוכרים. ההסתברות לכל שכבה
+MIC_GROWTH_CHANCE = {'prospect': 0.7, 'rising': 0.6, 'local': 0.5, 'free': 0.4, 'midcard': 0.35, 'star': 0.15, 'former': 0.0, 'superstar': 0.0, 'legend': 0.0}
 BEST_MATCH = {'Giant': ('Cruiser', 'קל-משקל'), 'Cruiser': ('Giant', 'ענק'), 'Fighter': ('Bruiser', 'מכתש'), 'Bruiser': ('Fighter', 'לוחם'), 'Specialist': ('Any', 'כולם')}
 STAMINA = {'Giant': (55, 75), 'Cruiser': (80, 100), 'Bruiser': (65, 85), 'Fighter': (70, 90), 'Specialist': (70, 90)}
 
@@ -170,7 +174,9 @@ def make(tier, gender, name=None):
         'tier': key, 'tierHe': he, 'pool': pool,
         'class': cls[0], 'classHe': cls[1],
         'role': role[0], 'roleHe': role[1],
-        'popularity': rnd(pop), 'ringLevel': rnd(ring), 'mic': rnd(promo),
+        'popularity': rnd(pop), 'ringLevel': rnd(ring),
+        'mic': random.choices([1, 2, 3, 4, 5], weights=MIC_WEIGHTS['veteran' if key in ('superstar', 'legend') else 'default'])[0],
+        'micGrowth': 0,
         'rank': None, 'rankHe': None,
         'bestMatch': BEST_MATCH[cls[0]][0], 'bestMatchHe': BEST_MATCH[cls[0]][1],
         'stamina': random.randint(*STAMINA[cls[0]]), 'morale': random.randint(60, 80),
@@ -183,6 +189,8 @@ def make(tier, gender, name=None):
         'tagTeam': None, 'tagTeamHe': None,
         'desc': None, 'descEn': None,
     }
+    if w['mic'] < 5 and random.random() < MIC_GROWTH_CHANCE[key]:
+        w['micGrowth'] = 2 if key in ('prospect', 'rising', 'local') and random.random() < 0.5 else 1
     r = [x for x in RANKS if x[0] <= w['ringLevel']][-1]
     w['rank'], w['rankHe'] = r[1], r[2]
     ht = random.choice(HOMETOWNS)
@@ -269,16 +277,16 @@ def table(rows):
             notes.append(f"סקאוט רמה {w['scoutLevel']}")
         if w['contractWeeks']:
             notes.append(f"חוזה {w['contractWeeks']} שבועות")
-        out.append(f"| {w['id']} | {w['name']} | {w['nameHe']} | {'אישה' if w['gender'] == 'F' else 'גבר'} | {w['classHe']} | {w['bestMatchHe']} | {w['roleHe']} | {w['popularity']} | {w['ringLevel']} ({w['rankHe']}) | {'★' * w['mic']} | {w['stamina']} | ${w['salary'] // 1000}K | {' · '.join(notes)} |")
+        out.append(f"| {w['id']} | {w['name']} | {w['nameHe']} | {'אישה' if w['gender'] == 'F' else 'גבר'} | {w['classHe']} | {w['bestMatchHe']} | {w['roleHe']} | {w['popularity']} | {w['ringLevel']} ({w['rankHe']}) | {'★' * w['mic']}{' ↑' * (1 if w['micGrowth'] else 0)}{'↑' if w['micGrowth'] == 2 else ''} | {w['stamina']} | ${w['salary'] // 1000}K | {' · '.join(notes)} |")
     return '\n'.join(out)
 
 
-summary = ['| שכבה | מאגר | גברים | נשים | סה"כ | פופולריות | ניסיון | מיקרופון | משכורת לעונה |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+summary = ['| שכבה | מאגר | גברים | נשים | סה"כ | פופולריות | ניסיון | משכורת לעונה |', '| --- | --- | --- | --- | --- | --- | --- | --- |']
 pool_he = {'active': 'דראפט', 'legend': 'גיוס: אגדות', 'former': 'גיוס: סקאוטים', 'free': 'גיוס: סקאוטים', 'local': 'גיוס: זמין תמיד'}
 for t in TIERS:
     rows = [w for w in wrestlers if w['tier'] == t[0]]
     m = sum(1 for w in rows if w['gender'] == 'M')
-    summary.append(f"| {t[1]} | {pool_he[t[2]]} | {m} | {len(rows) - m} | {len(rows)} | {t[4][0]}–{t[4][1]} | {t[5][0]}–{t[5][1]} | {t[6][0]}–{t[6][1]} | ${t[7][0]}K–{t[7][1]}K |")
+    summary.append(f"| {t[1]} | {pool_he[t[2]]} | {m} | {len(rows) - m} | {len(rows)} | {t[4][0]}–{t[4][1]} | {t[5][0]}–{t[5][1]} | ${t[7][0]}K–{t[7][1]}K |")
 
 gm_rows = ['| # | מנהל | בעברית | משפחה | קלף בלעדי | מה הוא עושה |', '| --- | --- | --- | --- | --- | --- |']
 for g in gms:
@@ -319,13 +327,14 @@ lead: 300 מתאבקים בדיוניים, מחולקים לשכבות כמו ב
 | צד | טוב / רע | טוב מול רע מעלה את הציון, ואותו צד מוריד אותו. |
 | פופולריות | 1–100, בהתחלה עד 70 | גם כוכבי העל הגדולים מתחילים ב-60–70. עולה במהלך העונה מקרבות, פרומואים ותארים. |
 | רמת ניסיון | 1–30 | שש דרגות: מתחיל (1), מבוסס (5), מוכר (10), אייקון (15), אגדה (20), בן אלמוות (25). עולה מקרבות, פרומואים ואימונים (5,000 דולר לאימון). |
-| מיקרופון | 1–5 כוכבים | כמה טוב הפרומו שלו. |
+| מיקרופון | 1–5 כוכבים | כמה טוב הפרומו שלו. לא תלוי בשכבה: גם מתאבק מידקארד יכול להיות מדבר מעולה. כוכבי על ואגדות נוטים למעלה, כי הם מנוסים. |
+| מגמת שיפור במיקרופון | ↑ איטית, ↑↑ מהירה | בעיקר לצעירים, לכוכבים עולים ולכישרון המקומי, ולא למוכרים. משתפרים עם פרומואים לאורך העונה. |
 | סיבולת | 55–100 | התקרה האישית. ענקים נמוכים, קלי-משקל גבוהים. מתחת ל-40 סיכון הפציעה עולה. |
 | מורל | 60–80 בהתחלה | נאמנות למותג. ב-0 הוא עלול לעזוב. |
 | משכורת | לעונה | לפי השכבה. |
 
 > [!לאמת]
-> פופולריות של עד 70 בהתחלה ומיקרופון 1–5 נקבעו לפי הניסיון שלך במשחק. רמות הניסיון והדרגות לפי מדריכים של 2K26: מתאבקים טובים ברמה 15 ומעלה ואגדות ב-20 ומעלה. הגבולות המדויקים בין הדרגות, וטווחי הסיבולת, יאומתו במחקר המספרים.
+> פופולריות של עד 70 בהתחלה ומיקרופון 1–5 שלא תלוי בשכבה נקבעו לפי הניסיון שלך במשחק. רמות הניסיון והדרגות לפי מדריכים של 2K26: מתאבקים טובים ברמה 15 ומעלה ואגדות ב-20 ומעלה. הגבולות המדויקים בין הדרגות, וטווחי הסיבולת, יאומתו במחקר המספרים.
 
 ## השכבות
 
