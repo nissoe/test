@@ -153,7 +153,7 @@ for i, b in enumerate(BRANDS):
                     + fig(secondary_belt(i, b), f'{t} {title.title()} Championship', f'התואר המשני: לוחית כסף משושה, שם התואר במרכז וסמל המותג מעליו. {HE[name]}.')
                     + '  </div>\n')
 
-page = '''<title>LWF Belt Sketches</title>
+page = '''<title>סקיצות חגורות LWF</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
