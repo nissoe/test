@@ -1,0 +1,182 @@
+[
+ {
+  "id": "G01",
+  "name": "Victoria Sterling",
+  "nameHe": "ויקטוריה סטרלינג",
+  "family": "כלכלה",
+  "card": "Golden Gate",
+  "cardHe": "שער הזהב",
+  "effect": "הכנסות הקהל כפולות לשבוע אחד."
+ },
+ {
+  "id": "G02",
+  "name": "Raymond Kessington",
+  "nameHe": "ריימונד קסינגטון",
+  "family": "כלכלה",
+  "card": "Open Checkbook",
+  "cardHe": "פנקס פתוח",
+  "effect": "כל הקרבות בחינם לשבוע אחד. פעמיים בעונה."
+ },
+ {
+  "id": "G03",
+  "name": "Delphine Ortiz",
+  "nameHe": "דלפין אורטיז",
+  "family": "כלכלה",
+  "card": "Prime Time Deal",
+  "cardHe": "עסקת פריים טיים",
+  "effect": "בונוסי הלוגיסטיקה כפולים לשבוע אחד."
+ },
+ {
+  "id": "G04",
+  "name": "Marcus Whitfield",
+  "nameHe": "מרקוס ויטפילד",
+  "family": "כלכלה",
+  "card": "Bargain Bin",
+  "cardHe": "מבצע סוף עונה",
+  "effect": "קלפים בחנות בחינם, ושתי יחידות בכל קנייה. פעמיים בעונה."
+ },
+ {
+  "id": "G05",
+  "name": "Sofia Bellucci",
+  "nameHe": "סופיה בלוצ'י",
+  "family": "כלכלה",
+  "card": "Legend Network",
+  "cardHe": "רשת האגדות",
+  "effect": "האגדה הראשונה שנחתמת השבוע בחינם."
+ },
+ {
+  "id": "G06",
+  "name": "Big Al Montague",
+  "nameHe": "ביג אל מונטגיו",
+  "family": "יריבויות",
+  "card": "Fan The Flames",
+  "cardHe": "ללבות את האש",
+  "effect": "כל היריבויות הפעילות עולות בשתי רמות. פעמיים בעונה."
+ },
+ {
+  "id": "G07",
+  "name": "Nadia Rahimi",
+  "nameHe": "נדיה רחימי",
+  "family": "יריבויות",
+  "card": "Bad Blood",
+  "cardHe": "דם רע",
+  "effect": "יריבות אחת קופצת ישר לרמה 4."
+ },
+ {
+  "id": "G08",
+  "name": "Theo Lancaster",
+  "nameHe": "תאו לנקסטר",
+  "family": "יריבויות",
+  "card": "Mic Drop",
+  "cardHe": "נפילת המיקרופון",
+  "effect": "פרומואים בחינם והתוצאות שלהם כפולות לשבוע אחד."
+ },
+ {
+  "id": "G09",
+  "name": "Ingrid Solberg",
+  "nameHe": "אינגריד סולברג",
+  "family": "יריבויות",
+  "card": "Grudge Match",
+  "cardHe": "קרב חשבונות",
+  "effect": "קרב יריבות השבוע מקבל בונוס ציון גבוה."
+ },
+ {
+  "id": "G10",
+  "name": "Felix Okoro",
+  "nameHe": "פליקס אוקורו",
+  "family": "יריבויות",
+  "card": "Spotlight",
+  "cardHe": "זרקור",
+  "effect": "מתאבק אחד מקבל 10 פופולריות."
+ },
+ {
+  "id": "G11",
+  "name": "Dr. Helena Voss",
+  "nameHe": "ד\"ר הלנה ווס",
+  "family": "התאוששות",
+  "card": "Medical Leave",
+  "cardHe": "חופשת מחלה",
+  "effect": "כל הפצועים חוזרים שבוע מוקדם יותר."
+ },
+ {
+  "id": "G12",
+  "name": "Coach Brandon Reyes",
+  "nameHe": "המאמן ברנדון רייס",
+  "family": "התאוששות",
+  "card": "Ice Bath",
+  "cardHe": "אמבט קרח",
+  "effect": "15 סיבולת לכל הרוסטר."
+ },
+ {
+  "id": "G13",
+  "name": "Mama Lucia",
+  "nameHe": "מאמא לוצ'יה",
+  "family": "התאוששות",
+  "card": "Family Dinner",
+  "cardHe": "ארוחה משפחתית",
+  "effect": "המורל של כל הרוסטר עולה."
+ },
+ {
+  "id": "G14",
+  "name": "Garrett Pike",
+  "nameHe": "גארט פייק",
+  "family": "התאוששות",
+  "card": "Second Wind",
+  "cardHe": "רוח שנייה",
+  "effect": "מתאבק אחד חוזר לסיבולת מלאה."
+ },
+ {
+  "id": "G15",
+  "name": "Yuki Tanabe",
+  "nameHe": "יוקי טנאבה",
+  "family": "התאוששות",
+  "card": "Training Camp",
+  "cardHe": "מחנה אימונים",
+  "effect": "כל הצעירים בפיתוח מקבלים נקודות ניסיון."
+ },
+ {
+  "id": "G16",
+  "name": "Dante Corvino",
+  "nameHe": "דנטה קורבינו",
+  "family": "התקפה",
+  "card": "Backstage Ambush",
+  "cardHe": "מארב מאחורי הקלעים",
+  "effect": "שני מתאבקים אקראיים של יריב נפצעים לתוכנית הבאה שלו."
+ },
+ {
+  "id": "G17",
+  "name": "Serena Blackwell",
+  "nameHe": "סרינה בלקוול",
+  "family": "התקפה",
+  "card": "Poach",
+  "cardHe": "חטיפה",
+  "effect": "לוקחים מתאבק ממותג יריב לצמיתות (לא מחזיק תואר)."
+ },
+ {
+  "id": "G18",
+  "name": "Ox Brannigan",
+  "nameHe": "אוקס בראניגן",
+  "family": "התקפה",
+  "card": "Bad Press",
+  "cardHe": "עיתונות רעה",
+  "effect": "כל הרוסטר של יריב מאבד 5 פופולריות."
+ },
+ {
+  "id": "G19",
+  "name": "Vivienne Lacroix",
+  "nameHe": "ויויאן לקרואה",
+  "family": "התקפה",
+  "card": "Sabotage",
+  "cardHe": "חבלה",
+  "effect": "בונוס האיכות של האולם של יריב מתבטל לשבוע אחד."
+ },
+ {
+  "id": "G20",
+  "name": "The Commissioner",
+  "nameHe": "הנציב",
+  "family": "התקפה",
+  "card": "Executive Order",
+  "cardHe": "צו מנהלי",
+  "effect": "מבטלים את הקלף האחרון שיריב הפעיל."
+ }
+]
