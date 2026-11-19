@@ -8,7 +8,7 @@
 - תוספות תחביר: `> [!החלטה]`, `> [!לאמת]`, `> [!הערה]`, `> [!לגרסה שלנו]` בתחילת ציטוט, ו-`[[לאמת]]` בתוך שורה.
 
 ## מסמכים
-- `roster.md` — רוסטר LWF: 300 מתאבקים ו-20 מנהלים (נבנה מ-`content/build_roster.py`).
+- `roster.md` — רוסטר LWF: 300 מתאבקים ו-20 מנהלים (נבנה מ-`content/build_roster.py`). דף מפורסם: https://claude.ai/artifact/T2xVn2JNfN4rLGqMjEWmjG
 - `belts.md` — מפרט הפקת 30 חגורות האליפות. דף מפורסם: https://claude.ai/artifact/TfWzmTbvJbXYYjdRHa7N8F
 - `costs.md` — תקציב ועלויות. דף מפורסם: https://claude.ai/artifact/6D7rw6N4kdwPzpT2TdqyKn
 - `gdd.md` — מסמך אפיון המשחק. דף מפורסם: https://claude.ai/artifact/RcepWhLbcV9pjfxgP5tCHc (לעדכן אותו: לפרסם מחדש את `dist/gdd.html` לאותה כתובת).
