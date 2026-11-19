@@ -247,6 +247,29 @@ for t in TIERS:
             tl = (TIER_LINE_F if g == 'F' else TIER_LINE)[t[0]]
             w['desc'], w['descEn'] = f'{d[0]}. {tl[0]}', f'{d[1]}. {tl[1]}'
 
+# ---------- סגנון קבוע לשמות שמחייבים אותו: מחליפים עם מתאבק אחר באותה שכבה ומגדר, כדי לשמור על המכסות ----------
+FIXED_CLASS = {'Colossus': 'Giant', 'Big Jim Tolliver': 'Giant', 'Makoa': 'Giant', 'Tank Mason': 'Bruiser', 'El Fantasma Rojo': 'Cruiser', 'Cyclone Diaz': 'Cruiser'}
+
+
+def set_class(w, cname):
+    c = next(c for c in CLASSES if c[0] == cname)
+    w['class'], w['classHe'] = c
+    w['bestMatch'], w['bestMatchHe'] = BEST_MATCH[c[0]]
+    w['stamina'] = random.randint(*STAMINA[c[0]])
+    d = (DESC_F if w['gender'] == 'F' else DESC)[c[0]]
+    tl = (TIER_LINE_F if w['gender'] == 'F' else TIER_LINE)[w['tier']]
+    w['desc'], w['descEn'] = f'{d[0]}. {tl[0]}', f'{d[1]}. {tl[1]}'
+
+
+for w in wrestlers:
+    want = FIXED_CLASS.get(w['name'])
+    if want and w['class'] != want:
+        other = next((o for o in wrestlers if o['tier'] == w['tier'] and o['gender'] == w['gender'] and o['class'] == want and o['name'] not in FIXED_CLASS), None)
+        old = w['class']
+        set_class(w, want)
+        if other:
+            set_class(other, old)
+
 # ---------- מכסות מיקרופון לכל שכבה (החלטה 48) ----------
 # מספר המתאבקים עם 1★..5★ בכל שכבה. ניסיון משפר את הממוצע, 5★ נדיר אבל קיים, ובשכבות הנמוכות יש הפתעות
 MIC_QUOTA = {
@@ -270,6 +293,26 @@ for t, q in MIC_QUOTA.items():
         w['micGrowth'] = 0
         if m < 5 and random.random() < MIC_GROWTH_CHANCE[t]:
             w['micGrowth'] = 2 if t in ('prospect', 'rising', 'local') and random.random() < 0.5 else 1
+
+# ---------- מהלך סיום מקורי לכל מתאבק (החלטה 59), לפי הסגנון ----------
+FIN_PREFIX = [('Crimson', 'ארגמן'), ('Thunder', 'רעם'), ('Iron', 'ברזל'), ('Storm', 'סערה'), ('Shadow', 'צל'), ('Golden', 'זהב'),
+              ('Midnight', 'חצות'), ('Savage', 'פרא'), ('Venom', 'ארס'), ('Inferno', 'תופת'), ('Glacier', 'קרחון'), ('Phantom', 'רפאים'),
+              ('Titan', 'טיטאן'), ('Eclipse', 'ליקוי'), ('Viper', 'צפע'), ('Comet', 'שביט'), ('Obsidian', 'אובסידיאן'), ('Wolf', 'זאב'),
+              ('Neon', 'ניאון'), ('Static', 'חשמל'), ('Grave', 'קבר'), ('Royal', 'מלכות'), ('Lunar', 'ירח'), ('Ember', 'גחלת')]
+FIN_CORE = {
+    'Giant': [('Slam', 'הטחת'), ('Drop', 'נפילת'), ('Bomb', 'פצצת'), ('Crash', 'התרסקות'), ('Toss', 'השלכת')],
+    'Cruiser': [('Dive', 'צלילת'), ('Kick', 'בעיטת'), ('Flip', 'סלטת'), ('Press', 'לחיצת'), ('Splash', 'נחיתת')],
+    'Bruiser': [('Lariat', 'לאריאט'), ('Hammer', 'פטיש'), ('Headbutt', 'נגיחת'), ('Punch', 'אגרוף'), ('Bulldozer', 'דחפור')],
+    'Fighter': [('Lock', 'נעילת'), ('Clutch', 'אחיזת'), ('Hold', 'תפיסת'), ('Choke', 'חניקת'), ('Stretch', 'מתיחת')],
+    'Specialist': [('Cutter', 'חיתוך'), ('Breaker', 'שובר'), ('Spin', 'סחרור'), ('Strike', 'מכת'), ('Twist', 'פיתול')],
+}
+used_fin = set()
+for w in wrestlers:
+    options = [(f'{p[0]} {c[0]}', f'{c[1]} {p[1]}') for c in FIN_CORE[w['class']] for p in FIN_PREFIX]
+    random.shuffle(options)
+    f = next(o for o in options if o[0] not in used_fin)
+    used_fin.add(f[0])
+    w['finisher'], w['finisherHe'] = f
 
 # ---------- משכורת לפי ערך: פופולריות, ניסיון ומיקרופון בתוך טווח השכבה ----------
 for t in TIERS:
@@ -341,7 +384,7 @@ json.dump(wrestlers, open(os.path.join(HERE, 'roster.json'), 'w', encoding='utf-
 
 # ---------- מסמך ----------
 def table(rows):
-    out = ['| # | שם | בעברית | מגדר | סגנון | מתאים מול | צד | פופולריות | ניסיון (דרגה) | מיקרופון | סיבולת | משכורת | הערות |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+    out = ['| # | שם | בעברית | מגדר | סגנון | מתאים מול | צד | פופולריות | ניסיון (דרגה) | מיקרופון | סיבולת | משכורת | מהלך סיום | הערות |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
     for w in rows:
         notes = []
         if w['tagTeam']:
@@ -352,7 +395,7 @@ def table(rows):
             notes.append(f"סקאוט רמה {w['scoutLevel']}")
         if w['contractWeeks']:
             notes.append(f"חוזה {w['contractWeeks']} שבועות")
-        out.append(f"| {w['id']} | {w['name']} | {w['nameHe']} | {'אישה' if w['gender'] == 'F' else 'גבר'} | {w['classHe']} | {w['bestMatchHe']} | {w['roleHe']} | {w['popularity']} | {w['ringLevel']} ({w['rankHe']}) | {'★' * w['mic']}{' ↑' * (1 if w['micGrowth'] else 0)}{'↑' if w['micGrowth'] == 2 else ''} | {w['stamina']} | ${w['salary'] // 1000}K | {' · '.join(notes)} |")
+        out.append(f"| {w['id']} | {w['name']} | {w['nameHe']} | {'אישה' if w['gender'] == 'F' else 'גבר'} | {w['classHe']} | {w['bestMatchHe']} | {w['roleHe']} | {w['popularity']} | {w['ringLevel']} ({w['rankHe']}) | {'★' * w['mic']}{' ↑' * (1 if w['micGrowth'] else 0)}{'↑' if w['micGrowth'] == 2 else ''} | {w['stamina']} | ${w['salary'] // 1000}K | {w['finisher']} ({w['finisherHe']}) | {' · '.join(notes)} |")
     return '\n'.join(out)
 
 
@@ -406,6 +449,7 @@ lead: 300 מתאבקים בדיוניים, מחולקים לשכבות כמו ב
 | מגמת שיפור במיקרופון | ↑ איטית, ↑↑ מהירה | בעיקר לצעירים, לכוכבים עולים ולכישרון המקומי, ולא למוכרים. משתפרים עם פרומואים לאורך העונה. |
 | סיבולת | 55–100 | התקרה האישית. ענקים נמוכים, קלי-משקל גבוהים. מתחת ל-40 סיכון הפציעה עולה. |
 | מורל | 60–80 בהתחלה | נאמנות למותג. ב-0 הוא עלול לעזוב. |
+| מהלך סיום | שם מקורי | לכל מתאבק מהלך משלו לפי הסגנון, למשל "Thunder Slam" לענק או "Comet Dive" לקל-משקל. הפרשן צועק אותו ברגע הסיום. |
 | משכורת | לעונה | לפי השכבה. |
 
 > [!לאמת]
