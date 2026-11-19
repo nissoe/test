@@ -14,6 +14,7 @@
 - `venues.md` — האולמות (נבנה מ-`content/build_venues.py`).
 - `events.md` — בקשות ואירועים (נבנה מ-`content/build_events.py`).
 - `challenges.md` — אתגרים והיכל התהילה (נבנה מ-`content/build_challenges.py`).
+- `difficulty.md` — רמות הקושי (נבנה מ-`content/build_difficulty.py`).
 - `cards.md` — קלפי הכוח: 20 קלפי מנהלים וחנות (נבנה מ-`content/build_cards.py`). דף מפורסם: https://claude.ai/artifact/KnS1UTUnMX56GRrop8yYB8
 - `belts.md` — מפרט הפקת 30 חגורות האליפות. דף מפורסם: https://claude.ai/artifact/TfWzmTbvJbXYYjdRHa7N8F
 - `costs.md` — תקציב ועלויות. דף מפורסם: https://claude.ai/artifact/6D7rw6N4kdwPzpT2TdqyKn

@@ -1,0 +1,60 @@
+{
+ "levels": [
+  {
+   "name": "Easy",
+   "nameHe": "קל",
+   "matches": 3,
+   "promos": 2,
+   "slotsVerified": true,
+   "morale": "יורד לאט, עוזבים רק במורל 0 אחרי 4 שבועות",
+   "injuries": "סיכון נמוך (×0.5)",
+   "budgetCut": "אין קיצוץ",
+   "ai": "בוחר בסיסי, משתמש בקלפים רק לפעמים"
+  },
+  {
+   "name": "Normal",
+   "nameHe": "רגיל",
+   "matches": 4,
+   "promos": 3,
+   "slotsVerified": true,
+   "morale": "רגיל",
+   "injuries": "רגיל (×1)",
+   "budgetCut": "5% בכל עונה",
+   "ai": "מאוזן"
+  },
+  {
+   "name": "Hard",
+   "nameHe": "קשה",
+   "matches": 4,
+   "promos": 3,
+   "slotsVerified": true,
+   "morale": "יורד מהר יותר",
+   "injuries": "מוגבר (×1.25)",
+   "budgetCut": "10% בכל עונה",
+   "ai": "חכם: מתאים מחלקות וצדדים, בונה יריבויות לאירועי שיא"
+  },
+  {
+   "name": "Extreme",
+   "nameHe": "קיצוני",
+   "matches": 5,
+   "promos": 4,
+   "slotsVerified": true,
+   "morale": "יורד מהר, עוזבים אחרי שבועיים במורל 0",
+   "injuries": "גבוה (×1.5)",
+   "budgetCut": "15% בכל עונה",
+   "ai": "חכם מאוד: מתזמן קלפים, צד מתאבקים ממך בגיוס"
+  },
+  {
+   "name": "Elite",
+   "nameHe": "עילית",
+   "matches": 5,
+   "promos": 4,
+   "slotsVerified": false,
+   "morale": "יורד הכי מהר, עוזבים מיד במורל 0",
+   "injuries": "גבוה מאוד (×1.75)",
+   "budgetCut": "20% בכל עונה",
+   "ai": "הכי חכם: משחק כמו שחקן מנוסה, משתמש בכל הקלפים בזמן הנכון"
+  }
+ ],
+ "goHomeBonusSlots": 1
+}
