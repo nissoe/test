@@ -36,28 +36,31 @@ figcaption span { color: var(--ink-soft); font-size: 0.95rem; }
   <p class="note">סקיצות בלבד. העיצוב הסופי רק אחרי בדיקת הסימן המסחרי של LWF ושל שמות המותגים (החלטה 30).</p>
 
   <figure class="hero">
-    <svg viewBox="0 0 1000 420" role="img" aria-label="LWF Legends Wrestling Federation logo, clean version">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="LWF Legends Wrestling Federation logo with custom letters">
       <defs>
-        <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d27a"/><stop offset="1" stop-color="#c8962e"/></linearGradient>
+        <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#d9dde6"/><stop offset=".55" stop-color="#9aa0ad"/><stop offset="1" stop-color="#e6e9ef"/></linearGradient>
+        <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7dc8c"/><stop offset=".5" stop-color="#d6a43a"/><stop offset="1" stop-color="#9a6b12"/></linearGradient>
+        <radialGradient id="plateGlow" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#2a3142"/><stop offset="1" stop-color="#0c0e14"/></radialGradient>
+        <!-- custom letterforms: L, W with crown gem, F -->
+        <g id="lwfLetters">
+          <path d="M14 0 H70 V172 H176 L156 240 H0 V14 Z"/>
+          <path d="M196 0 H256 L288 150 L312 70 H340 L364 150 L396 0 H456 L404 240 H350 L326 160 L302 240 H248 Z"/>
+          <path d="M476 0 H640 L622 58 H540 V96 H612 L596 150 H540 V240 H476 Z"/>
+        </g>
       </defs>
-      <rect width="1000" height="420" fill="#101318"/>
-      <!-- wordmark -->
-      <g transform="translate(330 0)">
-        <text x="170" y="250" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="200" letter-spacing="6" fill="#f4f5f8">LWF</text>
-        <!-- gold slash through the W: the one accent -->
-        <path d="M58 270 L318 104 L330 120 L70 286 Z" fill="url(#gold)"/>
+      <rect width="1000" height="470" fill="#0a0c11"/>
+      <!-- centre plate, belt-plate shape -->
+      <path d="M150 70 H850 L915 225 L850 380 H150 L85 225 Z" fill="url(#plateGlow)" stroke="url(#gold)" stroke-width="6"/>
+      <path d="M166 86 H834 L895 225 L834 364 H166 L105 225 Z" fill="none" stroke="#d6a43a" stroke-opacity=".35" stroke-width="2"/>
+      <g transform="translate(500 236) scale(0.86) translate(-320 -97) skewX(-8)">
+        <use href="#lwfLetters" fill="none" stroke="url(#gold)" stroke-width="16" stroke-linejoin="miter"/>
+        <use href="#lwfLetters" fill="url(#steel)" stroke="#07080c" stroke-width="5" stroke-linejoin="miter"/>
+        <!-- crown gem above the W -->
+        <path d="M326 -50 L346 -26 L326 -2 L306 -26 Z" fill="url(#gold)" stroke="#07080c" stroke-width="4"/>
       </g>
-      <rect x="330" y="292" width="340" height="3" fill="url(#gold)"/>
-      <text x="500" y="332" text-anchor="middle" font-family="'Bebas Neue', Impact, sans-serif" font-size="27" letter-spacing="9" fill="#aab1c4">LEGENDS WRESTLING FEDERATION</text>
-      <!-- app icon -->
-      <g transform="translate(790 120)">
-        <rect width="160" height="160" rx="36" fill="#f4f5f8"/>
-        <text x="80" y="112" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="78" letter-spacing="2" fill="#101318">LWF</text>
-        <path d="M30 122 L132 52 L138 61 L36 131 Z" fill="url(#gold)"/>
-      </g>
-      <text x="870" y="312" text-anchor="middle" font-family="Assistant, sans-serif" font-size="16" fill="#6f7689">אייקון אפליקציה</text>
+      <text x="500" y="428" text-anchor="middle" font-family="'Bebas Neue', Impact, sans-serif" font-size="30" letter-spacing="10" fill="#d6a43a">LEGENDS WRESTLING FEDERATION</text>
     </svg>
-    <figcaption><b>LWF – Legends Wrestling Federation</b><span>גרסה נקייה ומודרנית: אותיות חזקות בלבן, קו זהב אחד שחוצה אותן (נגיעה של חגורת אליפות), שם מלא קטן מתחת. בצד: אותו סמל כאייקון אפליקציה.</span><div class="sw"><i style="background:#f4f5f8"></i><i style="background:#101318"></i><i style="background:#d6a43a"></i></div></figcaption>
+    <figcaption><b>LWF – Legends Wrestling Federation</b><span>אותיות מצוירות בהתאמה: זוויות חדות ופינות חתוכות, גימור פלדה עם מסגרת זהב, הטיה קלה קדימה (תנועה), ויהלום זהב מעל ה-W כמו כתר של אגדה. הכול יושב על לוחית בצורת לוחית חגורת אליפות.</span><div class="sw"><i style="background:#d9dde6"></i><i style="background:#d6a43a"></i><i style="background:#0a0c11"></i></div></figcaption>
   </figure>
 
   <div class="grid">
