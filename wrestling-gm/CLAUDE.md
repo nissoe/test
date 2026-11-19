@@ -28,6 +28,7 @@
 - `docs/gdd.md` — מסמך האפיון (GDD). דף מפורסם: https://claude.ai/artifact/RcepWhLbcV9pjfxgP5tCHc
 - `brand/logo-sketches.html` — סקיצות לוגו (LWF + 5 מותגים). דף מפורסם: https://claude.ai/artifact/F6GXTPSmugqbwi9ktKD7UU
 - `brand/belt-sketches.html` — סקיצות חגורות וקטוריות: **נפסלו** (החלטה 39). החגורות מופקות לפי `docs/belts.md`.
+- `app/` — אב-טיפוס שאפשר לשחק. דף מפורסם: https://claude.ai/artifact/MMr6HTV9QSRh7r3GQZjkRN
 - מסמך המחקר המלא (Claude Docs): https://claude.ai/artifact/Fzmg4pp5hGMkoFbgVDT9hA
 
 ## שלבי התהליך
