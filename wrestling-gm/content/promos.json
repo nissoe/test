@@ -60,6 +60,26 @@
   "note": ""
  },
  {
+  "name": "Role Change",
+  "nameHe": "החלפת צד",
+  "origin": "original",
+  "cost": 10000,
+  "participants": "1",
+  "desc": "מתאבק עובר מטוב לרע או להפך, מול הקהל.",
+  "descEn": "A superstar turns face or heel in front of the crowd.",
+  "note": ""
+ },
+ {
+  "name": "Class Change",
+  "nameHe": "החלפת סגנון",
+  "origin": "original",
+  "cost": 10000,
+  "participants": "1",
+  "desc": "מתאבק עובר לסגנון אחר (למשל מלוחם למכתש), וזה משנה את ההתאמות שלו בקרבות.",
+  "descEn": "A superstar switches class (for example Fighter to Bruiser), which changes their matchups.",
+  "note": ""
+ },
+ {
   "name": "Invasion",
   "nameHe": "פלישה",
   "origin": "original",
@@ -68,16 +88,6 @@
   "desc": "מתאבק תוקף תוכנית יריבה. פרומו טוב גונב ממנה מעריצים, ופרומו חלש מאבד מעריצים.",
   "descEn": "A superstar invades a rival show. A good promo steals fans, a weak one loses fans.",
   "note": "רק במרובה משתתפים, כמו במקור [[לאמת]]: מחיר"
- },
- {
-  "name": "Turn",
-  "nameHe": "החלפת צד",
-  "origin": "ours",
-  "cost": 6000,
-  "participants": "1",
-  "desc": "מתאבק עובר מטוב לרע או להפך, מול הקהל. מעלה פופולריות אם המיקרופון שלו טוב.",
-  "descEn": "A superstar turns face or heel in front of the crowd. Gains popularity with a good mic.",
-  "note": "רק כשמתג \"החלפת צד\" דלוק (החלטה 21)"
  },
  {
   "name": "Mentor Talk",

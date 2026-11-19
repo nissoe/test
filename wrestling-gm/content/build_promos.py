@@ -16,9 +16,10 @@ PROMOS = [
     ('Training', 'אימון', 'original', 5000, '1', 'מעלה את נקודות הניסיון של המתאבק.', 'Raises the superstar\'s ring XP.', ''),
     ('Charity', 'צדקה', 'original', 10000, '1', 'מביא מעט מעריצים נוספים השבוע, ואולי גם פופולריות.', 'Brings a small fan bonus this week, and maybe popularity.', 'חלק מהאתגרים העונתיים'),
     ('Advertising', 'פרסומת', 'original', 0, '1', 'בחינם, אבל מסוכן: פרומו חלש מוריד פופולריות.', 'Free, but risky: a weak promo costs popularity.', ''),
+    ('Role Change', 'החלפת צד', 'original', 10000, '1', 'מתאבק עובר מטוב לרע או להפך, מול הקהל.', 'A superstar turns face or heel in front of the crowd.', ''),
+    ('Class Change', 'החלפת סגנון', 'original', 10000, '1', 'מתאבק עובר לסגנון אחר (למשל מלוחם למכתש), וזה משנה את ההתאמות שלו בקרבות.', 'A superstar switches class (for example Fighter to Bruiser), which changes their matchups.', ''),
     ('Invasion', 'פלישה', 'original', 4000, '1', 'מתאבק תוקף תוכנית יריבה. פרומו טוב גונב ממנה מעריצים, ופרומו חלש מאבד מעריצים.', 'A superstar invades a rival show. A good promo steals fans, a weak one loses fans.', 'רק במרובה משתתפים, כמו במקור [[לאמת]]: מחיר'),
     # ---- משלנו ----
-    ('Turn', 'החלפת צד', 'ours', 6000, '1', 'מתאבק עובר מטוב לרע או להפך, מול הקהל. מעלה פופולריות אם המיקרופון שלו טוב.', 'A superstar turns face or heel in front of the crowd. Gains popularity with a good mic.', 'רק כשמתג "החלפת צד" דלוק (החלטה 21)'),
     ('Mentor Talk', 'שיחה עם מנטור', 'ours', 4000, '2', 'ותיק עם מיקרופון טוב מדבר עם צעיר: הצעיר מקבל ניסיון, ומגמת השיפור שלו במיקרופון מתקדמת.', 'A veteran with a good mic talks with a Prospect: the Prospect gains XP and their mic growth advances.', ''),
     ('Contract Signing', 'חתימת חוזה בזירה', 'ours', 7000, '2', 'שני המתמודדים על קרב באירוע השיא חותמים מול הקהל: היריבות עולה ברמה, ויש סיכוי להתקפה ופציעה.', 'Two opponents for a premium event sign in the ring: the rivalry goes up a level, with a chance of a brawl and injury.', 'רק בשבוע שלפני אירוע שיא'),
     ('Champion\'s Address', 'נאום האלוף', 'ours', 3500, '1', 'אלוף מדבר על התואר: פופולריות לפי המיקרופון, ובונוס לקרב התואר הבא שלו.', 'A champion talks about the title: popularity by mic skill, and a bonus to their next title match.', 'רק למחזיק תואר'),
@@ -51,8 +52,8 @@ lead: {len(orig)} פרומואים כמו במקור, באותם מחירים, �
 
 ## בקצרה
 
-- **כמו במקור (החלטה 52):** פרומו עצמי, קריאת תיגר (גם לזוגות), אימון, צדקה, פרסומת ופלישה. המחירים לפי המדריכים של 2K26.
-- **משלנו:** החלפת צד, שיחה עם מנטור, חתימת חוזה בזירה, נאום האלוף, אתגר פתוח וקטע מאחורי הקלעים.
+- **כמו במקור (החלטות 52, 54):** פרומו עצמי, קריאת תיגר (גם לזוגות), אימון, צדקה, פרסומת, החלפת צד, החלפת סגנון ופלישה. המחירים לפי המדריכים של 2K26.
+- **משלנו:** שיחה עם מנטור, חתימת חוזה בזירה, נאום האלוף, אתגר פתוח וקטע מאחורי הקלעים.
 - **המיקרופון קובע:** אותו פרומו מצליח יותר אצל מתאבק עם 4–5 כוכבים, ועלול להזיק אצל מתאבק עם 1–2 כוכבים.
 - **פרומו וקרב באותה תוכנית:** מותר, כמו במקור, אבל עולה בסיבולת. אם המתאבק נפצע לפני הפרומו, הפרומו מתבטל.
 
