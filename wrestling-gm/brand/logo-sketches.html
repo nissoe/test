@@ -1,0 +1,137 @@
+<title>LWF Logo Sketches</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Assistant:wght@400;600;700&family=Bebas+Neue&family=Black+Ops+One&family=Russo+One&family=Secular+One&display=swap">
+<style>
+/* Layout: one column; LWF crest as hero plate, then a 2-column grid of brand plates. Logos are fixed-color assets on their own dark plates; the page around them follows the theme. */
+:root {
+  --paper: #f5f6f9; --ink: #161922; --ink-soft: #4a5063; --rule: #dfe2ea; --card: #ffffff;
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #0f1219; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d; --card: #161a23; color-scheme: dark; } }
+:root[data-theme="dark"] { --paper: #0f1219; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d; --card: #161a23; color-scheme: dark; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+.wrap { direction: rtl; max-width: 1080px; margin: 0 auto; padding-block: 40px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+header h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.9rem, 5vw, 2.6rem); margin: 0; line-height: 1.2; }
+header p { margin: 6px 0 0; color: var(--ink-soft); max-width: 62ch; }
+.note { font-size: 0.9rem; color: var(--ink-soft); border-inline-start: 3px solid #b3471d; padding: 6px 12px; background: var(--card); border-radius: 8px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 20px; }
+figure { margin: 0; background: var(--card); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; display: grid; }
+figure svg { display: block; width: 100%; height: auto; }
+figcaption { padding: 14px 16px 16px; display: grid; gap: 4px; }
+figcaption b { font-size: 1.1rem; }
+figcaption span { color: var(--ink-soft); font-size: 0.95rem; }
+.sw { display: flex; gap: 6px; margin-top: 4px; }
+.sw i { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--rule); }
+.hero svg { max-height: 360px; }
+</style>
+<div class="wrap">
+  <header>
+    <h1>סקיצות לוגו: LWF והמותגים</h1>
+    <p>כיוון ראשון לזהות של הליגה וחמשת המותגים, לפי האופי והצבעים שנבחרו (החלטה 35). כל הלוגואים וקטוריים, וגם הגופנים יוחלפו בעיבוד הסופי לצורות, כך שהם חדים בכל גודל.</p>
+  </header>
+  <p class="note">סקיצות בלבד. העיצוב הסופי רק אחרי בדיקת הסימן המסחרי של LWF ושל שמות המותגים (החלטה 30).</p>
+
+  <figure class="hero">
+    <svg viewBox="0 0 1000 420" role="img" aria-label="LWF Legends Wrestling Federation crest">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d77a"/><stop offset=".5" stop-color="#d6a43a"/><stop offset="1" stop-color="#8f6514"/></linearGradient>
+        <linearGradient id="plate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2030"/><stop offset="1" stop-color="#0b0d14"/></linearGradient>
+        <radialGradient id="glow" cx=".5" cy=".45" r=".55"><stop offset="0" stop-color="#f6d77a" stop-opacity=".22"/><stop offset="1" stop-color="#f6d77a" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1000" height="420" fill="url(#plate)"/>
+      <rect width="1000" height="420" fill="url(#glow)"/>
+      <!-- shield -->
+      <path d="M500 46 L640 86 L640 214 Q640 316 500 374 Q360 316 360 214 L360 86 Z" fill="#141826" stroke="url(#gold)" stroke-width="7"/>
+      <path d="M500 66 L622 101 L622 214 Q622 302 500 354 Q378 302 378 214 L378 101 Z" fill="none" stroke="#d6a43a" stroke-opacity=".45" stroke-width="2"/>
+      <!-- laurel stars -->
+      <g fill="url(#gold)">
+        <path d="M500 92 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2z"/>
+        <path d="M452 112 l4.5 9 10 1.3 -7.5 7 2 10 -9 -5 -9 5 2 -10 -7.5 -7 10 -1.3z"/>
+        <path d="M548 112 l4.5 9 10 1.3 -7.5 7 2 10 -9 -5 -9 5 2 -10 -7.5 -7 10 -1.3z"/>
+      </g>
+      <text x="500" y="262" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="118" letter-spacing="4" fill="url(#gold)" stroke="#5a3e08" stroke-width="2">LWF</text>
+      <!-- ribbon -->
+      <path d="M250 300 L750 300 L730 322 L750 344 L250 344 L270 322 Z" fill="#9e1830"/>
+      <path d="M270 300 L730 300 L730 344 L270 344 Z" fill="#b71e38"/>
+      <text x="500" y="331" text-anchor="middle" font-family="'Bebas Neue', Impact, sans-serif" font-size="30" letter-spacing="6" fill="#fbeec8">LEGENDS WRESTLING FEDERATION</text>
+    </svg>
+    <figcaption><b>LWF – Legends Wrestling Federation</b><span>מגן עם שלושה כוכבים וסרט אדום: מסורת, אליפויות, היכל תהילה. זהב וכחול-לילה.</span><div class="sw"><i style="background:#d6a43a"></i><i style="background:#141826"></i><i style="background:#b71e38"></i></div></figcaption>
+  </figure>
+
+  <div class="grid">
+    <figure>
+      <svg viewBox="0 0 600 300" role="img" aria-label="LWF Rage logo sketch">
+        <defs><linearGradient id="rageRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff3b3b"/><stop offset="1" stop-color="#9d0b16"/></linearGradient></defs>
+        <rect width="600" height="300" fill="#16181d"/>
+        <g stroke="#2a2d35" stroke-width="2"><path d="M0 60 L600 0"/><path d="M0 140 L600 80"/><path d="M0 220 L600 160"/><path d="M0 300 L600 240"/></g>
+        <g transform="translate(300 175) skewX(-12)">
+          <text x="0" y="0" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="150" letter-spacing="2" fill="url(#rageRed)" stroke="#000" stroke-width="3">RAGE</text>
+        </g>
+        <!-- claw slashes -->
+        <g fill="#16181d"><path d="M160 92 L196 92 L120 222 L96 222 Z"/><path d="M214 92 L240 92 L164 222 L146 222 Z"/></g>
+        <text x="300" y="232" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="26" letter-spacing="10" fill="#c9ccd4">LWF</text>
+      </svg>
+      <figcaption><b>Rage</b><span>מותג ראשי. גולמי ואגרסיבי: אותיות כבדות ונטויות, שריטות טופר.</span><div class="sw"><i style="background:#c8101f"></i><i style="background:#16181d"></i></div></figcaption>
+    </figure>
+
+    <figure>
+      <svg viewBox="0 0 600 300" role="img" aria-label="LWF Throwdown logo sketch">
+        <defs><linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#c7cad6"/><stop offset="1" stop-color="#8a8ea0"/></linearGradient>
+        <radialGradient id="purp" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#5b2a9e"/><stop offset="1" stop-color="#1e0d3a"/></radialGradient></defs>
+        <rect width="600" height="300" fill="url(#purp)"/>
+        <g fill="#c7cad6"><path d="M300 52 l8 17 18 2 -13 12 3 18 -16 -9 -16 9 3 -18 -13 -12 18 -2z"/></g>
+        <path d="M110 118 L490 118" stroke="#c7cad6" stroke-opacity=".5" stroke-width="2"/>
+        <text x="300" y="196" text-anchor="middle" font-family="'Russo One', sans-serif" font-size="74" letter-spacing="3" fill="url(#silver)" stroke="#2a1452" stroke-width="2">THROWDOWN</text>
+        <path d="M110 220 L490 220" stroke="#c7cad6" stroke-opacity=".5" stroke-width="2"/>
+        <text x="300" y="256" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="26" letter-spacing="10" fill="#d9c9f5">LWF</text>
+      </svg>
+      <figcaption><b>Throwdown</b><span>מותג ראשי שני. מלוטש עם כוכבים: כסף מבריק על סגול מלכותי, כוכב מעל.</span><div class="sw"><i style="background:#3d1a73"></i><i style="background:#c7cad6"></i></div></figcaption>
+    </figure>
+
+    <figure>
+      <svg viewBox="0 0 600 300" role="img" aria-label="LWF Ignite logo sketch">
+        <defs><linearGradient id="flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff4d00"/><stop offset=".6" stop-color="#ff9a1f"/><stop offset="1" stop-color="#ffd25a"/></linearGradient></defs>
+        <rect width="600" height="300" fill="#0d0d0f"/>
+        <!-- flame swoosh -->
+        <path d="M120 222 C170 150 250 210 300 140 C330 96 312 70 300 52 C360 82 400 150 360 210 C420 180 440 130 430 98 C480 150 470 222 400 248 L120 248 Z" fill="url(#flame)" opacity=".22"/>
+        <text x="300" y="196" text-anchor="middle" font-family="'Black Ops One', sans-serif" font-size="104" letter-spacing="4" fill="url(#flame)">IGNITE</text>
+        <text x="300" y="250" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="26" letter-spacing="10" fill="#ffb35c">LWF</text>
+      </svg>
+      <figcaption><b>Ignite</b><span>מהיר ואווירי: להבה שעולה מאחורי אותיות חדות, מעבר מכתום לצהוב.</span><div class="sw"><i style="background:#ff6a00"></i><i style="background:#0d0d0f"></i></div></figcaption>
+    </figure>
+
+    <figure>
+      <svg viewBox="0 0 600 300" role="img" aria-label="LWF Breakout logo sketch">
+        <rect width="600" height="300" fill="#071f22"/>
+        <!-- shattered panel -->
+        <g fill="none" stroke="#19e3d0" stroke-opacity=".35" stroke-width="2">
+          <path d="M300 150 L230 40"/><path d="M300 150 L420 30"/><path d="M300 150 L560 120"/><path d="M300 150 L520 280"/><path d="M300 150 L90 270"/><path d="M300 150 L40 110"/>
+        </g>
+        <g fill="#19e3d0"><path d="M470 70 l18 -10 4 20z"/><path d="M500 220 l22 6 -14 14z"/><path d="M96 84 l-16 -14 22 -2z"/></g>
+        <rect x="70" y="112" width="460" height="98" rx="6" fill="#071f22"/>
+        <text x="300" y="192" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="92" letter-spacing="6" fill="#ffffff">BREAK<tspan fill="#19e3d0">OUT</tspan></text>
+        <text x="300" y="250" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="26" letter-spacing="10" fill="#8ff3ea">LWF</text>
+      </svg>
+      <figcaption><b>Breakout</b><span>מותג הפיתוח. צעיר ורעב: לוח שנשבר החוצה, לבן וטורקיז חשמלי.</span><div class="sw"><i style="background:#19e3d0"></i><i style="background:#ffffff"></i><i style="background:#071f22"></i></div></figcaption>
+    </figure>
+
+    <figure>
+      <svg viewBox="0 0 600 300" role="img" aria-label="LWF Uproar logo sketch">
+        <defs><pattern id="hazard" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="20" height="40" fill="#ffd400"/><rect x="20" width="20" height="40" fill="#1a1a1a"/></pattern></defs>
+        <rect width="600" height="300" fill="#4a4c50"/>
+        <rect width="600" height="300" fill="#3a3c40" opacity=".6"/>
+        <rect x="0" y="34" width="600" height="20" fill="url(#hazard)"/>
+        <rect x="0" y="246" width="600" height="20" fill="url(#hazard)"/>
+        <g transform="rotate(-4 300 160)">
+          <text x="300" y="196" text-anchor="middle" font-family="'Black Ops One', sans-serif" font-size="108" letter-spacing="2" fill="#ffd400" stroke="#111" stroke-width="5" paint-order="stroke">UPROAR</text>
+        </g>
+        <text x="300" y="232" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="26" letter-spacing="10" fill="#f2f2f2">LWF</text>
+      </svg>
+      <figcaption><b>Uproar</b><span>כאוטי ואכזרי: פסי אזהרה, אותיות צבאיות נטויות, אפור בטון.</span><div class="sw"><i style="background:#ffd400"></i><i style="background:#4a4c50"></i><i style="background:#1a1a1a"></i></div></figcaption>
+    </figure>
+  </div>
+</div>
