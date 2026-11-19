@@ -1,0 +1,537 @@
+<title>סוגי הקרבות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Secular+One&display=swap">
+<style>
+/* Layout: one reading column (≈70ch) under a "production bible" cover band; sticky contents on wide screens. RTL first. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #161922;
+  --ink-soft: #4a5063;
+  --rule: #dfe2ea;
+  --accent: #9e1830;      /* championship red: section marks, links */
+  --gold: #a87412;        /* belt gold: decisions */
+  --gold-tint: #fbf3e2;
+  --verify: #b3471d;      /* "to verify" */
+  --verify-tint: #fdeee6;
+  --note-tint: #eef1f7;
+  --cover-bg: #141822;
+  --cover-ink: #f2f3f7;
+  --cover-soft: #aab1c4;
+
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2rem, 5vw, 2.875rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+    --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+    --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1219; --sheet: #161a23; --ink: #e9ebf1; --ink-soft: #a3a9ba; --rule: #2a303d;
+  --accent: #f06475; --gold: #e3b552; --gold-tint: #2a2416; --verify: #f08a5d; --verify-tint: #2c1d16;
+  --note-tint: #1d2230; --cover-bg: #0a0d13; --cover-ink: #f2f3f7; --cover-soft: #9aa2b6;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.7; }
+.doc { direction: rtl; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Cover */
+.cover { background: var(--cover-bg); color: var(--cover-ink); }
+.cover-inner { max-width: 1120px; margin: 0 auto; padding-block: 48px 40px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--cover-soft); display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.eyebrow .live { color: #ff6b7d; }
+.cover h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.15; margin: 0; text-wrap: balance; }
+.cover .lead { font-size: var(--step-1); color: var(--cover-soft); max-width: 62ch; margin: 0; }
+.belt { height: 4px; background: linear-gradient(90deg, var(--gold) 0 70%, var(--accent) 70% 100%); }
+
+/* Body grid */
+.layout { max-width: 1120px; margin: 0 auto; padding-block: 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1000px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } }
+.toc { font-size: var(--step--1); }
+@media (min-width: 1000px) { .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; } }
+.toc-title { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: flex; gap: 8px; color: var(--ink); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--note-tint); }
+.toc .n { font-family: var(--font-data); color: var(--accent); min-width: 2ch; }
+
+.content { min-width: 0; max-width: 72ch; }
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); line-height: 1.25; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; gap: 14px; align-items: baseline; text-wrap: balance; scroll-margin-top: 24px; }
+.content h2 .n { font-family: var(--font-data); font-size: var(--step-1); color: var(--accent); }
+.content h3 { font-size: var(--step-1); font-weight: 700; margin: 32px 0 8px; scroll-margin-top: 24px; }
+.content h4 { font-size: var(--step-0); font-weight: 700; margin: 24px 0 4px; color: var(--ink-soft); }
+.content p, .content ul, .content ol { margin: 0 0 14px; }
+.content ul, .content ol { padding-inline-start: 1.4em; }
+.content li + li { margin-top: 4px; }
+.content a { color: var(--accent); text-underline-offset: 3px; }
+.content strong { font-weight: 700; }
+.content code { font-family: var(--font-data); font-size: 0.88em; background: var(--note-tint); padding: 1px 6px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+.content pre { background: var(--note-tint); padding: 14px 16px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; }
+.content pre code { background: none; padding: 0; }
+.content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.content table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.content th, .content td { text-align: start; padding: 9px 12px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.content th { font-weight: 700; background: var(--note-tint); white-space: nowrap; }
+.content tr:last-child td { border-bottom: 0; }
+
+/* Callouts: > [!החלטה] / > [!לאמת] / > [!הערה] / > [!לגרסה שלנו] */
+.callout { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; background: var(--note-tint); border-inline-start: 4px solid var(--ink-soft); }
+.callout > :last-child { margin-bottom: 0; }
+.callout-label { font-family: var(--font-data); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 4px; color: var(--ink-soft); }
+.callout.decision { background: var(--gold-tint); border-color: var(--gold); }
+.callout.decision .callout-label { color: var(--gold); }
+.callout.verify { background: var(--verify-tint); border-color: var(--verify); }
+.callout.verify .callout-label { color: var(--verify); }
+.callout.ours { border-color: var(--accent); }
+.callout.ours .callout-label { color: var(--accent); }
+.content blockquote { margin: 0 0 20px; padding: 4px 16px; border-inline-start: 3px solid var(--rule); color: var(--ink-soft); }
+
+/* Inline badge: [[לאמת]] */
+.badge { display: inline-block; font-family: var(--font-data); font-size: 0.72em; line-height: 1.6; padding: 0 7px; border-radius: 999px; border: 1px solid var(--verify); color: var(--verify); vertical-align: 0.1em; white-space: nowrap; }
+
+.foot { border-top: 1px solid var(--rule); }
+.foot-inner { max-width: 1120px; margin: 0 auto; padding-block: 20px 32px; font-size: var(--step--1); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.foot code { font-family: var(--font-data); direction: ltr; unicode-bidi: isolate; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+</style>
+<div class="doc" dir="rtl" lang="he">
+  <header class="cover">
+    <div class="cover-inner gutter">
+      <div class="eyebrow"><span class="live">● נתוני תוכן</span><span>גרסה 0.1</span><span>2026-11-19</span><span>סטטוס: טיוטה, המספרים לפי מודל עבודה</span></div>
+      <h1>סוגי הקרבות</h1>
+      <p class="lead">15 פורמטים ו-28 תנאים: כל מה שיש במקור, עם שם משלנו לתנאים ששמם שייך ל-WWE, ועוד 9 קרבות מקוריים שלנו.</p>
+    </div>
+    <div class="belt"></div>
+  </header>
+  <div class="layout gutter">
+    <nav class="toc" aria-label="תוכן העניינים">
+      <p class="toc-title">תוכן העניינים</p>
+      <ol><li><a href="#s1"><span class="n">01</span><span>בקצרה</span></a></li><li><a href="#s2"><span class="n">02</span><span>פורמטים</span></a></li><li><a href="#s3"><span class="n">03</span><span>תנאים</span></a></li></ol>
+    </nav>
+    <main class="content">
+<h2 id="s1"><span class="n">01</span><span>בקצרה</span></h2>
+<ul>
+<li><strong>כמו במקור (החלטה 51):</strong> כל הפורמטים של 2K26, כולל 5, 6 ו-8 משתתפים, קרבות נכות וקרבות מעורבים.</li>
+<li><strong>שמות משלנו:</strong> תנאים ששמם שייך ל-WWE קיבלו שם מקורי, למשל הכספת במקום Hell in a Cell, וטבעת אש במקום Inferno.</li>
+<li><strong>קרבות מקוריים שלנו:</strong> למשל קרב המורשת, סולם כרטיס הזהב, החשכה ומבחן הטירון.</li>
+<li><strong>נעילה כמו במקור:</strong> חלק מהתנאים נפתחים במהלך העונה, בתשלום חד-פעמי בפעם הראשונה. חלק זמינים רק באירועי שיא.</li>
+<li><strong>מחיר וסיבולת:</strong> תנאי מיוחד עולה יותר כסף ושוחק יותר סיבולת, אבל מעלה את ציון הקרב.</li>
+</ul>
+<div class="callout verify"><p class="callout-label">לאמת</p><p>המחיר מוצג בדרגות ($ עד $$$). הסכומים, הבונוסים ושבועות הפתיחה הם מודל עבודה, ויכוילו במחקר המספרים ובסימולטור.</p>
+</div>
+<h2 id="s2"><span class="n">02</span><span>פורמטים</span></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>פורמט</th>
+<th>משתתפים</th>
+<th>הערה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>יחיד מול יחיד (Singles)</td>
+<td>2</td>
+<td>הבסיס.</td>
+</tr>
+<tr>
+<td>זוגות (Tag Team)</td>
+<td>2×2</td>
+<td>צמדים אמיתיים מקבלים בונוס.</td>
+</tr>
+<tr>
+<td>משולש (Triple Threat)</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>רביעייה (Fatal 4-Way)</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>5 משתתפים (5-Way)</td>
+<td>5</td>
+<td>חדש ב-2K26.</td>
+</tr>
+<tr>
+<td>6 משתתפים (6-Way)</td>
+<td>6</td>
+<td>חדש ב-2K26.</td>
+</tr>
+<tr>
+<td>8 משתתפים (8-Way)</td>
+<td>8</td>
+<td>חדש ב-2K26.</td>
+</tr>
+<tr>
+<td>3 מול 3 (3-on-3)</td>
+<td>3×3</td>
+<td></td>
+</tr>
+<tr>
+<td>4 מול 4 (4-on-4)</td>
+<td>4×4</td>
+<td></td>
+</tr>
+<tr>
+<td>נכות 1 מול 2 (Handicap 1v2)</td>
+<td>1+2</td>
+<td>מי שמנצח לבד מקבל בונוס פופולריות.</td>
+</tr>
+<tr>
+<td>נכות 1 מול 3 (Handicap 1v3)</td>
+<td>1+3</td>
+<td></td>
+</tr>
+<tr>
+<td>נכות 1 מול 4 (Handicap 1v4)</td>
+<td>1+4</td>
+<td></td>
+</tr>
+<tr>
+<td>משולש זוגות (Triple Threat Tag)</td>
+<td>3×2</td>
+<td></td>
+</tr>
+<tr>
+<td>רביעיית זוגות (Fatal 4-Way Tag)</td>
+<td>4×2</td>
+<td></td>
+</tr>
+<tr>
+<td>מעורב (Intergender)</td>
+<td>כל פורמט</td>
+<td>תוספת מחיר, כמו ב-2K26.</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="s3"><span class="n">03</span><span>תנאים</span></h2>
+<h3>כמו במקור (13)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תנאי</th>
+<th>מחיר</th>
+<th>סיבולת</th>
+<th>בונוס</th>
+<th>יריבות</th>
+<th>נפתח</th>
+<th>מה זה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>רגיל (Standard)</td>
+<td>$</td>
+<td>רגילה</td>
+<td>+0★</td>
+<td>רגיל</td>
+<td>מההתחלה</td>
+<td>נצחון בהצמדה, הכנעה או פסילה.</td>
+</tr>
+<tr>
+<td>בלי פסילות (No Disqualification)</td>
+<td>$</td>
+<td>גבוהה</td>
+<td>+0.25★</td>
+<td>גבוה</td>
+<td>מההתחלה</td>
+<td>הכול מותר.</td>
+</tr>
+<tr>
+<td>הצמדה בכל מקום (Falls Count Anywhere)</td>
+<td>$</td>
+<td>גבוהה</td>
+<td>+0.25★</td>
+<td>גבוה</td>
+<td>מההתחלה</td>
+<td>אפשר לנצח בכל מקום באולם.</td>
+</tr>
+<tr>
+<td>הכנעה בלבד (Submission)</td>
+<td>$</td>
+<td>רגילה</td>
+<td>+0.25★</td>
+<td>רגיל</td>
+<td>מההתחלה</td>
+<td>רק הכנעה מנצחת. לוחמים מקבלים בונוס.</td>
+</tr>
+<tr>
+<td>האחרון שעומד (Last Man Standing)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.5★</td>
+<td>גבוה</td>
+<td>שבוע 4</td>
+<td>מנצח מי שהיריב לא קם עד ספירת 10.</td>
+</tr>
+<tr>
+<td>אני מוותר (I Quit)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.5★</td>
+<td>גבוה מאוד</td>
+<td>שבוע 4</td>
+<td>היריב חייב להגיד את המילים.</td>
+</tr>
+<tr>
+<td>שולחנות (Tables)</td>
+<td>$</td>
+<td>גבוהה</td>
+<td>+0.25★</td>
+<td>גבוה</td>
+<td>מההתחלה</td>
+<td>מנצח מי ששובר שולחן עם היריב.</td>
+</tr>
+<tr>
+<td>סולם (Ladder)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.5★</td>
+<td>גבוה</td>
+<td>שבוע 4</td>
+<td>מטפסים ומורידים את מה שתלוי מעל הזירה. קלי-משקל מקבלים בונוס.</td>
+</tr>
+<tr>
+<td>כלוב (Steel Cage)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.5★</td>
+<td>מסיים יריבות</td>
+<td>שבוע 8</td>
+<td>סיכוי מוגבר להעלות יריבות, ומסיים אותה.</td>
+</tr>
+<tr>
+<td>קרב המוני (Battle Royal)</td>
+<td>$$</td>
+<td>נמוכה</td>
+<td>+0.25★</td>
+<td>נמוך</td>
+<td>מההתחלה</td>
+<td>זריקה מעל החבל העליון. ענקים מקבלים בונוס.</td>
+</tr>
+<tr>
+<td>גאונטלט (Gauntlet)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.5★</td>
+<td>רגיל</td>
+<td>שבוע 8</td>
+<td>מתאבק אחד מול רצף יריבים, אחד אחרי השני.</td>
+</tr>
+<tr>
+<td>גאונטלט הדחה (Gauntlet Eliminator)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+0.5★</td>
+<td>רגיל</td>
+<td>שבוע 8</td>
+<td>כולם נכנסים בזה אחר זה, והמודח יוצא.</td>
+</tr>
+<tr>
+<td>פח זבל (Dumpster)</td>
+<td>$</td>
+<td>גבוהה</td>
+<td>+0.25★</td>
+<td>גבוה</td>
+<td>שבוע 4</td>
+<td>מנצח מי שסוגר את היריב בפח.</td>
+</tr>
+</tbody></table>
+</div>
+<h3>כמו במקור, שם משלנו (6)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תנאי</th>
+<th>מחיר</th>
+<th>סיבולת</th>
+<th>בונוס</th>
+<th>יריבות</th>
+<th>נפתח</th>
+<th>מה זה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>טבעת אש (Ring of Fire)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.75★</td>
+<td>גבוה מאוד</td>
+<td>שבוע 12</td>
+<td>הזירה מוקפת להבות. מנצח מי שמצית את היריב. (במקור: Inferno)</td>
+</tr>
+<tr>
+<td>שלושה שלבים (Three Stages)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.75★</td>
+<td>גבוה מאוד</td>
+<td>שבוע 12</td>
+<td>שלוש נפילות, כל אחת בתנאי אחר. (במקור: 3 Stages of Hell)</td>
+</tr>
+<tr>
+<td>חוקי השבועה (Blood Oath Rules)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+0.5★</td>
+<td>גבוה</td>
+<td>שבוע 8</td>
+<td>בני ברית יכולים להתערב בלי פסילה. (במקור: Bloodline Rules)</td>
+</tr>
+<tr>
+<td>הכספת (The Vault)</td>
+<td>$$$</td>
+<td>קיצונית</td>
+<td>+1★</td>
+<td>מסיים יריבות</td>
+<td>אירועי שיא</td>
+<td>כלוב ענק עם תקרה, רק באירועי שיא. (במקור: Hell in a Cell)</td>
+</tr>
+<tr>
+<td>בור הקרב (Fight Pit)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+0.5★</td>
+<td>גבוה</td>
+<td>שבוע 8</td>
+<td>זירה בלי חבלים, רק נוקאאוט או הכנעה. (במקור: Underground)</td>
+</tr>
+<tr>
+<td>מרוץ האגדות (Legends Rush)</td>
+<td>$$$</td>
+<td>נמוכה</td>
+<td>+1★</td>
+<td>נמוך</td>
+<td>אירועי שיא</td>
+<td>30 משתתפים שנכנסים כל דקה וחצי, זריקה מעל החבל. המנצח מקבל קרב תואר באירוע השיא הגדול. (בהשראת Royal Rumble)</td>
+</tr>
+</tbody></table>
+</div>
+<h3>מקורי שלנו (9)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>תנאי</th>
+<th>מחיר</th>
+<th>סיבולת</th>
+<th>בונוס</th>
+<th>יריבות</th>
+<th>נפתח</th>
+<th>מה זה</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>בחירת הקהל (Crowd&#39;s Choice)</td>
+<td>$</td>
+<td>משתנה</td>
+<td>+0.25★</td>
+<td>רגיל</td>
+<td>שבוע 4</td>
+<td>הקהל מצביע על התנאי ברגע האחרון: תנאי אקראי מהרשימה, ובונוס התרגשות.</td>
+</tr>
+<tr>
+<td>קרב המורשת (Legacy Match)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+0.75★</td>
+<td>מסיים יריבות</td>
+<td>שבוע 12</td>
+<td>המפסיד מאבד 10 פופולריות והמנצח מקבל 10. רק ליריבות ברמה 3 ומעלה.</td>
+</tr>
+<tr>
+<td>תואר מול תואר (Title vs Title)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+1★</td>
+<td>גבוה</td>
+<td>אירועי שיא</td>
+<td>שני אלופים, המנצח מחזיק בשני התארים.</td>
+</tr>
+<tr>
+<td>סולם כרטיס הזהב (Golden Ticket Ladder)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.75★</td>
+<td>רגיל</td>
+<td>אירועי שיא</td>
+<td>המנצח מוריד כרטיס זהב: קרב תואר מתי שירצה במשך העונה.</td>
+</tr>
+<tr>
+<td>שעון חול (Clockwork)</td>
+<td>$$</td>
+<td>גבוהה מאוד</td>
+<td>+0.5★</td>
+<td>גבוה</td>
+<td>שבוע 8</td>
+<td>20 דקות, מנצח מי שצבר יותר נפילות. מתאבקים עם סיבולת גבוהה מקבלים בונוס.</td>
+</tr>
+<tr>
+<td>חוטבי עצים (Lumberjack)</td>
+<td>$</td>
+<td>רגילה</td>
+<td>+0.25★</td>
+<td>גבוה</td>
+<td>מההתחלה</td>
+<td>מתאבקים מקיפים את הזירה ומחזירים פנימה כל מי שבורח.</td>
+</tr>
+<tr>
+<td>החשכה (Blackout)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+0.5★</td>
+<td>גבוה מאוד</td>
+<td>שבוע 8</td>
+<td>האורות כבים לרגעים, והכול יכול לקרות: התערבויות והפתעות. התוצאה פחות צפויה.</td>
+</tr>
+<tr>
+<td>מבחן הטירון (Rookie Gauntlet)</td>
+<td>$</td>
+<td>גבוהה מאוד</td>
+<td>+0.25★</td>
+<td>נמוך</td>
+<td>מההתחלה</td>
+<td>צעיר מול שלושה ותיקים. אם הוא שורד, הוא מקבל ניסיון כפול ו-8 פופולריות.</td>
+</tr>
+<tr>
+<td>מערבולת זוגות (Tag Turmoil)</td>
+<td>$$</td>
+<td>גבוהה</td>
+<td>+0.5★</td>
+<td>רגיל</td>
+<td>שבוע 8</td>
+<td>חמישה צמדים ברצף, המנצחים נשארים בזירה. המנצח האחרון מקבל קרב על תואר הזוגות.</td>
+</tr>
+</tbody></table>
+</div>
+
+    </main>
+  </div>
+  <footer class="foot">
+    <div class="foot-inner gutter"><span>מקור המסמך: <code>wrestling-gm/docs/matches.md</code></span><span>נבנה מהתבנית האחידה של מסמכי הפרויקט</span></div>
+  </footer>
+</div>

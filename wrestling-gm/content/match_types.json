@@ -1,0 +1,447 @@
+{
+ "formats": [
+  {
+   "name": "Singles",
+   "nameHe": "יחיד מול יחיד",
+   "participants": "2",
+   "note": "הבסיס.",
+   "noteEn": "The basic match."
+  },
+  {
+   "name": "Tag Team",
+   "nameHe": "זוגות",
+   "participants": "2×2",
+   "note": "צמדים אמיתיים מקבלים בונוס.",
+   "noteEn": "Real tag teams get a bonus."
+  },
+  {
+   "name": "Triple Threat",
+   "nameHe": "משולש",
+   "participants": "3",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "Fatal 4-Way",
+   "nameHe": "רביעייה",
+   "participants": "4",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "5-Way",
+   "nameHe": "5 משתתפים",
+   "participants": "5",
+   "note": "חדש ב-2K26.",
+   "noteEn": "New in 2K26."
+  },
+  {
+   "name": "6-Way",
+   "nameHe": "6 משתתפים",
+   "participants": "6",
+   "note": "חדש ב-2K26.",
+   "noteEn": "New in 2K26."
+  },
+  {
+   "name": "8-Way",
+   "nameHe": "8 משתתפים",
+   "participants": "8",
+   "note": "חדש ב-2K26.",
+   "noteEn": "New in 2K26."
+  },
+  {
+   "name": "3-on-3",
+   "nameHe": "3 מול 3",
+   "participants": "3×3",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "4-on-4",
+   "nameHe": "4 מול 4",
+   "participants": "4×4",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "Handicap 1v2",
+   "nameHe": "נכות 1 מול 2",
+   "participants": "1+2",
+   "note": "מי שמנצח לבד מקבל בונוס פופולריות.",
+   "noteEn": "A solo winner gains bonus popularity."
+  },
+  {
+   "name": "Handicap 1v3",
+   "nameHe": "נכות 1 מול 3",
+   "participants": "1+3",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "Handicap 1v4",
+   "nameHe": "נכות 1 מול 4",
+   "participants": "1+4",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "Triple Threat Tag",
+   "nameHe": "משולש זוגות",
+   "participants": "3×2",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "Fatal 4-Way Tag",
+   "nameHe": "רביעיית זוגות",
+   "participants": "4×2",
+   "note": "",
+   "noteEn": ""
+  },
+  {
+   "name": "Intergender",
+   "nameHe": "מעורב",
+   "participants": "כל פורמט",
+   "note": "תוספת מחיר, כמו ב-2K26.",
+   "noteEn": "Extra booking cost, as in 2K26."
+  }
+ ],
+ "stipulations": [
+  {
+   "name": "Standard",
+   "nameHe": "רגיל",
+   "origin": "original",
+   "costTier": 1,
+   "stamina": "רגילה",
+   "starBonus": 0,
+   "rivalry": "רגיל",
+   "unlock": "מההתחלה",
+   "desc": "נצחון בהצמדה, הכנעה או פסילה.",
+   "descEn": "Win by pinfall, submission or DQ."
+  },
+  {
+   "name": "No Disqualification",
+   "nameHe": "בלי פסילות",
+   "origin": "original",
+   "costTier": 2,
+   "stamina": "גבוהה",
+   "starBonus": 0.25,
+   "rivalry": "גבוה",
+   "unlock": "מההתחלה",
+   "desc": "הכול מותר.",
+   "descEn": "Anything goes."
+  },
+  {
+   "name": "Falls Count Anywhere",
+   "nameHe": "הצמדה בכל מקום",
+   "origin": "original",
+   "costTier": 2,
+   "stamina": "גבוהה",
+   "starBonus": 0.25,
+   "rivalry": "גבוה",
+   "unlock": "מההתחלה",
+   "desc": "אפשר לנצח בכל מקום באולם.",
+   "descEn": "Pins count anywhere in the arena."
+  },
+  {
+   "name": "Submission",
+   "nameHe": "הכנעה בלבד",
+   "origin": "original",
+   "costTier": 2,
+   "stamina": "רגילה",
+   "starBonus": 0.25,
+   "rivalry": "רגיל",
+   "unlock": "מההתחלה",
+   "desc": "רק הכנעה מנצחת. לוחמים מקבלים בונוס.",
+   "descEn": "Only a submission wins. Fighters get a bonus."
+  },
+  {
+   "name": "Last Man Standing",
+   "nameHe": "האחרון שעומד",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.5,
+   "rivalry": "גבוה",
+   "unlock": "שבוע 4",
+   "desc": "מנצח מי שהיריב לא קם עד ספירת 10.",
+   "descEn": "Win when the opponent cannot answer a 10 count."
+  },
+  {
+   "name": "I Quit",
+   "nameHe": "אני מוותר",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.5,
+   "rivalry": "גבוה מאוד",
+   "unlock": "שבוע 4",
+   "desc": "היריב חייב להגיד את המילים.",
+   "descEn": "The opponent must say the words."
+  },
+  {
+   "name": "Tables",
+   "nameHe": "שולחנות",
+   "origin": "original",
+   "costTier": 2,
+   "stamina": "גבוהה",
+   "starBonus": 0.25,
+   "rivalry": "גבוה",
+   "unlock": "מההתחלה",
+   "desc": "מנצח מי ששובר שולחן עם היריב.",
+   "descEn": "Put your opponent through a table to win."
+  },
+  {
+   "name": "Ladder",
+   "nameHe": "סולם",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.5,
+   "rivalry": "גבוה",
+   "unlock": "שבוע 4",
+   "desc": "מטפסים ומורידים את מה שתלוי מעל הזירה. קלי-משקל מקבלים בונוס.",
+   "descEn": "Climb and retrieve what hangs above the ring. Cruisers get a bonus."
+  },
+  {
+   "name": "Steel Cage",
+   "nameHe": "כלוב",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.5,
+   "rivalry": "מסיים יריבות",
+   "unlock": "שבוע 8",
+   "desc": "סיכוי מוגבר להעלות יריבות, ומסיים אותה.",
+   "descEn": "Higher chance to raise a rivalry, and it ends it."
+  },
+  {
+   "name": "Battle Royal",
+   "nameHe": "קרב המוני",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "נמוכה",
+   "starBonus": 0.25,
+   "rivalry": "נמוך",
+   "unlock": "מההתחלה",
+   "desc": "זריקה מעל החבל העליון. ענקים מקבלים בונוס.",
+   "descEn": "Over the top rope eliminations. Giants get a bonus."
+  },
+  {
+   "name": "Gauntlet",
+   "nameHe": "גאונטלט",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.5,
+   "rivalry": "רגיל",
+   "unlock": "שבוע 8",
+   "desc": "מתאבק אחד מול רצף יריבים, אחד אחרי השני.",
+   "descEn": "One superstar against a run of opponents, one at a time."
+  },
+  {
+   "name": "Gauntlet Eliminator",
+   "nameHe": "גאונטלט הדחה",
+   "origin": "original",
+   "costTier": 3,
+   "stamina": "גבוהה",
+   "starBonus": 0.5,
+   "rivalry": "רגיל",
+   "unlock": "שבוע 8",
+   "desc": "כולם נכנסים בזה אחר זה, והמודח יוצא.",
+   "descEn": "Everyone enters in turn, eliminated wrestlers leave."
+  },
+  {
+   "name": "Dumpster",
+   "nameHe": "פח זבל",
+   "origin": "original",
+   "costTier": 2,
+   "stamina": "גבוהה",
+   "starBonus": 0.25,
+   "rivalry": "גבוה",
+   "unlock": "שבוע 4",
+   "desc": "מנצח מי שסוגר את היריב בפח.",
+   "descEn": "Shut your opponent inside the dumpster to win."
+  },
+  {
+   "name": "Ring of Fire",
+   "nameHe": "טבעת אש",
+   "origin": "renamed",
+   "costTier": 4,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.75,
+   "rivalry": "גבוה מאוד",
+   "unlock": "שבוע 12",
+   "desc": "הזירה מוקפת להבות. מנצח מי שמצית את היריב. (במקור: Inferno)",
+   "descEn": "Flames surround the ring. Set your opponent alight to win."
+  },
+  {
+   "name": "Three Stages",
+   "nameHe": "שלושה שלבים",
+   "origin": "renamed",
+   "costTier": 4,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.75,
+   "rivalry": "גבוה מאוד",
+   "unlock": "שבוע 12",
+   "desc": "שלוש נפילות, כל אחת בתנאי אחר. (במקור: 3 Stages of Hell)",
+   "descEn": "Three falls, each under a different stipulation."
+  },
+  {
+   "name": "Blood Oath Rules",
+   "nameHe": "חוקי השבועה",
+   "origin": "renamed",
+   "costTier": 3,
+   "stamina": "גבוהה",
+   "starBonus": 0.5,
+   "rivalry": "גבוה",
+   "unlock": "שבוע 8",
+   "desc": "בני ברית יכולים להתערב בלי פסילה. (במקור: Bloodline Rules)",
+   "descEn": "Allies may interfere without a DQ."
+  },
+  {
+   "name": "The Vault",
+   "nameHe": "הכספת",
+   "origin": "renamed",
+   "costTier": 5,
+   "stamina": "קיצונית",
+   "starBonus": 1,
+   "rivalry": "מסיים יריבות",
+   "unlock": "אירועי שיא",
+   "desc": "כלוב ענק עם תקרה, רק באירועי שיא. (במקור: Hell in a Cell)",
+   "descEn": "A huge roofed cage, premium events only."
+  },
+  {
+   "name": "Fight Pit",
+   "nameHe": "בור הקרב",
+   "origin": "renamed",
+   "costTier": 3,
+   "stamina": "גבוהה",
+   "starBonus": 0.5,
+   "rivalry": "גבוה",
+   "unlock": "שבוע 8",
+   "desc": "זירה בלי חבלים, רק נוקאאוט או הכנעה. (במקור: Underground)",
+   "descEn": "A ropeless ring, knockout or submission only."
+  },
+  {
+   "name": "Legends Rush",
+   "nameHe": "מרוץ האגדות",
+   "origin": "renamed",
+   "costTier": 5,
+   "stamina": "נמוכה",
+   "starBonus": 1,
+   "rivalry": "נמוך",
+   "unlock": "אירועי שיא",
+   "desc": "30 משתתפים שנכנסים כל דקה וחצי, זריקה מעל החבל. המנצח מקבל קרב תואר באירוע השיא הגדול. (בהשראת Royal Rumble)",
+   "descEn": "30 entrants arriving every 90 seconds, over the top rope. The winner earns a title shot at the biggest event."
+  },
+  {
+   "name": "Crowd's Choice",
+   "nameHe": "בחירת הקהל",
+   "origin": "ours",
+   "costTier": 2,
+   "stamina": "משתנה",
+   "starBonus": 0.25,
+   "rivalry": "רגיל",
+   "unlock": "שבוע 4",
+   "desc": "הקהל מצביע על התנאי ברגע האחרון: תנאי אקראי מהרשימה, ובונוס התרגשות.",
+   "descEn": "The crowd votes the stipulation at the last moment: a random one from the list, plus an excitement bonus."
+  },
+  {
+   "name": "Legacy Match",
+   "nameHe": "קרב המורשת",
+   "origin": "ours",
+   "costTier": 4,
+   "stamina": "גבוהה",
+   "starBonus": 0.75,
+   "rivalry": "מסיים יריבות",
+   "unlock": "שבוע 12",
+   "desc": "המפסיד מאבד 10 פופולריות והמנצח מקבל 10. רק ליריבות ברמה 3 ומעלה.",
+   "descEn": "The loser loses 10 popularity and the winner gains 10. Rivalries at level 3+ only."
+  },
+  {
+   "name": "Title vs Title",
+   "nameHe": "תואר מול תואר",
+   "origin": "ours",
+   "costTier": 4,
+   "stamina": "גבוהה",
+   "starBonus": 1,
+   "rivalry": "גבוה",
+   "unlock": "אירועי שיא",
+   "desc": "שני אלופים, המנצח מחזיק בשני התארים.",
+   "descEn": "Two champions, the winner holds both titles."
+  },
+  {
+   "name": "Golden Ticket Ladder",
+   "nameHe": "סולם כרטיס הזהב",
+   "origin": "ours",
+   "costTier": 4,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.75,
+   "rivalry": "רגיל",
+   "unlock": "אירועי שיא",
+   "desc": "המנצח מוריד כרטיס זהב: קרב תואר מתי שירצה במשך העונה.",
+   "descEn": "The winner pulls down a golden ticket: a title shot whenever they choose this season."
+  },
+  {
+   "name": "Clockwork",
+   "nameHe": "שעון חול",
+   "origin": "ours",
+   "costTier": 3,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.5,
+   "rivalry": "גבוה",
+   "unlock": "שבוע 8",
+   "desc": "20 דקות, מנצח מי שצבר יותר נפילות. מתאבקים עם סיבולת גבוהה מקבלים בונוס.",
+   "descEn": "20 minutes, most falls wins. High-stamina wrestlers get a bonus."
+  },
+  {
+   "name": "Lumberjack",
+   "nameHe": "חוטבי עצים",
+   "origin": "ours",
+   "costTier": 2,
+   "stamina": "רגילה",
+   "starBonus": 0.25,
+   "rivalry": "גבוה",
+   "unlock": "מההתחלה",
+   "desc": "מתאבקים מקיפים את הזירה ומחזירים פנימה כל מי שבורח.",
+   "descEn": "Wrestlers surround the ring and throw back anyone who escapes."
+  },
+  {
+   "name": "Blackout",
+   "nameHe": "החשכה",
+   "origin": "ours",
+   "costTier": 3,
+   "stamina": "גבוהה",
+   "starBonus": 0.5,
+   "rivalry": "גבוה מאוד",
+   "unlock": "שבוע 8",
+   "desc": "האורות כבים לרגעים, והכול יכול לקרות: התערבויות והפתעות. התוצאה פחות צפויה.",
+   "descEn": "The lights go out at moments and anything can happen: run-ins and surprises. Less predictable."
+  },
+  {
+   "name": "Rookie Gauntlet",
+   "nameHe": "מבחן הטירון",
+   "origin": "ours",
+   "costTier": 2,
+   "stamina": "גבוהה מאוד",
+   "starBonus": 0.25,
+   "rivalry": "נמוך",
+   "unlock": "מההתחלה",
+   "desc": "צעיר מול שלושה ותיקים. אם הוא שורד, הוא מקבל ניסיון כפול ו-8 פופולריות.",
+   "descEn": "A Prospect against three veterans. If they survive, they gain double XP and 8 popularity."
+  },
+  {
+   "name": "Tag Turmoil",
+   "nameHe": "מערבולת זוגות",
+   "origin": "ours",
+   "costTier": 3,
+   "stamina": "גבוהה",
+   "starBonus": 0.5,
+   "rivalry": "רגיל",
+   "unlock": "שבוע 8",
+   "desc": "חמישה צמדים ברצף, המנצחים נשארים בזירה. המנצח האחרון מקבל קרב על תואר הזוגות.",
+   "descEn": "Five teams in a row, winners stay in. The last team standing earns a tag title shot."
+  }
+ ]
+}

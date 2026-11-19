@@ -9,6 +9,7 @@
 
 ## מסמכים
 - `roster.md` — רוסטר LWF: 300 מתאבקים (נבנה מ-`content/build_roster.py`). דף מפורסם: https://claude.ai/artifact/T2xVn2JNfN4rLGqMjEWmjG
+- `matches.md` — סוגי הקרבות (נבנה מ-`content/build_matches.py`).
 - `cards.md` — קלפי הכוח: 20 קלפי מנהלים וחנות (נבנה מ-`content/build_cards.py`). דף מפורסם: https://claude.ai/artifact/KnS1UTUnMX56GRrop8yYB8
 - `belts.md` — מפרט הפקת 30 חגורות האליפות. דף מפורסם: https://claude.ai/artifact/TfWzmTbvJbXYYjdRHa7N8F
 - `costs.md` — תקציב ועלויות. דף מפורסם: https://claude.ai/artifact/6D7rw6N4kdwPzpT2TdqyKn
