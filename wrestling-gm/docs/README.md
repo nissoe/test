@@ -8,6 +8,6 @@
 - תוספות תחביר: `> [!החלטה]`, `> [!לאמת]`, `> [!הערה]`, `> [!לגרסה שלנו]` בתחילת ציטוט, ו-`[[לאמת]]` בתוך שורה.
 
 ## מסמכים
-- `belts.md` — מפרט הפקת 30 חגורות האליפות.
+- `belts.md` — מפרט הפקת 30 חגורות האליפות. דף מפורסם: https://claude.ai/artifact/TfWzmTbvJbXYYjdRHa7N8F
 - `costs.md` — תקציב ועלויות. דף מפורסם: https://claude.ai/artifact/6D7rw6N4kdwPzpT2TdqyKn
 - `gdd.md` — מסמך אפיון המשחק. דף מפורסם: https://claude.ai/artifact/RcepWhLbcV9pjfxgP5tCHc (לעדכן אותו: לפרסם מחדש את `dist/gdd.html` לאותה כתובת).
