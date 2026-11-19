@@ -36,8 +36,9 @@
 | 31 | 2026-11-19 | שמות המותגים | LWF Rage (ראשי) · LWF Throwdown (ראשי שני) · LWF Ignite (נפיץ) · LWF Breakout (מותג הפיתוח) · LWF Uproar (נוסף) | בסגנון שמות התוכניות האמיתיות (מילה אחת חזקה). לא נמצאה תוכנית שבועית פעילה באף אחד מהשמות: Throwdown הופיע רק כשם אירוע חד-פעמי. נכלל בבדיקת הסימנים המסחריים במחשב. נפסלו: Fury (SWE Fury), Shockwave (NWA, לשעבר), Riot (MLW Battle Riot). |
 | 32 | 2026-11-19 | שמות התארים | שם המותג + סוג התואר, כמו במקור (Rage World Championship, Throwdown Tag Team Championship). התואר המשני מקבל שם ייחודי לכל מותג | מבנה התארים בכל מותג לפי המקור [לאמת]: עולמי, עולמי נשים, משני, משני נשים, זוגות, זוגות נשים. כתיב נכון בעברית: "תארים". |
 | 33 | 2026-11-19 | תארים משניים | Rage Legacy · Throwdown Iron · Ignite Blaze · Breakout Rising Star · Uproar Brawl (Championship) | Legacy מתחבר ל-Legends. |
+| 34 | 2026-11-19 | אירועי שיא | 16 אירועים: Rise of Legends (פתיחת עונה) · Warpath · Iron Will · Vendetta · Blood & Glory · Steel Storm · Throne Wars · Hostile Takeover · Wildfire · Winter Wars · Full Throttle · Supremacy · Ironclad · Night of Legends · Last Legend Standing · Legends Forever (סיום עונה, הגדול ביותר) | הושמטו שמות של אירועים אמיתיים מוכרים (Uprising, Point of No Return, Fire & Ice, Fallout). שיבוץ לשבועות ואילו חוצי מותגים: לפי המקור [לאמת]. בעונה של 25 שבועות: תת-קבוצה. |
 
 ## שאלות פתוחות (בתור לשאלון)
 - משימה במחשב: בדיקת סימן מסחרי, חנויות ודומיין ל-LWF (החלטה 30)
-- שמות 20 המנהלים, התארים ואירועי השיא
+- שמות 20 המנהלים (שלב התוכן, במחשב)
 - משימה במחשב: מחקר מספרים ונוסחאות של המקור (החלטה 23)
