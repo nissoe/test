@@ -223,6 +223,8 @@ export const s = StyleSheet.create({
 /** זכוכית: טשטוש של הזירה מאחורי הפאנל (בווב) */
 export const GLASS: any = Platform.OS === 'web' ? { backdropFilter: 'blur(14px) saturate(140%)', WebkitBackdropFilter: 'blur(14px) saturate(140%)' } : {};
 
+export const SAFE_BOTTOM: any = Platform.OS === 'web' ? 'max(8px, env(safe-area-inset-bottom))' : 8;
+
 export function useNarrow() {
   return useWindowDimensions().width < 900;
 }
@@ -251,7 +253,7 @@ export function Stage({ children, arenaShare = 0.26, side = 'end', width = 560, 
       <View style={{ height: Math.round(H * arenaShare), justifyContent: 'flex-end', paddingHorizontal: 10, paddingBottom: 6 }} pointerEvents="box-none">
         {overlay}
       </View>
-      <View style={{ flex: 1, paddingHorizontal: 8 }}>{children}</View>
+      <View style={{ flex: 1, paddingHorizontal: 8, paddingBottom: bottomBar ? 0 : SAFE_BOTTOM }}>{children}</View>
       {bottomBar}
     </View>
   );
@@ -268,7 +270,7 @@ export function TabBar({ tabs, active, onChange, color = C.gold }: { tabs: { key
     );
   }
   return (
-    <View style={[{ flexDirection: 'row', backgroundColor: '#07080Cf2', borderTopWidth: 1, borderTopColor: '#ffffff1a', paddingTop: 6, paddingBottom: 8 }, GLASS]}>
+    <View style={[{ flexDirection: 'row', backgroundColor: '#07080Cf2', borderTopWidth: 1, borderTopColor: '#ffffff1a', paddingTop: 6, paddingBottom: SAFE_BOTTOM }, GLASS]}>
       {tabs.map((tb) => {
         const on = active === tb.key;
         return (

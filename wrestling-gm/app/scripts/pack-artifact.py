@@ -17,9 +17,10 @@ open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write('''<title>LWF
 <style>
   /* מראה אחד, כהה בכוונה: מסך שידור של משחק */
   :root { --bg: #06070B; color-scheme: dark; }
-  html, body { height: 100%; background: var(--bg); }
+  html, body { height: 100%; margin: 0; background: var(--bg); overflow: hidden; overscroll-behavior: none; }
   body { overflow: hidden; }
-  #root { display: flex; height: 100%; flex: 1; }
+  /* המשחק ממלא את כל המסך; את השוליים של המגרעת והפס התחתון הוא מטפל בעצמו */
+  #root { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; }
 </style>
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div id="root"></div>

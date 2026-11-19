@@ -1,7 +1,7 @@
 // LWF GM — אב-טיפוס: פתיחה, דראפט, תוכנית שבועית, תוצאות וסוף עונה.
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, SafeAreaView, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 import { Anton_400Regular } from '@expo-google-fonts/anton/400Regular';
@@ -22,6 +22,9 @@ import { GameProvider, useStore } from './src/store.tsx';
 import { C, Head } from './src/ui.tsx';
 import * as sfx from './src/sfx.ts';
 
+// שוליים בטוחים (מגרעת ופס תחתון) – פעם אחת בלבד, כאן
+const SAFE_TOP = Platform.OS === 'web' ? 'max(8px, env(safe-area-inset-top))' : 8;
+
 function Logo() {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
@@ -40,9 +43,9 @@ function Shell() {
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       {/* הזירה החיה מאחורי כל המסכים */}
       <Arena />
-      <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <View style={{ flex: 1, direction: lang === 'he' ? 'rtl' : 'ltr' }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#ffffff12', backgroundColor: '#05060Acc' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, paddingBottom: 8, paddingTop: SAFE_TOP as any, borderBottomWidth: 1, borderBottomColor: '#ffffff12', backgroundColor: '#05060Acc' }}>
             <Logo />
             <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
               <Pressable onPress={() => sfx.setMuted(!muted)} hitSlop={8}>
@@ -55,7 +58,7 @@ function Shell() {
           </View>
           {phase === 'setup' ? <Setup /> : phase === 'draft' ? <Draft /> : phase === 'hub' ? <Hub /> : phase === 'results' ? <Results /> : <SeasonEnd />}
         </View>
-      </SafeAreaView>
+      </View>
       <StatusBar style="light" />
     </View>
   );
